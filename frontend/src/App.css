@@ -74,8 +74,8 @@ body::after {
   background-size:
     320px auto,
     260px auto,
-    300px auto,
-    300px auto;
+    250px auto,
+    250px auto;
   opacity: 0.12;
   filter: blur(0.2px);
   pointer-events: none;
