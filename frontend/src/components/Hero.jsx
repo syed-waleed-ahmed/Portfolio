@@ -1,7 +1,7 @@
 // src/components/Hero.jsx
 import React, { useEffect, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import profileImg from "../assets/profile.jpg"; // <-- adjust path to your image
+import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
+import profileImg from "../assets/Profile.JPG"; // adjust if your filename differs
 
 const exploreItems = [
   "Full-Stack AI Engineering",
@@ -14,6 +14,7 @@ const exploreItems = [
 const Hero = () => {
   const [exploreIndex, setExploreIndex] = useState(0);
 
+  // rotate "Currently exploring" text
   useEffect(() => {
     const id = setInterval(
       () => setExploreIndex((i) => (i + 1) % exploreItems.length),
@@ -22,19 +23,26 @@ const Hero = () => {
     return () => clearInterval(id);
   }, []);
 
+  // === Apple-ish parallax on scroll ===
+  const { scrollYProgress } = useScroll();
+  const heroImageY = useTransform(scrollYProgress, [0, 0.4], [0, -80]);
+  const heroBgY = useTransform(scrollYProgress, [0, 0.4], [0, 40]);
+  const heroOpacity = useTransform(scrollYProgress, [0, 0.3], [1, 0.85]);
+
   return (
     <motion.section
       id="hero"
       className="hero-gradient hero-wrapper d-flex align-items-center"
+      style={{ opacity: heroOpacity }}
       initial={{ opacity: 0, y: 30 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.7, ease: "easeOut" }}
     >
       <div className="container position-relative">
-        {/* blurred glowing blobs */}
-        <div className="hero-orbit hero-orbit-1" />
-        <div className="hero-orbit hero-orbit-2" />
-        <div className="hero-orbit hero-orbit-3" />
+        {/* blurred glowing blobs with slight parallax */}
+        <motion.div className="hero-orbit hero-orbit-1" style={{ y: heroBgY }} />
+        <motion.div className="hero-orbit hero-orbit-2" style={{ y: heroBgY }} />
+        <motion.div className="hero-orbit hero-orbit-3" style={{ y: heroBgY }} />
 
         <div className="row align-items-center g-5">
           {/* LEFT: text side */}
@@ -45,7 +53,8 @@ const Hero = () => {
               transition={{ duration: 0.8, ease: "easeOut" }}
             >
               <p className="display-4 fw-bold hero-title mb-3">
-                Hi, I'm <span className="gradient-text">Syed Waleed Ahmed</span>
+                Hi, I'm{" "}
+                <span className="gradient-text">Syed Waleed Ahmed</span>
               </p>
 
               <p className="hero-lead mb-4">
@@ -82,19 +91,21 @@ const Hero = () => {
 
               {/* Email / Phone chips */}
               <div className="d-flex flex-wrap gap-3 mb-3">
-                <div className="hero-contact-pill hero-contact-pill-strong">
+                {/* Email button (no address shown) */}
+                <a
+                  href="mailto:syedwaleedahmed9@gmail.com"
+                  className="btn btn-primary neon-btn hero-contact-pill hero-contact-pill-strong"
+                >
                   <span className="hero-contact-label">Email</span>
-                  <a href="mailto:syedwaleedahmed9@gmail.com">
-                    syedwaleedahmed9@gmail.com
-                  </a>
-                </div>
+                </a>
 
+                {/* Phone pill with both numbers */}
                 <div className="hero-contact-pill hero-contact-pill-strong">
-                  <span className="hero-contact-label">Phone</span>
-                  {/* both numbers, each clickable */}
-                  <a href="tel:+31687889345">+31 6 8788 9345</a>
-                  <span className="mx-1">·</span>
-                  <a href="tel:+393519609532">+39 351 960 9532</a>
+                  <span className="hero-contact-label">Phone / Whatsapp</span>
+                  <div className="d-flex flex-column flex-sm-row gap-2">
+                    <span className="d-none d-sm-inline">•</span>
+                    <a href="tel:+393519609532">+39 3519609532</a>
+                  </div>
                 </div>
               </div>
 
@@ -130,7 +141,7 @@ const Hero = () => {
                   rel="noreferrer"
                   className="social-pill"
                 >
-                  Twitter
+                  X (Twitter)
                 </a>
               </div>
             </motion.div>
@@ -144,6 +155,7 @@ const Hero = () => {
               animate={{ opacity: 1, x: 0, scale: 1 }}
               transition={{ duration: 0.9, ease: "easeOut" }}
               whileHover={{ y: -8, rotate: 1.2 }}
+              style={{ y: heroImageY }}
             >
               <div className="gradient-border hero-ring">
                 <img

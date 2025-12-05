@@ -21,6 +21,11 @@
   box-sizing: border-box;
 }
 
+/* smooth scrolling between sections */
+html {
+  scroll-behavior: smooth;
+}
+
 body {
   margin: 0;
   font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
@@ -28,6 +33,50 @@ body {
   background: radial-gradient(circle at top, #020617 0, #020617 45%, #000 100%);
   color: var(--text-main);
   overflow-x: hidden;
+  position: relative; /* needed for fixed bg layers */
+}
+
+/* === Global AI / ML background layer === */
+/* Put ai-grid.png, code-snippet.png, llm-chip.png, code.png in /public */
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background-image: url("C:\\Users\\walee\\Desktop\\portfolio\\frontend\\src\\assets\\ai-grid.png");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  opacity: 0.16;
+  mix-blend-mode: screen;
+  pointer-events: none;
+  z-index: -3;
+}
+
+/* Multiple accent images. To add more images:
+   - Append another url(...) in background-image
+   - Add corresponding values in repeat / position / size (same order) */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background-image:
+    url("C:\\Users\\walee\\Desktop\\portfolio\\frontend\\src\\assets\\code-snippet.png"),
+    url("C:\\Users\\walee\\Desktop\\portfolio\\frontend\\src\\assets\\llm-chip.png"),
+    url("C:\\Users\\walee\\Desktop\\portfolio\\frontend\\src\\assets\\code.png");
+  background-repeat: no-repeat, no-repeat, no-repeat;
+  background-position:
+    4% 28%,   /* left accent */
+    96% 72%,  /* right accent */
+    50% 92%;  /* bottom accent */
+  background-size:
+    320px auto,
+    260px auto,
+    480px auto;
+  opacity: 0.12;
+  filter: blur(0.2px);
+  pointer-events: none;
+  z-index: -2;
 }
 
 .app-root {
@@ -37,51 +86,83 @@ body {
 /* ========= Navbar ========= */
 
 .glass-nav {
-  background: rgba(15, 23, 42, 0.96);
-  backdrop-filter: blur(14px);
-  border-bottom: 1px solid var(--border-subtle);
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: radial-gradient(circle at top, #020617 0, #020617 35%, #020617f5 100%);
+  backdrop-filter: blur(18px);
+  border-bottom: 1px solid rgba(148, 163, 184, 0.22);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.6);
 }
 
-/* nav pills centered – no brand */
+/* keep nav content nicely centered */
+.glass-nav .navbar-nav {
+  gap: 0.75rem;
+}
+
+/* flat, text-only tabs (no circles) */
 .nav-pills .nav-link-pill {
   position: relative;
-  border-radius: 999px;
-  padding-inline: 0.9rem;
-  padding-block: 0.4rem;
-  color: var(--text-muted);
-  border: 1px solid transparent;
-  font-size: 0.9rem;
+  padding: 0.65rem 0.4rem;
+  border: none;
+  border-radius: 0;
   background: transparent;
-  transition: all 0.18s ease-out;
+  color: var(--text-muted);
+  font-size: 0.82rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition:
+    color 0.18s ease-out,
+    transform 0.18s ease-out,
+    text-shadow 0.18s ease-out;
 }
 
-/* hover + active background / color */
-.nav-pills .nav-link-pill:hover,
-.nav-pills .nav-link-pill:focus,
-.nav-pills .nav-link-pill.active {
-  color: var(--text-main);
-  border-color: var(--accent-soft);
-  background: rgba(15, 23, 42, 0.96);
-}
-
-/* animated underline for dynamic feel */
-.nav-link-pill::after {
+/* subtle glow underline */
+.nav-pills .nav-link-pill::after {
   content: "";
   position: absolute;
   left: 50%;
-  bottom: 0.18rem;
+  bottom: 0.15rem;
   width: 0;
   height: 2px;
   border-radius: 999px;
   background: linear-gradient(90deg, var(--accent), var(--accent-2));
-  transition: width 0.2s ease-out, left 0.2s ease-out;
+  box-shadow: 0 0 8px rgba(56, 189, 248, 0.7);
+  opacity: 0;
+  transform: translateX(-50%);
+  transition:
+    width 0.2s ease-out,
+    opacity 0.2s ease-out;
 }
 
-.nav-link-pill:hover::after,
-.nav-link-pill:focus::after,
-.nav-link-pill.active::after {
-  width: 70%;
-  left: 15%;
+/* hover + active state */
+.nav-pills .nav-link-pill:hover,
+.nav-pills .nav-link-pill:focus,
+.nav-pills .nav-link-pill.active {
+  color: var(--text-main);
+  transform: translateY(-1px);
+  text-shadow: 0 0 8px rgba(15, 23, 42, 0.9);
+}
+
+.nav-pills .nav-link-pill:hover::after,
+.nav-pills .nav-link-pill:focus::after,
+.nav-pills .nav-link-pill.active::after {
+  width: 80%;
+  opacity: 1;
+}
+
+/* mobile tweaks */
+@media (max-width: 768px) {
+  .glass-nav .navbar-nav {
+    gap: 0.4rem;
+  }
+
+  .nav-pills .nav-link-pill {
+    padding: 0.55rem 0.25rem;
+    font-size: 0.78rem;
+    letter-spacing: 0.12em;
+  }
 }
 
 /* ========= Hero (base) ========= */
@@ -397,10 +478,9 @@ body {
 
 /* Each skill card gets equal width & gaps in the row */
 .skill-card-wrapper {
-  flex: 1 1 320px;   /* grows, shrinks nicely */
-  max-width: 400px;  /* prevents getting too wide on huge screens */
+  flex: 1 1 320px;
+  max-width: 400px;
 }
-
 
 /* ========= Inputs ========= */
 
@@ -408,8 +488,8 @@ body {
   background: rgba(15, 23, 42, 0.96) !important;
   border-radius: 12px;
   border: 1px solid var(--border-subtle);
-  color: #f9fafb !important;   /* ensure white text while typing */
-  caret-color: #f9fafb;        /* white caret on dark background */
+  color: #f9fafb !important;
+  caret-color: #f9fafb;
 }
 
 /* brighter placeholders for dark background */
@@ -588,12 +668,12 @@ small,
 
 /* Global section spacing: tighter but still airy */
 .section-wrapper {
-  padding: 60px 0;               /* was larger before */
+  padding: 60px 0;
 }
 
 /* Slightly smaller gap under each section title */
 .section-title {
-  margin-bottom: 28px;           /* was ~36–40px */
+  margin-bottom: 28px;
 }
 
 /* Pull consecutive sections a bit closer together */
@@ -603,7 +683,7 @@ small,
 
 /* Hero: keep it strong but reduce empty space below */
 .hero-wrapper {
-  padding-bottom: 40px;          /* only bottom tightened */
+  padding-bottom: 40px;
 }
 
 /* Mid-page sections (experience → contact) a touch tighter */
@@ -618,14 +698,13 @@ small,
 
 /* ============================================
    HERO REFINEMENTS (calmer, more consistent)
-   These override some of the earlier hero rules
    ============================================ */
 
-/* Overall hero background: subtle gradient */
+/* updated: no solid background here so hero uses the global body background */
 .hero-gradient {
   position: relative;
   padding-block: 3.5rem;
-  background: radial-gradient(circle at 10% 0%, #0b1220 0, #020617 40%, #020617 100%);
+  background: transparent;
 }
 
 /* Ensure hero fills viewport nicely */
@@ -635,7 +714,7 @@ small,
   align-items: center;
 }
 
-/* Orb glows instead of huge ::before blur */
+/* Orb glows */
 .hero-orbit {
   position: absolute;
   filter: blur(45px);
