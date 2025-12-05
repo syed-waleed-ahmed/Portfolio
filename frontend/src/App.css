@@ -63,16 +63,19 @@ body::after {
   background-image:
     url("C:\\Users\\walee\\Desktop\\portfolio\\frontend\\src\\assets\\code-snippet.png"),
     url("C:\\Users\\walee\\Desktop\\portfolio\\frontend\\src\\assets\\llm-chip.png"),
-    url("C:\\Users\\walee\\Desktop\\portfolio\\frontend\\src\\assets\\code.png");
-  background-repeat: no-repeat, no-repeat, no-repeat;
+    url("C:\\Users\\walee\\Desktop\\portfolio\\frontend\\src\\assets\\code.png"),
+    url("C:\\Users\\walee\\Desktop\\portfolio\\frontend\\src\\assets\\css.png");
+  background-repeat: no-repeat, no-repeat, no-repeat, no-repeat;
   background-position:
     4% 28%,   /* left accent */
     96% 72%,  /* right accent */
-    50% 92%;  /* bottom accent */
+    50% 92%,  /* bottom accent */
+    50% 22%;  /* top accent */
   background-size:
     320px auto,
     260px auto,
-    480px auto;
+    300px auto,
+    300px auto;
   opacity: 0.12;
   filter: blur(0.2px);
   pointer-events: none;

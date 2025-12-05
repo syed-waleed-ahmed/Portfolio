@@ -58,7 +58,7 @@ const Hero = () => {
               </p>
 
               <p className="hero-lead mb-4">
-                I’m a Master’s student in Automation Engineering at the
+                Master’s student in Automation Engineering at the
                 University of Bologna, specializing in{" "}
                 <span className="fw-semibold">
                   AI, ML, Intelligent Automation
