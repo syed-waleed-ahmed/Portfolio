@@ -31,7 +31,7 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="navbar navbar-expand-md fixed-top glass-nav">
+    <nav className="navbar navbar-expand-md fixed-top glass-nav navbar-dark">
       <div className="container d-flex justify-content-center">
         {/* Toggler for mobile */}
         <button
