@@ -12,20 +12,20 @@ const PORT = process.env.PORT || 5000;
 // ===== Middleware =====
 const allowedOrigins = [
   "http://localhost:5173",
-  "https://syedwaleedahmed.netlify.app", 
+  "https://syedwaleedahmed.netlify.app"
 ];
 
+// Global CORS (handles normal + preflight requests)
 app.use(
   cors({
-    origin: (origin, cb) => {
-      if (!origin || allowedOrigins.includes(origin)) {
-        return cb(null, true);
-      }
-      return cb(new Error("Not allowed by CORS"));
-    },
-    methods: ["POST", "GET", "OPTIONS"],
+    origin: allowedOrigins,              // allow both local + Netlify
+    methods: ["GET", "POST", "OPTIONS"],
+    allowedHeaders: ["Content-Type"],    // allow JSON
   })
 );
+
+// Explicitly handle OPTIONS for all routes (preflight)
+app.options("*", cors());
 
 app.use(express.json());
 
