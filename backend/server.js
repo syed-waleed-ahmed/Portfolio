@@ -10,9 +10,19 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 // ===== Middleware =====
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://your-frontend-domain.netlify.app", // we'll update this after first deploy
+];
+
 app.use(
   cors({
-    origin: process.env.CLIENT_ORIGIN || "http://localhost:5173",
+    origin: (origin, cb) => {
+      if (!origin || allowedOrigins.includes(origin)) {
+        return cb(null, true);
+      }
+      return cb(new Error("Not allowed by CORS"));
+    },
     methods: ["POST", "GET", "OPTIONS"],
   })
 );

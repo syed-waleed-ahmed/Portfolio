@@ -43,7 +43,7 @@ body::before {
   content: "";
   position: fixed;
   inset: 0;
-  background-image: url("C:\\Users\\walee\\Desktop\\portfolio\\frontend\\src\\assets\\ai-grid.png");
+  background-image: url("/ai-grid.png");
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -61,10 +61,10 @@ body::after {
   position: fixed;
   inset: 0;
   background-image:
-    url("C:\\Users\\walee\\Desktop\\portfolio\\frontend\\src\\assets\\code-snippet.png"),
-    url("C:\\Users\\walee\\Desktop\\portfolio\\frontend\\src\\assets\\llm-chip.png"),
-    url("C:\\Users\\walee\\Desktop\\portfolio\\frontend\\src\\assets\\code.png"),
-    url("C:\\Users\\walee\\Desktop\\portfolio\\frontend\\src\\assets\\css.png");
+    url("/code-snippet.png"),
+    url("/llm-chip.png"),
+    url("/code.png"),
+    url("/css.png");
   background-repeat: no-repeat, no-repeat, no-repeat, no-repeat;
   background-position:
     4% 28%,   /* left accent */
