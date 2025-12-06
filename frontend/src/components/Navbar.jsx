@@ -2,15 +2,34 @@
 import React from "react";
 
 const navLinks = [
-  { href: "#about", label: "About" },
-  { href: "#experience", label: "Experience" },
-  { href: "#projects", label: "Projects" },
-  { href: "#skills", label: "Skills" },
-  { href: "#interests", label: "Interests" },
-  { href: "#contact", label: "Contact" },
+  { target: "top", label: "Home" },          // scroll to top
+  { target: "about", label: "About" },
+  { target: "experience", label: "Experience" },
+  { target: "projects", label: "Projects" },
+  { target: "skills", label: "Skills" },
+  { target: "interests", label: "Interests" },
+  { target: "contact", label: "Contact" },
 ];
 
 const Navbar = () => {
+  const handleNavClick = (e, target) => {
+    e.preventDefault(); // don't do normal link navigation / reload
+
+    if (target === "top") {
+      // Home: scroll to very top of the page
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    } else {
+      // Other sections: scroll to element with matching id
+      const el = document.getElementById(target);
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    }
+
+    // Make sure URL stays clean (no #hash)
+    window.history.replaceState({}, "", window.location.pathname);
+  };
+
   return (
     <nav className="navbar navbar-expand-md fixed-top glass-nav">
       <div className="container d-flex justify-content-center">
@@ -33,8 +52,12 @@ const Navbar = () => {
         >
           <ul className="navbar-nav nav-pills gap-2">
             {navLinks.map((link) => (
-              <li className="nav-item" key={link.href}>
-                <a href={link.href} className="nav-link nav-link-pill">
+              <li className="nav-item" key={link.label}>
+                <a
+                  href="/"
+                  className="nav-link nav-link-pill"
+                  onClick={(e) => handleNavClick(e, link.target)}
+                >
                   {link.label}
                 </a>
               </li>
