@@ -11,7 +11,7 @@ const initialState = {
 
 // base URL for the backend API
 // - in dev: uses Vite env var if set, otherwise http://localhost:5000
-// - in production: you can set VITE_API_BASE_URL to your deployed backend URL
+// - in production: set VITE_API_BASE_URL to your deployed backend URL
 const API_BASE_URL =
   import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
 
@@ -87,7 +87,8 @@ const Contact = () => {
 
       const data = await res.json();
 
-      if (!res.ok) {
+      // also check backend "success" flag to be extra safe
+      if (!res.ok || !data.success) {
         throw new Error(data.error || "Failed to send message.");
       }
 
@@ -138,6 +139,7 @@ const Contact = () => {
                         placeholder="Your full name"
                         value={form.name}
                         onChange={handleChange}
+                        spellCheck="false"
                       />
                       {errors.name && (
                         <div className="small text-danger mt-1">
@@ -161,6 +163,7 @@ const Contact = () => {
                         placeholder="you@example.com"
                         value={form.email}
                         onChange={handleChange}
+                        spellCheck="false"
                       />
                       {errors.email && (
                         <div className="small text-danger mt-1">
@@ -184,6 +187,7 @@ const Contact = () => {
                         placeholder="+xx xxxxxxxxxx"
                         value={form.phone}
                         onChange={handleChange}
+                        spellCheck="false"
                       />
                       {errors.phone && (
                         <div className="small text-danger mt-1">
@@ -207,6 +211,7 @@ const Contact = () => {
                         placeholder="How can I help?"
                         value={form.subject}
                         onChange={handleChange}
+                        spellCheck="false"
                       />
                       {errors.subject && (
                         <div className="small text-danger mt-1">

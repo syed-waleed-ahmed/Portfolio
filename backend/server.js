@@ -1,45 +1,43 @@
-// server.js
+// backend/server.js
 import express from "express";
 import dotenv from "dotenv";
 import nodemailer from "nodemailer";
 import cors from "cors";
 
-// Load environment variables from .env
 dotenv.config();
 
-// Destructure env vars for convenience
-const { EMAIL_USER, EMAIL_PASS, EMAIL_TO, PORT } = process.env;
-
-if (!EMAIL_USER || !EMAIL_PASS || !EMAIL_TO) {
-  console.error("❌ Missing EMAIL_USER, EMAIL_PASS, or EMAIL_TO in .env");
-}
-
 const app = express();
-const port = PORT || 5000;
+const PORT = process.env.PORT || 5000;
 
-// Middleware
+// ===== Middleware =====
 app.use(
   cors({
-    origin: "http://localhost:5173", // your Vite dev URL (adjust for production)
+    origin: process.env.CLIENT_ORIGIN || "http://localhost:5173",
     methods: ["POST", "GET", "OPTIONS"],
   })
 );
+
 app.use(express.json());
 
-// Nodemailer transport using your Gmail + App Password
+// Simple health check route (useful for Render/monitors)
+app.get("/", (req, res) => {
+  res.json({ status: "ok", message: "Portfolio backend is running" });
+});
+
+// ===== Nodemailer transport (Gmail + App Password) =====
 const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
-    user: EMAIL_USER,
-    pass: EMAIL_PASS,
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS,
   },
 });
 
-// Route for sending messages
+// ===== Contact Route =====
 app.post("/api/contact", async (req, res) => {
   const { name, email, phone, subject, message } = req.body;
 
-  // Basic server-side validation
+  // Basic validation
   if (!name || !email || !subject || !message) {
     return res
       .status(400)
@@ -47,8 +45,8 @@ app.post("/api/contact", async (req, res) => {
   }
 
   const mailOptions = {
-    from: `"Portfolio Contact" <${EMAIL_USER}>`,
-    to: EMAIL_TO,
+    from: `"Portfolio Contact" <${process.env.EMAIL_USER}>`,
+    to: process.env.EMAIL_TO,
     subject: `New Portfolio Message: ${subject}`,
     text: `
 Name: ${name}
@@ -73,4 +71,7 @@ ${message}
   }
 });
 
-app.listen(port, () => console.log(`Server running on port ${port}`));
+// ===== Start server =====
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});

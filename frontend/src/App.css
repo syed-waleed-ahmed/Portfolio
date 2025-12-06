@@ -485,6 +485,11 @@ body::after {
   max-width: 400px;
 }
 
+/* ⬇ NEW: make skills boxes have a larger, stretched radius like AI & Automation card */
+.skill-card-wrapper .neo-card {
+  border-radius: 24px;
+}
+
 /* ========= Inputs ========= */
 
 .glass-input {
@@ -498,13 +503,13 @@ body::after {
 /* brighter placeholders for dark background */
 .glass-input::placeholder {
   color: #cbd5f5;
-  opacity: 0.9;
+  opacity: 0.1;
 }
 
 /* Firefox specific */
 .glass-input::-moz-placeholder {
   color: #cbd5f5;
-  opacity: 0.9;
+  opacity: 0.1;
 }
 
 .glass-input:focus {
@@ -899,4 +904,18 @@ small,
   .hero-photo-wrapper .profile-img {
     max-width: 220px;
   }
+}
+
+/* === Force white text in all glass inputs (fix "black name" issue) === */
+
+input.glass-input,
+textarea.glass-input {
+  color: #f9fafb !important;
+  -webkit-text-fill-color: #f9fafb !important; /* Chrome/WebKit */
+}
+
+input.glass-input:focus,
+textarea.glass-input:focus {
+  color: #f9fafb !important;
+  -webkit-text-fill-color: #f9fafb !important;
 }
