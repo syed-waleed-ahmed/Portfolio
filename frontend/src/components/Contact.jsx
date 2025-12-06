@@ -9,11 +9,8 @@ const initialState = {
   message: "",
 };
 
-// base URL for the backend API
-// - in dev: uses Vite env var if set, otherwise http://localhost:5000
-// - in production: set VITE_API_BASE_URL to your deployed backend URL
 const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
+  import.meta.env.VITE_API_BASE_URL || "https://portfolio-backend-kmum.onrender.com";
 
 const Contact = () => {
   const [form, setForm] = useState(initialState);
