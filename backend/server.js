@@ -29,7 +29,7 @@ app.use(
 app.use(express.json());
 
 // Health route
-app.get("/", (req, res) => {
+app.get("/health", (req, res) => {
   res.json({ message: "Backend running" });
 });
 
