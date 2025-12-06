@@ -6,9 +6,9 @@ const skillGroups = [
   {
     title: "Programming & AI/ML",
     skills: [
-      { name: "Python / NumPy / Pandas", percent: 85 },
+      { name: "Python • NumPy • Pandas", percent: 85 },
       {
-        name: "Machine Learning (scikit-learn, TensorFlow, PyTorch)",
+        name: "Machine Learning • Deep Learning",
         percent: 80,
       },
       { name: "Data Analysis & Predictive Analytics", percent: 85 },
@@ -17,17 +17,17 @@ const skillGroups = [
   {
     title: "Web & Application Development",
     skills: [
-      { name: "React & modern JS", percent: 80 },
-      { name: ".NET / REST APIs", percent: 70 },
-      { name: "HTML • CSS • JavaScript • MySQL", percent: 85 },
+      { name: "HTML • CSS • TypeScript", percent: 80 },
+      { name: ".NET • JavaScript", percent: 70 },
+      { name: "MySQL • PostgreSQL", percent: 85 },
     ],
   },
   {
     title: "Cloud, Systems & Automation",
     skills: [
-      { name: "Automation Systems & Workflow Automation", percent: 80 },
+      { name: "Workflow Automation", percent: 80 },
       { name: "Linux • Networking & Security Ops", percent: 70 },
-      { name: "Azure (familiar) • SharePoint & CRM", percent: 65 },
+      { name: "Azure • SharePoint & CRM", percent: 65 },
     ],
   },
 ];
@@ -87,7 +87,7 @@ const Skills = () => {
         </Reveal>
 
         {/* main 3 cards - spacing fixed by flex + wrapper */}
-        <div className="skills-row d-flex flex-wrap justify-content-center gap-4">
+        <div className="skills-row d-flex flex-wrap justify-content-between">
           {skillGroups.map((group, gi) => (
             <Reveal key={group.title} delay={gi * 0.05}>
               <div className="neo-card p-4 skill-card-wrapper">
@@ -120,35 +120,6 @@ const Skills = () => {
             </Reveal>
           ))}
         </div>
-
-        {/* AI & Automation focus chips */}
-        <Reveal delay={0.15}>
-          <div className="neo-card p-4 mt-4">
-            <h6 className="mb-3">AI & Automation Focus</h6>
-            <div className="d-flex flex-wrap gap-2">
-              <span className="badge rounded-pill skill-badge">Groq LLMs</span>
-              <span className="badge rounded-pill skill-badge">LangGraph</span>
-              <span className="badge rounded-pill skill-badge">
-                ReAct-style Reasoning
-              </span>
-              <span className="badge rounded-pill skill-badge">
-                Multi-Agent Systems
-              </span>
-              <span className="badge rounded-pill skill-badge">
-                Data Visualization &amp; BI
-              </span>
-              <span className="badge rounded-pill skill-badge">
-                Power BI / SSRS
-              </span>
-              <span className="badge rounded-pill skill-badge">
-                ETL Pipelines
-              </span>
-              <span className="badge rounded-pill skill-badge">
-                Agile Collaboration
-              </span>
-            </div>
-          </div>
-        </Reveal>
       </div>
     </section>
   );

@@ -43,6 +43,11 @@ const transporter = nodemailer.createTransport({
   },
 });
 
+// ===== Health Route =====
+app.get("/health", (req, res) => {
+  res.json({ status: "ok", time: new Date().toISOString() });
+});
+
 // ===== Contact Route =====
 app.post("/api/contact", async (req, res) => {
   const { name, email, phone, subject, message } = req.body;
