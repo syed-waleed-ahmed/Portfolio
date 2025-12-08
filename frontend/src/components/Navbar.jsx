@@ -15,6 +15,20 @@ const Navbar = () => {
   const handleNavClick = (e, target) => {
     e.preventDefault(); // don't do normal link navigation / reload
 
+    // Close the navbar collapse
+    const navbarCollapse = document.getElementById("mainNav");
+    if (navbarCollapse && navbarCollapse.classList.contains("show")) {
+      // Use Bootstrap's Collapse API to properly close the menu
+      const bsCollapse = window.bootstrap?.Collapse.getInstance(navbarCollapse);
+      if (bsCollapse) {
+        bsCollapse.hide();
+      } else {
+        // Fallback: manually remove the 'show' class
+        navbarCollapse.classList.remove("show");
+      }
+    }
+
+    // Perform the scroll action
     if (target === "top") {
       // Home: scroll to very top of the page
       window.scrollTo({ top: 0, behavior: "smooth" });
