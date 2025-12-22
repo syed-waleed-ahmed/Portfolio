@@ -1,7 +1,8 @@
+// backend/server.js
 import express from "express";
 import dotenv from "dotenv";
-import nodemailer from "nodemailer";
 import cors from "cors";
+import { Resend } from "resend";
 
 dotenv.config();
 
@@ -9,91 +10,115 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 // ===== Middleware =====
-const allowedOrigins = new Set([
+const allowedOrigins = [
   "http://localhost:5173",
-
-  // Netlify default domain for this portfolio
   "https://syedwaleedahmed.netlify.app",
-
-  // Your custom domain
   "https://syedwaleedahmed.me",
   "https://www.syedwaleedahmed.me",
-]);
+];
 
 app.use(
   cors({
     origin: (origin, cb) => {
-      // allow server-to-server / curl / postman (no origin)
+      // allow requests with no origin (Postman / curl)
       if (!origin) return cb(null, true);
 
-      if (allowedOrigins.has(origin)) return cb(null, true);
+      if (allowedOrigins.includes(origin)) return cb(null, true);
 
       return cb(new Error(`Not allowed by CORS: ${origin}`));
     },
     methods: ["GET", "POST", "OPTIONS"],
-    allowedHeaders: ["Content-Type"],
-    optionsSuccessStatus: 200,
+    allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
 
-// IMPORTANT: explicitly handle preflight
-app.options("*", cors());
-
+app.options("*", cors()); // preflight
 app.use(express.json());
 
-// Health routes
-app.get("/health", (req, res) => {
+// ===== Health Routes =====
+app.get("/", (req, res) => {
   res.json({ status: "ok", message: "Portfolio backend is running" });
 });
 
-app.get("/", (req, res) => {
+app.get("/health", (req, res) => {
   res.json({ status: "ok", time: new Date().toISOString() });
 });
 
-// ===== Nodemailer transport =====
-// NOTE: Gmail SMTP often times out on Render free tier.
-// If you moved to Resend, you will replace this section.
-const transporter = nodemailer.createTransport({
-  service: "gmail",
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
-  },
-});
+// ===== Resend Setup =====
+const resend = new Resend(process.env.RESEND_API_KEY);
 
-// Contact route
+// ===== Contact Route =====
 app.post("/api/contact", async (req, res) => {
-  const { name, email, phone, subject, message } = req.body;
-
-  if (!name || !email || !subject || !message) {
-    return res
-      .status(400)
-      .json({ success: false, error: "Missing required fields." });
-  }
-
-  const mailOptions = {
-    from: `"Portfolio Contact" <${process.env.EMAIL_USER}>`,
-    to: process.env.EMAIL_TO,
-    subject: `New Portfolio Message: ${subject}`,
-    text: `Name: ${name}
-Email: ${email}
-Phone: ${phone || "N/A"}
-Subject: ${subject}
-
-Message:
-${message}`,
-  };
-
   try {
-    await transporter.sendMail(mailOptions);
-    return res.json({ success: true, message: "Email sent successfully!" });
+    const { name, email, phone, subject, message } = req.body;
+
+    // Basic validation
+    if (!name || !email || !subject || !message) {
+      return res
+        .status(400)
+        .json({ success: false, error: "Missing required fields." });
+    }
+
+    const to = process.env.EMAIL_TO; // your Gmail
+    const from = process.env.EMAIL_FROM; // must be a verified sender on Resend
+
+    if (!process.env.RESEND_API_KEY) {
+      return res.status(500).json({
+        success: false,
+        error: "RESEND_API_KEY is missing on server.",
+      });
+    }
+
+    if (!to || !from) {
+      return res.status(500).json({
+        success: false,
+        error: "EMAIL_TO or EMAIL_FROM is missing on server.",
+      });
+    }
+
+    const html = `
+      <div style="font-family: Arial, sans-serif; line-height: 1.5;">
+        <h2>New Portfolio Message</h2>
+        <p><b>Name:</b> ${name}</p>
+        <p><b>Email:</b> ${email}</p>
+        <p><b>Phone:</b> ${phone || "N/A"}</p>
+        <p><b>Subject:</b> ${subject}</p>
+        <hr />
+        <p style="white-space: pre-wrap;">${message}</p>
+      </div>
+    `;
+
+    const { data, error } = await resend.emails.send({
+      from,
+      to,
+      replyTo: email, // so you can hit "Reply" and it goes to the sender
+      subject: `Portfolio: ${subject}`,
+      html,
+    });
+
+    if (error) {
+      console.error("Resend error:", error);
+      return res.status(500).json({
+        success: false,
+        error: error.message || "Email sending failed via Resend.",
+      });
+    }
+
+    return res.json({
+      success: true,
+      message: "Email sent successfully!",
+      id: data?.id,
+    });
   } catch (err) {
-    console.error("Email error:", err);
+    console.error("Contact route error:", err);
     return res.status(500).json({
       success: false,
-      error: "Email sending failed. Please try again later.",
+      error: "Server error while sending email.",
     });
   }
 });
 
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+// ===== Start server =====
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
