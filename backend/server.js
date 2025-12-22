@@ -42,14 +42,17 @@ app.options("*", cors());
 app.use(express.json());
 
 // Health routes
-app.get("/health", "/", (req, res) => {
-  res.json({ status: "ok", message: "Portfolio backend is running", time: new Date().toISOString()});
+app.get("/health", (req, res) => {
+  res.json({ status: "ok", message: "Portfolio backend is running" });
 });
 
-// app.get("/", (req, res) => {
-//   res.json({ status: "ok", time: new Date().toISOString() });
-// });
+app.get("/", (req, res) => {
+  res.json({ status: "ok", time: new Date().toISOString() });
+});
 
+// ===== Nodemailer transport =====
+// NOTE: Gmail SMTP often times out on Render free tier.
+// If you moved to Resend, you will replace this section.
 const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
