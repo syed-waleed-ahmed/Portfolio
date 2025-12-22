@@ -1,4 +1,3 @@
-// backend/server.js
 import express from "express";
 import dotenv from "dotenv";
 import nodemailer from "nodemailer";
@@ -10,38 +9,44 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 // ===== Middleware =====
-const allowedOrigins = [
+const allowedOrigins = new Set([
   "http://localhost:5173",
-  "http://localhost:3000",
+
+  // Netlify default domain for this portfolio
   "https://syedwaleedahmed.netlify.app",
+
+  // Your custom domain
   "https://syedwaleedahmed.me",
   "https://www.syedwaleedahmed.me",
-];
+]);
 
 app.use(
   cors({
     origin: (origin, cb) => {
-      // allow requests with no origin (like curl/postman) + allowed browsers
-      if (!origin || allowedOrigins.includes(origin)) return cb(null, true);
-      return cb(null, false);
+      // allow server-to-server / curl / postman (no origin)
+      if (!origin) return cb(null, true);
+
+      if (allowedOrigins.has(origin)) return cb(null, true);
+
+      return cb(new Error(`Not allowed by CORS: ${origin}`));
     },
     methods: ["GET", "POST", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"],
-    optionsSuccessStatus: 204,
+    allowedHeaders: ["Content-Type"],
+    optionsSuccessStatus: 200,
   })
 );
 
-// IMPORTANT: respond to preflight
+// IMPORTANT: explicitly handle preflight
 app.options("*", cors());
 
 app.use(express.json());
 
 // Health routes
-app.get("/", (req, res) => {
+app.get("/health", (req, res) => {
   res.json({ status: "ok", message: "Portfolio backend is running" });
 });
 
-app.get("/health", (req, res) => {
+app.get("/", (req, res) => {
   res.json({ status: "ok", time: new Date().toISOString() });
 });
 
