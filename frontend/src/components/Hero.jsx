@@ -136,12 +136,12 @@ const Hero = () => {
                   LeetCode
                 </a>
                 <a
-                  href="https://x.com/Waleed_Dexter"
+                  href="https://drive.google.com/file/d/1fCVwwAEqV7cnsuiWeDKHR44B_eP6N4ZX/view?usp=sharing"
                   target="_blank"
                   rel="noreferrer"
                   className="social-pill"
                 >
-                  X (Twitter)
+                  Resume
                 </a>
               </div>
             </motion.div>

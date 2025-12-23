@@ -7,10 +7,7 @@ const skillGroups = [
     title: "Programming & AI/ML",
     skills: [
       { name: "Python • NumPy • Pandas", percent: 85 },
-      {
-        name: "Machine Learning • Deep Learning",
-        percent: 80,
-      },
+      { name: "Machine Learning • Deep Learning", percent: 80 },
       { name: "Data Analysis & Predictive Analytics", percent: 85 },
     ],
   },
@@ -86,12 +83,15 @@ const Skills = () => {
           <h2 className="section-title text-center mb-5">Skills</h2>
         </Reveal>
 
-        {/* main 3 cards - spacing fixed by flex + wrapper */}
-        <div className="skills-row d-flex flex-wrap justify-content-between">
+        {/* Main 3 cards */}
+        {/* Use gap-4 and center so spacing is consistent like Projects section */}
+        <div className="skills-row d-flex flex-wrap justify-content-center gap-4">
           {skillGroups.map((group, gi) => (
             <Reveal key={group.title} delay={gi * 0.05}>
+              {/* Make wrapper control width; keep neo-card styling intact */}
               <div className="neo-card p-4 skill-card-wrapper">
-                <h5 className="mb-4">{group.title}</h5>
+                {/* Fix heading order for Lighthouse while keeping same visual size */}
+                <h3 className="mb-4 h5">{group.title}</h3>
 
                 {group.skills.map((skill, si) => (
                   <div className="mb-3" key={skill.name}>
@@ -101,18 +101,21 @@ const Skills = () => {
                         {displayPercents[gi][si]}%
                       </span>
                     </div>
+
                     <div className="progress skill-progress">
                       <div
                         className="progress-bar"
                         role="progressbar"
-                        aria-valuemin="0"
-                        aria-valuemax="100"
+                        aria-label={`${skill.name} proficiency`}
+                        aria-valuemin={0}
+                        aria-valuemax={100}
+                        aria-valuenow={displayPercents[gi][si]}
                         style={{
                           width: animate
                             ? `${displayPercents[gi][si]}%`
                             : "0%",
                         }}
-                      ></div>
+                      />
                     </div>
                   </div>
                 ))}
