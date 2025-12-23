@@ -1,7 +1,5 @@
-// src/components/Hero.jsx
 import React, { useEffect, useState } from "react";
-import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
-import profileImg from "../assets/Profile.JPG"; // adjust if your filename differs
+import { AnimatePresence, useScroll, useTransform } from "framer-motion";
 
 const exploreItems = [
   "Full-Stack AI Engineering",
@@ -53,21 +51,16 @@ const Hero = () => {
               transition={{ duration: 0.8, ease: "easeOut" }}
             >
               <p className="display-4 fw-bold hero-title mb-3">
-                Hi, I'm{" "}
-                <span className="gradient-text">Syed Waleed Ahmed</span>
+                Hi, I'm <span className="gradient-text">Syed Waleed Ahmed</span>
               </p>
 
               <p className="hero-lead mb-4">
-                Master’s student in Automation Engineering at the
-                University of Bologna, specializing in{" "}
-                <span className="fw-semibold">
-                  AI, ML, Intelligent Automation
-                </span>
-                , and{" "}
-                <span className="fw-semibold">LLM-driven workflows</span>. I
-                build end-to-end AI systems that combine multi-agent
-                orchestration, workflow automation, and data-driven decision
-                making.
+                Master’s student in Automation Engineering at the University of Bologna,
+                specializing in{" "}
+                <span className="fw-semibold">AI, ML, Intelligent Automation</span>, and{" "}
+                <span className="fw-semibold">LLM-driven workflows</span>. I build end-to-end
+                AI systems that combine multi-agent orchestration, workflow automation, and
+                data-driven decision making.
               </p>
 
               {/* Currently exploring */}
@@ -91,7 +84,6 @@ const Hero = () => {
 
               {/* Email / Phone chips */}
               <div className="d-flex flex-wrap gap-3 mb-3">
-                {/* Email button (no address shown) */}
                 <a
                   href="mailto:syedwaleedahmed9@gmail.com"
                   className="btn btn-primary neon-btn hero-contact-pill hero-contact-pill-strong"
@@ -99,7 +91,6 @@ const Hero = () => {
                   <span className="hero-contact-label">Email</span>
                 </a>
 
-                {/* Phone pill with both numbers */}
                 <div className="hero-contact-pill hero-contact-pill-strong">
                   <span className="hero-contact-label">Phone / Whatsapp</span>
                   <div className="d-flex flex-column flex-sm-row gap-2">
@@ -158,11 +149,20 @@ const Hero = () => {
               style={{ y: heroImageY }}
             >
               <div className="gradient-border hero-ring">
-                <img
-                  src={profileImg}
-                  alt="Syed Waleed Ahmed"
-                  className="profile-img"
-                />
+                <picture>
+                  <source srcSet="/images/Profile.avif" type="image/avif" />
+                  <source srcSet="/images/Profile.webp" type="image/webp" />
+                  <img
+                    src="/images/Profile.webp"
+                    alt="Syed Waleed Ahmed"
+                    className="profile-img"
+                    width="420"
+                    height="420"
+                    loading="eager"
+                    fetchPriority="high"
+                    decoding="async"
+                  />
+                </picture>
               </div>
             </motion.div>
           </div>

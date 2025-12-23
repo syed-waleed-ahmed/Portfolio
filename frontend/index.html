@@ -3,13 +3,17 @@
   <head>
     <meta charset="UTF-8" />
 
-    <!-- ✅ Favicons (use your local files, not a remote png) -->
+    <!-- ✅ Favicons -->
     <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="shortcut icon" href="/favicon.ico" />
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
     <link rel="manifest" href="/site.webmanifest" />
     <meta name="theme-color" content="#0b1220" />
+
+    <!-- ✅ Preload HERO image (LCP boost) -->
+    <link rel="preload" as="image" href="/images/Profile.avif" type="image/avif" />
+    <link rel="preload" as="image" href="/images/Profile.webp" type="image/webp" />
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
