@@ -13,47 +13,38 @@ import Footer from "./components/Footer";
 
 function App() {
   useEffect(() => {
-    // Always start from top on reload
-    window.scrollTo(0, 0);
-
-    // Prevent browser from restoring previous scroll position
+    // ✅ Prevent browser scroll restoration BEFORE forcing scroll top
     if ("scrollRestoration" in window.history) {
       window.history.scrollRestoration = "manual";
     }
+
+    // ✅ Ensure top on first paint (helps Safari/iOS)
+    window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+
+    // ✅ Also force it after load (covers iOS restoring scroll after hydration)
+    const onLoad = () => window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+    window.addEventListener("load", onLoad);
+
+    return () => {
+      window.removeEventListener("load", onLoad);
+    };
   }, []);
+
   return (
     <div className="app-root">
       <ParticlesBackground />
       <Navbar />
 
       <main>
-        <section id="hero">
-          <Hero />
-        </section>
+        {/* Hero already renders <motion.section id="hero" ...> so no need to wrap again */}
+        <Hero />
 
-        <section id="about" className="py-5 section-wrapper">
-          <About />
-        </section>
-
-        <section id="experience" className="py-5 section-wrapper">
-          <Experience />
-        </section>
-
-        <section id="projects" className="py-5 section-wrapper">
-          <Projects />
-        </section>
-
-        <section id="skills" className="py-5 section-wrapper">
-          <Skills />
-        </section>
-
-        <section id="interests" className="py-5 section-wrapper">
-          <Interests />
-        </section>
-
-        <section id="contact" className="py-5 section-wrapper">
-          <Contact />
-        </section>
+        <About />
+        <Experience />
+        <Projects />
+        <Skills />
+        <Interests />
+        <Contact />
       </main>
 
       <Footer />

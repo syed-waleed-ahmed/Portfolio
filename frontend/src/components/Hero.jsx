@@ -47,9 +47,9 @@ const Hero = () => {
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.8, ease: "easeOut" }}
             >
-              <p className="display-4 fw-bold hero-title mb-3">
+              <h1 className="display-4 fw-bold hero-title mb-3">
                 Hi, I'm <span className="gradient-text">Syed Waleed Ahmed</span>
-              </p>
+              </h1>
 
               <p className="hero-lead mb-4">
                 Master’s student in Automation Engineering at the University of Bologna,

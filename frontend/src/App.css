@@ -1,3 +1,7 @@
+/* =========================
+   App.css (FINAL)
+   ========================= */
+
 :root {
   --bg-main: #020617;
   --bg-card: #02091a;
@@ -152,6 +156,8 @@ body::after {
 .section-wrapper {
   position: relative;
   padding: 52px 0;
+  /* important: prevents fixed/sticky nav from covering section heading on scroll */
+  scroll-margin-top: 90px;
 }
 
 .section-wrapper + .section-wrapper {
@@ -161,6 +167,7 @@ body::after {
 @media (max-width: 768px) {
   .section-wrapper {
     padding: 44px 0;
+    scroll-margin-top: 86px;
   }
 }
 
@@ -218,6 +225,7 @@ body::after {
   position: relative;
   display: inline-block;
 }
+
 .card-subtitle-accent::after {
   content: "";
   position: absolute;
@@ -385,6 +393,7 @@ small,
   border-radius: 999px;
   transition: transform 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
 }
+
 .neon-btn:hover {
   transform: translateY(-1px);
   box-shadow: 0 0 24px rgba(129, 140, 248, 0.9);
@@ -428,6 +437,7 @@ small,
   color: #e5e7eb;
   text-decoration: none;
 }
+
 .hero-contact-pill a:hover {
   text-decoration: underline;
 }
@@ -464,6 +474,7 @@ small,
   .hero-gradient {
     padding-block: 2.5rem;
   }
+
   .profile-img {
     max-width: 220px;
   }
@@ -604,10 +615,25 @@ small,
   -webkit-text-fill-color: #f9fafb !important;
 }
 
+/* default placeholder styling (kept) */
 .glass-input::placeholder,
 .glass-input::-moz-placeholder {
   color: #cbd5f5;
   opacity: 0.1;
+}
+
+/* Force placeholder opacity for your contact form inputs (strong override) */
+input.form-control.glass-input::placeholder,
+textarea.form-control.glass-input::placeholder {
+  opacity: 0.1 !important;
+  color: #cbd5f5 !important;
+}
+
+/* Firefox */
+input.form-control.glass-input::-moz-placeholder,
+textarea.form-control.glass-input::-moz-placeholder {
+  opacity: 0.1 !important;
+  color: #cbd5f5 !important;
 }
 
 .glass-input:focus {
@@ -633,20 +659,6 @@ small,
   resize: vertical;
 }
 
-/* Force placeholder opacity for your contact form inputs */
-input.form-control.glass-input::placeholder,
-textarea.form-control.glass-input::placeholder {
-  opacity: 0.1 !important;
-  color: #cbd5f5 !important;
-}
-
-/* Firefox */
-input.form-control.glass-input::-moz-placeholder,
-textarea.form-control.glass-input::-moz-placeholder {
-  opacity: 0.1 !important;
-  color: #cbd5f5 !important;
-}
-
 /* ========= Footer ========= */
 .footer {
   border-top: 1px solid var(--border-subtle);
@@ -654,6 +666,7 @@ textarea.form-control.glass-input::-moz-placeholder {
   background: #020617;
 }
 
+/* ========= Reduced motion ========= */
 @media (prefers-reduced-motion: reduce) {
   * {
     animation: none !important;
