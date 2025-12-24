@@ -1,42 +1,59 @@
-# 🌐 Personal Portfolio Website
+# 🌐 Syed Waleed Ahmed — Personal Portfolio Website
 
-A modern, responsive, animated **Personal Portfolio Website** built using **React + Vite** for the frontend and **Node.js + Express + Nodemailer** for the backend.
-The website features a beautiful UI design, smooth animations, and a fully functional contact form that sends messages directly to your Gmail inbox.
+A modern, responsive, and animated **personal portfolio website** built with **React + Vite** on the frontend and **Node.js + Express** on the backend.
+The project focuses on **performance, accessibility, clean UI/UX**, and a **fully functional contact system**.
 
----
-
-## 🚀 Live Demo
-
-👉 Coming soon…
+🔗 **Live Website:**
+👉 https://syedwaleedahmed.me/
 
 ---
 
-## ✨ Features
+## ✨ Highlights
+
+* ⚡ Fast & lightweight (Vite + optimized assets)
+* 🎨 Modern UI with glassmorphism & soft gradients
+* 🎥 Smooth animations using **Framer Motion**
+* 📱 Fully responsive (desktop, tablet, mobile)
+* 📨 Working contact form with backend email delivery
+* 🔍 SEO-friendly + Lighthouse optimized
+* 🌐 Custom domain + HTTPS
+
+---
+
+## 🧩 Features
 
 ### 🎨 Frontend
 
-* Built with **React + Vite**
-* Beautiful animated **Hero section**
-* Smooth fade-in scroll animations with Framer Motion
-* Responsive and modern UI (glassmorphism + soft gradients)
-* Sections included:
+* **React + Vite**
+* Hero section with parallax & animated text
+* Scroll-based reveal animations
+* “Currently Exploring” rotating tech pill
+* Skills section with animated progress bars
+* Optimized hero image using **AVIF + WebP**
+* Custom favicon & PWA manifest
+* Accessible components (ARIA-aware)
 
-  * About
-  * Experience
-  * Projects
-  * Skills
-  * Interests
-  * Contact Form
-* Custom styled contact inputs and animated buttons
-* “Currently Exploring” dynamic rotating pill
+**Sections included:**
+
+* Home / Hero
+* About
+* Experience
+* Projects
+* Skills
+* Interests
+* Contact
+
+---
 
 ### 📨 Backend
 
-* Built with **Node.js + Express**
-* Email sending via **Nodemailer + Gmail App Password**
+* **Node.js + Express**
+* Contact form email delivery
+* Email provider support (Resend / SMTP)
 * Backend validation
-* CORS enabled
+* CORS configuration
 * Secure environment variables using `.env`
+* Health check endpoint for uptime monitoring
 
 ---
 
@@ -49,22 +66,33 @@ The website features a beautiful UI design, smooth animations, and a fully funct
 * Framer Motion
 * Bootstrap Grid
 * Custom CSS
+* AVIF / WebP images
 
 ### Backend
 
 * Node.js
 * Express
-* Nodemailer
+* Email service (Resend / SMTP)
 * CORS
 * Dotenv
 
 ---
 
-## 📂 Folder Structure
+## 📂 Project Structure
 
 ```
 portfolio/
-│── frontend/
+│
+├── frontend/
+│   ├── public/
+│   │   ├── images/
+│   │   │   ├── Profile.avif
+│   │   │   └── Profile.webp
+│   │   ├── favicon.ico
+│   │   ├── favicon.svg
+│   │   ├── apple-touch-icon.png
+│   │   └── site.webmanifest
+│   │
 │   ├── src/
 │   │   ├── components/
 │   │   │   ├── Hero.jsx
@@ -74,38 +102,40 @@ portfolio/
 │   │   │   ├── Skills.jsx
 │   │   │   ├── Interests.jsx
 │   │   │   ├── Contact.jsx
+│   │   │   ├── Navbar.jsx
 │   │   │   └── Reveal.jsx
 │   │   ├── App.jsx
-│   │   ├── App.css
+│   │   ├── main.jsx
 │   │   ├── index.css
-│   │   └── main.jsx
+│   │   └── App.css
+│   │
+│   ├── index.html
 │   ├── package.json
 │   └── vite.config.js
 │
-│── backend/
+├── backend/
 │   ├── server.js
-│   ├── .env
 │   ├── package.json
-│   └── node_modules/
+│   └── .env
 │
-│── .gitignore
-│── README.md
+├── .gitignore
+└── README.md
 ```
 
 ---
 
-## ⚙️ Setup & Installation
+## ⚙️ Local Setup
 
 ### 1️⃣ Clone Repository
 
 ```bash
-git clone https://github.com/your-username/portfolio.git
-cd portfolio
+git clone https://github.com/syed-waleed-ahmed/Portfolio.git
+cd Portfolio
 ```
 
 ---
 
-## 🎨 Frontend Setup
+### 🎨 Frontend Setup
 
 ```bash
 cd frontend
@@ -113,7 +143,7 @@ npm install
 npm run dev
 ```
 
-Frontend runs at:
+Runs at:
 
 ```
 http://localhost:5173
@@ -121,7 +151,7 @@ http://localhost:5173
 
 ---
 
-## 📨 Backend Setup
+### 📨 Backend Setup
 
 ```bash
 cd backend
@@ -129,7 +159,7 @@ npm install
 npm start
 ```
 
-Backend runs at:
+Runs at:
 
 ```
 http://localhost:5000
@@ -137,70 +167,67 @@ http://localhost:5000
 
 ---
 
-## 🔐 Environment Variables
+## 🔐 Environment Variables (Backend)
 
-Create a `.env` file inside `backend/`:
+Create `backend/.env`:
 
 ```
-EMAIL_USER=yourgmail@gmail.com
-EMAIL_PASS=your_generated_app_password
-EMAIL_TO=yourgmail@gmail.com
 PORT=5000
+EMAIL_FROM=portfolio@yourdomain.com
+EMAIL_TO=syedwaleedahmed9@gmail.com
+EMAIL_API_KEY=your_email_service_key
 ```
 
-To generate Gmail App Password:
-
-1. Enable **2-Step Verification**
-2. Visit **Google App Passwords**
-3. Create a new password (choose "Other")
-4. Paste it into `EMAIL_PASS`
+> 💡 For production, **Resend** is recommended over Gmail SMTP for reliability.
 
 ---
 
-## 📬 Contact Form Logic
+## 📬 Contact Form Flow
 
-The frontend sends a POST request:
-
-```js
-fetch("/api/contact", {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify(form)
-});
-```
-
-Backend receives and emails the message using Nodemailer.
+1. User submits contact form
+2. Frontend sends a POST request to the backend
+3. Backend validates input
+4. Email is sent to your inbox
+5. A success or error message is returned to the frontend
 
 ---
 
 ## 🌍 Deployment
 
-### Frontend options:
+### Frontend
 
-* Vercel
-* Netlify
-* GitHub Pages
+Deployed on **Netlify** with:
 
-### Backend options:
+* Custom domain
+* Automatic HTTPS
+* Asset caching
+* SPA routing
 
-* Render (recommended)
-* Railway
-* Vercel Serverless Functions
+### Backend
 
-⚠️ Update your frontend API URL if the backend is deployed separately.
+Deployed on **Render** with:
 
----
-
-## 🤝 Contributing
-
-Contributions, issues, and feature requests are welcome!
-Feel free to open a PR.
+* Health checks
+* Environment variables
+* Auto restarts
 
 ---
 
-## ⭐ Show Your Support
+## 📊 Performance & SEO
 
-If you like this project, please ⭐ the repository.
+* Lighthouse optimized
+* AVIF/WebP hero image
+* Proper meta tags
+* Accessible headings & labels
+* Zero layout shift (CLS = 0)
+
+---
+
+## 🤝 Contributions
+
+Feedback, issues, and suggestions are welcome.
+
+If you encounter any rendering issues or have suggestions for improvement, please don't hesitate to open an issue or reach out.
 
 ---
 
@@ -209,3 +236,9 @@ If you like this project, please ⭐ the repository.
 This project is licensed under the **MIT License**.
 
 ---
+
+### 👋 Author
+
+**Syed Waleed Ahmed**
+Master’s student in Automation Engineering — University of Bologna
+AI • ML • Intelligent Automation • Full-Stack Engineering
