@@ -144,16 +144,34 @@ const Hero = () => {
             >
               <div className="gradient-border hero-ring">
                 <picture>
-                  {/* ✅ These match your actual file names in public/images */}
-                  <source srcSet="/images/Profile.avif" type="image/avif" />
-                  <source srcSet="/images/Profile.webp" type="image/webp" />
+                  {/* AVIF */}
+                  <source
+                    type="image/avif"
+                    srcSet="
+                      /images/Profile-220.avif 220w,
+                      /images/Profile-260.avif 260w,
+                      /images/Profile-420.avif 420w
+                    "
+                    sizes="(max-width: 768px) 220px, 260px"
+                  />
+
+                  {/* WEBP fallback */}
+                  <source
+                    type="image/webp"
+                    srcSet="
+                      /images/Profile-220.webp 220w,
+                      /images/Profile-260.webp 260w,
+                      /images/Profile-420.webp 420w
+                    "
+                    sizes="(max-width: 768px) 220px, 260px"
+                  />
 
                   <img
-                    src="/images/Profile.webp"
+                    src="/images/Profile-260.webp"
                     alt="Syed Waleed Ahmed"
                     className="profile-img"
-                    width="420"
-                    height="420"
+                    width="260"
+                    height="260"
                     loading="eager"
                     fetchPriority="high"
                     decoding="async"
