@@ -12,7 +12,6 @@ const exploreItems = [
 const Hero = () => {
   const [exploreIndex, setExploreIndex] = useState(0);
 
-  // rotate "Currently exploring" text
   useEffect(() => {
     const id = setInterval(
       () => setExploreIndex((i) => (i + 1) % exploreItems.length),
@@ -21,7 +20,6 @@ const Hero = () => {
     return () => clearInterval(id);
   }, []);
 
-  // === Apple-ish parallax on scroll ===
   const { scrollYProgress } = useScroll();
   const heroImageY = useTransform(scrollYProgress, [0, 0.4], [0, -80]);
   const heroBgY = useTransform(scrollYProgress, [0, 0.4], [0, 40]);
@@ -37,13 +35,12 @@ const Hero = () => {
       transition={{ duration: 0.7, ease: "easeOut" }}
     >
       <div className="container position-relative">
-        {/* blurred glowing blobs with slight parallax */}
         <motion.div className="hero-orbit hero-orbit-1" style={{ y: heroBgY }} />
         <motion.div className="hero-orbit hero-orbit-2" style={{ y: heroBgY }} />
         <motion.div className="hero-orbit hero-orbit-3" style={{ y: heroBgY }} />
 
         <div className="row align-items-center g-5">
-          {/* LEFT: text side */}
+          {/* LEFT */}
           <div className="col-lg-7">
             <motion.div
               initial={{ opacity: 0, x: -40 }}
@@ -63,7 +60,6 @@ const Hero = () => {
                 data-driven decision making.
               </p>
 
-              {/* Currently exploring */}
               <div className="d-flex align-items-center gap-2 mb-3 hero-explore-row">
                 <span className="text-muted small">Currently exploring</span>
                 <div className="explore-pill">
@@ -82,7 +78,6 @@ const Hero = () => {
                 </div>
               </div>
 
-              {/* Email / Phone chips */}
               <div className="d-flex flex-wrap gap-3 mb-3">
                 <a
                   href="mailto:syedwaleedahmed9@gmail.com"
@@ -100,7 +95,6 @@ const Hero = () => {
                 </div>
               </div>
 
-              {/* Social pills */}
               <div className="d-flex flex-wrap gap-2">
                 <a
                   href="https://www.linkedin.com/in/syed-waleed-ahmed/"
@@ -138,7 +132,7 @@ const Hero = () => {
             </motion.div>
           </div>
 
-          {/* RIGHT: photo side */}
+          {/* RIGHT */}
           <div className="col-lg-5 d-flex justify-content-lg-end justify-content-center">
             <motion.div
               className="profile-wrapper hero-photo-wrapper"
@@ -150,8 +144,10 @@ const Hero = () => {
             >
               <div className="gradient-border hero-ring">
                 <picture>
+                  {/* ✅ These match your actual file names in public/images */}
                   <source srcSet="/images/Profile.avif" type="image/avif" />
                   <source srcSet="/images/Profile.webp" type="image/webp" />
+
                   <img
                     src="/images/Profile.webp"
                     alt="Syed Waleed Ahmed"
@@ -161,6 +157,7 @@ const Hero = () => {
                     loading="eager"
                     fetchPriority="high"
                     decoding="async"
+                    style={{ objectFit: "cover" }}
                   />
                 </picture>
               </div>
