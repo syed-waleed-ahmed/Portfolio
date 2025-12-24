@@ -41,7 +41,7 @@ body::before {
   content: "";
   position: fixed;
   inset: 0;
-  background-image: url("/ai-grid.jpg");
+  background-image: url("/ai-grid.webp");
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -55,7 +55,7 @@ body::after {
   content: "";
   position: fixed;
   inset: 0;
-  background-image: url("/code-snippet.webp"), url("/llm-chip.png");
+  background-image: url("/code-snippet.webp"), url("/llm-chip.webp");
   background-repeat: no-repeat, no-repeat;
   background-position: 4% 28%, 96% 72%;
   background-size: 320px auto, 260px auto;

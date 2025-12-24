@@ -35,7 +35,7 @@ const Interests = () => {
             {/* Right side: topics list */}
             <div className="col-lg-5">
               <div className="interests-side-box">
-                <h6 className="mb-3 text-accent">Topics I’m Exploring</h6>
+                <h3 className="mb-3 text-accent">Topics I’m Exploring</h3>
                 <ul className="interests-list small mb-0">
                   <li>Multi-agent systems & AI-driven workflow automation</li>
                   <li>LLM engineering, ReAct-style reasoning and tool use</li>
