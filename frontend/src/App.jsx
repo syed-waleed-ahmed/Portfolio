@@ -1,6 +1,5 @@
 // src/App.jsx
 import { useEffect } from "react";
-
 import ParticlesBackground from "./components/ParticlesBackground";
 import Navbar from "./components/Navbar";
 import Hero from "./components/Hero";
@@ -22,22 +21,39 @@ function App() {
       window.history.scrollRestoration = "manual";
     }
   }, []);
-
   return (
     <div className="app-root">
       <ParticlesBackground />
       <Navbar />
 
       <main>
-        {/* Hero already renders <motion.section id="hero"> internally,
-            so no need to wrap it in another <section id="hero"> */}
-        <Hero />
-        <About />
-        <Experience />
-        <Projects />
-        <Skills />
-        <Interests />
-        <Contact />
+        <section id="hero">
+          <Hero />
+        </section>
+
+        <section id="about" className="py-5 section-wrapper">
+          <About />
+        </section>
+
+        <section id="experience" className="py-5 section-wrapper">
+          <Experience />
+        </section>
+
+        <section id="projects" className="py-5 section-wrapper">
+          <Projects />
+        </section>
+
+        <section id="skills" className="py-5 section-wrapper">
+          <Skills />
+        </section>
+
+        <section id="interests" className="py-5 section-wrapper">
+          <Interests />
+        </section>
+
+        <section id="contact" className="py-5 section-wrapper">
+          <Contact />
+        </section>
       </main>
 
       <Footer />
