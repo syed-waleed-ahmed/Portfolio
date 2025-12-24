@@ -1,11 +1,9 @@
-/* ========= Root theme ========= */
-
 :root {
-  --bg-main: #020617; /* almost black navy */
+  --bg-main: #020617;
   --bg-card: #02091a;
-  --accent: #6366f1; /* soft indigo */
+  --accent: #6366f1;
   --accent-soft: rgba(99, 102, 241, 0.25);
-  --accent-2: #22d3ee; /* teal */
+  --accent-2: #22d3ee;
   --text-main: #e5e7eb;
   --text-muted: #9ca3af;
   --border-subtle: rgba(148, 163, 184, 0.35);
@@ -14,31 +12,31 @@
 }
 
 /* ========= Base ========= */
-
 *,
 *::before,
 *::after {
   box-sizing: border-box;
 }
 
-/* smooth scrolling between sections */
 html {
   scroll-behavior: smooth;
 }
 
 body {
   margin: 0;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
-    sans-serif;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   background: radial-gradient(circle at top, #020617 0, #020617 45%, #000 100%);
   color: var(--text-main);
   overflow-x: hidden;
-  position: relative; /* needed for fixed bg layers */
+  position: relative;
 }
 
-/* === Global AI / ML background layer === */
-/* Put ai-grid.png, code-snippet.png, llm-chip.png, code.png in /public */
+.app-root {
+  min-height: 100vh;
+}
 
+/* ========= Global AI background layers ========= */
+/* Put these assets in /public (root), or update paths accordingly */
 body::before {
   content: "";
   position: fixed;
@@ -53,53 +51,21 @@ body::before {
   z-index: -3;
 }
 
-/* Multiple accent images. To add more images:
-   - Append another url(...) in background-image
-   - Add corresponding values in repeat / position / size (same order) */
 body::after {
   content: "";
   position: fixed;
   inset: 0;
-  background-image:
-    url("/code-snippet.png"),
-    url("/llm-chip.png")
-    /* url("/code.png"),
-    url("/css.png") */
-    ;
-  background-repeat: no-repeat, no-repeat, no-repeat, no-repeat;
-  background-position:
-    4% 28%,   /* left accent */
-    96% 72%,  /* right accent */
-    50% 92%,  /* bottom accent */
-    50% 22%;  /* top accent */
-  background-size:
-    320px auto,
-    260px auto,
-    250px auto,
-    250px auto;
+  background-image: url("/code-snippet.png"), url("/llm-chip.png");
+  background-repeat: no-repeat, no-repeat;
+  background-position: 4% 28%, 96% 72%;
+  background-size: 320px auto, 260px auto;
   opacity: 0.12;
   filter: blur(0.2px);
   pointer-events: none;
   z-index: -2;
 }
 
-.app-root {
-  min-height: 100vh;
-}
-
 /* ========= Navbar ========= */
-
-/* Make mobile hamburger icon bright + visible on dark hero */
-.glass-nav .navbar-toggler {
-  border: none;
-}
-
-.glass-nav .navbar-toggler-icon {
-  /* Pure white, thick lines */
-  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(255,255,255,0.96)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2.4' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
-  background-size: 1.5rem 1.5rem;
-}
-
 .glass-nav {
   position: sticky;
   top: 0;
@@ -110,12 +76,21 @@ body::after {
   box-shadow: 0 12px 30px rgba(0, 0, 0, 0.6);
 }
 
-/* keep nav content nicely centered */
 .glass-nav .navbar-nav {
   gap: 0.75rem;
 }
 
-/* flat, text-only tabs (no circles) */
+/* Mobile toggler icon visible on dark background */
+.glass-nav .navbar-toggler {
+  border: none;
+}
+
+.glass-nav .navbar-toggler-icon {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(255,255,255,0.96)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2.4' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+  background-size: 1.5rem 1.5rem;
+}
+
+/* text-only pill links */
 .nav-pills .nav-link-pill {
   position: relative;
   padding: 0.65rem 0.4rem;
@@ -127,13 +102,10 @@ body::after {
   letter-spacing: 0.14em;
   text-transform: uppercase;
   text-decoration: none;
-  transition:
-    color 0.18s ease-out,
-    transform 0.18s ease-out,
-    text-shadow 0.18s ease-out;
+  transition: color 0.18s ease-out, transform 0.18s ease-out, text-shadow 0.18s ease-out;
 }
 
-/* subtle glow underline */
+/* underline glow */
 .nav-pills .nav-link-pill::after {
   content: "";
   position: absolute;
@@ -146,12 +118,9 @@ body::after {
   box-shadow: 0 0 8px rgba(56, 189, 248, 0.7);
   opacity: 0;
   transform: translateX(-50%);
-  transition:
-    width 0.2s ease-out,
-    opacity 0.2s ease-out;
+  transition: width 0.2s ease-out, opacity 0.2s ease-out;
 }
 
-/* hover + active state */
 .nav-pills .nav-link-pill:hover,
 .nav-pills .nav-link-pill:focus,
 .nav-pills .nav-link-pill.active {
@@ -167,7 +136,6 @@ body::after {
   opacity: 1;
 }
 
-/* mobile tweaks */
 @media (max-width: 768px) {
   .glass-nav .navbar-nav {
     gap: 0.4rem;
@@ -180,168 +148,19 @@ body::after {
   }
 }
 
-/* ========= Hero (base) ========= */
-
-.hero-gradient {
-  position: relative;
-  padding-block: 3rem;
-  isolation: isolate;
-}
-
-@media (max-width: 768px) {
-  .hero-gradient {
-    padding-block: 2.5rem;
-  }
-}
-
-/* hero fills most of the viewport */
-#hero.hero-gradient {
-  min-height: calc(100vh - 70px);
-  display: flex;
-  align-items: center;
-}
-
-.hero-title {
-  letter-spacing: 0.02em;
-}
-
-.badge.bg-gradient-primary {
-  background: linear-gradient(135deg, var(--accent), var(--accent-2));
-}
-
-.bg-dark-glass {
-  background: rgba(15, 23, 42, 0.9);
-}
-
-.text-accent {
-  color: var(--accent-2);
-}
-
-.neon-text {
-  color: #f9fafb;
-  text-shadow: 0 0 12px rgba(129, 140, 248, 0.7);
-}
-
-/* ========= Buttons & pills ========= */
-
-.neon-btn {
-  box-shadow: 0 0 18px rgba(129, 140, 248, 0.6);
-  border-radius: 999px;
-  transition: transform 0.15s ease, box-shadow 0.15s ease,
-    background-color 0.15s ease;
-}
-
-.neon-btn:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 0 24px rgba(129, 140, 248, 0.9);
-}
-
-/* outline / secondary button */
-.glass-btn {
-  border-radius: 999px;
-  border-color: var(--border-subtle);
-  background: rgba(15, 23, 42, 0.7);
-  color: var(--text-main);
-  transition: background-color 0.18s ease, border-color 0.18s ease,
-    color 0.18s ease, transform 0.18s ease;
-}
-
-.glass-btn:hover {
-  background: rgba(37, 99, 235, 0.15); /* soft blue tint, not black */
-  border-color: var(--accent-soft);
-  color: var(--text-main);
-  transform: translateY(-1px);
-}
-
-/* social chips under the buttons */
-
-.social-pill {
-  border-radius: 999px;
-  padding: 0.3rem 0.8rem;
-  border: 1px solid var(--border-subtle);
-  font-size: 0.8rem;
-  text-decoration: none;
-  color: var(--text-muted);
-  background: rgba(15, 23, 42, 0.9);
-  display: inline-flex;
-  align-items: center;
-  gap: 0.35rem;
-  transition: color 0.18s ease, border-color 0.18s ease,
-    background-color 0.18s ease, transform 0.18s ease;
-}
-
-.social-pill:hover {
-  color: var(--text-main);
-  border-color: var(--accent);
-  background: rgba(37, 99, 235, 0.18);
-  transform: translateY(-1px);
-}
-
-/* hero contact chips (email & phone) */
-.hero-contact-pill {
-  border-radius: 999px;
-  padding: 0.45rem 0.95rem;
-  background: radial-gradient(
-      circle at top left,
-      rgba(59, 130, 246, 0.35),
-      rgba(15, 23, 42, 0.95)
-    );
-  border: 1px solid var(--accent-soft);
-  color: var(--text-main);
-  font-size: 0.86rem;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.45rem;
-  box-shadow: 0 0 18px rgba(37, 99, 235, 0.55);
-}
-
-.hero-contact-pill a {
-  color: #f9fafb;
-  text-decoration: none;
-}
-
-.hero-contact-pill a:hover {
-  text-decoration: underline;
-}
-
-.hero-contact-label {
-  font-size: 0.75rem;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--text-muted);
-}
-
-/* ========= Profile card ========= */
-
-.profile-wrapper {
-  max-width: 260px;
-  text-align: center;
-}
-
-.gradient-border {
-  padding: 3px;
-  border-radius: 999px;
-  background: linear-gradient(135deg, var(--accent), var(--accent-2));
-}
-
-.profile-img {
-  border-radius: 999px;
-  width: 100%;
-  height: auto;
-  object-fit: cover;
-}
-
-/* ========= Sections & cards ========= */
-
-/* compact vertical spacing between sections */
+/* ========= Sections ========= */
 .section-wrapper {
   position: relative;
-  padding-block: 3rem;
+  padding: 52px 0;
+}
+
+.section-wrapper + .section-wrapper {
+  margin-top: -10px;
 }
 
 @media (max-width: 768px) {
   .section-wrapper {
-    padding-block: 2.25rem;
+    padding: 44px 0;
   }
 }
 
@@ -350,7 +169,7 @@ body::after {
   font-weight: 700;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  margin-bottom: 2.25rem;
+  margin-bottom: 28px;
 }
 
 .section-title::after {
@@ -363,51 +182,42 @@ body::after {
   background: linear-gradient(90deg, var(--accent), var(--accent-2));
 }
 
+/* ========= Cards ========= */
 .neo-card {
   border-radius: var(--radius-lg);
   background: var(--bg-card);
   border: 1px solid var(--border-subtle);
   box-shadow: var(--shadow-soft);
-  transition: transform 0.22s ease-out, box-shadow 0.22s ease-out,
-    border-color 0.22s ease-out, background 0.22s ease-out;
+  transition: transform 0.22s ease-out, box-shadow 0.22s ease-out, border-color 0.22s ease-out,
+    background 0.22s ease-out;
 }
 
-/* compact on phones */
 @media (max-width: 768px) {
   .neo-card {
     padding: 1.5rem !important;
   }
 }
 
-/* subtle float + glow on hover for all cards */
 .neo-card:hover {
   transform: translateY(-6px) scale(1.01);
   box-shadow: 0 24px 60px rgba(15, 23, 42, 0.95);
   border-color: rgba(129, 140, 248, 0.9);
-  background: radial-gradient(
-      circle at top left,
-      rgba(56, 189, 248, 0.16),
-      transparent 55%
-    ),
-    radial-gradient(
-      circle at bottom right,
-      rgba(129, 140, 248, 0.18),
-      transparent 55%
-    ),
+  background:
+    radial-gradient(circle at top left, rgba(56, 189, 248, 0.16), transparent 55%),
+    radial-gradient(circle at bottom right, rgba(129, 140, 248, 0.18), transparent 55%),
     #020617;
 }
 
-/* project cards: extra glow on hover */
+/* project cards extra glow (Projects.jsx uses project-card) */
 .project-card:hover {
   box-shadow: 0 0 25px rgba(56, 189, 248, 0.6);
 }
 
-/* small gradient underline for titles inside cards */
+/* small gradient underline for subtitle (Projects.jsx uses card-subtitle-accent) */
 .card-subtitle-accent {
   position: relative;
   display: inline-block;
 }
-
 .card-subtitle-accent::after {
   content: "";
   position: absolute;
@@ -420,8 +230,22 @@ body::after {
   opacity: 0.9;
 }
 
-/* ========= Timeline (Education) ========= */
+/* ========= Utility text ========= */
+.text-accent {
+  color: var(--accent-2);
+}
 
+.timeline-meta {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+}
+
+small,
+.text-muted {
+  color: var(--text-muted) !important;
+}
+
+/* ========= Timeline (About.jsx) ========= */
 .timeline {
   list-style: none;
   padding-left: 0;
@@ -446,13 +270,206 @@ body::after {
   box-shadow: 0 0 10px rgba(99, 102, 241, 0.8);
 }
 
-.timeline-meta {
+/* About/Experience equal-height helper */
+.about-card,
+.experience-card {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Constrain widths (About.jsx + Contact.jsx) */
+.about-row,
+.contact-row {
+  max-width: 1150px;
+  margin: 0 auto;
+}
+
+/* ========= Hero ========= */
+.hero-gradient {
+  position: relative;
+  padding-block: 3.5rem;
+  background: transparent;
+  isolation: isolate;
+}
+
+#hero.hero-gradient {
+  min-height: calc(100vh - 72px);
+  display: flex;
+  align-items: center;
+}
+
+.hero-wrapper {
+  padding-bottom: 40px;
+}
+
+.hero-title {
+  letter-spacing: 0.02em;
+  line-height: 1.1;
+}
+
+.gradient-text {
+  background: linear-gradient(120deg, #60a5fa, #22d3ee);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.hero-lead {
+  max-width: 640px;
+  color: #cbd5f5;
+  font-size: 0.98rem;
+}
+
+@media (min-width: 992px) {
+  #hero .col-lg-7 {
+    max-width: 640px;
+  }
+}
+
+/* Hero glow orbs */
+.hero-orbit {
+  position: absolute;
+  filter: blur(45px);
+  opacity: 0.4;
+  z-index: -1;
+}
+
+.hero-orbit-1 {
+  width: 280px;
+  height: 280px;
+  background: radial-gradient(circle, rgba(59, 130, 246, 0.45), transparent 65%);
+  top: 18%;
+  left: 6%;
+}
+
+.hero-orbit-2 {
+  width: 260px;
+  height: 260px;
+  background: radial-gradient(circle, rgba(45, 212, 191, 0.4), transparent 70%);
+  bottom: 14%;
+  left: 12%;
+}
+
+.hero-orbit-3 {
+  width: 320px;
+  height: 320px;
+  background: radial-gradient(circle, rgba(129, 140, 248, 0.4), transparent 70%);
+  right: 6%;
+  bottom: 10%;
+}
+
+/* Explore pill */
+.explore-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.25rem 0.9rem;
+  border-radius: 999px;
+  border: 1px solid rgba(148, 163, 184, 0.5);
+  background: rgba(15, 23, 42, 0.9);
   font-size: 0.82rem;
-  color: var(--text-muted);
+  color: #e5e7eb;
+}
+
+.explore-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #22c55e;
+  box-shadow: 0 0 10px rgba(34, 197, 94, 0.8);
+}
+
+/* Buttons & pills used in Hero + Contact */
+.neon-btn {
+  box-shadow: 0 0 18px rgba(129, 140, 248, 0.6);
+  border-radius: 999px;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
+}
+.neon-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 0 24px rgba(129, 140, 248, 0.9);
+}
+
+.hero-contact-pill,
+.social-pill {
+  border-radius: 999px;
+  border: 1px solid rgba(148, 163, 184, 0.55);
+  background: rgba(15, 23, 42, 0.92);
+  padding: 0.4rem 0.95rem;
+  font-size: 0.82rem;
+  color: #e5e7eb;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  text-decoration: none;
+  transition: background 0.18s ease, border-color 0.18s ease, transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+.hero-contact-pill-strong {
+  border-color: rgba(96, 165, 250, 0.7);
+}
+
+.hero-contact-pill:hover,
+.social-pill:hover {
+  background: radial-gradient(circle at top left, rgba(37, 99, 235, 0.22), rgba(15, 23, 42, 0.96));
+  border-color: rgba(129, 140, 248, 0.85);
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.9);
+  transform: translateY(-1px);
+}
+
+.hero-contact-label {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.13em;
+  color: #9ca3af;
+}
+
+.hero-contact-pill a {
+  color: #e5e7eb;
+  text-decoration: none;
+}
+.hero-contact-pill a:hover {
+  text-decoration: underline;
+}
+
+/* hero photo ring + image */
+.profile-wrapper {
+  max-width: 260px;
+  text-align: center;
+}
+
+.gradient-border {
+  padding: 3px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+}
+
+.hero-photo-wrapper .hero-ring {
+  padding: 4px;
+  border-radius: 999px;
+  background: conic-gradient(from 220deg, #1d4ed8, #22c55e, #22d3ee, #1d4ed8);
+  box-shadow: 0 20px 40px rgba(15, 23, 42, 0.9);
+}
+
+.profile-img {
+  border-radius: 999px;
+  display: block;
+  width: 100%;
+  max-width: 260px;
+  height: auto;
+  object-fit: cover;
+}
+
+@media (max-width: 768px) {
+  .hero-gradient {
+    padding-block: 2.5rem;
+  }
+  .profile-img {
+    max-width: 220px;
+  }
 }
 
 /* ========= Skills ========= */
-
 .skill-badge {
   border-radius: 999px;
   background: rgba(15, 23, 42, 0.95);
@@ -460,7 +477,6 @@ body::after {
   font-size: 0.76rem;
 }
 
-/* prettier Bootstrap progress for skills */
 .skill-progress {
   background: rgba(15, 23, 42, 0.9);
   border-radius: 999px;
@@ -485,93 +501,12 @@ body::after {
   font-size: 0.9rem;
 }
 
-/* Center & constrain skills layout – full width of container */
 .skills-row {
-  max-width: 1200px;      /* similar width to projects row */
-  margin: 0 auto;         /* center in the container */
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between; /* equal space between the 3 cards */
-  column-gap: 2.5rem;     /* horizontal breathing room (desktop) */
-  row-gap: 2.5rem;        /* vertical gap if they wrap on small screens */
-}
-
-/* Each skill card: SAME width and height */
-.skill-card-wrapper {
-  flex: 1 1 0;
-  min-width: 340px;
-  max-width: 360px;       /* keeps them similar to project cards */
-}
-
-/* keep radius when neo-card hover styles apply */
-.skill-card-wrapper.neo-card {
-  border-radius: 24px;
-}
-
-/* On smaller screens, stack them nicely */
-@media (max-width: 999px) {
-  .skills-row {
-    gap: 1.25rem;
-    justify-content: center !important;
-  }
-
-  .skill-card-wrapper {
-    flex: 1 1 100%;
-    max-width: 640px;
-  }
-}
-
-
-/* ========= Inputs ========= */
-
-.glass-input {
-  background: rgba(15, 23, 42, 0.96) !important;
-  border-radius: 12px;
-  border: 1px solid var(--border-subtle);
-  color: #f9fafb !important;
-  caret-color: #f9fafb;
-}
-
-/* brighter placeholders for dark background */
-.glass-input::placeholder {
-  color: #cbd5f5;
-  opacity: 0.1;
-}
-
-/* Firefox specific */
-.glass-input::-moz-placeholder {
-  color: #cbd5f5;
-  opacity: 0.1;
-}
-
-.glass-input:focus {
-  box-shadow: 0 0 0 1px var(--accent-soft);
-  border-color: var(--accent);
-}
-
-/* error state */
-.glass-input.is-invalid {
-  border-color: #f97373;
-  box-shadow: 0 0 0 1px rgba(248, 113, 113, 0.7);
-}
-
-/* Chrome autofill on dark backgrounds */
-.glass-input:-webkit-autofill,
-.glass-input:-webkit-autofill:hover,
-.glass-input:-webkit-autofill:focus {
-  -webkit-text-fill-color: #f9fafb;
-  -webkit-box-shadow: 0 0 0 1000px rgba(15, 23, 42, 0.96) inset;
-  box-shadow: 0 0 0 1000px rgba(15, 23, 42, 0.96) inset;
-}
-
-/* larger message box in contact form */
-.contact-message {
-  min-height: 200px;
-  resize: vertical;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
 /* ========= Interests ========= */
-
 .interests-card {
   position: relative;
   overflow: hidden;
@@ -642,7 +577,6 @@ body::after {
 }
 
 /* ========= Contact ========= */
-
 .contact-card {
   position: relative;
   overflow: hidden;
@@ -652,302 +586,71 @@ body::after {
   content: "";
   position: absolute;
   inset: 0;
-  background: radial-gradient(
-      circle at top left,
-      rgba(99, 102, 241, 0.18),
-      transparent 55%
-    ),
-    radial-gradient(
-      circle at bottom right,
-      rgba(34, 211, 238, 0.16),
-      transparent 55%
-    );
+  background:
+    radial-gradient(circle at top left, rgba(99, 102, 241, 0.18), transparent 55%),
+    radial-gradient(circle at bottom right, rgba(34, 211, 238, 0.16), transparent 55%);
   opacity: 0.9;
   pointer-events: none;
   z-index: -1;
 }
 
-/* Center & constrain the contact card */
-.contact-row {
-  max-width: 1150px;
-  margin: 0 auto;
+/* inputs */
+.glass-input {
+  background: rgba(15, 23, 42, 0.96) !important;
+  border-radius: 12px;
+  border: 1px solid var(--border-subtle);
+  color: #f9fafb !important;
+  caret-color: #f9fafb;
+  -webkit-text-fill-color: #f9fafb !important;
 }
 
-/* ========= Equal-height cards helpers ========= */
-
-.experience-card,
-.about-card {
-  display: flex;
-  flex-direction: column;
+.glass-input::placeholder,
+.glass-input::-moz-placeholder {
+  color: #cbd5f5;
+  opacity: 0.1;
 }
 
-/* Center the About & Education cards as a block */
-.about-row {
-  max-width: 1150px;
-  margin: 0 auto;
+.glass-input:focus {
+  box-shadow: 0 0 0 1px var(--accent-soft);
+  border-color: var(--accent);
+}
+
+.glass-input.is-invalid {
+  border-color: #f97373;
+  box-shadow: 0 0 0 1px rgba(248, 113, 113, 0.7);
+}
+
+.glass-input:-webkit-autofill,
+.glass-input:-webkit-autofill:hover,
+.glass-input:-webkit-autofill:focus {
+  -webkit-text-fill-color: #f9fafb;
+  -webkit-box-shadow: 0 0 0 1000px rgba(15, 23, 42, 0.96) inset;
+  box-shadow: 0 0 0 1000px rgba(15, 23, 42, 0.96) inset;
+}
+
+.contact-message {
+  min-height: 200px;
+  resize: vertical;
+}
+
+/* Force placeholder opacity for your contact form inputs */
+input.form-control.glass-input::placeholder,
+textarea.form-control.glass-input::placeholder {
+  opacity: 0.1 !important;
+  color: #cbd5f5 !important;
+}
+
+/* Firefox */
+input.form-control.glass-input::-moz-placeholder,
+textarea.form-control.glass-input::-moz-placeholder {
+  opacity: 0.1 !important;
+  color: #cbd5f5 !important;
 }
 
 /* ========= Footer ========= */
-
 .footer {
   border-top: 1px solid var(--border-subtle);
   color: var(--text-muted);
   background: #020617;
 }
 
-/* ========= Text tweaks ========= */
-
-small,
-.text-muted {
-  color: var(--text-muted) !important;
-}
-
-/* ===========================
-   Section spacing overrides
-   =========================== */
-
-/* Global section spacing: tighter but still airy */
-.section-wrapper {
-  padding: 60px 0;
-}
-
-/* Slightly smaller gap under each section title */
-.section-title {
-  margin-bottom: 28px;
-}
-
-/* Pull consecutive sections a bit closer together */
-.section-wrapper + .section-wrapper {
-  margin-top: -10px;
-}
-
-/* Hero: keep it strong but reduce empty space below */
-.hero-wrapper {
-  padding-bottom: 40px;
-}
-
-/* Mid-page sections (experience → contact) a touch tighter */
-#experience.section-wrapper,
-#projects.section-wrapper,
-#skills.section-wrapper,
-#interests.section-wrapper,
-#contact.section-wrapper {
-  padding-top: 52px;
-  padding-bottom: 52px;
-}
-
-/* ============================================
-   HERO REFINEMENTS (calmer, more consistent)
-   ============================================ */
-
-/* updated: no solid background here so hero uses the global body background */
-.hero-gradient {
-  position: relative;
-  padding-block: 3.5rem;
-  background: transparent;
-}
-
-/* Ensure hero fills viewport nicely */
-#hero.hero-gradient {
-  min-height: calc(100vh - 72px);
-  display: flex;
-  align-items: center;
-}
-
-/* Orb glows */
-.hero-orbit {
-  position: absolute;
-  filter: blur(45px);
-  opacity: 0.4;
-  z-index: -1;
-}
-
-.hero-orbit-1 {
-  width: 280px;
-  height: 280px;
-  background: radial-gradient(circle, rgba(59, 130, 246, 0.45), transparent 65%);
-  top: 18%;
-  left: 6%;
-}
-
-.hero-orbit-2 {
-  width: 260px;
-  height: 260px;
-  background: radial-gradient(circle, rgba(45, 212, 191, 0.4), transparent 70%);
-  bottom: 14%;
-  left: 12%;
-}
-
-.hero-orbit-3 {
-  width: 320px;
-  height: 320px;
-  background: radial-gradient(circle, rgba(129, 140, 248, 0.4), transparent 70%);
-  right: 6%;
-  bottom: 10%;
-}
-
-/* Headline + gradient name */
-
-.hero-title {
-  letter-spacing: 0.02em;
-  line-height: 1.1;
-}
-
-.gradient-text {
-  background: linear-gradient(120deg, #60a5fa, #22d3ee);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-}
-
-.hero-title .gradient-text {
-  text-shadow: 0 0 26px rgba(37, 99, 235, 0.18);
-}
-
-.hero-lead {
-  max-width: 640px;
-  color: #cbd5f5;
-  font-size: 0.98rem;
-}
-
-/* Tighter text column on large screens */
-@media (min-width: 992px) {
-  #hero .col-lg-7 {
-    max-width: 640px;
-  }
-}
-
-/* Explore pill */
-
-.hero-explore-row {
-  gap: 0.65rem;
-}
-
-.explore-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.55rem;
-  padding: 0.25rem 0.9rem;
-  border-radius: 999px;
-  border: 1px solid rgba(148, 163, 184, 0.5);
-  background: rgba(15, 23, 42, 0.9);
-  font-size: 0.82rem;
-  color: #e5e7eb;
-}
-
-.explore-dot {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: #22c55e;
-  box-shadow: 0 0 10px rgba(34, 197, 94, 0.8);
-}
-
-/* Contact & social chips – unified look */
-
-.hero-contact-pill,
-.social-pill {
-  border-radius: 999px;
-  border: 1px solid rgba(148, 163, 184, 0.55);
-  background: rgba(15, 23, 42, 0.92);
-  padding: 0.4rem 0.95rem;
-  font-size: 0.82rem;
-  color: #e5e7eb;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.45rem;
-  text-decoration: none;
-  transition: background 0.18s ease, border-color 0.18s ease,
-    transform 0.18s ease, box-shadow 0.18s ease;
-}
-
-.hero-contact-pill-strong {
-  border-color: rgba(96, 165, 250, 0.7);
-}
-
-.hero-contact-pill:hover,
-.social-pill:hover {
-  background: radial-gradient(circle at top left, rgba(37, 99, 235, 0.22), rgba(15, 23, 42, 0.96));
-  border-color: rgba(129, 140, 248, 0.85);
-  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.9);
-  transform: translateY(-1px);
-}
-
-.hero-contact-label {
-  font-size: 0.7rem;
-  text-transform: uppercase;
-  letter-spacing: 0.13em;
-  color: #9ca3af;
-}
-
-.hero-contact-pill a {
-  color: #e5e7eb;
-  text-decoration: none;
-}
-
-.hero-contact-pill a:hover {
-  text-decoration: underline;
-}
-
-/* Social pills slightly lighter */
-.social-pill {
-  border-color: rgba(148, 163, 184, 0.45);
-  background: rgba(15, 23, 42, 0.9);
-}
-
-/* Photo ring + hover */
-
-.hero-photo-wrapper .hero-ring {
-  padding: 4px;
-  border-radius: 999px;
-  background: conic-gradient(
-    from 220deg,
-    #1d4ed8,
-    #22c55e,
-    #22d3ee,
-    #1d4ed8
-  );
-  box-shadow: 0 20px 40px rgba(15, 23, 42, 0.9);
-}
-
-.hero-photo-wrapper .profile-img {
-  border-radius: 999px;
-  display: block;
-  width: 100%;
-  max-width: 260px;
-  height: auto;
-  object-fit: cover;
-}
-
-.hero-photo-wrapper {
-  transition: transform 0.25s ease;
-}
-
-.hero-photo-wrapper:hover {
-  transform: translateY(-6px);
-}
-
-/* Smaller photo on mobile */
-@media (max-width: 768px) {
-  .hero-gradient {
-    padding-block: 2.5rem;
-  }
-
-  .hero-photo-wrapper .profile-img {
-    max-width: 220px;
-  }
-}
-
-/* === Force white text in all glass inputs (fix "black name" issue) === */
-
-input.glass-input,
-textarea.glass-input {
-  color: #f9fafb !important;
-  -webkit-text-fill-color: #f9fafb !important; /* Chrome/WebKit */
-}
-
-input.glass-input:focus,
-textarea.glass-input:focus {
-  color: #f9fafb !important;
-  -webkit-text-fill-color: #f9fafb !important;
-}
