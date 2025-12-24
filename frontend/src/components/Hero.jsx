@@ -1,3 +1,4 @@
+// src/components/Hero.jsx
 import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
 
@@ -144,32 +145,19 @@ const Hero = () => {
             >
               <div className="gradient-border hero-ring">
                 <picture>
-                  <source
-                    type="image/avif"
-                    srcSet="
-                      /images/Profile-220.avif 220w,
-                      /images/Profile-260.avif 260w,
-                      /images/Profile-420.avif 420w
-                    "
-                    sizes="(max-width: 768px) 220px, (max-width: 1200px) 260px, 260px"
-                  />
+                  {/* AVIF (preferred) */}
+                  <source type="image/avif" srcSet="/images/Profile.avif" />
 
-                  <source
-                    type="image/webp"
-                    srcSet="
-                      /images/Profile-220.webp 220w,
-                      /images/Profile-260.webp 260w,
-                      /images/Profile-420.webp 420w
-                    "
-                    sizes="(max-width: 768px) 220px, (max-width: 1200px) 260px, 260px"
-                  />
+                  {/* WEBP fallback */}
+                  <source type="image/webp" srcSet="/images/Profile.webp" />
 
+                  {/* Final fallback (use webp) */}
                   <img
-                    src="/images/Profile-260.webp"
+                    src="/images/Profile.webp"
                     alt="Syed Waleed Ahmed"
                     className="profile-img"
-                    width="260"
-                    height="260"
+                    width="460"
+                    height="460"
                     loading="eager"
                     fetchPriority="high"
                     decoding="async"

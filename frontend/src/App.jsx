@@ -1,6 +1,4 @@
-// src/App.jsx
-import { useEffect } from "react";
-import ParticlesBackground from "./components/ParticlesBackground";
+import { useEffect, useState, Suspense, lazy } from "react";
 import Navbar from "./components/Navbar";
 import Hero from "./components/Hero";
 import About from "./components/About";
@@ -11,40 +9,44 @@ import Interests from "./components/Interests";
 import Contact from "./components/Contact";
 import Footer from "./components/Footer";
 
+const ParticlesBackground = lazy(() => import("./components/ParticlesBackground"));
+
 function App() {
+  const [showParticles, setShowParticles] = useState(false);
+
   useEffect(() => {
-    // ✅ Prevent browser scroll restoration BEFORE forcing scroll top
-    if ("scrollRestoration" in window.history) {
-      window.history.scrollRestoration = "manual";
-    }
+    window.scrollTo(0, 0);
+    if ("scrollRestoration" in window.history) window.history.scrollRestoration = "manual";
 
-    // ✅ Ensure top on first paint (helps Safari/iOS)
-    window.scrollTo({ top: 0, left: 0, behavior: "auto" });
-
-    // ✅ Also force it after load (covers iOS restoring scroll after hydration)
-    const onLoad = () => window.scrollTo({ top: 0, left: 0, behavior: "auto" });
-    window.addEventListener("load", onLoad);
+    // load particles AFTER the page becomes interactive
+    const id = requestIdleCallback
+      ? requestIdleCallback(() => setShowParticles(true))
+      : setTimeout(() => setShowParticles(true), 1200);
 
     return () => {
-      window.removeEventListener("load", onLoad);
+      if (typeof id === "number") clearTimeout(id);
+      else cancelIdleCallback?.(id);
     };
   }, []);
 
   return (
     <div className="app-root">
-      <ParticlesBackground />
+      {showParticles && (
+        <Suspense fallback={null}>
+          <ParticlesBackground />
+        </Suspense>
+      )}
+
       <Navbar />
 
       <main>
-        {/* Hero already renders <motion.section id="hero" ...> so no need to wrap again */}
-        <Hero />
-
-        <About />
-        <Experience />
-        <Projects />
-        <Skills />
-        <Interests />
-        <Contact />
+        <section id="hero"><Hero /></section>
+        <section id="about" className="py-5 section-wrapper"><About /></section>
+        <section id="experience" className="py-5 section-wrapper"><Experience /></section>
+        <section id="projects" className="py-5 section-wrapper"><Projects /></section>
+        <section id="skills" className="py-5 section-wrapper"><Skills /></section>
+        <section id="interests" className="py-5 section-wrapper"><Interests /></section>
+        <section id="contact" className="py-5 section-wrapper"><Contact /></section>
       </main>
 
       <Footer />
