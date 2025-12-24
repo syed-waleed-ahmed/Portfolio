@@ -47,7 +47,7 @@ const Projects = () => {
               <Reveal delay={0.06 * (idx + 1)} className="w-100">
                 <div className="neo-card project-card h-100 p-4 d-flex flex-column">
                   <div className="mb-3">
-                    <h5 className="mb-1">{project.title}</h5>
+                    <h3 className="mb-1">{project.title}</h3>
                     <div className="text-accent small card-subtitle-accent">
                       {project.role}
                     </div>

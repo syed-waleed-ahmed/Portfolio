@@ -15,7 +15,7 @@ const Experience = () => {
           <div className="col-md-4 d-flex">
             <Reveal delay={0.04} className="w-100">
               <div className="neo-card experience-card h-100 p-4">
-                <h5 className="mb-1">Tech Trainee</h5>
+                <h3 className="mb-1">Tech Trainee</h3>
                 <p className="text-accent mb-1">Jubilee Life Insurance</p>
                 <p className="timeline-meta mb-3">Jan 2024 – Oct 2024</p>
 
@@ -45,7 +45,7 @@ const Experience = () => {
           <div className="col-md-4 d-flex">
             <Reveal delay={0.08} className="w-100">
               <div className="neo-card experience-card h-100 p-4">
-                <h5 className="mb-1">Application Engineer</h5>
+                <h3 className="mb-1">Application Engineer</h3>
                 <p className="text-accent mb-1">
                   Britlite Engineering Company
                 </p>
@@ -69,7 +69,7 @@ const Experience = () => {
           <div className="col-md-4 d-flex">
             <Reveal delay={0.12} className="w-100">
               <div className="neo-card experience-card h-100 p-4">
-                <h5 className="mb-1">Electrical Engineering Intern</h5>
+                <h3 className="mb-1">Electrical Engineering Intern</h3>
                 <p className="text-accent mb-1">
                   Pakistan Civil Aviation Authority
                 </p>

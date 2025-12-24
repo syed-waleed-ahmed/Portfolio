@@ -39,7 +39,7 @@ const About = () => {
           <div className="col-md-10 col-lg-6 d-flex">
             <Reveal delay={0.08} className="w-100">
               <div className="neo-card about-card flex-fill h-100 p-4 p-md-5">
-                <h5 className="mb-3 text-accent">Education</h5>
+                <h3 className="mb-3 text-accent">Education</h3>
                 <ul className="timeline mb-0">
                   <li className="mb-3">
                     <div className="fw-semibold">

@@ -15,9 +15,9 @@ const Interests = () => {
           <div className="row g-4 align-items-start">
             {/* Left side: narrative */}
             <div className="col-lg-7">
-              <h5 className="mb-3 interests-heading">
+              <h3 className="mb-3 interests-heading">
                 Why I Care About Intelligent Automation
-              </h5>
+              </h3>
               <p>
                 I’m particularly interested in how <strong>LLMs</strong> and{" "}
                 <strong>Generative AI</strong> can power{" "}
