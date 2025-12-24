@@ -45,8 +45,8 @@ body::before {
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  opacity: 0.16;
-  mix-blend-mode: screen;
+  opacity: 0.08;
+  mix-blend-mode: normal;
   pointer-events: none;
   z-index: -3;
 }
@@ -60,7 +60,7 @@ body::after {
   background-position: 4% 28%, 96% 72%;
   background-size: 320px auto, 260px auto;
   opacity: 0.12;
-  filter: blur(0.2px);
+  filter: none;
   pointer-events: none;
   z-index: -2;
 }
@@ -654,3 +654,10 @@ textarea.form-control.glass-input::-moz-placeholder {
   background: #020617;
 }
 
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}
