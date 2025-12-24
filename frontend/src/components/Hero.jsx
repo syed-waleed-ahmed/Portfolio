@@ -144,7 +144,6 @@ const Hero = () => {
             >
               <div className="gradient-border hero-ring">
                 <picture>
-                  {/* AVIF */}
                   <source
                     type="image/avif"
                     srcSet="
@@ -152,10 +151,9 @@ const Hero = () => {
                       /images/Profile-260.avif 260w,
                       /images/Profile-420.avif 420w
                     "
-                    sizes="(max-width: 768px) 220px, 260px"
+                    sizes="(max-width: 768px) 220px, (max-width: 1200px) 260px, 260px"
                   />
 
-                  {/* WEBP fallback */}
                   <source
                     type="image/webp"
                     srcSet="
@@ -163,7 +161,7 @@ const Hero = () => {
                       /images/Profile-260.webp 260w,
                       /images/Profile-420.webp 420w
                     "
-                    sizes="(max-width: 768px) 220px, 260px"
+                    sizes="(max-width: 768px) 220px, (max-width: 1200px) 260px, 260px"
                   />
 
                   <img

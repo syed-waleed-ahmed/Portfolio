@@ -11,9 +11,21 @@
     <link rel="manifest" href="/site.webmanifest" />
     <meta name="theme-color" content="#0b1220" />
 
-    <!-- Preload HERO image (LCP boost) -->
-    <link rel="preload" as="image" href="/images/Profile.avif" type="image/avif" />
-    <link rel="preload" as="image" href="/images/Profile.webp" type="image/webp" />
+    <!-- Preload the EXACT hero image actually used (matches Hero.jsx fallback) -->
+    <link
+      rel="preload"
+      as="image"
+      href="/images/Profile-260.avif"
+      type="image/avif"
+      fetchpriority="high"
+    />
+    <link
+      rel="preload"
+      as="image"
+      href="/images/Profile-260.webp"
+      type="image/webp"
+      fetchpriority="high"
+    />
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
