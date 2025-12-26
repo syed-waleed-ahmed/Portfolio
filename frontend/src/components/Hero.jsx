@@ -1,6 +1,6 @@
 // src/components/Hero.jsx
-import React, { useEffect, useState } from "react";
-import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
+import React, { useEffect, useMemo, useState } from "react";
+import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 
 const exploreItems = [
   "Full-Stack AI Engineering",
@@ -11,41 +11,66 @@ const exploreItems = [
 ];
 
 const Hero = () => {
+  const prefersReducedMotion = useReducedMotion();
   const [exploreIndex, setExploreIndex] = useState(0);
+  const [canHover, setCanHover] = useState(false);
 
+  // Rotate "Currently exploring" text (cheap + fine)
   useEffect(() => {
-    const id = setInterval(
-      () => setExploreIndex((i) => (i + 1) % exploreItems.length),
-      2600
-    );
+    if (prefersReducedMotion) return;
+    const id = setInterval(() => {
+      setExploreIndex((i) => (i + 1) % exploreItems.length);
+    }, 2600);
     return () => clearInterval(id);
+  }, [prefersReducedMotion]);
+
+  // Only enable hover animation on devices that actually support hover
+  useEffect(() => {
+    const mq = window.matchMedia?.("(hover: hover)");
+    const update = () => setCanHover(Boolean(mq?.matches));
+    update();
+    mq?.addEventListener?.("change", update);
+    return () => mq?.removeEventListener?.("change", update);
   }, []);
 
-  const { scrollYProgress } = useScroll();
-  const heroImageY = useTransform(scrollYProgress, [0, 0.4], [0, -80]);
-  const heroBgY = useTransform(scrollYProgress, [0, 0.4], [0, 40]);
-  const heroOpacity = useTransform(scrollYProgress, [0, 0.3], [1, 0.85]);
+  const currentExplore = useMemo(
+    () => exploreItems[exploreIndex],
+    [exploreIndex]
+  );
+
+  const sectionInitial = prefersReducedMotion ? false : { opacity: 0, y: 30 };
+  const sectionAnimate = prefersReducedMotion ? { opacity: 1 } : { opacity: 1, y: 0 };
+
+  const leftInitial = prefersReducedMotion ? false : { opacity: 0, x: -40 };
+  const leftAnimate = prefersReducedMotion ? { opacity: 1 } : { opacity: 1, x: 0 };
+
+  const rightInitial = prefersReducedMotion
+    ? false
+    : { opacity: 0, x: 40, scale: 0.92 };
+  const rightAnimate = prefersReducedMotion
+    ? { opacity: 1 }
+    : { opacity: 1, x: 0, scale: 1 };
 
   return (
     <motion.section
       id="hero"
       className="hero-gradient hero-wrapper d-flex align-items-center"
-      style={{ opacity: heroOpacity }}
-      initial={{ opacity: 0, y: 30 }}
-      animate={{ opacity: 1, y: 0 }}
+      initial={sectionInitial}
+      animate={sectionAnimate}
       transition={{ duration: 0.7, ease: "easeOut" }}
     >
       <div className="container position-relative">
-        <motion.div className="hero-orbit hero-orbit-1" style={{ y: heroBgY }} />
-        <motion.div className="hero-orbit hero-orbit-2" style={{ y: heroBgY }} />
-        <motion.div className="hero-orbit hero-orbit-3" style={{ y: heroBgY }} />
+        {/* Keep orbits, but avoid scroll-linked JS transforms */}
+        <div className="hero-orbit hero-orbit-1" />
+        <div className="hero-orbit hero-orbit-2" />
+        <div className="hero-orbit hero-orbit-3" />
 
         <div className="row align-items-center g-5">
           {/* LEFT */}
           <div className="col-lg-7">
             <motion.div
-              initial={{ opacity: 0, x: -40 }}
-              animate={{ opacity: 1, x: 0 }}
+              initial={leftInitial}
+              animate={leftAnimate}
               transition={{ duration: 0.8, ease: "easeOut" }}
             >
               <h1 className="display-4 fw-bold hero-title mb-3">
@@ -67,13 +92,13 @@ const Hero = () => {
                   <span className="explore-dot" />
                   <AnimatePresence mode="wait">
                     <motion.span
-                      key={exploreItems[exploreIndex]}
-                      initial={{ opacity: 0, y: 8 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -8 }}
+                      key={currentExplore}
+                      initial={prefersReducedMotion ? { opacity: 1 } : { opacity: 0, y: 8 }}
+                      animate={prefersReducedMotion ? { opacity: 1 } : { opacity: 1, y: 0 }}
+                      exit={prefersReducedMotion ? { opacity: 1 } : { opacity: 0, y: -8 }}
                       transition={{ duration: 0.35 }}
                     >
-                      {exploreItems[exploreIndex]}
+                      {currentExplore}
                     </motion.span>
                   </AnimatePresence>
                 </div>
@@ -137,21 +162,18 @@ const Hero = () => {
           <div className="col-lg-5 d-flex justify-content-lg-end justify-content-center">
             <motion.div
               className="profile-wrapper hero-photo-wrapper"
-              initial={{ opacity: 0, x: 40, scale: 0.92 }}
-              animate={{ opacity: 1, x: 0, scale: 1 }}
+              initial={rightInitial}
+              animate={rightAnimate}
               transition={{ duration: 0.9, ease: "easeOut" }}
-              whileHover={{ y: -8, rotate: 1.2 }}
-              style={{ y: heroImageY }}
+              // only hover-animate when it makes sense
+              whileHover={
+                !prefersReducedMotion && canHover ? { y: -8, rotate: 1.2 } : undefined
+              }
             >
               <div className="gradient-border hero-ring">
                 <picture>
-                  {/* AVIF (preferred) */}
                   <source type="image/avif" srcSet="/images/Profile.avif" />
-
-                  {/* WEBP fallback */}
                   <source type="image/webp" srcSet="/images/Profile.webp" />
-
-                  {/* Final fallback (use webp) */}
                   <img
                     src="/images/Profile.webp"
                     alt="Syed Waleed Ahmed"

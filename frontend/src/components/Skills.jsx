@@ -31,18 +31,26 @@ const skillGroups = [
 
 const Skills = () => {
   const sectionRef = useRef(null);
+  const rafRef = useRef(null);
+  const lastUpdateRef = useRef(0);
+
   const [animate, setAnimate] = useState(false);
 
-  // 2D array for the numbers we display
   const [displayPercents, setDisplayPercents] = useState(
     skillGroups.map((group) => group.skills.map(() => 0))
   );
 
   // Trigger animation when section enters viewport
   useEffect(() => {
+    // If IntersectionObserver isn't available, just animate immediately
+    if (!("IntersectionObserver" in window)) {
+      setAnimate(true);
+      return;
+    }
+
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting) {
+        if (entry?.isIntersecting) {
           setAnimate(true);
           observer.disconnect();
         }
@@ -63,17 +71,32 @@ const Skills = () => {
     const duration = 1500; // ms
     const start = performance.now();
 
+    // Reduce React renders: update at ~20fps (every 50ms)
+    const minFrameInterval = 50;
+
     const tick = (now) => {
       const progress = Math.min(1, (now - start) / duration);
-      const current = targets.map((group) =>
-        group.map((p) => Math.round(p * progress))
-      );
-      setDisplayPercents(current);
 
-      if (progress < 1) requestAnimationFrame(tick);
+      // Throttle state updates
+      if (now - lastUpdateRef.current >= minFrameInterval || progress === 1) {
+        lastUpdateRef.current = now;
+
+        const current = targets.map((group) =>
+          group.map((p) => Math.round(p * progress))
+        );
+        setDisplayPercents(current);
+      }
+
+      if (progress < 1) {
+        rafRef.current = requestAnimationFrame(tick);
+      }
     };
 
-    requestAnimationFrame(tick);
+    rafRef.current = requestAnimationFrame(tick);
+
+    return () => {
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    };
   }, [animate]);
 
   return (
@@ -83,14 +106,10 @@ const Skills = () => {
           <h2 className="section-title text-center mb-5">Skills</h2>
         </Reveal>
 
-        {/* Main 3 cards */}
-        {/* Use gap-4 and center so spacing is consistent like Projects section */}
         <div className="skills-row d-flex flex-wrap justify-content-center gap-4">
           {skillGroups.map((group, gi) => (
             <Reveal key={group.title} delay={gi * 0.05}>
-              {/* Make wrapper control width; keep neo-card styling intact */}
               <div className="neo-card p-4 skill-card-wrapper">
-                {/* Fix heading order for Lighthouse while keeping same visual size */}
                 <h3 className="mb-4 h5">{group.title}</h3>
 
                 {group.skills.map((skill, si) => (
@@ -111,9 +130,7 @@ const Skills = () => {
                         aria-valuemax={100}
                         aria-valuenow={displayPercents[gi][si]}
                         style={{
-                          width: animate
-                            ? `${displayPercents[gi][si]}%`
-                            : "0%",
+                          width: animate ? `${displayPercents[gi][si]}%` : "0%",
                         }}
                       />
                     </div>

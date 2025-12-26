@@ -1,18 +1,10 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
-import legacy from "@vitejs/plugin-legacy";
 import { VitePWA } from "vite-plugin-pwa";
 
 export default defineConfig({
   plugins: [
     react(),
-
-    // ✅ Safari / older browser compatibility
-    legacy({
-      targets: ["defaults", "safari >= 13", "ios >= 13"],
-      modernPolyfills: true,
-      additionalLegacyPolyfills: ["regenerator-runtime/runtime"],
-    }),
 
     // ✅ Keep your PWA setup
     VitePWA({
@@ -40,9 +32,9 @@ export default defineConfig({
     }),
   ],
 
-  // ✅ Good baseline targets for Safari
+  // ✅ Modern build to remove "legacy JavaScript" warning + reduce JS shipped
   build: {
-    target: "es2017",
+    target: "es2018",
     sourcemap: true,
   },
 });

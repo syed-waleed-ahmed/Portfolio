@@ -1,5 +1,5 @@
 /* =========================
-   App.css (FINAL)
+   App.css (Lighthouse-optimized, same UI)
    ========================= */
 
 :root {
@@ -33,19 +33,33 @@ body {
   color: var(--text-main);
   overflow-x: hidden;
   position: relative;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
 }
 
 .app-root {
   min-height: 100vh;
 }
 
-/* ========= Global AI background layers ========= */
+/* ========= Global background layers =========
+   Lighthouse note:
+   - These are full-screen fixed layers with images.
+   - Keep look the same, but reduce work:
+     - use image-set so browser picks best
+     - avoid unnecessary composite work
+*/
+
 /* Put these assets in /public (root), or update paths accordingly */
 body::before {
   content: "";
   position: fixed;
   inset: 0;
-  background-image: url("/ai-grid.webp");
+
+  /* Prefer modern formats; browser will pick supported source */
+  background-image: image-set(
+    url("/ai-grid.webp") type("image/webp")
+  );
+
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -53,13 +67,23 @@ body::before {
   mix-blend-mode: normal;
   pointer-events: none;
   z-index: -3;
+
+  /* isolates paint better */
+  will-change: opacity;
 }
 
 body::after {
   content: "";
   position: fixed;
   inset: 0;
-  background-image: url("/code-snippet.webp"), url("/llm-chip.webp");
+
+  background-image: image-set(
+      url("/code-snippet.webp") type("image/webp")
+    ),
+    image-set(
+      url("/llm-chip.webp") type("image/webp")
+    );
+
   background-repeat: no-repeat, no-repeat;
   background-position: 4% 28%, 96% 72%;
   background-size: 320px auto, 260px auto;
@@ -67,6 +91,17 @@ body::after {
   filter: none;
   pointer-events: none;
   z-index: -2;
+
+  will-change: opacity;
+}
+
+/* If user has Data Saver enabled, skip decorative background images.
+   Functionality is unchanged; UI remains usable and readable. */
+@media (prefers-reduced-data: reduce) {
+  body::before,
+  body::after {
+    background-image: none !important;
+  }
 }
 
 /* ========= Navbar ========= */
@@ -152,12 +187,20 @@ body::after {
   }
 }
 
-/* ========= Sections ========= */
+/* ========= Sections =========
+   Performance boost:
+   content-visibility prevents rendering off-screen sections until needed.
+   This improves Lighthouse TBT + rendering cost on long pages.
+*/
 .section-wrapper {
   position: relative;
   padding: 52px 0;
-  /* important: prevents fixed/sticky nav from covering section heading on scroll */
   scroll-margin-top: 90px;
+
+  /* Lighthouse-friendly rendering optimization */
+  content-visibility: auto;
+  contain-intrinsic-size: 1px 800px; /* prevents layout jump while skipping render */
+  contain: content;
 }
 
 .section-wrapper + .section-wrapper {
@@ -168,6 +211,7 @@ body::after {
   .section-wrapper {
     padding: 44px 0;
     scroll-margin-top: 86px;
+    contain-intrinsic-size: 1px 720px;
   }
 }
 
@@ -205,6 +249,7 @@ body::after {
   }
 }
 
+/* Keep hover effects, but ensure they use transforms (already good) */
 .neo-card:hover {
   transform: translateY(-6px) scale(1.01);
   box-shadow: 0 24px 60px rgba(15, 23, 42, 0.95);
@@ -340,6 +385,9 @@ small,
   filter: blur(45px);
   opacity: 0.4;
   z-index: -1;
+
+  /* reduce chance of costly repaints */
+  will-change: transform, opacity;
 }
 
 .hero-orbit-1 {

@@ -1,21 +1,59 @@
-import React, { useCallback, useMemo, useEffect, useState } from "react";
-import Particles from "react-tsparticles";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { loadSlim } from "tsparticles-slim";
 
 const ParticlesBackground = () => {
   const [enabled, setEnabled] = useState(false);
+  const [ParticlesComponent, setParticlesComponent] = useState(null);
 
   useEffect(() => {
-    // wait until page is idle / after first render
-    const id = requestIdleCallback
-      ? requestIdleCallback(() => setEnabled(true))
-      : setTimeout(() => setEnabled(true), 1200);
+    // Hard-disable on mobile / low-end scenarios for Lighthouse wins
+    const prefersReducedMotion =
+      typeof window !== "undefined" &&
+      window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches;
+
+    const isSmallScreen =
+      typeof window !== "undefined" && window.matchMedia?.("(max-width: 768px)")?.matches;
+
+    // navigator.deviceMemory is not supported everywhere; if missing, treat as unknown
+    const lowMemory =
+      typeof navigator !== "undefined" && "deviceMemory" in navigator
+        ? navigator.deviceMemory <= 4
+        : false;
+
+    if (prefersReducedMotion || isSmallScreen || lowMemory) {
+      setEnabled(false);
+      return;
+    }
+
+    // Defer enabling until idle
+    const enableLater = () => setEnabled(true);
+
+    const id =
+      "requestIdleCallback" in window
+        ? window.requestIdleCallback(enableLater, { timeout: 2000 })
+        : window.setTimeout(enableLater, 1500);
 
     return () => {
-      if (typeof id === "number") clearTimeout(id);
-      else cancelIdleCallback?.(id);
+      if (typeof id === "number") window.clearTimeout(id);
+      else window.cancelIdleCallback?.(id);
     };
   }, []);
+
+  useEffect(() => {
+    // Dynamically import react-tsparticles only when enabled
+    if (!enabled) return;
+
+    let cancelled = false;
+
+    (async () => {
+      const mod = await import("react-tsparticles");
+      if (!cancelled) setParticlesComponent(() => mod.default);
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [enabled]);
 
   const particlesInit = useCallback(async (engine) => {
     await loadSlim(engine);
@@ -24,36 +62,43 @@ const ParticlesBackground = () => {
   const options = useMemo(
     () => ({
       fullScreen: { enable: false },
-      fpsLimit: 60,
+
+      // Lower FPS reduces CPU on slower devices.
+      fpsLimit: 40,
+
       particles: {
-        number: { value: 45, density: { enable: true, area: 900 } }, // reduced
-        color: { value: ["#6366f1", "#22d3ee"] }, // reduced
+        number: { value: 30, density: { enable: true, area: 1100 } },
+        color: { value: ["#6366f1", "#22d3ee"] },
         links: {
           enable: true,
           color: "#4b5563",
-          distance: 140,
-          opacity: 0.25,
+          distance: 150,
+          opacity: 0.22,
           width: 1,
         },
-        move: { enable: true, speed: 0.8, outModes: { default: "out" } },
-        opacity: { value: 0.45 },
+        move: { enable: true, speed: 0.7, outModes: { default: "out" } },
+        opacity: { value: 0.42 },
         size: { value: { min: 1, max: 2 } },
       },
+
       interactivity: {
         events: {
-          onHover: { enable: false }, // hover is costly
+          onHover: { enable: false },
           onClick: { enable: false },
+          resize: true,
         },
       },
-      detectRetina: true,
+
+      // Retina can double work; for a background effect, it's not worth it.
+      detectRetina: false,
     }),
     []
   );
 
-  if (!enabled) return null;
+  if (!enabled || !ParticlesComponent) return null;
 
   return (
-    <Particles
+    <ParticlesComponent
       id="tsparticles"
       init={particlesInit}
       options={options}
