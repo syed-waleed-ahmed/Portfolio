@@ -259,5 +259,3 @@ Licensed under the **MIT License**.
 ## 👋 Author
 
 **Syed Waleed Ahmed**
-```
-```
