@@ -1,4 +1,4 @@
-# 🌐 Syed Waleed Ahmed — Portfolio (React + Vite + Node/Express)
+# 🌐 Syed Waleed Ahmed — Portfolio
 
 A modern, responsive **personal portfolio website** built with **React + Vite** on the frontend and **Node.js + Express** on the backend.  
 Designed with a focus on **performance (Core Web Vitals)**, **accessibility**, **clean UI/UX**, and a **production-ready contact system**.
