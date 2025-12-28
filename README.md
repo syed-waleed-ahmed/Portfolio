@@ -98,8 +98,8 @@ portfolio/
 │   │   ├── favicon.svg
 │   │   ├── apple-touch-icon.png
 │   │   ├── site.webmanifest
-│   │   ├── sitemap.xml          (recommended)
-│   │   └── robots.txt           (recommended)
+│   │   ├── sitemap.xml          
+│   │   └── robots.txt           
 │   │
 │   ├── src/
 │   │   ├── components/
@@ -128,7 +128,6 @@ portfolio/
 │   ├── package.json
 │   └── .env
 │
-├── netlify.toml                (recommended for redirects + caching)
 ├── .gitignore
 └── README.md
 ````
