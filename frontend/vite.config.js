@@ -6,7 +6,7 @@ export default defineConfig({
   plugins: [
     react(),
 
-    // ✅ Keep your PWA setup
+    // Keep your PWA setup
     VitePWA({
       registerType: "autoUpdate",
       includeAssets: ["favicon.ico", "apple-touch-icon.png"],
@@ -32,7 +32,6 @@ export default defineConfig({
     }),
   ],
 
-  // ✅ Modern build to remove "legacy JavaScript" warning + reduce JS shipped
   build: {
     target: "es2018",
     sourcemap: true,
