@@ -147,7 +147,7 @@ const Hero = () => {
                   LeetCode
                 </a>
                 <a
-                  href="https://drive.google.com/file/d/1jkVZ_N2QvQBWRvf9vnzDBfgR0_zGfM0p/view?usp=sharing"
+                  href="https://drive.google.com/file/d/1hruWE4BEDn-XTiSIkGzVKoKEmpOvHu9d/view?usp=sharing"
                   target="_blank"
                   rel="noreferrer"
                   className="social-pill"

@@ -57,7 +57,7 @@ const About = () => {
                     <div className="timeline-meta">
                       University of Twente, Enschede, Netherlands
                       <br />
-                      Sep 2025 – Present
+                      Sep 2025 – Jan 2026
                     </div>
                   </li>
 
