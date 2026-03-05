@@ -3,11 +3,10 @@ import Reveal from "./Reveal";
 
 const Interests = () => {
   return (
-    <section id="interests" className="section-wrapper">
       <div className="container">
         <Reveal>
           <h2 className="section-title text-center mb-4">
-            Interests in AI / ML & Automation
+            Interests in AI / ML &amp; Automation
           </h2>
         </Reveal>
 
@@ -19,28 +18,30 @@ const Interests = () => {
                   Why I Care About Intelligent Automation
                 </h3>
                 <p>
-                  I’m particularly interested in how <strong>LLMs</strong> and{" "}
-                  <strong>Generative AI</strong> can power{" "}
-                  <strong>intelligent automation</strong> in real-world systems.
-                  This includes multi-agent orchestration, workflow automation,
-                  and AI-assisted decision-making.
+                  I&apos;m especially interested in roles and collaborations
+                  involving <strong>agentic systems</strong>,{" "}
+                  <strong>applied machine learning</strong>,{" "}
+                  <strong>data intelligence pipelines</strong>, and{" "}
+                  <strong>AI product development</strong>. My focus is on
+                  building systems where AI isn&apos;t just a demo &mdash;
+                  it&apos;s deployed, monitored, and continuously improved.
                 </p>
                 <p className="mb-0">
-                  My work explores how AI can be embedded into both software
-                  workflows and engineering systems to create adaptive,
-                  data-driven solutions that continuously improve over time.
+                  Previously, I built automated ETL workflows, analytics
+                  dashboards, and business automation tools, improving
+                  performance and reducing manual effort through system design.
                 </p>
               </div>
 
               <div className="col-lg-5">
                 <div className="interests-side-box">
-                  <h4 className="mb-3 text-accent h6">Topics I’m Exploring</h4>
+                  <h4 className="mb-3 text-accent h6">Topics I&apos;m Exploring</h4>
                   <ul className="interests-list small mb-0">
-                    <li>Multi-agent systems & AI-driven workflow automation</li>
-                    <li>LLM engineering, ReAct-style reasoning and tool use</li>
-                    <li>Generative AI for content creation and campaign design</li>
-                    <li>Predictive analytics and smart monitoring in automation</li>
-                    <li>Bridging control systems with modern AI/ML pipelines</li>
+                    <li>Agentic systems &amp; configurable AI assistants</li>
+                    <li>Multimodal RAG &amp; LLM orchestration pipelines</li>
+                    <li>Large-scale data preprocessing &amp; clustering</li>
+                    <li>Product similarity &amp; recommendation engines</li>
+                    <li>Full-stack development for AI-powered tools</li>
                   </ul>
                 </div>
               </div>
@@ -48,7 +49,6 @@ const Interests = () => {
           </div>
         </Reveal>
       </div>
-    </section>
   );
 };
 

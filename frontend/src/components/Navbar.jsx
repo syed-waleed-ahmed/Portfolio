@@ -1,5 +1,5 @@
 // src/components/Navbar.jsx
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 const navLinks = [
   { target: "top", label: "Home" },
@@ -11,7 +11,35 @@ const navLinks = [
   { target: "contact", label: "Contact" },
 ];
 
+const sectionIds = ["hero", "about", "experience", "projects", "skills", "interests", "contact"];
+
 const Navbar = () => {
+  const [activeSection, setActiveSection] = useState("top");
+
+  useEffect(() => {
+    if (!("IntersectionObserver" in window)) return;
+
+    const observers = [];
+
+    sectionIds.forEach((id) => {
+      const el = document.getElementById(id);
+      if (!el) return;
+
+      const obs = new IntersectionObserver(
+        ([entry]) => {
+          if (entry.isIntersecting) {
+            setActiveSection(id === "hero" ? "top" : id);
+          }
+        },
+        { rootMargin: "-30% 0px -60% 0px", threshold: 0 }
+      );
+
+      obs.observe(el);
+      observers.push(obs);
+    });
+
+    return () => observers.forEach((obs) => obs.disconnect());
+  }, []);
   const closeMobileMenu = () => {
     const navbarCollapse = document.getElementById("mainNav");
     if (!navbarCollapse) return;
@@ -68,7 +96,9 @@ const Navbar = () => {
               <li className="nav-item" key={link.label}>
                 <a
                   href="#"
-                  className="nav-link nav-link-pill"
+                  className={`nav-link nav-link-pill${
+                    activeSection === link.target ? " active" : ""
+                  }`}
                   onClick={(e) => handleNavClick(e, link.target)}
                 >
                   {link.label}

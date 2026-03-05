@@ -2,7 +2,6 @@ import Reveal from "./Reveal";
 
 const About = () => {
   return (
-    <section id="about" className="section-wrapper">
       <div className="container">
         <Reveal>
           <h2 className="section-title text-center mb-5">
@@ -17,19 +16,23 @@ const About = () => {
             <Reveal delay={0.04} className="w-100">
               <div className="neo-card about-card flex-fill h-100 p-4 p-md-5">
                 <p className="mb-3">
-                  I am a Master’s student in Automation Engineering at the
-                  University of Bologna, focusing on{" "}
-                  <strong>Artificial Intelligence</strong> and{" "}
-                  <strong>Machine Learning</strong>. My work revolves around{" "}
-                  <strong>LLM engineering, Generative AI systems</strong>, and{" "}
-                  <strong>intelligent automation</strong>.
+                  I think the best AI work happens when you stop treating models
+                  as magic and start treating them as components in a system.
+                  That mindset drives everything I build &mdash; from multi-agent
+                  orchestration layers to production data pipelines.
+                </p>
+                <p className="mb-3">
+                  Right now I&apos;m productizing a modular AI assistant platform
+                  at <strong>MemorAIz</strong> (thesis) and building clustering
+                  pipelines over 1&nbsp;M+ product records at <strong>Fruugle</strong>.
+                  Before that I shipped web apps, SIEM dashboards, and BI
+                  reports during a year-long IT rotational programme.
                 </p>
                 <p className="mb-0">
-                  I’m actively working on AI-driven automation projects,
-                  including multi-agent systems and workflow automation tools
-                  leveraging Groq LLMs, LangGraph, and ReAct-style reasoning.
-                  I’ve built solutions for automating business workflows, AI
-                  content generation, and predictive analytics.
+                  When I&apos;m not writing code I&apos;m usually exploring new
+                  papers on agentic architectures, solving problems on LeetCode,
+                  or figuring out how to make the next pipeline a little more
+                  fault-tolerant.
                 </p>
               </div>
             </Reveal>
@@ -46,9 +49,9 @@ const About = () => {
                       Master in Automation Engineering
                     </div>
                     <div className="timeline-meta">
-                      Alma Mater Studiorum – Università di Bologna, Italy
+                      Alma Mater Studiorum &ndash; Universit&agrave; di Bologna, Italy
                       <br />
-                      Sep 2024 – Present
+                      Sep 2024 &ndash; Present
                     </div>
                   </li>
 
@@ -57,7 +60,7 @@ const About = () => {
                     <div className="timeline-meta">
                       University of Twente, Enschede, Netherlands
                       <br />
-                      Sep 2025 – Jan 2026
+                      Sep 2025 &ndash; Jan 2026
                     </div>
                   </li>
 
@@ -69,7 +72,7 @@ const About = () => {
                       NED University of Engineering and Technology, Karachi,
                       Pakistan
                       <br />
-                      Oct 2019 – Aug 2023 · CGPA: 3.46
+                      Oct 2019 &ndash; Aug 2023 &middot; CGPA: 3.46
                     </div>
                   </li>
                 </ul>
@@ -78,7 +81,6 @@ const About = () => {
           </div>
         </div>
       </div>
-    </section>
   );
 };
 

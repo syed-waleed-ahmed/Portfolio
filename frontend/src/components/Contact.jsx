@@ -10,7 +10,7 @@ const initialState = {
 };
 
 const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL || "https://portfolio-backend-kmum.onrender.com/api/contact";
+  import.meta.env.VITE_API_BASE_URL || "https://portfolio-backend-kmum.onrender.com";
 
 const Contact = () => {
   const [form, setForm] = useState(initialState);
@@ -103,7 +103,6 @@ const Contact = () => {
   };
 
   return (
-    <section id="contact" className="section-wrapper">
       <div className="container">
         <Reveal>
           <h2 className="section-title text-center mb-5">Contact</h2>
@@ -264,7 +263,6 @@ const Contact = () => {
           </div>
         </div>
       </div>
-    </section>
   );
 };
 

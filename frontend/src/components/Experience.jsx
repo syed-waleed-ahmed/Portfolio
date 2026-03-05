@@ -2,7 +2,6 @@ import Reveal from "./Reveal";
 
 const Experience = () => {
   return (
-    <section id="experience" className="section-wrapper">
       <div className="container">
         <Reveal>
           <h2 className="section-title text-center mb-5">
@@ -11,78 +10,112 @@ const Experience = () => {
         </Reveal>
 
         <div className="row g-4 align-items-stretch">
-          {/* Tech Trainee */}
-          <div className="col-md-4 d-flex">
+          {/* Thesis Student */}
+          <div className="col-md-6 col-lg-4 d-flex">
             <Reveal delay={0.04} className="w-100">
               <div className="neo-card experience-card h-100 p-4">
-                <h3 className="mb-1">Tech Trainee</h3>
-                <p className="text-accent mb-1">Jubilee Life Insurance</p>
-                <p className="timeline-meta mb-3">Jan 2024 – Oct 2024</p>
+                <h3 className="mb-1">Thesis Student</h3>
+                <p className="text-accent mb-1">MemorAIz</p>
+                <p className="timeline-meta mb-3">Feb 2026 &ndash; Present &middot; Bologna, Italy</p>
 
                 <ul className="mb-0">
                   <li>
-                    Completed a 12-month rotational tech program across data,
-                    development, networking and governance.
+                    Productizing a modular AI assistant platform with
+                    configurable agents that orchestrate reusable UI-based
+                    AI modules (function + micro-experience widgets).
                   </li>
                   <li>
-                    Designed, optimized and administered SQL databases and BI
-                    dashboards.
+                    Designed agent configuration schemas, module interfaces,
+                    and a module registry/versioning strategy to enable
+                    new solutions through configuration instead of bespoke code.
                   </li>
                   <li>
-                    Built dynamic web apps with HTML, CSS, JS, PHP, .NET ASP
-                    Core, React and MySQL.
+                    Built the orchestration layer for multi-step agent &harr;
+                    module &harr; UI flows with routing, retries/fallbacks,
+                    and observability hooks (traces, latency, failure tracking).
                   </li>
                   <li>
-                    Monitored and analyzed security events using IBM QRadar,
-                    SIEM and SOAR.
+                    Shipped the first productized MVP and an internal
+                    &ldquo;dogfooding&rdquo; assistant to stress-test
+                    configuration, module UX, and orchestration robustness.
+                  </li>
+                  <li>
+                    Implemented governance features (human-in-the-loop approvals,
+                    guardrails, role/permission boundaries) and a lightweight
+                    evaluation suite with scenario-based regression tests and
+                    quality metrics per workflow.
                   </li>
                 </ul>
               </div>
             </Reveal>
           </div>
 
-          {/* Application Engineer */}
-          <div className="col-md-4 d-flex">
+          {/* Data Clustering & AI Model Intern */}
+          <div className="col-md-6 col-lg-4 d-flex">
             <Reveal delay={0.08} className="w-100">
               <div className="neo-card experience-card h-100 p-4">
-                <h3 className="mb-1">Application Engineer</h3>
-                <p className="text-accent mb-1">
-                  Britlite Engineering Company
-                </p>
-                <p className="timeline-meta mb-3">Oct 2023 – Dec 2023</p>
+                <h3 className="mb-1">Data Clustering &amp; AI Model Intern</h3>
+                <p className="text-accent mb-1">Fruugle</p>
+                <p className="timeline-meta mb-3">Jan 2026 &ndash; Present &middot; Riga, Latvia (Remote)</p>
 
                 <ul className="mb-0">
                   <li>
-                    Developed product expertise in cables, networking items,
-                    earthing, lighting, transformers, AVR and VFDs.
+                    Analyzed and preprocessed massive product and pricing datasets
+                    (1M+ records) from multiple supermarket sources for a
+                    multimodal AI-powered e-grocery assistant.
                   </li>
                   <li>
-                    Prepared technical proposals, quotations and detailed
-                    reports for complex electrical solutions.
+                    Built data clustering and grouping pipelines (K-means, DBSCAN,
+                    hierarchical) to create comparable product segments for
+                    real-time price comparison.
+                  </li>
+                  <li>
+                    Collaborated with AI engineers to support multimodal model
+                    training across text, image, and numerical data.
+                  </li>
+                  <li>
+                    Optimized algorithms for product similarity and recommendation
+                    logic using data normalization and feature extraction.
+                  </li>
+                  <li>
+                    Visualized cluster insights to help business and product teams
+                    understand pricing patterns.
                   </li>
                 </ul>
               </div>
             </Reveal>
           </div>
 
-          {/* Electrical Engineering Intern */}
-          <div className="col-md-4 d-flex">
+          {/* Tech Trainee */}
+          <div className="col-md-6 col-lg-4 d-flex">
             <Reveal delay={0.12} className="w-100">
               <div className="neo-card experience-card h-100 p-4">
-                <h3 className="mb-1">Electrical Engineering Intern</h3>
-                <p className="text-accent mb-1">
-                  Pakistan Civil Aviation Authority
-                </p>
-                <p className="timeline-meta mb-3">Apr 2023 – May 2023</p>
+                <h3 className="mb-1">Tech Trainee</h3>
+                <p className="text-accent mb-1">Jubilee Life Insurance Co. Ltd.</p>
+                <p className="timeline-meta mb-3">Dec 2023 &ndash; Oct 2024 &middot; Karachi, Pakistan</p>
 
                 <ul className="mb-0">
                   <li>
-                    Supported operation &amp; maintenance of HVAC plants, LV
-                    distribution and airfield lighting systems.
+                    Completed a 12-month rotational program across IT domains
+                    including networking, cybersecurity, web development, and
+                    database administration.
                   </li>
                   <li>
-                    Applied analytical troubleshooting to optimize reliability
-                    and performance.
+                    Managed threat monitoring and incident response using IBM
+                    QRadar (SIEM, SOAR, PAM); implemented IT governance and
+                    compliance frameworks.
+                  </li>
+                  <li>
+                    Built dynamic web applications using HTML/CSS, JavaScript,
+                    PHP, .NET ASP Core, React, and MySQL.
+                  </li>
+                  <li>
+                    Designed databases, stored procedures, SSRS reports, and
+                    Power BI dashboards for data-driven decision-making.
+                  </li>
+                  <li>
+                    Customized SharePoint and CRM solutions for workflow
+                    automation and cross-team collaboration.
                   </li>
                 </ul>
               </div>
@@ -90,7 +123,6 @@ const Experience = () => {
           </div>
         </div>
       </div>
-    </section>
   );
 };
 

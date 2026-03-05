@@ -4,9 +4,10 @@ import { motion } from "framer-motion";
 // make ESLint clearly see that `motion` is used in JS
 const MotionDiv = motion.div;
 
-const Reveal = ({ children, delay = 0 }) => {
+const Reveal = ({ children, delay = 0, className }) => {
   return (
     <MotionDiv
+      className={className}
       initial={{ opacity: 0, y: 40 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, amount: 0.2 }}

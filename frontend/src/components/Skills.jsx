@@ -4,27 +4,27 @@ import Reveal from "./Reveal";
 
 const skillGroups = [
   {
-    title: "Programming & AI/ML",
+    title: "AI / ML & LLMs",
     skills: [
-      { name: "Python • NumPy • Pandas", percent: 85 },
-      { name: "Machine Learning • Deep Learning", percent: 80 },
-      { name: "Data Analysis & Predictive Analytics", percent: 85 },
+      { name: "Machine Learning • Deep Learning", percent: 88 },
+      { name: "LLMs • RAG • LangChain • LangGraph", percent: 85 },
+      { name: "Python • NumPy • Pandas • Scikit-learn", percent: 90 },
     ],
   },
   {
-    title: "Web & Application Development",
+    title: "Data & Backend",
     skills: [
-      { name: "HTML • CSS • TypeScript", percent: 80 },
-      { name: ".NET • JavaScript", percent: 70 },
-      { name: "MySQL • PostgreSQL", percent: 85 },
+      { name: "Data Preprocessing • Clustering • ETL", percent: 85 },
+      { name: "MySQL • PostgreSQL • MongoDB", percent: 82 },
+      { name: "Node.js • Express • REST APIs", percent: 78 },
     ],
   },
   {
-    title: "Cloud, Systems & Automation",
+    title: "Web, Cloud & DevOps",
     skills: [
-      { name: "Workflow Automation", percent: 80 },
-      { name: "Linux • Networking & Security Ops", percent: 70 },
-      { name: "Azure • SharePoint & CRM", percent: 65 },
+      { name: "React • HTML • CSS • JavaScript", percent: 82 },
+      { name: "Azure • Docker • Linux", percent: 72 },
+      { name: "Git • CI/CD • Workflow Automation", percent: 78 },
     ],
   },
 ];
@@ -100,8 +100,7 @@ const Skills = () => {
   }, [animate]);
 
   return (
-    <section id="skills" className="section-wrapper" ref={sectionRef}>
-      <div className="container">
+    <div className="container" ref={sectionRef}>
         <Reveal>
           <h2 className="section-title text-center mb-5">Skills</h2>
         </Reveal>
@@ -140,8 +139,7 @@ const Skills = () => {
             </Reveal>
           ))}
         </div>
-      </div>
-    </section>
+    </div>
   );
 };
 

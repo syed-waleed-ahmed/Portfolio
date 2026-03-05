@@ -1,4 +1,5 @@
 import Reveal from "./Reveal";
+import { FaGithub, FaExternalLinkAlt } from "react-icons/fa";
 
 const projects = [
   {
@@ -10,16 +11,18 @@ const projects = [
       "Engineered a multi-agent AI workflow to automate campaign creation from a simple product brief, including trend analysis, copywriting and final content assembly.",
     highlight:
       "Designed a modular, reusable architecture for future channels and formats.",
+    github: "https://github.com/syed-waleed-ahmed",
   },
   {
     title: "Delay Classification for Tele-Robotic System",
-    role: "Academic Project • Group Lead",
-    period: "2022 – 2023",
+    role: "Academic Project \u2022 Group Lead",
+    period: "2022 \u2013 2023",
     stack: ["C++", "Signal Processing", "Networking"],
     description:
       "Analyzed and classified delays in teleoperation over LAN, WAN and 4G networks to improve stability and reliability of remote robotic systems.",
     highlight:
       "Combined data analysis, system modelling and performance evaluation for robust insights.",
+    github: "https://github.com/syed-waleed-ahmed",
   },
   {
     title: "Visual Inspection of Motorcycle Connecting Rods",
@@ -30,12 +33,12 @@ const projects = [
       "Developed a vision-based inspection system for dimensional analysis and automated sorting of connecting rods using feature and hole-count based classification.",
     highlight:
       "Enabled automated quality inspection and robotic sorting between rod types.",
+    github: "https://github.com/syed-waleed-ahmed",
   },
 ];
 
 const Projects = () => {
   return (
-    <section id="projects" className="section-wrapper">
       <div className="container">
         <Reveal>
           <h2 className="section-title text-center mb-5">Projects</h2>
@@ -47,7 +50,20 @@ const Projects = () => {
               <Reveal delay={0.06 * (idx + 1)} className="w-100">
                 <div className="neo-card project-card h-100 p-4 d-flex flex-column">
                   <div className="mb-3">
-                    <h3 className="mb-1">{project.title}</h3>
+                    <div className="d-flex justify-content-between align-items-start">
+                      <h3 className="mb-1">{project.title}</h3>
+                      {project.github && (
+                        <a
+                          href={project.github}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="project-link-icon"
+                          aria-label={`View ${project.title} on GitHub`}
+                        >
+                          <FaGithub />
+                        </a>
+                      )}
+                    </div>
                     <div className="text-accent small card-subtitle-accent">
                       {project.role}
                     </div>
@@ -74,7 +90,6 @@ const Projects = () => {
           ))}
         </div>
       </div>
-    </section>
   );
 };
 

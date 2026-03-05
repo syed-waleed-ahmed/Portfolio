@@ -1,13 +1,22 @@
 // src/components/Hero.jsx
 import React, { useEffect, useMemo, useState } from "react";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
+import {
+  FaEnvelope,
+  FaPhoneAlt,
+  FaWhatsapp,
+  FaLinkedinIn,
+  FaGithub,
+  FaFileAlt,
+} from "react-icons/fa";
+import { SiLeetcode } from "react-icons/si";
 
 const exploreItems = [
-  "Full-Stack AI Engineering",
-  "LLMs & RAG Pipelines",
-  "Multi-Agent Systems",
-  "Intelligent Automation",
-  "Data-Driven Problem Solving",
+  "Agentic AI Systems",
+  "Multimodal RAG Pipelines",
+  "Multi-Agent Orchestration",
+  "LLM Engineering & Tool Use",
+  "Data Intelligence Pipelines",
 ];
 
 const Hero = () => {
@@ -78,12 +87,12 @@ const Hero = () => {
               </h1>
 
               <p className="hero-lead mb-4">
-                Master’s student in Automation Engineering at the University of Bologna,
+                AI Engineer building production-grade agentic AI systems. Master's
+                student in Automation Engineering at the University of Bologna,
                 specializing in{" "}
-                <span className="fw-semibold">AI, ML, Intelligent Automation</span>, and{" "}
-                <span className="fw-semibold">LLM-driven workflows</span>. I build end-to-end
-                AI systems that combine multi-agent orchestration, workflow automation, and
-                data-driven decision making.
+                <span className="fw-semibold">Multimodal RAG, LLM orchestration</span>, and{" "}
+                <span className="fw-semibold">intelligent automation</span>. I turn messy data
+                and complex workflows into reliable, deployed applications.
               </p>
 
               <div className="d-flex align-items-center gap-2 mb-3 hero-explore-row">
@@ -104,54 +113,67 @@ const Hero = () => {
                 </div>
               </div>
 
-              <div className="d-flex flex-wrap gap-3 mb-3">
+              <div className="d-flex flex-wrap gap-2 hero-links-row">
                 <a
                   href="mailto:syedwaleedahmed9@gmail.com"
-                  className="btn btn-primary neon-btn hero-contact-pill hero-contact-pill-strong"
+                  className="hero-pill"
                 >
-                  <span className="hero-contact-label">Email</span>
+                  <FaEnvelope className="hero-pill-icon" />
+                  Email
                 </a>
-
-                <div className="hero-contact-pill hero-contact-pill-strong">
-                  <span className="hero-contact-label">Phone / Whatsapp</span>
-                  <div className="d-flex flex-column flex-sm-row gap-2">
-                    <span className="d-none d-sm-inline">•</span>
-                    <a href="tel:+393519609532">+39 3519609532</a>
-                  </div>
-                </div>
+                <a
+                  href="tel:+393519609532"
+                  className="hero-pill"
+                >
+                  <FaPhoneAlt className="hero-pill-icon" />
+                  +39 351 960 9532
+                </a>
+                <a
+                  href="https://wa.me/393519609532"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="hero-pill"
+                >
+                  <FaWhatsapp className="hero-pill-icon" />
+                  WhatsApp
+                </a>
               </div>
 
-              <div className="d-flex flex-wrap gap-2">
+              <div className="d-flex flex-wrap gap-2 hero-links-row">
                 <a
                   href="https://www.linkedin.com/in/syed-waleed-ahmed/"
                   target="_blank"
                   rel="noreferrer"
-                  className="social-pill"
+                  className="hero-pill"
                 >
+                  <FaLinkedinIn className="hero-pill-icon" />
                   LinkedIn
                 </a>
                 <a
                   href="https://github.com/syed-waleed-ahmed"
                   target="_blank"
                   rel="noreferrer"
-                  className="social-pill"
+                  className="hero-pill"
                 >
+                  <FaGithub className="hero-pill-icon" />
                   GitHub
                 </a>
                 <a
                   href="https://leetcode.com/u/syed-waleed-ahmed/"
                   target="_blank"
                   rel="noreferrer"
-                  className="social-pill"
+                  className="hero-pill"
                 >
+                  <SiLeetcode className="hero-pill-icon" />
                   LeetCode
                 </a>
                 <a
                   href="https://drive.google.com/file/d/1hruWE4BEDn-XTiSIkGzVKoKEmpOvHu9d/view?usp=sharing"
                   target="_blank"
                   rel="noreferrer"
-                  className="social-pill"
+                  className="hero-pill hero-pill-accent"
                 >
+                  <FaFileAlt className="hero-pill-icon" />
                   Resume
                 </a>
               </div>
@@ -178,12 +200,11 @@ const Hero = () => {
                     src="/images/Profile.webp"
                     alt="Syed Waleed Ahmed"
                     className="profile-img"
-                    width="460"
-                    height="460"
+                    width="300"
+                    height="300"
                     loading="eager"
                     fetchPriority="high"
                     decoding="async"
-                    style={{ objectFit: "cover" }}
                   />
                 </picture>
               </div>
