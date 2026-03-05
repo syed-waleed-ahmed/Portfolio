@@ -15,6 +15,7 @@ const sectionIds = ["hero", "about", "experience", "projects", "skills", "intere
 
 const Navbar = () => {
   const [activeSection, setActiveSection] = useState("top");
+  const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
     if (!("IntersectionObserver" in window)) return;
@@ -43,6 +44,8 @@ const Navbar = () => {
   const closeMobileMenu = () => {
     const navbarCollapse = document.getElementById("mainNav");
     if (!navbarCollapse) return;
+
+    setMenuOpen(false);
 
     if (navbarCollapse.classList.contains("show")) {
       // ✅ No optional chaining (better iOS/Safari compatibility)
@@ -77,17 +80,20 @@ const Navbar = () => {
 
   return (
     <nav className="navbar navbar-expand-md fixed-top glass-nav navbar-dark">
-      <div className="container d-flex justify-content-center">
+      <div className="container">
         <button
-          className="navbar-toggler border-0 shadow-none ms-auto"
+          className={`navbar-toggler border-0 shadow-none ms-auto hamburger${menuOpen ? " open" : ""}`}
           type="button"
           data-bs-toggle="collapse"
           data-bs-target="#mainNav"
           aria-controls="mainNav"
-          aria-expanded="false"
+          aria-expanded={menuOpen}
           aria-label="Toggle navigation"
+          onClick={() => setMenuOpen((prev) => !prev)}
         >
-          <span className="navbar-toggler-icon" />
+          <span className="hamburger-line" />
+          <span className="hamburger-line" />
+          <span className="hamburger-line" />
         </button>
 
         <div className="collapse navbar-collapse justify-content-center" id="mainNav">
