@@ -47,9 +47,43 @@ app.get("/health", (req, res) => {
 // ===== Resend Setup =====
 const resend = new Resend(process.env.RESEND_API_KEY);
 
+// ===== Helpers =====
+function escapeHtml(str) {
+  return String(str)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+
+// Simple in-memory rate limiter: max 5 submissions per IP per 15 min
+const rateMap = new Map();
+const RATE_WINDOW = 15 * 60 * 1000;
+const RATE_LIMIT = 5;
+
+function isRateLimited(ip) {
+  const now = Date.now();
+  const entry = rateMap.get(ip);
+  if (!entry || now - entry.start > RATE_WINDOW) {
+    rateMap.set(ip, { start: now, count: 1 });
+    return false;
+  }
+  entry.count += 1;
+  return entry.count > RATE_LIMIT;
+}
+
 // ===== Contact Route =====
 app.post("/api/contact", async (req, res) => {
   try {
+    // Rate limiting
+    const ip = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
+    if (isRateLimited(ip)) {
+      return res.status(429).json({
+        success: false,
+        error: "Too many requests. Please try again later.",
+      });
+    }
+
     const { name, email, phone, subject, message } = req.body;
 
     // Basic validation
@@ -57,6 +91,14 @@ app.post("/api/contact", async (req, res) => {
       return res
         .status(400)
         .json({ success: false, error: "Missing required fields." });
+    }
+
+    // Input length limits
+    if (name.length > 100 || email.length > 100 || (phone && phone.length > 25) ||
+        subject.length > 200 || message.length > 5000) {
+      return res
+        .status(400)
+        .json({ success: false, error: "One or more fields exceed the maximum length." });
     }
 
     const to = process.env.EMAIL_TO; // your Gmail
@@ -79,12 +121,12 @@ app.post("/api/contact", async (req, res) => {
     const html = `
       <div style="font-family: Arial, sans-serif; line-height: 1.5;">
         <h2>New Portfolio Message</h2>
-        <p><b>Name:</b> ${name}</p>
-        <p><b>Email:</b> ${email}</p>
-        <p><b>Phone:</b> ${phone || "N/A"}</p>
-        <p><b>Subject:</b> ${subject}</p>
+        <p><b>Name:</b> ${escapeHtml(name)}</p>
+        <p><b>Email:</b> ${escapeHtml(email)}</p>
+        <p><b>Phone:</b> ${escapeHtml(phone || "N/A")}</p>
+        <p><b>Subject:</b> ${escapeHtml(subject)}</p>
         <hr />
-        <p style="white-space: pre-wrap;">${message}</p>
+        <p style="white-space: pre-wrap;">${escapeHtml(message)}</p>
       </div>
     `;
 

@@ -1,151 +1,119 @@
-# 🌐 Syed Waleed Ahmed — Portfolio
+# Syed Waleed Ahmed -- Portfolio
 
-A modern, responsive **personal portfolio website** built with **React + Vite** on the frontend and **Node.js + Express** on the backend.  
-Designed with a focus on **performance (Core Web Vitals)**, **accessibility**, **clean UI/UX**, and a **production-ready contact system**.
+A modern, responsive **personal portfolio website** built with **React 19 + Vite** on the frontend and **Node.js + Express** on the backend.
+Designed with a focus on **performance**, **accessibility**, **security**, and **clean UI/UX**.
 
-🔗 **Live Website:**  
-👉 https://www.syedwaleedahmed.me/
-
----
-
-## ✨ Highlights
-
-- ⚡ Fast build + optimized delivery (Vite, code-splitting, lazy-loaded sections)
-- 🎨 Modern UI (glassmorphism + gradients)
-- 🎥 Smooth animations (Framer Motion, reduced-motion friendly)
-- 📱 Fully responsive (desktop/tablet/mobile)
-- 📨 Working contact form (backend email delivery via Resend/SMTP)
-- 🔍 SEO-ready (canonical URL, structured data, sitemap/robots support)
-- 🌐 Custom domain + HTTPS
+**Live:** https://www.syedwaleedahmed.me/
 
 ---
 
-## 🧩 Features
+## Highlights
 
-### 🎨 Frontend
-
-- **React + Vite**
-- Hero section with animated text + optimized LCP image (AVIF/WebP)
-- Scroll-based reveal animations
-- “Currently exploring” rotating pill
-- Skills with animated progress bars
-- PWA-ready (manifest, icons)
-- Accessibility-first (ARIA labels, semantic headings)
-- Lighthouse-focused improvements:
-  - Reduced main-thread work (lazy mount + throttled animations)
-  - Deferred heavy visuals (Particles loaded after idle / disabled on mobile/low-end)
-  - Responsive image delivery (`srcset/sizes` recommended)
-
-**Sections included:**
-- Home / Hero
-- About
-- Experience
-- Projects
-- Skills
-- Interests
-- Contact
+- Fast build & delivery -- Vite, code-splitting, lazy-mounted sections (`content-visibility: auto`)
+- Modern UI -- glassmorphism, neo-card design, Bootstrap 5 grid
+- Smooth animations -- Framer Motion reveal + animated skill progress bars (reduced-motion friendly)
+- Fully responsive -- desktop, tablet, mobile
+- Secure contact form -- server-side HTML escaping, input length validation, IP-based rate limiting
+- SEO-ready -- canonical URL, structured data, sitemap, robots.txt
+- PWA-ready -- manifest, icons, service worker via vite-plugin-pwa
+- Custom domain + HTTPS
 
 ---
 
-### 📨 Backend
+## Sections
 
-- **Node.js + Express**
-- Contact form email delivery
-- Provider support: **Resend** or SMTP
-- Input validation
-- CORS configuration
-- Environment variables via `.env`
-- Health check endpoint for uptime monitoring
+| Section | Description |
+|---------|-------------|
+| Hero | Animated intro with rotating "currently exploring" pill |
+| About | Background summary with profile image (AVIF) |
+| Experience | Work history cards (Thesis, Internship, Trainee) |
+| Projects | Featured projects with tech tags and GitHub links |
+| Skills | Animated progress bars across AI/ML, Data & Backend, Web & Tools |
+| Interests | Two-column layout -- paragraph + topic list |
+| Contact | Working contact form with email delivery |
 
 ---
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 ### Frontend
-- React
-- Vite
-- Framer Motion
-- Bootstrap Grid
-- Custom CSS
-- AVIF / WebP images
-- PWA manifest
+- React 19, Vite, Framer Motion
+- Bootstrap 5, Custom CSS (glassmorphism)
+- react-icons, react-tsparticles
+- vite-plugin-pwa, AVIF/WebP images
 
 ### Backend
-- Node.js
-- Express
-- Email service (Resend / SMTP)
-- CORS
-- Dotenv
+- Node.js, Express (ESM)
+- Resend (email delivery)
+- CORS, dotenv
+- In-memory rate limiter, HTML escaping, Input validation
 
-### Hosting / Deployment
-- Frontend: **Netlify**
+### Deployment
+- Frontend: **Netlify** (syedwaleedahmed.me)
 - Backend: **Render**
-- Domain: Custom + HTTPS
 
 ---
 
-## 📂 Project Structure
+## Project Structure
 
-```txt
+```
 portfolio/
-│
-├── frontend/
-│   ├── public/
-│   │   ├── images/
-│   │   │   ├── Profile.avif
-│   │   │   └── Profile.webp
-│   │   ├── favicon.ico
-│   │   ├── favicon.svg
-│   │   ├── apple-touch-icon.png
-│   │   ├── site.webmanifest
-│   │   ├── sitemap.xml          
-│   │   └── robots.txt           
-│   │
-│   ├── src/
-│   │   ├── components/
-│   │   │   ├── Hero.jsx
-│   │   │   ├── About.jsx
-│   │   │   ├── Experience.jsx
-│   │   │   ├── Projects.jsx
-│   │   │   ├── Skills.jsx
-│   │   │   ├── Interests.jsx
-│   │   │   ├── Contact.jsx
-│   │   │   ├── Navbar.jsx
-│   │   │   └── Reveal.jsx
-│   │   ├── App.jsx
-│   │   ├── main.jsx
-│   │   ├── index.css
-│   │   └── App.css
-│   │
-│   ├── index.html
-│   ├── package.json
-│   └── vite.config.js
-│
-├── backend/
-│   ├── routes/
-│   │   └── contactRoutes.js
-│   ├── server.js
-│   ├── package.json
-│   └── .env
-│
-├── .gitignore
-└── README.md
-````
++-- frontend/
+|   +-- public/
+|   |   +-- images/Profile.avif
+|   |   +-- favicon.ico
+|   |   +-- favicon.svg
+|   |   +-- apple-touch-icon.png
+|   |   +-- favicon-96x96.png
+|   |   +-- web-app-manifest-192x192.png
+|   |   +-- web-app-manifest-512x512.png
+|   |   +-- ai-grid.webp
+|   |   +-- code-snippet.webp
+|   |   +-- llm-chip.webp
+|   |   +-- site.webmanifest
+|   |   +-- sitemap.xml
+|   |   +-- robots.txt
+|   +-- src/
+|   |   +-- components/
+|   |   |   +-- Hero.jsx
+|   |   |   +-- About.jsx
+|   |   |   +-- Experience.jsx
+|   |   |   +-- Projects.jsx
+|   |   |   +-- Skills.jsx
+|   |   |   +-- Interests.jsx
+|   |   |   +-- Contact.jsx
+|   |   |   +-- Navbar.jsx
+|   |   |   +-- Footer.jsx
+|   |   |   +-- ParticlesBackground.jsx
+|   |   |   +-- Reveal.jsx
+|   |   +-- App.jsx
+|   |   +-- App.css
+|   |   +-- main.jsx
+|   |   +-- index.css
+|   +-- index.html
+|   +-- vite.config.js
+|   +-- package.json
++-- backend/
+|   +-- server.js
+|   +-- package.json
+|   +-- .env
++-- .gitignore
++-- LICENSE
++-- README.md
+```
 
 ---
 
-## ⚙️ Local Setup
+## Local Setup
 
-### 1) Clone the repository
+### 1. Clone
 
 ```bash
 git clone https://github.com/syed-waleed-ahmed/Portfolio.git
 cd Portfolio
 ```
 
----
-
-### 2) Frontend
+### 2. Frontend
 
 ```bash
 cd frontend
@@ -153,108 +121,52 @@ npm install
 npm run dev
 ```
 
-Runs at:
+Runs at `http://localhost:5173`
 
-```txt
-http://localhost:5173
-```
-
----
-
-### 3) Backend
+### 3. Backend
 
 ```bash
-cd ../backend
+cd backend
 npm install
 npm start
 ```
 
-Runs at:
-
-```txt
-http://localhost:5000
-```
+Runs at `http://localhost:5000`
 
 ---
 
-## 🔐 Environment Variables (Backend)
+## Environment Variables
 
 Create `backend/.env`:
 
 ```env
 PORT=5000
 EMAIL_FROM=portfolio@yourdomain.com
-EMAIL_TO=syedwaleedahmed9@gmail.com
-EMAIL_API_KEY=your_email_service_key
+EMAIL_TO=your-email@gmail.com
+RESEND_API_KEY=re_xxxxxxxxxxxx
 ```
 
-> 💡 For production, **Resend** is recommended over Gmail SMTP for reliability.
+---
+
+## Contact Form Flow
+
+1. User submits form on the frontend
+2. Frontend POSTs to the backend API
+3. Backend validates input (length limits, required fields)
+4. Rate limiter checks IP (5 requests per 15 minutes)
+5. HTML-escaped email is sent via Resend
 
 ---
 
-## 📬 Contact Form Flow
+## Security
 
-1. User submits contact form
-2. Frontend sends a POST request to the backend
-3. Backend validates input
-4. Email is sent to the configured inbox
-5. Frontend receives success/error response
-
----
-
-## 🌍 Deployment
-
-### Frontend (Netlify)
-
-* Custom domain + HTTPS
-* SPA routing
-* Asset caching (recommended headers)
-* Redirect configuration to avoid multi-hop redirects (recommended)
-
-### Backend (Render)
-
-* Environment variables
-* Health checks
-* Auto restarts
+- **HTML escaping** -- All user input is escaped before rendering in email templates
+- **Rate limiting** -- In-memory IP-based limiter (5 requests / 15 min window)
+- **Input validation** -- Max lengths enforced (name: 100, email: 100, phone: 25, subject: 200, message: 5000)
+- **CORS** -- Configured for allowed origins
 
 ---
 
-## 🔍 SEO Setup (Recommended)
+## License
 
-To improve indexing and ranking:
-
-* ✅ Add **Google Search Console** + submit sitemap
-* ✅ Add `public/sitemap.xml` and `public/robots.txt`
-* ✅ Ensure a single canonical URL (prefer `https://www.syedwaleedahmed.me/`)
-* ✅ Structured data (Person schema) in `index.html`
-
----
-
-## 📊 Performance Notes
-
-This project is optimized for strong Lighthouse results:
-
-* Lazy-loaded non-critical sections
-* Reduced main-thread work (throttled animations where needed)
-* Deferred heavy visuals (Particles)
-* Optimized LCP image (AVIF/WebP + preload)
-* Zero layout shift (CLS = 0)
-
----
-
-## 🤝 Contributions
-
-Feedback, issues, and suggestions are welcome.
-If you encounter any bugs or have any improvement ideas, feel free to open an issue or reach out.
-
----
-
-## 📄 License
-
-Licensed under the **MIT License**.
-
----
-
-## 👋 Author
-
-**Syed Waleed Ahmed**
+MIT -- see [LICENSE](LICENSE)

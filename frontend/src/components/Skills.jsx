@@ -6,25 +6,25 @@ const skillGroups = [
   {
     title: "AI / ML & LLMs",
     skills: [
-      { name: "Machine Learning • Deep Learning", percent: 88 },
-      { name: "LLMs • RAG • LangChain • LangGraph", percent: 85 },
-      { name: "Python • NumPy • Pandas • Scikit-learn", percent: 90 },
+      { name: "Machine Learning • Deep Learning", percent: 82 },
+      { name: "LLMs • RAG • OpenAI • Gemini", percent: 88 },
+      { name: "Python • PyTorch • Scikit-learn", percent: 88 },
     ],
   },
   {
     title: "Data & Backend",
     skills: [
       { name: "Data Preprocessing • Clustering • ETL", percent: 85 },
-      { name: "MySQL • PostgreSQL • MongoDB", percent: 82 },
-      { name: "Node.js • Express • REST APIs", percent: 78 },
+      { name: "PostgreSQL • MySQL • pgvector", percent: 78 },
+      { name: "Node.js • Express • REST APIs", percent: 72 },
     ],
   },
   {
-    title: "Web, Cloud & DevOps",
+    title: "Web, Frameworks & Tools",
     skills: [
-      { name: "React • HTML • CSS • JavaScript", percent: 82 },
-      { name: "Azure • Docker • Linux", percent: 72 },
-      { name: "Git • CI/CD • Workflow Automation", percent: 78 },
+      { name: "React • Next.js • JavaScript", percent: 80 },
+      { name: "Git • CI/CD • Power BI", percent: 72 },
+      { name: "Mastra • OpenAI Gym • Vercel", percent: 70 },
     ],
   },
 ];
@@ -105,38 +105,40 @@ const Skills = () => {
           <h2 className="section-title text-center mb-5">Skills</h2>
         </Reveal>
 
-        <div className="skills-row d-flex flex-wrap justify-content-center gap-4">
+        <div className="row g-4 justify-content-center">
           {skillGroups.map((group, gi) => (
-            <Reveal key={group.title} delay={gi * 0.05}>
-              <div className="neo-card p-4 skill-card-wrapper">
-                <h3 className="mb-4 h5">{group.title}</h3>
+            <div className="col-md-6 col-lg-4 d-flex" key={group.title}>
+              <Reveal delay={gi * 0.05} className="w-100">
+                <div className="neo-card h-100 p-4">
+                  <h3 className="mb-4">{group.title}</h3>
 
-                {group.skills.map((skill, si) => (
-                  <div className="mb-3" key={skill.name}>
-                    <div className="d-flex justify-content-between align-items-center mb-1">
-                      <span className="skill-name">{skill.name}</span>
-                      <span className="skill-percent">
-                        {displayPercents[gi][si]}%
-                      </span>
-                    </div>
+                  {group.skills.map((skill, si) => (
+                    <div className="mb-3" key={skill.name}>
+                      <div className="d-flex justify-content-between align-items-center mb-1">
+                        <span className="skill-name">{skill.name}</span>
+                        <span className="skill-percent">
+                          {displayPercents[gi][si]}%
+                        </span>
+                      </div>
 
-                    <div className="progress skill-progress">
-                      <div
-                        className="progress-bar"
-                        role="progressbar"
-                        aria-label={`${skill.name} proficiency`}
-                        aria-valuemin={0}
-                        aria-valuemax={100}
-                        aria-valuenow={displayPercents[gi][si]}
-                        style={{
-                          width: animate ? `${displayPercents[gi][si]}%` : "0%",
-                        }}
-                      />
+                      <div className="progress skill-progress">
+                        <div
+                          className="progress-bar"
+                          role="progressbar"
+                          aria-label={`${skill.name} proficiency`}
+                          aria-valuemin={0}
+                          aria-valuemax={100}
+                          aria-valuenow={displayPercents[gi][si]}
+                          style={{
+                            width: animate ? `${displayPercents[gi][si]}%` : "0%",
+                          }}
+                        />
+                      </div>
                     </div>
-                  </div>
-                ))}
-              </div>
-            </Reveal>
+                  ))}
+                </div>
+              </Reveal>
+            </div>
           ))}
         </div>
     </div>

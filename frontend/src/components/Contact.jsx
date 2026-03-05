@@ -108,11 +108,9 @@ const Contact = () => {
           <h2 className="section-title text-center mb-5">Contact</h2>
         </Reveal>
 
-        {/* Centered row & constrained width */}
-        <div className="row justify-content-center contact-row">
-          <div className="col-12 col-lg-10 col-xl-9">
-            <Reveal delay={0.08}>
-              <div className="neo-card contact-card p-4 p-md-5">
+        {/* Full-width card */}
+        <Reveal delay={0.08}>
+          <div className="neo-card contact-card p-4">
                 <p className="text-center text-muted mb-4">
                   Have a question, collaboration idea, or opportunity? Fill out
                   the form and I&apos;ll get back to you.
@@ -132,7 +130,7 @@ const Contact = () => {
                         className={`form-control glass-input ${
                           errors.name ? "is-invalid" : ""
                         }`}
-                        placeholder="Your full name"
+                        placeholder="e.g. John Doe"
                         value={form.name}
                         onChange={handleChange}
                         spellCheck="false"
@@ -156,7 +154,7 @@ const Contact = () => {
                         className={`form-control glass-input ${
                           errors.email ? "is-invalid" : ""
                         }`}
-                        placeholder="you@example.com"
+                        placeholder="e.g. john.doe@company.com"
                         value={form.email}
                         onChange={handleChange}
                         spellCheck="false"
@@ -171,7 +169,7 @@ const Contact = () => {
                     {/* Phone */}
                     <div className="col-md-6">
                       <label className="form-label mb-1" htmlFor="phone">
-                        Phone (with country code) *
+                        Phone *
                       </label>
                       <input
                         id="phone"
@@ -180,7 +178,7 @@ const Contact = () => {
                         className={`form-control glass-input ${
                           errors.phone ? "is-invalid" : ""
                         }`}
-                        placeholder="+xx xxxxxxxxxx"
+                        placeholder="e.g. +1 234 567 8900"
                         value={form.phone}
                         onChange={handleChange}
                         spellCheck="false"
@@ -204,7 +202,7 @@ const Contact = () => {
                         className={`form-control glass-input ${
                           errors.subject ? "is-invalid" : ""
                         }`}
-                        placeholder="How can I help?"
+                        placeholder="e.g. Job Opportunity / Collaboration / Freelance"
                         value={form.subject}
                         onChange={handleChange}
                         spellCheck="false"
@@ -227,7 +225,7 @@ const Contact = () => {
                         className={`form-control glass-input contact-message ${
                           errors.message ? "is-invalid" : ""
                         }`}
-                        placeholder="Share a brief overview of your project, question or opportunity..."
+                        placeholder="Hi Waleed, I came across your portfolio and would like to discuss..."
                         value={form.message}
                         onChange={handleChange}
                       />
@@ -260,8 +258,6 @@ const Contact = () => {
                 </form>
               </div>
             </Reveal>
-          </div>
-        </div>
       </div>
   );
 };

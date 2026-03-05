@@ -9,14 +9,14 @@ const Experience = () => {
           </h2>
         </Reveal>
 
-        <div className="row g-4 align-items-stretch">
+        <div className="row g-4 align-items-stretch justify-content-center">
           {/* Thesis Student */}
           <div className="col-md-6 col-lg-4 d-flex">
             <Reveal delay={0.04} className="w-100">
               <div className="neo-card experience-card h-100 p-4">
                 <h3 className="mb-1">Thesis Student</h3>
-                <p className="text-accent mb-1">MemorAIz</p>
-                <p className="timeline-meta mb-3">Feb 2026 &ndash; Present &middot; Bologna, Italy</p>
+                <div className="text-accent mb-1 card-subtitle-accent">MemorAIz</div>
+                <div className="timeline-meta mb-3">Feb 2026 &ndash; Present &middot; Bologna, Italy</div>
 
                 <ul className="mb-0">
                   <li>
@@ -36,14 +36,8 @@ const Experience = () => {
                   </li>
                   <li>
                     Shipped the first productized MVP and an internal
-                    &ldquo;dogfooding&rdquo; assistant to stress-test
+                    &ldquo;Onboarding Assistant&rdquo; assistant to stress-test
                     configuration, module UX, and orchestration robustness.
-                  </li>
-                  <li>
-                    Implemented governance features (human-in-the-loop approvals,
-                    guardrails, role/permission boundaries) and a lightweight
-                    evaluation suite with scenario-based regression tests and
-                    quality metrics per workflow.
                   </li>
                 </ul>
               </div>
@@ -55,8 +49,8 @@ const Experience = () => {
             <Reveal delay={0.08} className="w-100">
               <div className="neo-card experience-card h-100 p-4">
                 <h3 className="mb-1">Data Clustering &amp; AI Model Intern</h3>
-                <p className="text-accent mb-1">Fruugle</p>
-                <p className="timeline-meta mb-3">Jan 2026 &ndash; Present &middot; Riga, Latvia (Remote)</p>
+                <div className="text-accent mb-1 card-subtitle-accent">Fruugle</div>
+                <div className="timeline-meta mb-3">Jan 2026 &ndash; Present &middot; Riga, Latvia (Remote)</div>
 
                 <ul className="mb-0">
                   <li>
@@ -91,8 +85,8 @@ const Experience = () => {
             <Reveal delay={0.12} className="w-100">
               <div className="neo-card experience-card h-100 p-4">
                 <h3 className="mb-1">Tech Trainee</h3>
-                <p className="text-accent mb-1">Jubilee Life Insurance Co. Ltd.</p>
-                <p className="timeline-meta mb-3">Dec 2023 &ndash; Oct 2024 &middot; Karachi, Pakistan</p>
+                <div className="text-accent mb-1 card-subtitle-accent">Jubilee Life Insurance Co. Ltd.</div>
+                <div className="timeline-meta mb-3">Dec 2023 &ndash; Oct 2024 &middot; Karachi, Pakistan</div>
 
                 <ul className="mb-0">
                   <li>
@@ -116,7 +110,7 @@ const Experience = () => {
                   <li>
                     Customized SharePoint and CRM solutions for workflow
                     automation and cross-team collaboration.
-                  </li>
+       </li>
                 </ul>
               </div>
             </Reveal>

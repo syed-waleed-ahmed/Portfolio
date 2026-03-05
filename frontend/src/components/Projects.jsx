@@ -3,37 +3,37 @@ import { FaGithub, FaExternalLinkAlt } from "react-icons/fa";
 
 const projects = [
   {
-    title: "Multi-Agent AI Marketing Workflow",
-    role: "Self-Paced Project",
-    period: "2025",
-    stack: ["Groq API", "LangGraph", "ReAct", "Python"],
+    title: "Adversarial Training vs Domain Randomization",
+    role: "Academic Project \u2022 Group",
+    period: "2025 \u2013 2026",
+    stack: ["PPO", "LSTM", "SAC", "OpenAI Gym"],
     description:
-      "Engineered a multi-agent AI workflow to automate campaign creation from a simple product brief, including trend analysis, copywriting and final content assembly.",
+      "Benchmarked RL agent robustness in a modified Lunar Lander environment using adversarial self-play and domain randomization under visible and latent wind conditions.",
     highlight:
-      "Designed a modular, reusable architecture for future channels and formats.",
-    github: "https://github.com/syed-waleed-ahmed",
+      "LSTM-PPO with latent disturbances achieved the highest robustness by inferring hidden wind through temporal memory.",
+    github: "https://github.com/syed-waleed-ahmed/LunarLander_AdversaryLearning",
   },
   {
-    title: "Delay Classification for Tele-Robotic System",
-    role: "Academic Project \u2022 Group Lead",
-    period: "2022 \u2013 2023",
-    stack: ["C++", "Signal Processing", "Networking"],
+    title: "Adversarial Attacks & Defenses on CelebA",
+    role: "Academic Project \u2022 Group",
+    period: "2025 \u2013 2026",
+    stack: ["ResNet-18", "FGSM", "PGD", "PyTorch"],
     description:
-      "Analyzed and classified delays in teleoperation over LAN, WAN and 4G networks to improve stability and reliability of remote robotic systems.",
+      "Studied adversarial robustness in face attribute classification using FGSM and PGD attacks on a pretrained ResNet-18, with FGSM adversarial training as defense.",
     highlight:
-      "Combined data analysis, system modelling and performance evaluation for robust insights.",
-    github: "https://github.com/syed-waleed-ahmed",
+      "PGD drove accuracy to 0%; FGSM adversarial training defended only against FGSM, revealing the limits of single-attack defenses.",
+    github: "https://github.com/syed-waleed-ahmed/celeba-adversarial-attacks-defenses",
   },
   {
-    title: "Visual Inspection of Motorcycle Connecting Rods",
-    role: "Academic Project",
-    period: "2024",
-    stack: ["OpenCV", "Python", "Automation"],
+    title: "Memoraiz Onboarding Assistant",
+    role: "Testing Project",
+    period: "2026",
+    stack: ["Next.js", "Mastra", "OpenAI", "pgvector"],
     description:
-      "Developed a vision-based inspection system for dimensional analysis and automated sorting of connecting rods using feature and hole-count based classification.",
+      "Built an AI-powered onboarding platform with a split-screen conversational interface that auto-fills company profiles in real time using parallel LLM racing, hybrid caching, and streaming.",
     highlight:
-      "Enabled automated quality inspection and robotic sorting between rod types.",
-    github: "https://github.com/syed-waleed-ahmed",
+      "Replaced manual form filling with an agent-driven workflow combining RAG retrieval, real-time canvas updates, and sub-second response times.",
+    github: "https://github.com/syed-waleed-ahmed/memoraiz-onboarding",
   },
 ];
 
@@ -44,7 +44,7 @@ const Projects = () => {
           <h2 className="section-title text-center mb-5">Projects</h2>
         </Reveal>
 
-        <div className="row g-4">
+        <div className="row g-4 justify-content-center">
           {projects.map((project, idx) => (
             <div className="col-md-6 col-lg-4 d-flex" key={project.title}>
               <Reveal delay={0.06 * (idx + 1)} className="w-100">
@@ -64,10 +64,10 @@ const Projects = () => {
                         </a>
                       )}
                     </div>
-                    <div className="text-accent small card-subtitle-accent">
+                    <div className="text-accent card-subtitle-accent">
                       {project.role}
                     </div>
-                    <div className="timeline-meta mt-1">{project.period}</div>
+                    <div className="timeline-meta mb-3">{project.period}</div>
                   </div>
 
                   <p className="flex-grow-1 mb-3">{project.description}</p>

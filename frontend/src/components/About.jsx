@@ -9,39 +9,38 @@ const About = () => {
           </h2>
         </Reveal>
 
-        {/* Center the pair + equal height */}
-        <div className="row g-4 align-items-stretch justify-content-center about-row">
-          {/* About text card */}
-          <div className="col-md-10 col-lg-6 d-flex">
+        <div className="row g-4 align-items-stretch justify-content-center">
+          <div className="col-md-6 d-flex">
             <Reveal delay={0.04} className="w-100">
-              <div className="neo-card about-card flex-fill h-100 p-4 p-md-5">
+              <div className="neo-card about-card flex-fill h-100 p-4">
                 <p className="mb-3">
-                  I think the best AI work happens when you stop treating models
-                  as magic and start treating them as components in a system.
-                  That mindset drives everything I build &mdash; from multi-agent
-                  orchestration layers to production data pipelines.
+                  I treat AI models the same way I treat any other software
+                  component &mdash; they need clean interfaces, proper error
+                  handling, and a deployment story. That mindset shapes every
+                  system I build, from agent orchestration to data pipelines.
                 </p>
                 <p className="mb-3">
-                  Right now I&apos;m productizing a modular AI assistant platform
-                  at <strong>MemorAIz</strong> (thesis) and building clustering
-                  pipelines over 1&nbsp;M+ product records at <strong>Fruugle</strong>.
-                  Before that I shipped web apps, SIEM dashboards, and BI
-                  reports during a year-long IT rotational programme.
+                  At <strong>MemorAIz</strong> I&apos;m turning my thesis into a
+                  productized AI assistant platform with configurable agents,
+                  module registries, and built-in observability. At{" "}
+                  <strong>Fruugle</strong> I cluster and normalize 1&nbsp;M+
+                  supermarket product records so a multimodal AI assistant can
+                  do real-time price comparison.
                 </p>
                 <p className="mb-0">
-                  When I&apos;m not writing code I&apos;m usually exploring new
-                  papers on agentic architectures, solving problems on LeetCode,
-                  or figuring out how to make the next pipeline a little more
-                  fault-tolerant.
+                  Before that, I spent a year at <strong>Jubilee Life
+                  Insurance</strong> rotating through cybersecurity, web
+                  development, and database administration &mdash; which gave me
+                  the breadth to wire full systems together, not just the ML
+                  parts.
                 </p>
               </div>
             </Reveal>
           </div>
 
-          {/* Education card */}
-          <div className="col-md-10 col-lg-6 d-flex">
+          <div className="col-md-6 d-flex">
             <Reveal delay={0.08} className="w-100">
-              <div className="neo-card about-card flex-fill h-100 p-4 p-md-5">
+              <div className="neo-card about-card flex-fill h-100 p-4">
                 <h3 className="mb-3 text-accent">Education</h3>
                 <ul className="timeline mb-0">
                   <li className="mb-3">
