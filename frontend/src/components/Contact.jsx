@@ -48,7 +48,7 @@ const Contact = () => {
       const phoneRegex = /^\+\d[\d\s]{6,18}$/;
       if (!phoneRegex.test(form.phone)) {
         newErrors.phone =
-          "Use international format, e.g. +12 3456789000";
+          "Use international format, e.g. +1 234 567 8900";
       }
     }
 

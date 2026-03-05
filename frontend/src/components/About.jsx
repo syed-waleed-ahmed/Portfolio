@@ -23,7 +23,7 @@ const About = () => {
                   At <strong>MemorAIz</strong> I&apos;m turning my thesis into a
                   productized AI assistant platform with configurable agents,
                   module registries, and built-in observability. At{" "}
-                  <strong>Fruugle</strong> I cluster and normalize 1&nbsp;M+
+                  <strong>Fruugle</strong> I cluster and normalize 1M+
                   supermarket product records so a multimodal AI assistant can
                   do real-time price comparison.
                 </p>
@@ -45,7 +45,7 @@ const About = () => {
                 <ul className="timeline mb-0">
                   <li className="mb-3">
                     <div className="fw-semibold">
-                      Master in Automation Engineering
+                      Master&apos;s in Automation Engineering
                     </div>
                     <div className="timeline-meta">
                       Alma Mater Studiorum &ndash; Universit&agrave; di Bologna, Italy
@@ -65,7 +65,7 @@ const About = () => {
 
                   <li>
                     <div className="fw-semibold">
-                      Bachelor in Electrical Engineering
+                      Bachelor&apos;s in Electrical Engineering
                     </div>
                     <div className="timeline-meta">
                       NED University of Engineering and Technology, Karachi,

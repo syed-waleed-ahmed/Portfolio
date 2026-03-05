@@ -28,7 +28,7 @@ const Interests = () => {
                 <p className="mb-0">
                   I care about clean architecture, reproducible workflows, and
                   closing the gap between &ldquo;it works on my machine&rdquo;
-                  and &ldquo;it works in production for 10&nbsp;k users.&rdquo;
+                  and &ldquo;it works in production for 10k users.&rdquo;
                 </p>
               </div>
 

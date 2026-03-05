@@ -36,7 +36,7 @@ const Experience = () => {
                   </li>
                   <li>
                     Shipped the first productized MVP and an internal
-                    &ldquo;Onboarding Assistant&rdquo; assistant to stress-test
+                    &ldquo;Onboarding Assistant&rdquo; to stress-test
                     configuration, module UX, and orchestration robustness.
                   </li>
                 </ul>
@@ -101,7 +101,7 @@ const Experience = () => {
                   </li>
                   <li>
                     Built dynamic web applications using HTML/CSS, JavaScript,
-                    PHP, .NET ASP Core, React, and MySQL.
+                    PHP, ASP.NET Core, React, and MySQL.
                   </li>
                   <li>
                     Designed databases, stored procedures, SSRS reports, and
