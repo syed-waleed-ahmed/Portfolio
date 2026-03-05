@@ -9,6 +9,7 @@ export default defineConfig({
     // Keep your PWA setup
     VitePWA({
       registerType: "autoUpdate",
+      injectRegister: "script-defer",
       includeAssets: ["favicon.ico", "apple-touch-icon.png"],
       manifest: {
         name: "Syed Waleed Ahmed",
@@ -34,14 +35,5 @@ export default defineConfig({
 
   build: {
     target: "es2018",
-    sourcemap: true,
-    rollupOptions: {
-      output: {
-        manualChunks: {
-          "framer-motion": ["framer-motion"],
-          "react-vendor": ["react", "react-dom"],
-        },
-      },
-    },
   },
 });

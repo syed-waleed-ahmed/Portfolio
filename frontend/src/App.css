@@ -458,6 +458,64 @@ small,
   padding-bottom: 40px;
 }
 
+/* Hero entrance animations (replaces framer-motion) */
+.hero-entrance {
+  animation: heroFadeIn 0.7s ease-out both;
+}
+
+.hero-slide-left {
+  animation: heroSlideLeft 0.8s ease-out both;
+}
+
+.hero-slide-right {
+  animation: heroSlideRight 0.9s ease-out both;
+}
+
+.explore-cycle-text {
+  display: inline-block;
+  animation: exploreFadeIn 0.35s ease-out;
+}
+
+@keyframes heroFadeIn {
+  from { opacity: 0; transform: translateY(30px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes heroSlideLeft {
+  from { opacity: 0; transform: translateX(-40px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes heroSlideRight {
+  from { opacity: 0; transform: translateX(40px) scale(0.92); }
+  to   { opacity: 1; transform: translateX(0) scale(1); }
+}
+
+@keyframes exploreFadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Profile hover — only on hover-capable devices */
+@media (hover: hover) {
+  .hero-photo-wrapper {
+    transition: transform 0.3s ease;
+  }
+  .hero-photo-wrapper:hover {
+    transform: translateY(-8px) rotate(1.2deg);
+  }
+}
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .hero-entrance,
+  .hero-slide-left,
+  .hero-slide-right,
+  .explore-cycle-text {
+    animation: none;
+  }
+}
+
 .hero-title {
   letter-spacing: 0.02em;
   line-height: 1.1;
