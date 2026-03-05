@@ -50,7 +50,7 @@ body {
 */
 
 /* Put these assets in /public (root), or update paths accordingly */
-body::before {
+body.bg-ready::before {
   content: "";
   position: fixed;
   inset: 0;
@@ -72,7 +72,7 @@ body::before {
   will-change: opacity;
 }
 
-body::after {
+body.bg-ready::after {
   content: "";
   position: fixed;
   inset: 0;
@@ -98,8 +98,8 @@ body::after {
 /* If user has Data Saver enabled, skip decorative background images.
    Functionality is unchanged; UI remains usable and readable. */
 @media (prefers-reduced-data: reduce) {
-  body::before,
-  body::after {
+  body.bg-ready::before,
+  body.bg-ready::after {
     background-image: none !important;
   }
 }
@@ -220,6 +220,13 @@ body::after {
   letter-spacing: 0.06em;
   text-transform: uppercase;
   margin-bottom: 28px;
+}
+
+@media (max-width: 576px) {
+  .section-title {
+    font-size: 1.3rem;
+    letter-spacing: 0.04em;
+  }
 }
 
 .section-title::after {
@@ -500,7 +507,8 @@ small,
   display: inline-flex;
   align-items: center;
   gap: 0.45rem;
-  padding: 0.5rem 1.1rem;
+  padding: 0.6rem 1.1rem;
+  min-height: 44px;
   border-radius: 999px;
   border: 1px solid rgba(148, 163, 184, 0.45);
   background: rgba(15, 23, 42, 0.88);
@@ -578,6 +586,21 @@ small,
 
   .profile-img {
     max-width: 240px;
+  }
+}
+
+/* Landscape phones: reduce forced hero height */
+@media (max-height: 500px) and (orientation: landscape) {
+  #hero.hero-gradient {
+    min-height: auto;
+    padding-block: 2rem;
+  }
+}
+
+/* Tablet: photo stacks below text, keep it modest */
+@media (min-width: 769px) and (max-width: 991px) {
+  .profile-img {
+    max-width: 260px;
   }
 }
 
@@ -739,8 +762,8 @@ textarea.form-control.glass-input::-moz-placeholder {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 38px;
-  height: 38px;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
   border: 1px solid var(--border-subtle);
   color: var(--text-muted);
@@ -772,6 +795,26 @@ textarea.form-control.glass-input::-moz-placeholder {
 /* Accent subtitles (company / role) uniform across cards */
 .neo-card .text-accent {
   font-size: 0.85rem;
+}
+
+@media (max-width: 375px) {
+  .neo-card h3 {
+    font-size: 1.05rem;
+  }
+
+  .neo-card p,
+  .neo-card li {
+    font-size: 0.84rem;
+  }
+
+  .hero-pill {
+    font-size: 0.78rem;
+    padding: 0.5rem 0.85rem;
+  }
+
+  .explore-pill {
+    font-size: 0.76rem;
+  }
 }
 
 /* ========= Reduced motion ========= */

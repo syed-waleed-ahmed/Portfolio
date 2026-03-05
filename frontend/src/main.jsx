@@ -36,10 +36,13 @@ if (typeof window !== "undefined") {
     }
   };
 
+  // Also defer decorative background images until after idle
+  const enableBackgrounds = () => document.body.classList.add("bg-ready");
+
   const id =
     "requestIdleCallback" in window
-      ? window.requestIdleCallback(loadBootstrapJS, { timeout: 2000 })
-      : window.setTimeout(loadBootstrapJS, 1500);
+      ? window.requestIdleCallback(() => { loadBootstrapJS(); enableBackgrounds(); }, { timeout: 2000 })
+      : window.setTimeout(() => { loadBootstrapJS(); enableBackgrounds(); }, 1500);
 
   // No cleanup needed for module import; keep it simple
   void id;

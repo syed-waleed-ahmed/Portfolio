@@ -95,7 +95,7 @@ const Hero = () => {
                 and complex workflows into reliable, deployed applications.
               </p>
 
-              <div className="d-flex align-items-center gap-2 mb-3 hero-explore-row">
+              <div className="d-flex flex-wrap align-items-center gap-2 mb-3 hero-explore-row">
                 <span className="text-muted small">Currently exploring</span>
                 <div className="explore-pill">
                   <span className="explore-dot" />
@@ -202,6 +202,7 @@ const Hero = () => {
                     className="profile-img"
                     width="300"
                     height="300"
+                    sizes="(max-width: 768px) 240px, 300px"
                     loading="eager"
                     fetchPriority="high"
                     decoding="async"

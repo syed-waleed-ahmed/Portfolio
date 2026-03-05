@@ -35,5 +35,13 @@ export default defineConfig({
   build: {
     target: "es2018",
     sourcemap: true,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          "framer-motion": ["framer-motion"],
+          "react-vendor": ["react", "react-dom"],
+        },
+      },
+    },
   },
 });
