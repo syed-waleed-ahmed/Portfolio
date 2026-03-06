@@ -1,0 +1,134 @@
+/* =========================
+   navbar.css — glass nav, hamburger, pill links, mobile dropdown
+   ========================= */
+
+.glass-nav {
+  z-index: 50;
+  background: radial-gradient(circle at top, #020617 0, #020617 35%, #020617f5 100%);
+  backdrop-filter: blur(18px);
+  border-bottom: 1px solid rgba(148, 163, 184, 0.22);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.6);
+}
+
+.glass-nav .navbar-nav {
+  gap: 0.75rem;
+}
+
+.glass-nav .navbar-toggler {
+  border: none;
+}
+
+@media (max-width: 767.98px) {
+  .glass-nav .container {
+    justify-content: flex-end;
+  }
+}
+
+/* ========= Animated hamburger ========= */
+.hamburger {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  width: 36px;
+  height: 36px;
+  padding: 4px;
+  cursor: pointer;
+  background: transparent;
+  border: none;
+}
+
+.hamburger-line {
+  display: block;
+  width: 22px;
+  height: 2px;
+  border-radius: 2px;
+  background: #e5e7eb;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+  transform-origin: center;
+}
+
+.hamburger.open .hamburger-line:nth-child(1) {
+  transform: translateY(7px) rotate(45deg);
+}
+
+.hamburger.open .hamburger-line:nth-child(2) {
+  opacity: 0;
+}
+
+.hamburger.open .hamburger-line:nth-child(3) {
+  transform: translateY(-7px) rotate(-45deg);
+}
+
+/* ========= Nav pill links ========= */
+.nav-pills .nav-link-pill,
+.nav-pills .nav-link-pill.active,
+.nav-pills .show > .nav-link-pill {
+  position: relative;
+  padding: 0.65rem 0.4rem;
+  border: none;
+  border-radius: 0;
+  background: transparent !important;
+  color: var(--text-muted);
+  font-size: 0.82rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: color 0.18s ease-out, transform 0.18s ease-out, text-shadow 0.18s ease-out;
+}
+
+.nav-pills .nav-link-pill::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: 0.15rem;
+  width: 0;
+  height: 2px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--accent), var(--accent-2));
+  box-shadow: 0 0 8px rgba(56, 189, 248, 0.7);
+  opacity: 0;
+  transform: translateX(-50%);
+  transition: width 0.2s ease-out, opacity 0.2s ease-out;
+}
+
+.nav-pills .nav-link-pill:hover,
+.nav-pills .nav-link-pill:focus,
+.nav-pills .nav-link-pill.active {
+  color: var(--text-main);
+  transform: translateY(-1px);
+  text-shadow: 0 0 8px rgba(15, 23, 42, 0.9);
+}
+
+.nav-pills .nav-link-pill:hover::after,
+.nav-pills .nav-link-pill:focus::after,
+.nav-pills .nav-link-pill.active::after {
+  width: 80%;
+  opacity: 1;
+}
+
+/* ========= Mobile dropdown ========= */
+@media (max-width: 768px) {
+  .glass-nav .navbar-nav {
+    gap: 0;
+    padding: 0.75rem 0;
+  }
+
+  .nav-pills .nav-link-pill {
+    padding: 0.7rem 0.5rem;
+    font-size: 0.85rem;
+    letter-spacing: 0.1em;
+    border-radius: 6px;
+    transition: background 0.2s ease, color 0.18s ease-out;
+  }
+
+  .nav-pills .nav-link-pill:hover,
+  .nav-pills .nav-link-pill.active {
+    background: rgba(96, 165, 250, 0.1) !important;
+  }
+
+  .nav-pills .nav-link-pill::after {
+    display: none;
+  }
+}

@@ -9,14 +9,7 @@ import {
   FaFileAlt,
 } from "react-icons/fa";
 import { SiLeetcode } from "react-icons/si";
-
-const exploreItems = [
-  "Agentic AI Systems",
-  "Multimodal RAG Pipelines",
-  "Multi-Agent Orchestration",
-  "LLM Engineering & Tool Use",
-  "Data Intelligence Pipelines",
-];
+import { personalInfo, socialLinks, exploreItems } from "../data/portfolio";
 
 const Hero = () => {
   const [exploreIndex, setExploreIndex] = useState(0);
@@ -48,7 +41,7 @@ const Hero = () => {
           <div className="col-lg-7">
             <div className="hero-slide-left">
               <h1 className="display-4 fw-bold hero-title mb-3">
-                Hi, I'm <span className="gradient-text">Syed Waleed Ahmed</span>
+                Hi, I'm <span className="gradient-text">{personalInfo.name}</span>
               </h1>
 
               <p className="hero-lead mb-4">
@@ -72,23 +65,23 @@ const Hero = () => {
 
               <div className="d-flex flex-wrap gap-2 hero-links-row">
                 <a
-                  href="mailto:syedwaleedahmed9@gmail.com"
+                  href={`mailto:${personalInfo.email}`}
                   className="hero-pill"
                 >
                   <FaEnvelope className="hero-pill-icon" />
                   Email
                 </a>
                 <a
-                  href="tel:+393519609532"
+                  href={`tel:${personalInfo.phone}`}
                   className="hero-pill"
                 >
                   <FaPhoneAlt className="hero-pill-icon" />
-                  +39 351 960 9532
+                  {personalInfo.phoneDisplay}
                 </a>
                 <a
-                  href="https://wa.me/393519609532"
+                  href={personalInfo.whatsapp}
                   target="_blank"
-                  rel="noreferrer"
+                  rel="noopener noreferrer"
                   className="hero-pill"
                 >
                   <FaWhatsapp className="hero-pill-icon" />
@@ -98,36 +91,36 @@ const Hero = () => {
 
               <div className="d-flex flex-wrap gap-2 hero-links-row">
                 <a
-                  href="https://www.linkedin.com/in/syed-waleed-ahmed/"
+                  href={socialLinks.linkedin}
                   target="_blank"
-                  rel="noreferrer"
+                  rel="noopener noreferrer"
                   className="hero-pill"
                 >
                   <FaLinkedinIn className="hero-pill-icon" />
                   LinkedIn
                 </a>
                 <a
-                  href="https://github.com/syed-waleed-ahmed"
+                  href={socialLinks.github}
                   target="_blank"
-                  rel="noreferrer"
+                  rel="noopener noreferrer"
                   className="hero-pill"
                 >
                   <FaGithub className="hero-pill-icon" />
                   GitHub
                 </a>
                 <a
-                  href="https://leetcode.com/u/syed-waleed-ahmed/"
+                  href={socialLinks.leetcode}
                   target="_blank"
-                  rel="noreferrer"
+                  rel="noopener noreferrer"
                   className="hero-pill"
                 >
                   <SiLeetcode className="hero-pill-icon" />
                   LeetCode
                 </a>
                 <a
-                  href="https://drive.google.com/file/d/1hruWE4BEDn-XTiSIkGzVKoKEmpOvHu9d/view?usp=sharing"
+                  href={personalInfo.resumeUrl}
                   target="_blank"
-                  rel="noreferrer"
+                  rel="noopener noreferrer"
                   className="hero-pill hero-pill-accent"
                 >
                   <FaFileAlt className="hero-pill-icon" />
@@ -145,7 +138,7 @@ const Hero = () => {
                   <source type="image/webp" srcSet="/images/Profile.webp" />
                   <img
                     src="/images/Profile.webp"
-                    alt="Syed Waleed Ahmed"
+                    alt={personalInfo.name}
                     className="profile-img"
                     width="300"
                     height="300"

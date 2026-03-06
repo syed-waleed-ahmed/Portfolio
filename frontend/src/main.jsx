@@ -24,7 +24,10 @@ if (typeof window !== "undefined" && !("requestIdleCallback" in window)) {
 // Styles first (CSS is render-blocking anyway; keep order intentional)
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./index.css";
-import "./App.css";
+import "./styles/base.css";
+import "./styles/navbar.css";
+import "./styles/hero.css";
+import "./styles/components.css";
 
 // ❗Bootstrap JS: lazy-load after idle to reduce startup JS cost
 if (typeof window !== "undefined") {

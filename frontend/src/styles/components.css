@@ -1,0 +1,385 @@
+/* =========================
+   components.css — cards, timeline, skills, interests, contact, footer
+   ========================= */
+
+/* ========= Cards ========= */
+.neo-card {
+  border-radius: var(--radius-lg);
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  box-shadow: var(--shadow-soft);
+  transition: transform 0.22s ease-out, box-shadow 0.22s ease-out, border-color 0.22s ease-out,
+    background 0.22s ease-out;
+}
+
+@media (max-width: 768px) {
+  .neo-card {
+    padding: 1.5rem !important;
+  }
+}
+
+.neo-card:hover {
+  transform: translateY(-6px) scale(1.01);
+  box-shadow: 0 24px 60px rgba(15, 23, 42, 0.95);
+  border-color: rgba(129, 140, 248, 0.9);
+  background:
+    radial-gradient(circle at top left, rgba(56, 189, 248, 0.16), transparent 55%),
+    radial-gradient(circle at bottom right, rgba(129, 140, 248, 0.18), transparent 55%),
+    #020617;
+}
+
+.project-card:hover {
+  box-shadow: 0 0 25px rgba(56, 189, 248, 0.6);
+}
+
+/* GitHub link icon on project cards */
+.project-link-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 1px solid var(--border-subtle);
+  color: var(--text-muted);
+  font-size: 1rem;
+  transition: color 0.2s ease, border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.project-link-icon:hover {
+  color: var(--accent-2);
+  border-color: var(--accent-2);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 14px rgba(34, 211, 238, 0.3);
+}
+
+.card-subtitle-accent {
+  position: relative;
+  display: inline-block;
+}
+
+.card-subtitle-accent::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -0.25rem;
+  width: 38%;
+  height: 2px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--accent), var(--accent-2));
+  opacity: 0.9;
+}
+
+/* Card heading & text consistency */
+.neo-card h3 {
+  font-size: 1.15rem;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.neo-card p,
+.neo-card li {
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
+.neo-card .text-accent {
+  font-size: 0.85rem;
+}
+
+@media (max-width: 375px) {
+  .neo-card h3 {
+    font-size: 1.05rem;
+  }
+
+  .neo-card p,
+  .neo-card li {
+    font-size: 0.84rem;
+  }
+}
+
+/* ========= Timeline (About.jsx) ========= */
+.timeline {
+  list-style: none;
+  padding-left: 0;
+  margin: 0;
+}
+
+.timeline li {
+  position: relative;
+  padding-left: 1.3rem;
+  margin-bottom: 1rem;
+}
+
+.timeline li::before {
+  content: "";
+  position: absolute;
+  left: 0.2rem;
+  top: 0.35rem;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 10px rgba(99, 102, 241, 0.8);
+}
+
+/* List items inside content cards — accent dot bullets */
+.experience-card ul,
+.project-card ul {
+  padding-left: 1.1rem;
+  list-style: none;
+}
+
+.experience-card ul li,
+.project-card ul li {
+  position: relative;
+  padding-left: 1rem;
+  margin-bottom: 0.5rem;
+  color: var(--text-main);
+}
+
+.experience-card ul li::before,
+.project-card ul li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.55rem;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--accent-2);
+  box-shadow: 0 0 6px rgba(34, 211, 238, 0.6);
+}
+
+.about-card,
+.experience-card {
+  display: flex;
+  flex-direction: column;
+}
+
+/* ========= Skills ========= */
+.skill-badge {
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.95);
+  border: 1px solid var(--border-subtle);
+  font-size: 0.76rem;
+}
+
+.skill-progress {
+  background: rgba(15, 23, 42, 0.9);
+  border-radius: 999px;
+  height: 0.55rem;
+  overflow: hidden;
+}
+
+.skill-progress .progress-bar {
+  background: linear-gradient(90deg, var(--accent), var(--accent-2));
+  transition: width 0.1s ease-out;
+}
+
+.skill-name {
+  flex: 1;
+  font-size: 0.9rem;
+}
+
+.skill-percent {
+  flex-shrink: 0;
+  min-width: 2.5rem;
+  text-align: right;
+  font-size: 0.85rem;
+}
+
+/* ========= Interests ========= */
+.interests-heading {
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.interests-list {
+  list-style: none;
+  padding-left: 0;
+}
+
+.interests-list li {
+  position: relative;
+  padding-left: 1.2rem;
+  margin-bottom: 0.35rem;
+}
+
+.interests-list li::before {
+  content: "";
+  position: absolute;
+  left: 0.2rem;
+  top: 0.5rem;
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--accent-2);
+  box-shadow: 0 0 10px rgba(34, 211, 238, 0.9);
+}
+
+/* ========= Contact ========= */
+.contact-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.contact-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at top left, rgba(99, 102, 241, 0.18), transparent 55%),
+    radial-gradient(circle at bottom right, rgba(34, 211, 238, 0.16), transparent 55%);
+  opacity: 0.9;
+  pointer-events: none;
+  z-index: -1;
+}
+
+.glass-input {
+  background: rgba(15, 23, 42, 0.96) !important;
+  border-radius: 12px;
+  border: 1px solid var(--border-subtle);
+  color: #f9fafb !important;
+  caret-color: #f9fafb;
+  -webkit-text-fill-color: #f9fafb !important;
+}
+
+.glass-input::placeholder,
+.glass-input::-moz-placeholder {
+  color: #cbd5f5;
+  opacity: 0.4;
+}
+
+input.form-control.glass-input::placeholder,
+textarea.form-control.glass-input::placeholder {
+  opacity: 0.4 !important;
+  color: #cbd5f5 !important;
+}
+
+input.form-control.glass-input::-moz-placeholder,
+textarea.form-control.glass-input::-moz-placeholder {
+  opacity: 0.4 !important;
+  color: #cbd5f5 !important;
+}
+
+.glass-input:focus {
+  box-shadow: 0 0 0 1px var(--accent-soft);
+  border-color: var(--accent);
+}
+
+.glass-input.is-invalid {
+  border-color: #f97373;
+  box-shadow: 0 0 0 1px rgba(248, 113, 113, 0.7);
+}
+
+.glass-input:-webkit-autofill,
+.glass-input:-webkit-autofill:hover,
+.glass-input:-webkit-autofill:focus {
+  -webkit-text-fill-color: #f9fafb;
+  -webkit-box-shadow: 0 0 0 1000px rgba(15, 23, 42, 0.96) inset;
+  box-shadow: 0 0 0 1000px rgba(15, 23, 42, 0.96) inset;
+}
+
+.contact-message {
+  min-height: 200px;
+  resize: vertical;
+}
+
+/* ========= Footer ========= */
+.footer {
+  border-top: 1px solid var(--border-subtle);
+  color: var(--text-muted);
+  background: #020617;
+}
+
+.footer-social {
+  display: flex;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.footer-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1px solid var(--border-subtle);
+  color: var(--text-muted);
+  font-size: 1.05rem;
+  transition: color 0.2s ease, border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.footer-icon:hover {
+  color: var(--accent-2);
+  border-color: var(--accent-2);
+  transform: translateY(-3px);
+  box-shadow: 0 4px 15px rgba(34, 211, 238, 0.3);
+}
+
+/* ========= Print styles ========= */
+@media print {
+  body {
+    background: #fff !important;
+    color: #111 !important;
+  }
+
+  body::before,
+  body::after {
+    display: none !important;
+  }
+
+  .glass-nav,
+  .hero-orbit,
+  .neon-btn,
+  .footer-social,
+  #tsparticles {
+    display: none !important;
+  }
+
+  .neo-card {
+    break-inside: avoid;
+    box-shadow: none !important;
+    border: 1px solid #ccc !important;
+    background: #fff !important;
+  }
+
+  .section-wrapper {
+    page-break-inside: avoid;
+    padding: 1rem 0 !important;
+  }
+
+  .hero-gradient {
+    min-height: auto !important;
+    padding: 1rem 0 !important;
+  }
+
+  a[href]::after {
+    content: " (" attr(href) ")";
+    font-size: 0.8em;
+    color: #555;
+  }
+
+  .hero-pill::after,
+  .footer-icon::after {
+    content: none !important;
+  }
+
+  .gradient-text {
+    background: none !important;
+    -webkit-background-clip: unset !important;
+    color: #111 !important;
+  }
+
+  .progress-bar {
+    background: #333 !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}

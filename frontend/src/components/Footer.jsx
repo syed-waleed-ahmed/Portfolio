@@ -1,39 +1,40 @@
 import { FaLinkedinIn, FaGithub, FaEnvelope } from "react-icons/fa";
 import { SiLeetcode } from "react-icons/si";
+import { personalInfo, socialLinks } from "../data/portfolio";
 
 const Footer = () => {
   return (
     <footer className="py-4 text-center footer">
       <div className="footer-social">
         <a
-          href="https://www.linkedin.com/in/syed-waleed-ahmed/"
+          href={socialLinks.linkedin}
           target="_blank"
-          rel="noreferrer"
+          rel="noopener noreferrer"
           className="footer-icon"
           aria-label="LinkedIn"
         >
           <FaLinkedinIn />
         </a>
         <a
-          href="https://github.com/syed-waleed-ahmed"
+          href={socialLinks.github}
           target="_blank"
-          rel="noreferrer"
+          rel="noopener noreferrer"
           className="footer-icon"
           aria-label="GitHub"
         >
           <FaGithub />
         </a>
         <a
-          href="https://leetcode.com/u/syed-waleed-ahmed/"
+          href={socialLinks.leetcode}
           target="_blank"
-          rel="noreferrer"
+          rel="noopener noreferrer"
           className="footer-icon"
           aria-label="LeetCode"
         >
           <SiLeetcode />
         </a>
         <a
-          href="mailto:syedwaleedahmed9@gmail.com"
+          href={`mailto:${personalInfo.email}`}
           className="footer-icon"
           aria-label="Email"
         >
@@ -41,7 +42,7 @@ const Footer = () => {
         </a>
       </div>
       <small>
-        © {new Date().getFullYear()} Syed Waleed Ahmed. All rights reserved.
+        &copy; {new Date().getFullYear()} {personalInfo.name}. All rights reserved.
       </small>
     </footer>
   );

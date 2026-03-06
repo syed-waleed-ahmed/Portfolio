@@ -26,7 +26,7 @@
     <!-- Content Security Policy (frame-ancestors enforced via _headers HTTP header) -->
     <meta
       http-equiv="Content-Security-Policy"
-      content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self' https://portfolio-backend-kmum.onrender.com; font-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self';"
+      content="default-src 'self'; script-src 'self' https://www.googletagmanager.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://www.googletagmanager.com; connect-src 'self' https://portfolio-backend-kmum.onrender.com https://www.google-analytics.com https://analytics.google.com; font-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self';"
     />
 
     <!-- Favicons -->
@@ -38,6 +38,9 @@
 
     <!-- Canonical URL (VERY important for SEO) -->
     <link rel="canonical" href="https://www.syedwaleedahmed.me/" />
+
+    <!-- DNS prefetch for backend API -->
+    <link rel="dns-prefetch" href="https://portfolio-backend-kmum.onrender.com" />
 
     <!-- LCP Optimization: preload only the best format -->
     <link
@@ -100,6 +103,15 @@
   </head>
 
   <body>
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-E5YE59PWT0"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-E5YE59PWT0');
+    </script>
+
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
   </body>

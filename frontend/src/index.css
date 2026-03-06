@@ -1,14 +1,4 @@
-/* src/index.css */
-
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-}
-
-html {
-  scroll-behavior: smooth;
-}
+/* src/index.css — minimal resets (theme & layout live in base.css) */
 
 /* Prevent iOS Safari from forcing a white page in light mode */
 :root {
@@ -16,23 +6,10 @@ html {
 }
 
 body {
-  margin: 0;
   min-width: 320px;
   min-height: 100vh;
-
-  /* Dark fallback so iPhone doesn't render a white canvas */
-  background: #020617;
-  color: #e5e7eb;
-
-  /* Let App.css control theme/background; keep only font defaults here */
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   line-height: 1.5;
-
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-
-  overflow-x: hidden;
 }
 
 /* Make root fill screen */
@@ -58,7 +35,7 @@ select {
   font: inherit;
 }
 
-/* Links: keep default behavior; App.css styles your custom pills anyway */
+/* Links: default styling; pills and custom links styled in hero.css / components.css */
 a {
   color: inherit;
   text-decoration: none;

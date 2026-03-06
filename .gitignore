@@ -3,9 +3,11 @@ node_modules/
 dist/
 .DS_Store
 Thumbs.db
+desktop.ini
 
 # === Env / secrets ===
 .env
+.env.*
 backend/.env
 frontend/.env
 
@@ -27,3 +29,11 @@ backend/dist/
 # === Editor ===
 *.local
 *.sw?
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+.idea/
+
+# === OS ===
+*.tmp
+*.bak

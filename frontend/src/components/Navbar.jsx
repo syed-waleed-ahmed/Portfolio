@@ -1,17 +1,6 @@
 // src/components/Navbar.jsx
-import React, { useEffect, useState } from "react";
-
-const navLinks = [
-  { target: "top", label: "Home" },
-  { target: "about", label: "About" },
-  { target: "experience", label: "Experience" },
-  { target: "projects", label: "Projects" },
-  { target: "skills", label: "Skills" },
-  { target: "interests", label: "Interests" },
-  { target: "contact", label: "Contact" },
-];
-
-const sectionIds = ["hero", "about", "experience", "projects", "skills", "interests", "contact"];
+import { useEffect, useState } from "react";
+import { navLinks, sectionIds } from "../data/portfolio";
 
 const Navbar = () => {
   const [activeSection, setActiveSection] = useState("top");

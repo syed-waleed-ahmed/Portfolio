@@ -1,33 +1,7 @@
 // src/components/Skills.jsx
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Reveal from "./Reveal";
-
-const skillGroups = [
-  {
-    title: "AI / ML & LLMs",
-    skills: [
-      { name: "Machine Learning • Deep Learning", percent: 82 },
-      { name: "LLMs • RAG • OpenAI • Gemini", percent: 88 },
-      { name: "Python • PyTorch • Scikit-learn", percent: 88 },
-    ],
-  },
-  {
-    title: "Data & Backend",
-    skills: [
-      { name: "Data Preprocessing • Clustering • ETL", percent: 85 },
-      { name: "PostgreSQL • MySQL • pgvector", percent: 78 },
-      { name: "Node.js • Express • REST APIs", percent: 72 },
-    ],
-  },
-  {
-    title: "Web, Frameworks & Tools",
-    skills: [
-      { name: "React • Next.js • JavaScript", percent: 80 },
-      { name: "Git • CI/CD • Power BI", percent: 72 },
-      { name: "Mastra • OpenAI Gym • Vercel", percent: 70 },
-    ],
-  },
-];
+import { skillGroups } from "../data/skills";
 
 const Skills = () => {
   const sectionRef = useRef(null);
