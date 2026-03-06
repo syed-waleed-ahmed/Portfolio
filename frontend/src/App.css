@@ -39,6 +39,7 @@ body {
 
 .app-root {
   min-height: 100vh;
+  overflow-x: hidden;
 }
 
 /* ========= Global background layers =========
@@ -452,6 +453,7 @@ small,
   display: flex;
   align-items: center;
   padding-top: 72px;
+  overflow: hidden;
 }
 
 .hero-wrapper {

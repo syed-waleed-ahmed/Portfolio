@@ -41,8 +41,8 @@ if (typeof window !== "undefined") {
 
   const id =
     "requestIdleCallback" in window
-      ? window.requestIdleCallback(() => { loadBootstrapJS(); enableBackgrounds(); }, { timeout: 2000 })
-      : window.setTimeout(() => { loadBootstrapJS(); enableBackgrounds(); }, 1500);
+      ? window.requestIdleCallback(() => { loadBootstrapJS(); enableBackgrounds(); }, { timeout: 4000 })
+      : window.setTimeout(() => { loadBootstrapJS(); enableBackgrounds(); }, 3000);
 
   // No cleanup needed for module import; keep it simple
   void id;

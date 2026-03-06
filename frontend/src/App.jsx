@@ -53,10 +53,10 @@ function App() {
     window.scrollTo(0, 0);
     if ("scrollRestoration" in window.history) window.history.scrollRestoration = "manual";
 
-    // load particles AFTER the page becomes interactive
+    // load particles well AFTER the page becomes interactive
     const id = "requestIdleCallback" in window
-      ? window.requestIdleCallback(() => setShowParticles(true), { timeout: 2000 })
-      : window.setTimeout(() => setShowParticles(true), 1200);
+      ? window.requestIdleCallback(() => setShowParticles(true), { timeout: 4000 })
+      : window.setTimeout(() => setShowParticles(true), 3000);
 
     return () => {
       if (typeof id === "number") window.clearTimeout(id);
