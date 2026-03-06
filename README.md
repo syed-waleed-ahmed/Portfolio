@@ -3,7 +3,7 @@
 A modern, responsive **personal portfolio website** built with **React 19 + Vite** on the frontend and **Node.js + Express** on the backend.
 Designed with a focus on **performance**, **accessibility**, **security**, and **clean UI/UX**.
 
-**Live:** https://www.syedwaleedahmed.me/
+**Live:** https://syedwaleedahmed.me/
 
 ---
 

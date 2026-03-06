@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://www.syedwaleedahmed.me/sitemap.xml
+Sitemap: https://syedwaleedahmed.me/sitemap.xml
