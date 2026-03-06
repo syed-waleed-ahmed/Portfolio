@@ -4,13 +4,13 @@
 
 :root {
   --bg-main: #020617;
-  --bg-card: #02091a;
+  --bg-card: #0a1628;
   --accent: #6366f1;
   --accent-soft: rgba(99, 102, 241, 0.25);
   --accent-2: #22d3ee;
   --text-main: #e5e7eb;
   --text-muted: #9ca3af;
-  --border-subtle: rgba(148, 163, 184, 0.35);
+  --border-subtle: rgba(100, 116, 139, 0.25);
   --radius-lg: 18px;
   --shadow-soft: 0 18px 45px rgba(0, 0, 0, 0.65);
 }
@@ -114,6 +114,7 @@ body.bg-ready::after {
   letter-spacing: 0.06em;
   text-transform: uppercase;
   margin-bottom: 28px;
+  text-shadow: 0 0 40px rgba(99, 102, 241, 0.15);
 }
 
 @media (max-width: 576px) {
@@ -128,9 +129,10 @@ body.bg-ready::after {
   display: block;
   width: 80px;
   height: 3px;
-  margin: 0.4rem auto 0;
+  margin: 0.5rem auto 0;
   border-radius: 999px;
   background: linear-gradient(90deg, var(--accent), var(--accent-2));
+  box-shadow: 0 0 12px rgba(34, 211, 238, 0.4);
 }
 
 /* ========= Utility text ========= */

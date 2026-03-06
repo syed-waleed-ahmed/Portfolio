@@ -10,7 +10,7 @@ const Interests = () => {
         </Reveal>
 
         <Reveal delay={0.08}>
-          <div className="neo-card p-4">
+          <div className="neo-card interests-card p-4">
             <div className="row g-4 align-items-start">
               <div className="col-lg-7">
                 <h3 className="mb-3 interests-heading">

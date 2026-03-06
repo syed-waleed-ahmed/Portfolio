@@ -27,6 +27,7 @@
 }
 
 .hero-slide-left {
+  max-width: 620px;
   animation: heroSlideLeft 0.8s ease-out both;
 }
 
@@ -78,10 +79,25 @@
   }
 }
 
+/* ========= Role badge ========= */
+.hero-role-badge {
+  display: inline-block;
+  padding: 0.25rem 0.85rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent-2);
+  border: 1px solid rgba(34, 211, 238, 0.35);
+  border-radius: 999px;
+  background: rgba(34, 211, 238, 0.08);
+}
+
 /* ========= Hero text ========= */
 .hero-title {
   letter-spacing: 0.02em;
   line-height: 1.1;
+  text-wrap: balance;
 }
 
 .gradient-text {
@@ -92,14 +108,23 @@
 }
 
 .hero-lead {
-  max-width: 640px;
+  max-width: 620px;
   color: #cbd5f5;
-  font-size: 0.98rem;
+  font-size: 1.02rem;
+  line-height: 1.7;
+  text-wrap: pretty;
+}
+
+.hero-sub-lead {
+  max-width: 620px;
+  color: #94a3b8;
+  font-size: 0.88rem;
+  line-height: 1.6;
 }
 
 @media (min-width: 992px) {
   #hero .col-lg-7 {
-    max-width: 640px;
+    max-width: 680px;
   }
 }
 
@@ -170,8 +195,22 @@
   box-shadow: 0 0 24px rgba(129, 140, 248, 0.9);
 }
 
-.hero-links-row {
-  margin-bottom: 0.5rem;
+.hero-pill-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  max-width: 620px;
+}
+
+.hero-pill-row {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.hero-pill-row .hero-pill {
+  flex: 1 1 0;
+  justify-content: center;
+  white-space: nowrap;
 }
 
 .hero-pill {
@@ -198,30 +237,20 @@
   color: #fff;
 }
 
-.hero-pill-accent {
-  border-color: rgba(96, 165, 250, 0.6);
-  background: rgba(30, 58, 138, 0.3);
-}
-
-.hero-pill-accent:hover {
-  border-color: var(--accent-2);
-  box-shadow: 0 6px 24px rgba(34, 211, 238, 0.3);
-}
-
 .hero-pill-icon {
   font-size: 0.88rem;
   line-height: 1;
   flex-shrink: 0;
-  opacity: 0.85;
+  color: rgba(96, 165, 250, 0.85);
 }
 
 .hero-pill:hover .hero-pill-icon {
-  opacity: 1;
+  color: rgba(129, 140, 248, 1);
 }
 
 /* ========= Profile photo ========= */
 .profile-wrapper {
-  max-width: 300px;
+  max-width: 340px;
   text-align: center;
 }
 
@@ -244,7 +273,7 @@
   border-radius: 50%;
   display: block;
   width: 100%;
-  max-width: 300px;
+  max-width: 340px;
   aspect-ratio: 1 / 1;
   object-fit: cover;
   object-position: center 20%;
@@ -271,6 +300,16 @@
 @media (min-width: 769px) and (max-width: 991px) {
   .profile-img {
     max-width: 260px;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-pill-row {
+    flex-wrap: wrap;
+  }
+
+  .hero-pill-row .hero-pill {
+    flex: 1 1 auto;
   }
 }
 

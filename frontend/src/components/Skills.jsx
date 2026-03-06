@@ -83,7 +83,7 @@ const Skills = () => {
           {skillGroups.map((group, gi) => (
             <div className="col-md-6 col-lg-4 d-flex" key={group.title}>
               <Reveal delay={gi * 0.05} className="w-100">
-                <div className="neo-card h-100 p-4">
+                <div className="neo-card skill-card h-100 p-4">
                   <h3 className="mb-4">{group.title}</h3>
 
                   {group.skills.map((skill, si) => (

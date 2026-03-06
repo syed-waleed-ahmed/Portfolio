@@ -55,7 +55,9 @@ const About = () => {
                   </li>
 
                   <li className="mb-3">
-                    <div className="fw-semibold">Erasmus+ Mobility</div>
+                    <div className="fw-semibold">
+                      Erasmus+ Mobility
+                    </div>
                     <div className="timeline-meta">
                       University of Twente, Enschede, Netherlands
                       <br />

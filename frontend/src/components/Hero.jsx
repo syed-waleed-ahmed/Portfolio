@@ -40,17 +40,21 @@ const Hero = () => {
         <div className="row align-items-center g-5">
           <div className="col-lg-7">
             <div className="hero-slide-left">
-              <h1 className="display-4 fw-bold hero-title mb-3">
+              <h1 className="display-5 fw-bold hero-title mb-3">
                 Hi, I'm <span className="gradient-text">{personalInfo.name}</span>
               </h1>
 
               <p className="hero-lead mb-4">
-                AI Engineer building production-grade agentic AI systems. Master's
-                student in Automation Engineering at the University of Bologna,
-                specializing in{" "}
-                <span className="fw-semibold">Multimodal RAG, LLM orchestration</span>, and{" "}
-                <span className="fw-semibold">intelligent automation</span>. I turn messy data
-                and complex workflows into reliable, deployed applications.
+                I build production-grade agentic AI systems &mdash; from{" "}
+                <span className="fw-semibold">multimodal RAG pipelines</span> and{" "}
+                <span className="fw-semibold">LLM orchestration</span> to{" "}
+                <span className="fw-semibold">intelligent automation</span> that turns
+                messy data into reliable, deployed applications.
+              </p>
+
+              <p className="hero-sub-lead mb-4">
+                Master's student in Automation Engineering at the University of
+                Bologna, with an Erasmus semester at the University of Twente.
               </p>
 
               <div className="d-flex flex-wrap align-items-center gap-2 mb-3 hero-explore-row">
@@ -63,69 +67,70 @@ const Hero = () => {
                 </div>
               </div>
 
-              <div className="d-flex flex-wrap gap-2 hero-links-row">
-                <a
-                  href={`mailto:${personalInfo.email}`}
-                  className="hero-pill"
-                >
-                  <FaEnvelope className="hero-pill-icon" />
-                  Email
-                </a>
-                <a
-                  href={`tel:${personalInfo.phone}`}
-                  className="hero-pill"
-                >
-                  <FaPhoneAlt className="hero-pill-icon" />
-                  {personalInfo.phoneDisplay}
-                </a>
-                <a
-                  href={personalInfo.whatsapp}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="hero-pill"
-                >
-                  <FaWhatsapp className="hero-pill-icon" />
-                  WhatsApp
-                </a>
-              </div>
-
-              <div className="d-flex flex-wrap gap-2 hero-links-row">
-                <a
-                  href={socialLinks.linkedin}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="hero-pill"
-                >
-                  <FaLinkedinIn className="hero-pill-icon" />
-                  LinkedIn
-                </a>
-                <a
-                  href={socialLinks.github}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="hero-pill"
-                >
-                  <FaGithub className="hero-pill-icon" />
-                  GitHub
-                </a>
-                <a
-                  href={socialLinks.leetcode}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="hero-pill"
-                >
-                  <SiLeetcode className="hero-pill-icon" />
-                  LeetCode
-                </a>
-                <a
-                  href={personalInfo.resumeUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="hero-pill hero-pill-accent"
-                >
-                  <FaFileAlt className="hero-pill-icon" />
-                  Resume
-                </a>
+              <div className="hero-pill-grid">
+                <div className="hero-pill-row">
+                  <a
+                    href={`mailto:${personalInfo.email}`}
+                    className="hero-pill"
+                  >
+                    <FaEnvelope className="hero-pill-icon" />
+                    Email
+                  </a>
+                  <a
+                    href={`tel:${personalInfo.phone}`}
+                    className="hero-pill"
+                  >
+                    <FaPhoneAlt className="hero-pill-icon" />
+                    {personalInfo.phoneDisplay}
+                  </a>
+                  <a
+                    href={personalInfo.whatsapp}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="hero-pill"
+                  >
+                    <FaWhatsapp className="hero-pill-icon" />
+                    WhatsApp
+                  </a>
+                </div>
+                <div className="hero-pill-row">
+                  <a
+                    href={socialLinks.linkedin}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="hero-pill"
+                  >
+                    <FaLinkedinIn className="hero-pill-icon" />
+                    LinkedIn
+                  </a>
+                  <a
+                    href={socialLinks.github}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="hero-pill"
+                  >
+                    <FaGithub className="hero-pill-icon" />
+                    GitHub
+                  </a>
+                  <a
+                    href={socialLinks.leetcode}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="hero-pill"
+                  >
+                    <SiLeetcode className="hero-pill-icon" />
+                    LeetCode
+                  </a>
+                  <a
+                    href={personalInfo.resumeUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="hero-pill"
+                  >
+                    <FaFileAlt className="hero-pill-icon" />
+                    Resume
+                  </a>
+                </div>
               </div>
             </div>
           </div>

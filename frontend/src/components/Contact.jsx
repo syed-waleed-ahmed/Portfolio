@@ -1,4 +1,12 @@
 import { useState } from "react";
+import {
+  FaUser,
+  FaEnvelope,
+  FaPhone,
+  FaTag,
+  FaCommentDots,
+  FaPaperPlane,
+} from "react-icons/fa";
 import Reveal from "./Reveal";
 
 const initialState = {
@@ -110,8 +118,8 @@ const Contact = () => {
 
         {/* Full-width card */}
         <Reveal delay={0.08}>
-          <div className="neo-card contact-card p-4">
-                <p className="text-center text-muted mb-4">
+          <div className="neo-card contact-card">
+                <p className="text-center contact-subtitle mb-4">
                   Have a question, collaboration idea, or opportunity? Fill out
                   the form and I&apos;ll get back to you.
                 </p>
@@ -120,7 +128,8 @@ const Contact = () => {
                   <div className="row g-4">
                     {/* Name */}
                     <div className="col-md-6">
-                      <label className="form-label mb-1" htmlFor="name">
+                      <label className="contact-label mb-2" htmlFor="name">
+                        <FaUser className="contact-label-icon" />
                         Name *
                       </label>
                       <input
@@ -144,7 +153,8 @@ const Contact = () => {
 
                     {/* Email */}
                     <div className="col-md-6">
-                      <label className="form-label mb-1" htmlFor="email">
+                      <label className="contact-label mb-2" htmlFor="email">
+                        <FaEnvelope className="contact-label-icon" />
                         Email *
                       </label>
                       <input
@@ -168,7 +178,8 @@ const Contact = () => {
 
                     {/* Phone */}
                     <div className="col-md-6">
-                      <label className="form-label mb-1" htmlFor="phone">
+                      <label className="contact-label mb-2" htmlFor="phone">
+                        <FaPhone className="contact-label-icon" />
                         Phone *
                       </label>
                       <input
@@ -192,7 +203,8 @@ const Contact = () => {
 
                     {/* Subject */}
                     <div className="col-md-6">
-                      <label className="form-label mb-1" htmlFor="subject">
+                      <label className="contact-label mb-2" htmlFor="subject">
+                        <FaTag className="contact-label-icon" />
                         Subject *
                       </label>
                       <input
@@ -216,7 +228,8 @@ const Contact = () => {
 
                     {/* Message */}
                     <div className="col-12">
-                      <label className="form-label mb-1" htmlFor="message">
+                      <label className="contact-label mb-2" htmlFor="message">
+                        <FaCommentDots className="contact-label-icon" />
                         Message *
                       </label>
                       <textarea
@@ -241,9 +254,10 @@ const Contact = () => {
                   <div className="d-flex align-items-center gap-3 mt-4">
                     <button
                       type="submit"
-                      className="btn btn-primary neon-btn"
+                      className="contact-btn"
                       disabled={isSubmitting}
                     >
+                      <FaPaperPlane className="btn-icon" />
                       {isSubmitting ? "Sending..." : "Send Message"}
                     </button>
                     {submitError && (
