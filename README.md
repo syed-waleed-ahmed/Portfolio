@@ -17,7 +17,7 @@ Designed with a focus on **performance**, **accessibility**, **security**, and *
 - SEO-ready -- canonical URL, structured data, sitemap, robots.txt, Google Search Console
 - PWA-ready -- manifest, icons, service worker via vite-plugin-pwa
 - Google Analytics -- visitor tracking via gtag (G-E5YE59PWT0)
-- Content Security Policy -- meta tag + Netlify `_headers` with security hardening
+- Content Security Policy -- Netlify `_headers` with security hardening
 - Print-friendly -- dedicated print stylesheet for clean paper output
 - Custom domain + HTTPS
 - Data-driven architecture -- all portfolio content lives in `src/data/`, components are pure UI
@@ -29,8 +29,8 @@ Designed with a focus on **performance**, **accessibility**, **security**, and *
 
 | Section | Description |
 |---------|-------------|
-| Hero | Animated intro with rotating "currently exploring" pill |
-| About | Background summary with profile image (AVIF) |
+| Hero | Animated intro with rotating "currently exploring" pill + profile photo |
+| About | Background summary + education timeline |
 | Experience | Work history cards (Thesis, Internship, Trainee) |
 | Projects | Featured projects with tech tags and GitHub links |
 | Skills | Animated progress bars across AI/ML, Data & Backend, Web & Tools |
@@ -68,6 +68,7 @@ portfolio/
 +-- frontend/
 |   +-- public/
 |   |   +-- images/Profile.avif
+|   |   +-- images/Profile.webp
 |   |   +-- _headers              # Netlify security headers (CSP, X-Frame-Options)
 |   |   +-- ai-grid.webp          # Hero background images
 |   |   +-- code-snippet.webp
@@ -203,7 +204,7 @@ Components are pure UI -- they read from the data layer and render automatically
 
 ## Security
 
-- **Content Security Policy** -- meta tag + HTTP header via Netlify `_headers`
+- **Content Security Policy** -- HTTP header via Netlify `_headers`
 - **HTML escaping** -- All user input is escaped before rendering in email templates
 - **Rate limiting** -- In-memory IP-based limiter (5 requests / 15 min window)
 - **Input validation** -- Max lengths enforced (name: 100, email: 100, phone: 25, subject: 200, message: 5000)
