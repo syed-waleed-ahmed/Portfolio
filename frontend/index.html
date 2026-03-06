@@ -97,13 +97,9 @@
   </head>
 
   <body>
-    <!-- Google Analytics -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-E5YE59PWT0"></script>
+    <!-- Google Analytics (deferred to idle to avoid blocking main thread) -->
     <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-E5YE59PWT0');
+      (window.requestIdleCallback||setTimeout)(function(){var s=document.createElement('script');s.src='https://www.googletagmanager.com/gtag/js?id=G-E5YE59PWT0';s.async=true;document.head.appendChild(s);window.dataLayer=window.dataLayer||[];function g(){dataLayer.push(arguments)}window.gtag=g;g('js',new Date());g('config','G-E5YE59PWT0')});
     </script>
 
     <div id="root"></div>
