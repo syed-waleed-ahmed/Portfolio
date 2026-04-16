@@ -13,7 +13,7 @@ export const experiences = [
   {
     title: "Data Clustering & AI Model Intern",
     company: "Fruugle",
-    period: "Jan 2026 \u2013 Present \u00B7 Riga, Latvia (Remote)",
+    period: "Jan 2026 \u2013 April 2026 \u00B7 Riga, Latvia (Remote)",
     bullets: [
       "Analyzed and preprocessed massive product and pricing datasets (1M+ records) from multiple supermarket sources for a multimodal AI-powered e-grocery assistant.",
       "Built data clustering and grouping pipelines (K-means, DBSCAN, hierarchical) to create comparable product segments for real-time price comparison.",
