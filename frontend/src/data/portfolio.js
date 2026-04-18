@@ -7,7 +7,7 @@ export const personalInfo = {
   phoneDisplay: "+39 351 960 9532",
   whatsapp: "https://wa.me/393519609532",
   resumeUrl:
-    "https://drive.google.com/file/d/1hruWE4BEDn-XTiSIkGzVKoKEmpOvHu9d/view?usp=sharing",
+    "https://drive.google.com/file/d/1k3_vxVbXj6YXEMnFP0CXtgbD6XVtqJHN/view?usp=sharing",
 };
 
 export const socialLinks = {
