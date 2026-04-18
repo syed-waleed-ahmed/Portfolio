@@ -3,12 +3,12 @@ export const experiences = [
     title: "Thesis Student",
     company: "MemorAIz",
     period: "Feb 2026 \u2013 Present \u00B7 Bologna, Italy",
-    bullets: [
-      "Productizing a modular AI assistant platform with configurable agents that orchestrate reusable UI-based AI modules (function + micro-experience widgets).",
-      "Designed agent configuration schemas, module interfaces, and a module registry/versioning strategy to enable new solutions through configuration instead of bespoke code.",
-      "Built the orchestration layer for multi-step agent \u2194 module \u2194 UI flows with routing, retries/fallbacks, and observability hooks (traces, latency, failure tracking).",
-      "Shipped the first productized MVP and an internal \u201COnboarding Assistant\u201D to stress-test configuration, module UX, and orchestration robustness.",
-    ],
+      bullets: [
+    "Productizing a modular AI assistant platform for the EDU Suite, enabling rapid integration of external capabilities into reusable, UI-driven micro-experiences.",
+    "Designed a capability pipeline (scan → shortlist → test → integrate → render) to improve capability velocity and reduce feature delivery time from weeks to days.",
+    "Built reusable agent modules with structured JSON outputs, powering dynamic UI components such as quizzes, flashcards, and study plans instead of plain chat responses.",
+    "Developed the orchestration layer for multi-step agent ↔ module ↔ UI flows with routing, retries/fallbacks, and observability hooks for tracing, latency, and failure tracking."
+  ],
   },
   {
     title: "Data Clustering & AI Model Intern",
