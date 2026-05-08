@@ -7,9 +7,15 @@ updates:
       day: "monday"
       time: "09:00"
     open-pull-requests-limit: 5
+    # Group minor + patch into a single PR. Skip majors entirely —
+    # major bumps can break things and should be reviewed manually,
+    # not opened as auto-PRs.
     groups:
       minor-and-patch:
         update-types: ["minor", "patch"]
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
     labels: ["dependencies", "frontend"]
 
   - package-ecosystem: "npm"
@@ -22,10 +28,16 @@ updates:
     groups:
       minor-and-patch:
         update-types: ["minor", "patch"]
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
     labels: ["dependencies", "backend"]
 
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
       interval: "monthly"
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
     labels: ["dependencies", "ci"]

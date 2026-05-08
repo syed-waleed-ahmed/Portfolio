@@ -11,7 +11,8 @@
       "Bash(echo \"exit $?\")",
       "Bash(npm audit *)",
       "Bash(timeout 5 node server.js)",
-      "Bash(node --check server.js)"
+      "Bash(node --check server.js)",
+      "Bash(git fetch *)"
     ]
   }
 }

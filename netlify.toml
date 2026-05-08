@@ -1,0 +1,6 @@
+# Pin Node version so Netlify, CI, and local installs all agree.
+# Other build settings (base directory, publish dir, build command)
+# stay in the Netlify UI to match what's already configured.
+
+[build.environment]
+  NODE_VERSION = "20"
