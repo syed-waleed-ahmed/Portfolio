@@ -1,91 +1,92 @@
 // backend/routes/contactRoutes.js
 import express from "express";
+import rateLimit from "express-rate-limit";
 import { Resend } from "resend";
 
 const router = express.Router();
+
 const resend = process.env.RESEND_API_KEY
   ? new Resend(process.env.RESEND_API_KEY)
   : null;
 
 // ===== Helpers =====
-function escapeHtml(str) {
-  return String(str)
+const escapeHtml = (str) =>
+  String(str)
     .replace(/&/g, "&amp;")
     .replace(/</g, "&lt;")
     .replace(/>/g, "&gt;")
     .replace(/"/g, "&quot;");
-}
 
-// Simple in-memory rate limiter: max 5 submissions per IP per 15 min
-const rateMap = new Map();
-const RATE_WINDOW = 15 * 60 * 1000;
-const RATE_LIMIT = 5;
+// Validate required string fields with length caps
+const FIELDS = {
+  name: { max: 100, required: true },
+  email: { max: 100, required: true },
+  subject: { max: 200, required: true },
+  message: { max: 5000, required: true },
+};
 
-function isRateLimited(ip) {
-  const now = Date.now();
-  const entry = rateMap.get(ip);
-  if (!entry || now - entry.start > RATE_WINDOW) {
-    rateMap.set(ip, { start: now, count: 1 });
-    return false;
-  }
-  entry.count += 1;
-  return entry.count > RATE_LIMIT;
-}
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+// ===== Rate limiter (5 submissions per IP per 15 min) =====
+const contactLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 5,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: {
+    success: false,
+    error: "Too many requests. Please try again later.",
+  },
+});
 
 // ===== POST /api/contact =====
-router.post("/", async (req, res) => {
+router.post("/", contactLimiter, async (req, res, next) => {
   try {
-    const ip = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
-    if (isRateLimited(ip)) {
-      return res.status(429).json({
-        success: false,
-        error: "Too many requests. Please try again later.",
-      });
+    const body = req.body ?? {};
+
+    // Required fields + length validation in one pass
+    for (const [key, rules] of Object.entries(FIELDS)) {
+      const value = typeof body[key] === "string" ? body[key].trim() : "";
+      if (rules.required && !value) {
+        return res
+          .status(400)
+          .json({ success: false, error: `Missing required field: ${key}.` });
+      }
+      if (value.length > rules.max) {
+        return res.status(400).json({
+          success: false,
+          error: `Field "${key}" exceeds maximum length.`,
+        });
+      }
     }
 
-    const { name, email, phone, subject, message } = req.body;
-
-    if (!name || !email || !subject || !message) {
+    if (!EMAIL_RE.test(body.email.trim())) {
       return res
         .status(400)
-        .json({ success: false, error: "Missing required fields." });
-    }
-
-    if (
-      name.length > 100 ||
-      email.length > 100 ||
-      (phone && phone.length > 25) ||
-      subject.length > 200 ||
-      message.length > 5000
-    ) {
-      return res
-        .status(400)
-        .json({ success: false, error: "One or more fields exceed the maximum length." });
+        .json({ success: false, error: "Invalid email address." });
     }
 
     const to = process.env.EMAIL_TO;
     const from = process.env.EMAIL_FROM;
 
-    if (!process.env.RESEND_API_KEY) {
-      return res.status(500).json({
+    if (!resend || !to || !from) {
+      console.error("[contact] mailer not configured (check env vars)");
+      return res.status(503).json({
         success: false,
-        error: "RESEND_API_KEY is missing on server.",
+        error: "Email service is temporarily unavailable.",
       });
     }
 
-    if (!to || !from) {
-      return res.status(500).json({
-        success: false,
-        error: "EMAIL_TO or EMAIL_FROM is missing on server.",
-      });
-    }
+    const name = body.name.trim();
+    const email = body.email.trim();
+    const subject = body.subject.trim();
+    const message = body.message.trim();
 
     const html = `
       <div style="font-family: Arial, sans-serif; line-height: 1.5;">
         <h2>New Portfolio Message</h2>
         <p><b>Name:</b> ${escapeHtml(name)}</p>
         <p><b>Email:</b> ${escapeHtml(email)}</p>
-        <p><b>Phone:</b> ${escapeHtml(phone || "N/A")}</p>
         <p><b>Subject:</b> ${escapeHtml(subject)}</p>
         <hr />
         <p style="white-space: pre-wrap;">${escapeHtml(message)}</p>
@@ -101,24 +102,20 @@ router.post("/", async (req, res) => {
     });
 
     if (error) {
-      console.error("Resend error:", error);
-      return res.status(500).json({
-        success: false,
-        error: error.message || "Email sending failed via Resend.",
-      });
+      console.error("[contact] resend error:", error);
+      return res
+        .status(502)
+        .json({ success: false, error: "Email delivery failed." });
     }
 
     return res.json({
       success: true,
-      message: "Email sent successfully!",
+      message: "Message sent successfully.",
       id: data?.id,
     });
   } catch (err) {
-    console.error("Contact route error:", err);
-    return res.status(500).json({
-      success: false,
-      error: "Server error while sending email.",
-    });
+    // Hand off to the central error handler in server.js
+    next(err);
   }
 });
 

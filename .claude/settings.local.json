@@ -6,7 +6,12 @@
       "Bash(curl -s -o /dev/null -w \"HTTP %{http_code}\\\\n\" http://localhost:5173/)",
       "Bash(grep -E \"\\\\.\\(webp|png|jpg|jpeg|avif|svg\\)$\")",
       "Bash(npm uninstall *)",
-      "Bash(npm install *)"
+      "Bash(npm install *)",
+      "Bash(git check-ignore *)",
+      "Bash(echo \"exit $?\")",
+      "Bash(npm audit *)",
+      "Bash(timeout 5 node server.js)",
+      "Bash(node --check server.js)"
     ]
   }
 }

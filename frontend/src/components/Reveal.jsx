@@ -2,16 +2,13 @@ import { useEffect, useRef, useState } from "react";
 
 const Reveal = ({ children, delay = 0, className = "" }) => {
   const ref = useRef(null);
-  const [visible, setVisible] = useState(false);
+  const [visible, setVisible] = useState(
+    () => typeof window !== "undefined" && !("IntersectionObserver" in window)
+  );
 
   useEffect(() => {
     const node = ref.current;
-    if (!node) return;
-
-    if (!("IntersectionObserver" in window)) {
-      setVisible(true);
-      return;
-    }
+    if (!node || !("IntersectionObserver" in window)) return;
 
     const obs = new IntersectionObserver(
       ([entry]) => {

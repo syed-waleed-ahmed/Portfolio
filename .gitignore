@@ -1,9 +1,15 @@
-# === Global ===
+# === Dependencies ===
 node_modules/
+
+# === Build output ===
 dist/
-.DS_Store
-Thumbs.db
-desktop.ini
+dist-ssr/
+frontend/dist/
+backend/dist/
+
+# === Vite cache (anywhere, including stray root .vite/) ===
+.vite/
+**/.vite/
 
 # === Env / secrets ===
 .env
@@ -16,24 +22,25 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
+lerna-debug.log*
 logs/
 *.log
 
-# === Vite / React build output ===
-frontend/dist/
-frontend/.vite/
-
-# === Backend build artifacts ===
-backend/dist/
-
-# === Editor ===
-*.local
-*.sw?
+# === Editor / IDE ===
 .vscode/*
 !.vscode/extensions.json
 !.vscode/settings.json
 .idea/
+*.suo
+*.sw?
+*.local
+
+# === Local AI / agent caches ===
+.claude/
 
 # === OS ===
+.DS_Store
+Thumbs.db
+desktop.ini
 *.tmp
 *.bak

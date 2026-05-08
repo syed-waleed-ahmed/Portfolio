@@ -9,19 +9,20 @@ Designed with a focus on **performance**, **accessibility**, **security**, and *
 
 ## Highlights
 
-- Fast build & delivery -- Vite, code-splitting, lazy-mounted sections (`content-visibility: auto`)
-- Modern UI -- glassmorphism, neo-card design, Bootstrap 5 grid
-- Smooth animations -- CSS keyframe hero entrance + Framer Motion scroll reveals + animated skill progress bars (reduced-motion friendly)
-- Fully responsive -- desktop, tablet, mobile
-- Secure contact form -- server-side HTML escaping, input length validation, IP-based rate limiting
-- SEO-ready -- canonical URL, structured data, sitemap, robots.txt, Google Search Console
-- PWA-ready -- manifest, icons, service worker via vite-plugin-pwa
-- Google Analytics -- visitor tracking via gtag (G-E5YE59PWT0)
-- Content Security Policy -- Netlify `_headers` with security hardening
-- Print-friendly -- dedicated print stylesheet for clean paper output
-- Custom domain + HTTPS
-- Data-driven architecture -- all portfolio content lives in `src/data/`, components are pure UI
-- Error boundary -- graceful crash recovery for below-fold sections
+- **Lean bundle** -- no animation library, no PWA shell, no Bootstrap JS. ~9 KB CSS gzipped, ~70 KB JS gzipped after code-splitting
+- **Fast build & delivery** -- Vite, code-splitting, lazy-mounted sections (`content-visibility: auto`)
+- **Modern UI** -- glassmorphism cards, gradient accents, monospace HUD-style section labels, top-of-page scroll progress bar
+- **Hand-rolled animations** -- vanilla `IntersectionObserver` reveal hook + CSS keyframes (no `framer-motion`, no `tsparticles`)
+- **Custom navbar** -- own collapse logic, no Bootstrap JS dependency
+- **Fully responsive** -- desktop, tablet, mobile
+- **Secure contact form** -- server-side HTML escaping, length validation, IP-based rate limiting
+- **SEO-ready** -- canonical URL, Person structured data, sitemap, robots.txt
+- **Google Analytics** -- visitor tracking via gtag (deferred to idle to avoid blocking the main thread)
+- **Content Security Policy** -- Netlify `_headers` with security hardening
+- **Print-friendly** -- dedicated print stylesheet
+- **Custom domain + HTTPS** -- syedwaleedahmed.me
+- **Data-driven architecture** -- portfolio content lives in `src/data/`, components are pure UI
+- **Error boundary** -- graceful crash recovery for below-fold sections
 
 ---
 
@@ -29,29 +30,29 @@ Designed with a focus on **performance**, **accessibility**, **security**, and *
 
 | Section | Description |
 |---------|-------------|
-| Hero | Animated intro with rotating "currently exploring" pill + profile photo |
+| Hero | Animated intro, role badge, rotating "currently exploring" pill, primary CTAs + LinkedIn / GitHub icon links |
 | About | Background summary + education timeline |
-| Experience | Work history cards (Thesis, Internship, Trainee) |
-| Projects | Featured projects with tech tags and GitHub links |
-| Skills | Animated progress bars across AI/ML, Data & Backend, Web & Tools |
-| Interests | Two-column layout -- paragraph + topic list |
-| Contact | Working contact form with email delivery |
+| Experience | Work history cards (MemorAIz thesis, Fruugle internship, Jubilee trainee) |
+| Projects | Featured AI/ML and academic projects with tech tags + GitHub links |
+| Skills | Bento-style tag groups across AI/LLM, ML, Languages, Web, Databases, Tools |
+| Interests | What I'm looking for next + topics I'm exploring |
+| Contact | Contact form (name, email, subject, message) with email delivery via Resend |
 
 ---
 
 ## Tech Stack
 
 ### Frontend
-- React 19, Vite 7, Bootstrap 5
-- Framer Motion (scroll reveals only, loaded with lazy components)
-- CSS keyframe animations for hero entrance (no JS runtime cost)
-- react-icons, react-tsparticles (loaded on first scroll)
-- vite-plugin-pwa, AVIF/WebP images
-- PurgeCSS for production CSS trimming
+- React 19, Vite 7, Bootstrap 5 (CSS only -- no Bootstrap JS)
+- `react-icons` for the icon set
+- Vanilla `IntersectionObserver` for scroll-reveal -- no animation library
+- CSS keyframes for hero entrance and "explore" pill cycle
+- AVIF / WebP profile image with `<picture>` + `fetchpriority="high"`
+- PurgeCSS in production trims unused Bootstrap utilities to ~9 KB gzipped
 
 ### Backend
 - Node.js, Express (ESM)
-- Resend (email delivery)
+- Resend for transactional email
 - CORS, dotenv
 - In-memory rate limiter, HTML escaping, input validation
 
@@ -67,33 +68,30 @@ Designed with a focus on **performance**, **accessibility**, **security**, and *
 portfolio/
 +-- frontend/
 |   +-- public/
-|   |   +-- images/Profile.avif
-|   |   +-- images/Profile.webp
-|   |   +-- _headers              # Netlify security headers (CSP, X-Frame-Options)
-|   |   +-- ai-grid.webp          # Hero background images
-|   |   +-- code-snippet.webp
-|   |   +-- llm-chip.webp
+|   |   +-- images/
+|   |   |   +-- Profile.avif
+|   |   |   +-- Profile.webp
+|   |   +-- _headers                      # Netlify security headers (CSP, X-Frame-Options, ...)
 |   |   +-- apple-touch-icon.png
 |   |   +-- favicon.ico
 |   |   +-- favicon-96x96.png
 |   |   +-- favicon.svg
-|   |   +-- googleb4ba9f6faa31c433.html  # Google Search Console verification
+|   |   +-- googleb4ba9f6faa31c433.html   # Google Search Console verification
 |   |   +-- web-app-manifest-192x192.png
 |   |   +-- web-app-manifest-512x512.png
-|   |   +-- site.webmanifest
 |   |   +-- sitemap.xml
 |   |   +-- robots.txt
 |   +-- src/
-|   |   +-- data/                 # Portfolio content (edit here to update site)
-|   |   |   +-- portfolio.js      # Personal info, social links, nav, explore items
-|   |   |   +-- experience.js     # Work history entries
-|   |   |   +-- projects.js       # Project entries
-|   |   |   +-- skills.js         # Skill groups & percentages
-|   |   +-- styles/               # Modular CSS (split from single App.css)
-|   |   |   +-- base.css          # Variables, resets, backgrounds, sections
-|   |   |   +-- navbar.css        # Glass nav, hamburger, pill links
-|   |   |   +-- hero.css          # Hero section, animations, orbs, pills
-|   |   |   +-- components.css    # Cards, timeline, skills, contact, footer
+|   |   +-- data/                         # Portfolio content -- edit here to update site
+|   |   |   +-- portfolio.js              # Personal info, social links, nav, explore items
+|   |   |   +-- experience.js             # Work history entries
+|   |   |   +-- projects.js               # Project entries
+|   |   |   +-- skills.js                 # Skill groups (tag-based)
+|   |   +-- styles/                       # Modular CSS
+|   |   |   +-- base.css                  # Tokens, resets, sections, scroll-to-top
+|   |   |   +-- navbar.css                # Custom navbar + scroll progress bar
+|   |   |   +-- hero.css                  # Hero section, animations, orbs, CTAs
+|   |   |   +-- components.css            # Cards, timeline, skills, contact, footer
 |   |   +-- components/
 |   |   |   +-- Hero.jsx
 |   |   |   +-- About.jsx
@@ -104,9 +102,10 @@ portfolio/
 |   |   |   +-- Contact.jsx
 |   |   |   +-- Navbar.jsx
 |   |   |   +-- Footer.jsx
-|   |   |   +-- ParticlesBackground.jsx
-|   |   |   +-- Reveal.jsx
-|   |   |   +-- LazyMountSection.jsx
+|   |   |   +-- ScrollProgress.jsx        # Top-of-page progress bar
+|   |   |   +-- ScrollToTop.jsx           # Floating back-to-top button
+|   |   |   +-- Reveal.jsx                # Scroll-reveal IntersectionObserver wrapper
+|   |   |   +-- LazyMountSection.jsx      # Mounts a section only when near viewport
 |   |   |   +-- ErrorBoundary.jsx
 |   |   +-- App.jsx
 |   |   +-- main.jsx
@@ -121,7 +120,7 @@ portfolio/
 |   +-- routes/
 |   |   +-- contactRoutes.js
 |   +-- package.json
-|   +-- .env
+|   +-- .env                              # Not committed
 +-- .gitignore
 +-- LICENSE
 +-- README.md
@@ -185,8 +184,8 @@ All portfolio content is centralized in `frontend/src/data/`:
 
 - **New experience?** Add an entry to `experience.js`
 - **New project?** Add an entry to `projects.js`
-- **New skill group?** Add an entry to `skills.js`
-- **Update contact/social links?** Edit `portfolio.js`
+- **New skill group / tag?** Add an entry to `skills.js`
+- **Update contact / social links?** Edit `portfolio.js`
 
 Components are pure UI -- they read from the data layer and render automatically.
 
@@ -194,23 +193,23 @@ Components are pure UI -- they read from the data layer and render automatically
 
 ## Contact Form Flow
 
-1. User submits form on the frontend
-2. Frontend POSTs to the backend API
+1. User submits form on the frontend (name / email / subject / message)
+2. Frontend POSTs to `/api/contact` on the backend
 3. Backend validates input (length limits, required fields)
 4. Rate limiter checks IP (5 requests per 15 minutes)
-5. HTML-escaped email is sent via Resend
+5. HTML-escaped email is sent via Resend with the user's address as `replyTo`
 
 ---
 
 ## Security
 
 - **Content Security Policy** -- HTTP header via Netlify `_headers`
-- **HTML escaping** -- All user input is escaped before rendering in email templates
-- **Rate limiting** -- In-memory IP-based limiter (5 requests / 15 min window)
-- **Input validation** -- Max lengths enforced (name: 100, email: 100, phone: 25, subject: 200, message: 5000)
-- **CORS** -- Configured for allowed origins only
+- **HTML escaping** -- all user input is escaped before rendering in email templates
+- **Rate limiting** -- in-memory IP-based limiter (5 requests / 15 min window)
+- **Input validation** -- max lengths enforced (name: 100, email: 100, subject: 200, message: 5000)
+- **CORS** -- configured for allowed origins only
 - **Security headers** -- X-Frame-Options, X-Content-Type-Options, Referrer-Policy, Permissions-Policy
-- **DNS prefetch** -- Preconnect hint for backend API to reduce first-contact latency
+- **DNS prefetch** -- preconnect hint for backend API to reduce first-contact latency
 
 ---
 

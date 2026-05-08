@@ -2,13 +2,12 @@ import { useEffect, useRef, useState, Suspense } from "react";
 
 export default function LazyMountSection({ id, className = "", children }) {
   const ref = useRef(null);
-  const [mounted, setMounted] = useState(false);
+  const [mounted, setMounted] = useState(
+    () => typeof window !== "undefined" && !("IntersectionObserver" in window)
+  );
 
   useEffect(() => {
-    if (!("IntersectionObserver" in window)) {
-      setMounted(true);
-      return;
-    }
+    if (!("IntersectionObserver" in window)) return;
 
     const obs = new IntersectionObserver(
       (entries) => {
