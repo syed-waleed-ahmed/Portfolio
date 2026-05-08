@@ -16,6 +16,9 @@ backend/dist/
 .env.*
 backend/.env
 frontend/.env
+# But DO track .env.example templates — they're checked-in placeholders
+!.env.example
+!**/.env.example
 
 # === Logs ===
 npm-debug.log*

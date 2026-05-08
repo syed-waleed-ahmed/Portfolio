@@ -14,11 +14,13 @@ Designed with a focus on **performance**, **accessibility**, **security**, and *
 - **Modern UI** -- glassmorphism cards, gradient accents, monospace HUD-style section labels, top-of-page scroll progress bar
 - **Hand-rolled animations** -- vanilla `IntersectionObserver` reveal hook + CSS keyframes (no `framer-motion`, no `tsparticles`)
 - **Custom navbar** -- own collapse logic, no Bootstrap JS dependency
-- **Fully responsive** -- desktop, tablet, mobile
-- **Secure contact form** -- server-side HTML escaping, length validation, IP-based rate limiting
+- **Fully responsive** -- desktop, tablet, mobile (375px+ baseline)
+- **Hardened backend** -- Helmet security headers, `express-rate-limit`, body-size cap, trust-proxy, graceful shutdown
+- **CI/CD** -- GitHub Actions runs lint, build, syntax check, `npm audit`, and gitleaks secret scan on every push and PR
+- **Auto dependency updates** -- Dependabot opens grouped weekly PRs for minor + patch upgrades (majors are manual)
+- **Pinned Node version** -- `.nvmrc`, `netlify.toml`, and `engines` field keep Netlify, CI, and local installs aligned
 - **SEO-ready** -- canonical URL, Person structured data, sitemap, robots.txt
-- **Google Analytics** -- visitor tracking via gtag (deferred to idle to avoid blocking the main thread)
-- **Content Security Policy** -- Netlify `_headers` with security hardening
+- **Content Security Policy** -- Netlify `_headers` with strict CSP and friends
 - **Print-friendly** -- dedicated print stylesheet
 - **Custom domain + HTTPS** -- syedwaleedahmed.me
 - **Data-driven architecture** -- portfolio content lives in `src/data/`, components are pure UI
@@ -51,14 +53,21 @@ Designed with a focus on **performance**, **accessibility**, **security**, and *
 - PurgeCSS in production trims unused Bootstrap utilities to ~9 KB gzipped
 
 ### Backend
-- Node.js, Express (ESM)
+- Node.js 20, Express 4 (ESM)
 - Resend for transactional email
-- CORS, dotenv
-- In-memory rate limiter, HTML escaping, input validation
+- **Security**: Helmet (CSP / X-Frame-Options / no-sniff / etc.), `express-rate-limit` (5 req / 15 min / IP), 16 KB JSON body cap, trust-proxy=1, silent CORS reject (no leaky 500s), centralized error handler, graceful SIGTERM shutdown
 
 ### Deployment
-- Frontend: **Netlify** (syedwaleedahmed.me)
+- Frontend: **Netlify** (syedwaleedahmed.me) -- `netlify.toml` pins `NODE_VERSION=20`
 - Backend: **Render**
+
+### CI / CD
+- **GitHub Actions** (`.github/workflows/ci.yml`):
+  - Frontend job: `npm ci` -> `eslint` -> `vite build`
+  - Backend job: `npm ci` -> `node --check server.js` -> `npm audit --omit=dev --audit-level=high`
+  - Secret-scan job: `gitleaks` over full git history
+  - Concurrency-cancelled to avoid stale runs
+- **Dependabot** (`.github/dependabot.yml`): grouped weekly minor+patch PRs for `frontend/` and `backend/`, monthly GitHub Actions updates. Major-version bumps are ignored (manual review only).
 
 ---
 
@@ -66,6 +75,11 @@ Designed with a focus on **performance**, **accessibility**, **security**, and *
 
 ```
 portfolio/
++-- .github/
+|   +-- workflows/
+|   |   +-- ci.yml                        # Lint + build + audit + gitleaks
+|   +-- dependabot.yml                    # Auto-PRs for npm + actions
+|   +-- PULL_REQUEST_TEMPLATE.md          # PR checklist
 +-- frontend/
 |   +-- public/
 |   |   +-- images/
@@ -83,15 +97,15 @@ portfolio/
 |   |   +-- robots.txt
 |   +-- src/
 |   |   +-- data/                         # Portfolio content -- edit here to update site
-|   |   |   +-- portfolio.js              # Personal info, social links, nav, explore items
-|   |   |   +-- experience.js             # Work history entries
-|   |   |   +-- projects.js               # Project entries
-|   |   |   +-- skills.js                 # Skill groups (tag-based)
+|   |   |   +-- portfolio.js
+|   |   |   +-- experience.js
+|   |   |   +-- projects.js
+|   |   |   +-- skills.js
 |   |   +-- styles/                       # Modular CSS
-|   |   |   +-- base.css                  # Tokens, resets, sections, scroll-to-top
-|   |   |   +-- navbar.css                # Custom navbar + scroll progress bar
-|   |   |   +-- hero.css                  # Hero section, animations, orbs, CTAs
-|   |   |   +-- components.css            # Cards, timeline, skills, contact, footer
+|   |   |   +-- base.css
+|   |   |   +-- navbar.css
+|   |   |   +-- hero.css
+|   |   |   +-- components.css
 |   |   +-- components/
 |   |   |   +-- Hero.jsx
 |   |   |   +-- About.jsx
@@ -102,10 +116,10 @@ portfolio/
 |   |   |   +-- Contact.jsx
 |   |   |   +-- Navbar.jsx
 |   |   |   +-- Footer.jsx
-|   |   |   +-- ScrollProgress.jsx        # Top-of-page progress bar
-|   |   |   +-- ScrollToTop.jsx           # Floating back-to-top button
-|   |   |   +-- Reveal.jsx                # Scroll-reveal IntersectionObserver wrapper
-|   |   |   +-- LazyMountSection.jsx      # Mounts a section only when near viewport
+|   |   |   +-- ScrollProgress.jsx
+|   |   |   +-- ScrollToTop.jsx
+|   |   |   +-- Reveal.jsx
+|   |   |   +-- LazyMountSection.jsx
 |   |   |   +-- ErrorBoundary.jsx
 |   |   +-- App.jsx
 |   |   +-- main.jsx
@@ -115,20 +129,29 @@ portfolio/
 |   +-- postcss.config.js
 |   +-- eslint.config.js
 |   +-- package.json
+|   +-- .env.example                      # Template for VITE_API_BASE_URL
 +-- backend/
-|   +-- server.js
+|   +-- server.js                         # Helmet, CORS, body cap, error handler, graceful shutdown
 |   +-- routes/
-|   |   +-- contactRoutes.js
+|   |   +-- contactRoutes.js              # Validation + rate limit + Resend
 |   +-- package.json
-|   +-- .env                              # Not committed
+|   +-- .env.example                      # Template for RESEND_API_KEY, EMAIL_TO, EMAIL_FROM
++-- .editorconfig                         # Cross-platform editor settings
++-- .gitattributes                        # Normalized line endings, binary detection
 +-- .gitignore
-+-- LICENSE
++-- .npmrc                                # Strict engine enforcement
++-- .nvmrc                                # Node 20
++-- LICENSE                               # MIT
++-- netlify.toml                          # Pins NODE_VERSION on Netlify
 +-- README.md
++-- SECURITY.md                           # Vulnerability reporting policy
 ```
 
 ---
 
 ## Local Setup
+
+Requires **Node.js 20+** (use [nvm](https://github.com/nvm-sh/nvm): `nvm use`).
 
 ### 1. Clone
 
@@ -141,6 +164,7 @@ cd Portfolio
 
 ```bash
 cd frontend
+cp .env.example .env       # optional override of VITE_API_BASE_URL
 npm install
 npm run dev
 ```
@@ -151,6 +175,7 @@ Runs at `http://localhost:5173`
 
 ```bash
 cd backend
+cp .env.example .env       # required -- fill in real values
 npm install
 npm start
 ```
@@ -161,20 +186,21 @@ Runs at `http://localhost:5000`
 
 ## Environment Variables
 
-Create `backend/.env`:
+### `backend/.env`
 
-```env
-PORT=5000
-EMAIL_FROM=portfolio@yourdomain.com
-EMAIL_TO=your-email@gmail.com
-RESEND_API_KEY=re_xxxxxxxxxxxx
-```
+| Variable | Required | Purpose |
+|----------|----------|---------|
+| `PORT` | no (Render sets this) | Listen port |
+| `NODE_ENV` | recommended | `production` suppresses error-detail leaks |
+| `RESEND_API_KEY` | yes | API key from https://resend.com |
+| `EMAIL_FROM` | yes | Verified sender (or `onboarding@resend.dev` for testing) |
+| `EMAIL_TO` | yes | Where contact-form messages land |
 
-Optionally create `frontend/.env` to override the backend URL:
+### `frontend/.env` (optional)
 
-```env
-VITE_API_BASE_URL=http://localhost:5000
-```
+| Variable | Purpose |
+|----------|---------|
+| `VITE_API_BASE_URL` | Override the default backend URL during local dev |
 
 ---
 
@@ -193,23 +219,30 @@ Components are pure UI -- they read from the data layer and render automatically
 
 ## Contact Form Flow
 
-1. User submits form on the frontend (name / email / subject / message)
+1. User submits the form (name / email / subject / message)
 2. Frontend POSTs to `/api/contact` on the backend
-3. Backend validates input (length limits, required fields)
-4. Rate limiter checks IP (5 requests per 15 minutes)
+3. `express-rate-limit` checks the requester's IP (5 / 15 min)
+4. Backend validates input (required, length caps, email regex)
 5. HTML-escaped email is sent via Resend with the user's address as `replyTo`
+6. Errors flow through a centralized handler -- nothing leaks stack traces
 
 ---
 
 ## Security
 
 - **Content Security Policy** -- HTTP header via Netlify `_headers`
+- **Backend security headers** -- `helmet()` middleware (CSP-ready, X-Frame-Options DENY, no-sniff, Referrer-Policy)
 - **HTML escaping** -- all user input is escaped before rendering in email templates
-- **Rate limiting** -- in-memory IP-based limiter (5 requests / 15 min window)
+- **Rate limiting** -- `express-rate-limit` (5 requests / 15 min window, standard `RateLimit-*` headers)
 - **Input validation** -- max lengths enforced (name: 100, email: 100, subject: 200, message: 5000)
-- **CORS** -- configured for allowed origins only
-- **Security headers** -- X-Frame-Options, X-Content-Type-Options, Referrer-Policy, Permissions-Policy
+- **Body-size cap** -- `express.json({ limit: "16kb" })` to prevent payload abuse
+- **Trust-proxy=1** -- IP is read from the platform proxy hop only (Render); not blindly from client headers
+- **CORS** -- silent reject on disallowed origins (no leaky 500s)
+- **Graceful shutdown** -- SIGTERM/SIGINT close the server cleanly so platform restarts don't drop in-flight requests
+- **Secret scanning** -- gitleaks runs in CI on every push and PR
+- **Audit gate** -- CI fails on production-dependency vulnerabilities at `high` or above
 - **DNS prefetch** -- preconnect hint for backend API to reduce first-contact latency
+- **Reporting** -- see [SECURITY.md](SECURITY.md) for responsible disclosure
 
 ---
 

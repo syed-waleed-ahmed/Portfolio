@@ -12,7 +12,9 @@
       "Bash(npm audit *)",
       "Bash(timeout 5 node server.js)",
       "Bash(node --check server.js)",
-      "Bash(git fetch *)"
+      "Bash(git fetch *)",
+      "Bash([ -f \"/d/portfolio/$f\" ])",
+      "Bash(node --check /d/portfolio/backend/server.js)"
     ]
   }
 }

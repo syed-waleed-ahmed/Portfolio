@@ -1,0 +1,39 @@
+# Normalize line endings to LF in the repository.
+# Windows users get CRLF in their working tree, but the repo stays clean.
+* text=auto eol=lf
+
+# Explicit text files
+*.js     text eol=lf
+*.jsx    text eol=lf
+*.json   text eol=lf
+*.css    text eol=lf
+*.html   text eol=lf
+*.md     text eol=lf
+*.yml    text eol=lf
+*.yaml   text eol=lf
+*.toml   text eol=lf
+*.svg    text eol=lf
+
+# Shell / Windows scripts keep their native endings
+*.sh     text eol=lf
+*.bat    text eol=crlf
+*.cmd    text eol=crlf
+*.ps1    text eol=crlf
+
+# Binary assets — never touch these
+*.png    binary
+*.jpg    binary
+*.jpeg   binary
+*.gif    binary
+*.ico    binary
+*.webp   binary
+*.avif   binary
+*.woff   binary
+*.woff2  binary
+*.ttf    binary
+*.eot    binary
+*.pdf    binary
+
+# GitHub linguist hints — exclude generated/vendored content from language stats
+package-lock.json linguist-generated=true
+**/dist/**       linguist-generated=true
