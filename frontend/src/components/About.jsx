@@ -1,38 +1,48 @@
+import { FaUserAstronaut, FaGraduationCap } from "react-icons/fa";
 import Reveal from "./Reveal";
 
 const About = () => {
   return (
       <div className="container">
         <Reveal>
-          <h2 className="section-title text-center mb-5">
-            About Me &amp; Education
-          </h2>
+          <div className="section-header">
+            <span className="section-eyebrow">Who I Am</span>
+            <h2 className="section-title">About Me &amp; Education</h2>
+            <p className="section-subtitle">
+              Half full-stack engineer, half AI/ML. Here&apos;s a quick
+              summary of how I got here and what I&apos;m working on now.
+            </p>
+          </div>
         </Reveal>
 
         <div className="row g-4 align-items-stretch justify-content-center">
           <div className="col-md-6 d-flex">
             <Reveal delay={0.04} className="w-100">
               <div className="neo-card about-card flex-fill h-100 p-4">
+                <div className="card-heading">
+                  <span className="card-heading-icon"><FaUserAstronaut /></span>
+                  My Approach
+                </div>
                 <p className="mb-3">
-                  I treat AI models the same way I treat any other software
-                  component &mdash; they need clean interfaces, proper error
-                  handling, and a deployment story. That mindset shapes every
-                  system I build, from agent orchestration to data pipelines.
+                  My background is split between full-stack engineering and
+                  AI/ML. That mix shapes how I work: I build models the way
+                  I&apos;d build any other service &mdash; with proper APIs,
+                  error handling, and observability, not just notebooks that
+                  happen to run.
                 </p>
                 <p className="mb-3">
-                  At <strong>MemorAIz</strong> I&apos;m turning my thesis into a
-                  productized AI assistant platform with configurable agents,
-                  module registries, and built-in observability. At{" "}
-                  <strong>Fruugle</strong> I cluster and normalize 1M+
-                  supermarket product records so a multimodal AI assistant can
-                  do real-time price comparison.
+                  At <strong>MemorAIz</strong> I&apos;m productizing my
+                  master&apos;s thesis into an AI assistant platform with
+                  configurable agents, a module registry, and observability built
+                  in. At <strong>Fruugle</strong> I clustered and normalized
+                  1M+ supermarket records so a multimodal AI assistant could do
+                  real-time price comparison.
                 </p>
                 <p className="mb-0">
-                  Before that, I spent a year at <strong>Jubilee Life
-                  Insurance</strong> rotating through cybersecurity, web
-                  development, and database administration &mdash; which gave me
-                  the breadth to wire full systems together, not just the ML
-                  parts.
+                  Before that, a year at <strong>Jubilee Life Insurance</strong>{" "}
+                  rotating through cybersecurity, web development, and database
+                  administration. That breadth means I can wire whole systems
+                  together, not just the ML parts.
                 </p>
               </div>
             </Reveal>
@@ -41,7 +51,10 @@ const About = () => {
           <div className="col-md-6 d-flex">
             <Reveal delay={0.08} className="w-100">
               <div className="neo-card about-card flex-fill h-100 p-4">
-                <h3 className="mb-3 text-accent">Education</h3>
+                <div className="card-heading">
+                  <span className="card-heading-icon"><FaGraduationCap /></span>
+                  Education
+                </div>
                 <ul className="timeline mb-0">
                   <li className="mb-3">
                     <div className="fw-semibold">

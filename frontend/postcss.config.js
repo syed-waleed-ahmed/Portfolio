@@ -7,32 +7,21 @@ export default {
     ...(isProduction
       ? [
           purgecss({
-            content: [
-              "./index.html",
-              "./src/**/*.{jsx,js,ts,tsx}",
-            ],
-            // Bootstrap JS dynamically adds these classes (not in JSX source)
+            content: ["./index.html", "./src/**/*.{jsx,js,ts,tsx}"],
             safelist: {
               standard: [
                 "show",
-                "collapse",
-                "collapsing",
-                "active",
-                "fade",
+                "is-open",
+                "is-active",
+                "is-scrolled",
+                "is-visible",
                 "is-invalid",
                 "is-valid",
+                "is-error",
+                "is-success",
                 "was-validated",
-                "navbar-collapse",
-              ],
-              // Only keep patterns that Bootstrap JS adds dynamically
-              // All static utility classes (col-md-6, d-flex, etc.) are found
-              // automatically by PurgeCSS scanning JSX source files
-              greedy: [
-                /^nav/,
-                /^form-/,
               ],
             },
-            // Keep CSS variables and keyframes
             defaultExtractor: (content) =>
               content.match(/[\w-/:]+(?<!:)/g) || [],
           }),

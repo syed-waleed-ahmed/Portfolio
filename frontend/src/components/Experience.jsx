@@ -5,9 +5,13 @@ const Experience = () => {
   return (
       <div className="container">
         <Reveal>
-          <h2 className="section-title text-center mb-5">
-            Professional Experience
-          </h2>
+          <div className="section-header">
+            <span className="section-eyebrow">Career</span>
+            <h2 className="section-title">Professional Experience</h2>
+            <p className="section-subtitle">
+              Where I&apos;ve worked and what I built while I was there.
+            </p>
+          </div>
         </Reveal>
 
         <div className="row g-4 align-items-stretch justify-content-center">

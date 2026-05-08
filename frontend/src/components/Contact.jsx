@@ -2,7 +2,6 @@ import { useState } from "react";
 import {
   FaUser,
   FaEnvelope,
-  FaPhone,
   FaTag,
   FaCommentDots,
   FaPaperPlane,
@@ -12,7 +11,6 @@ import Reveal from "./Reveal";
 const initialState = {
   name: "",
   email: "",
-  phone: "",
   subject: "",
   message: "",
 };
@@ -49,17 +47,6 @@ const Contact = () => {
       }
     }
 
-    if (!form.phone.trim()) {
-      newErrors.phone = "Phone is required.";
-    } else {
-      // allow + and digits and optional spaces
-      const phoneRegex = /^\+\d[\d\s]{6,18}$/;
-      if (!phoneRegex.test(form.phone)) {
-        newErrors.phone =
-          "Use international format, e.g. +1 234 567 8900";
-      }
-    }
-
     if (!form.subject.trim()) newErrors.subject = "Subject is required.";
     if (!form.message.trim()) newErrors.message = "Message is required.";
 
@@ -84,20 +71,17 @@ const Contact = () => {
 
       const res = await fetch(`${API_BASE_URL}/api/contact`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
       });
 
       const data = await res.json();
 
-      // also check backend "success" flag to be extra safe
       if (!res.ok || !data.success) {
         throw new Error(data.error || "Failed to send message.");
       }
 
-      setSubmitSuccess("Thanks for reaching out! I’ll get back to you soon.");
+      setSubmitSuccess("Thanks for reaching out! I'll get back to you soon.");
       setForm(initialState);
       setErrors({});
     } catch (err) {
@@ -111,168 +95,114 @@ const Contact = () => {
   };
 
   return (
-      <div className="container">
-        <Reveal>
-          <h2 className="section-title text-center mb-5">Contact</h2>
-        </Reveal>
+    <div className="container">
+      <Reveal>
+        <div className="section-header">
+          <span className="section-eyebrow">Get in Touch</span>
+          <h2 className="section-title">Contact</h2>
+          <p className="section-subtitle">
+            Got a role, a question, or an idea? Drop a note &mdash; I read every
+            message.
+          </p>
+        </div>
+      </Reveal>
 
-        {/* Full-width card */}
-        <Reveal delay={0.08}>
-          <div className="neo-card contact-card">
-                <p className="text-center contact-subtitle mb-4">
-                  Have a question, collaboration idea, or opportunity? Fill out
-                  the form and I&apos;ll get back to you.
-                </p>
-
-                <form noValidate onSubmit={handleSubmit}>
-                  <div className="row g-4">
-                    {/* Name */}
-                    <div className="col-md-6">
-                      <label className="contact-label mb-2" htmlFor="name">
-                        <FaUser className="contact-label-icon" />
-                        Name *
-                      </label>
-                      <input
-                        id="name"
-                        name="name"
-                        type="text"
-                        className={`form-control glass-input ${
-                          errors.name ? "is-invalid" : ""
-                        }`}
-                        placeholder="e.g. John Doe"
-                        value={form.name}
-                        onChange={handleChange}
-                        spellCheck="false"
-                      />
-                      {errors.name && (
-                        <div className="small text-danger mt-1">
-                          {errors.name}
-                        </div>
-                      )}
-                    </div>
-
-                    {/* Email */}
-                    <div className="col-md-6">
-                      <label className="contact-label mb-2" htmlFor="email">
-                        <FaEnvelope className="contact-label-icon" />
-                        Email *
-                      </label>
-                      <input
-                        id="email"
-                        name="email"
-                        type="email"
-                        className={`form-control glass-input ${
-                          errors.email ? "is-invalid" : ""
-                        }`}
-                        placeholder="e.g. john.doe@company.com"
-                        value={form.email}
-                        onChange={handleChange}
-                        spellCheck="false"
-                      />
-                      {errors.email && (
-                        <div className="small text-danger mt-1">
-                          {errors.email}
-                        </div>
-                      )}
-                    </div>
-
-                    {/* Phone */}
-                    <div className="col-md-6">
-                      <label className="contact-label mb-2" htmlFor="phone">
-                        <FaPhone className="contact-label-icon" />
-                        Phone *
-                      </label>
-                      <input
-                        id="phone"
-                        name="phone"
-                        type="tel"
-                        className={`form-control glass-input ${
-                          errors.phone ? "is-invalid" : ""
-                        }`}
-                        placeholder="e.g. +1 234 567 8900"
-                        value={form.phone}
-                        onChange={handleChange}
-                        spellCheck="false"
-                      />
-                      {errors.phone && (
-                        <div className="small text-danger mt-1">
-                          {errors.phone}
-                        </div>
-                      )}
-                    </div>
-
-                    {/* Subject */}
-                    <div className="col-md-6">
-                      <label className="contact-label mb-2" htmlFor="subject">
-                        <FaTag className="contact-label-icon" />
-                        Subject *
-                      </label>
-                      <input
-                        id="subject"
-                        name="subject"
-                        type="text"
-                        className={`form-control glass-input ${
-                          errors.subject ? "is-invalid" : ""
-                        }`}
-                        placeholder="e.g. Job Opportunity / Collaboration / Freelance"
-                        value={form.subject}
-                        onChange={handleChange}
-                        spellCheck="false"
-                      />
-                      {errors.subject && (
-                        <div className="small text-danger mt-1">
-                          {errors.subject}
-                        </div>
-                      )}
-                    </div>
-
-                    {/* Message */}
-                    <div className="col-12">
-                      <label className="contact-label mb-2" htmlFor="message">
-                        <FaCommentDots className="contact-label-icon" />
-                        Message *
-                      </label>
-                      <textarea
-                        id="message"
-                        name="message"
-                        className={`form-control glass-input contact-message ${
-                          errors.message ? "is-invalid" : ""
-                        }`}
-                        placeholder="Hi Waleed, I came across your portfolio and would like to discuss..."
-                        value={form.message}
-                        onChange={handleChange}
-                      />
-                      {errors.message && (
-                        <div className="small text-danger mt-1">
-                          {errors.message}
-                        </div>
-                      )}
-                    </div>
-                  </div>
-
-                  {/* Submit row */}
-                  <div className="d-flex align-items-center gap-3 mt-4">
-                    <button
-                      type="submit"
-                      className="contact-btn"
-                      disabled={isSubmitting}
-                    >
-                      <FaPaperPlane className="btn-icon" />
-                      {isSubmitting ? "Sending..." : "Send Message"}
-                    </button>
-                    {submitError && (
-                      <span className="small text-danger">{submitError}</span>
-                    )}
-                    {submitSuccess && !submitError && (
-                      <span className="small text-success">
-                        {submitSuccess}
-                      </span>
-                    )}
-                  </div>
-                </form>
+      <Reveal delay={0.08}>
+        <div className="neo-card contact-card">
+          <form noValidate onSubmit={handleSubmit}>
+            <div className="row g-4">
+              <div className="col-md-6">
+                <label className="contact-label mb-2" htmlFor="name">
+                  <FaUser className="contact-label-icon" />
+                  Name *
+                </label>
+                <input
+                  id="name"
+                  name="name"
+                  type="text"
+                  className={`form-control glass-input ${errors.name ? "is-invalid" : ""}`}
+                  placeholder="e.g. Jane Doe"
+                  value={form.name}
+                  onChange={handleChange}
+                  spellCheck="false"
+                />
+                {errors.name && <div className="small text-danger mt-1">{errors.name}</div>}
               </div>
-            </Reveal>
-      </div>
+
+              <div className="col-md-6">
+                <label className="contact-label mb-2" htmlFor="email">
+                  <FaEnvelope className="contact-label-icon" />
+                  Email *
+                </label>
+                <input
+                  id="email"
+                  name="email"
+                  type="email"
+                  className={`form-control glass-input ${errors.email ? "is-invalid" : ""}`}
+                  placeholder="e.g. jane.doe@company.com"
+                  value={form.email}
+                  onChange={handleChange}
+                  spellCheck="false"
+                />
+                {errors.email && <div className="small text-danger mt-1">{errors.email}</div>}
+              </div>
+
+              <div className="col-12">
+                <label className="contact-label mb-2" htmlFor="subject">
+                  <FaTag className="contact-label-icon" />
+                  Subject *
+                </label>
+                <input
+                  id="subject"
+                  name="subject"
+                  type="text"
+                  className={`form-control glass-input ${errors.subject ? "is-invalid" : ""}`}
+                  placeholder="e.g. AI Engineer role at Acme"
+                  value={form.subject}
+                  onChange={handleChange}
+                  spellCheck="false"
+                />
+                {errors.subject && <div className="small text-danger mt-1">{errors.subject}</div>}
+              </div>
+
+              <div className="col-12">
+                <label className="contact-label mb-2" htmlFor="message">
+                  <FaCommentDots className="contact-label-icon" />
+                  Message *
+                </label>
+                <textarea
+                  id="message"
+                  name="message"
+                  className={`form-control glass-input contact-message ${errors.message ? "is-invalid" : ""}`}
+                  placeholder="Hi Waleed, I came across your portfolio and would like to discuss..."
+                  value={form.message}
+                  onChange={handleChange}
+                />
+                {errors.message && <div className="small text-danger mt-1">{errors.message}</div>}
+              </div>
+            </div>
+
+            <div className="d-flex flex-wrap align-items-center gap-3 mt-4">
+              <button type="submit" className="contact-btn" disabled={isSubmitting}>
+                <FaPaperPlane className="btn-icon" />
+                {isSubmitting ? "Sending..." : "Send Message"}
+              </button>
+            </div>
+
+            {submitError && (
+              <div className="contact-feedback is-error" role="alert">
+                {submitError}
+              </div>
+            )}
+            {submitSuccess && !submitError && (
+              <div className="contact-feedback is-success" role="status">
+                {submitSuccess}
+              </div>
+            )}
+          </form>
+        </div>
+      </Reveal>
+    </div>
   );
 };
 

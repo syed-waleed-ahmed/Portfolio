@@ -1,10 +1,17 @@
-// src/components/Navbar.jsx
 import { useEffect, useState } from "react";
 import { navLinks, sectionIds } from "../data/portfolio";
 
 const Navbar = () => {
   const [activeSection, setActiveSection] = useState("top");
   const [menuOpen, setMenuOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 24);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   useEffect(() => {
     if (!("IntersectionObserver" in window)) return;
@@ -30,32 +37,11 @@ const Navbar = () => {
 
     return () => observers.forEach((obs) => obs.disconnect());
   }, []);
-  const closeMobileMenu = () => {
-    const navbarCollapse = document.getElementById("mainNav");
-    if (!navbarCollapse) return;
-
-    setMenuOpen(false);
-
-    if (navbarCollapse.classList.contains("show")) {
-      // ✅ No optional chaining (better iOS/Safari compatibility)
-      const bs = window.bootstrap;
-
-      if (bs && bs.Collapse) {
-        const instance = bs.Collapse.getInstance(navbarCollapse);
-        if (instance) instance.hide();
-        else navbarCollapse.classList.remove("show");
-      } else {
-        navbarCollapse.classList.remove("show");
-      }
-    }
-  };
 
   const handleNavClick = (e, target) => {
     e.preventDefault();
+    setMenuOpen(false);
 
-    closeMobileMenu();
-
-    // Scroll
     if (target === "top") {
       window.scrollTo({ top: 0, behavior: "smooth" });
     } else {
@@ -63,45 +49,53 @@ const Navbar = () => {
       if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
     }
 
-    // keep URL clean
     window.history.replaceState({}, "", window.location.pathname);
   };
 
   return (
-    <nav className="navbar navbar-expand-md fixed-top glass-nav navbar-dark">
-      <div className="container">
+    <nav className={`site-nav${scrolled ? " is-scrolled" : ""}`}>
+      <div className="site-nav-inner container">
+        <a
+          href="#"
+          className="site-nav-brand"
+          onClick={(e) => handleNavClick(e, "top")}
+          aria-label="Home"
+        >
+          <span className="site-nav-brand-mark" aria-hidden="true">SW</span>
+          <span className="site-nav-brand-text">Syed Waleed Ahmed</span>
+        </a>
+
         <button
-          className={`navbar-toggler border-0 shadow-none ms-auto hamburger${menuOpen ? " open" : ""}`}
           type="button"
-          data-bs-toggle="collapse"
-          data-bs-target="#mainNav"
-          aria-controls="mainNav"
+          className={`site-nav-toggle${menuOpen ? " is-open" : ""}`}
+          aria-controls="primary-menu"
           aria-expanded={menuOpen}
           aria-label="Toggle navigation"
-          onClick={() => setMenuOpen((prev) => !prev)}
+          onClick={() => setMenuOpen((v) => !v)}
         >
-          <span className="hamburger-line" />
-          <span className="hamburger-line" />
-          <span className="hamburger-line" />
+          <span className="site-nav-toggle-line" />
+          <span className="site-nav-toggle-line" />
+          <span className="site-nav-toggle-line" />
         </button>
 
-        <div className="collapse navbar-collapse justify-content-center" id="mainNav">
-          <ul className="navbar-nav nav-pills gap-2">
-            {navLinks.map((link) => (
-              <li className="nav-item" key={link.label}>
-                <a
-                  href="#"
-                  className={`nav-link nav-link-pill${
-                    activeSection === link.target ? " active" : ""
-                  }`}
-                  onClick={(e) => handleNavClick(e, link.target)}
-                >
-                  {link.label}
-                </a>
-              </li>
-            ))}
-          </ul>
-        </div>
+        <ul
+          id="primary-menu"
+          className={`site-nav-list${menuOpen ? " is-open" : ""}`}
+        >
+          {navLinks.map((link) => (
+            <li key={link.label}>
+              <a
+                href="#"
+                className={`site-nav-link${
+                  activeSection === link.target ? " is-active" : ""
+                }`}
+                onClick={(e) => handleNavClick(e, link.target)}
+              >
+                {link.label}
+              </a>
+            </li>
+          ))}
+        </ul>
       </div>
     </nav>
   );

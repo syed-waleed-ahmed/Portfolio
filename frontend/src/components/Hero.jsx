@@ -1,14 +1,5 @@
-// src/components/Hero.jsx
 import { useEffect, useMemo, useState } from "react";
-import {
-  FaEnvelope,
-  FaPhoneAlt,
-  FaWhatsapp,
-  FaLinkedinIn,
-  FaGithub,
-  FaFileAlt,
-} from "react-icons/fa";
-import { SiLeetcode } from "react-icons/si";
+import { FaEnvelope, FaFileAlt, FaLinkedinIn, FaGithub } from "react-icons/fa";
 import { personalInfo, socialLinks, exploreItems } from "../data/portfolio";
 
 const Hero = () => {
@@ -27,6 +18,12 @@ const Hero = () => {
     () => exploreItems[exploreIndex],
     [exploreIndex]
   );
+
+  const scrollToContact = (e) => {
+    e.preventDefault();
+    document.getElementById("contact")?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+
   return (
     <section
       id="hero"
@@ -35,29 +32,32 @@ const Hero = () => {
       <div className="container position-relative">
         <div className="hero-orbit hero-orbit-1" />
         <div className="hero-orbit hero-orbit-2" />
-        <div className="hero-orbit hero-orbit-3" />
 
         <div className="row align-items-center g-5">
           <div className="col-lg-7">
             <div className="hero-slide-left">
-              <h1 className="display-5 fw-bold hero-title mb-3">
-                Hi, I'm <span className="gradient-text">{personalInfo.name}</span>
+              <span className="hero-role-badge">AI Engineer · Multi-Agent &amp; RAG Systems</span>
+
+              <h1 className="fw-bold hero-title mb-3">
+                Hi, I&apos;m <span className="gradient-text">{personalInfo.name}</span>
               </h1>
 
               <p className="hero-lead mb-4">
-                I build production-grade agentic AI systems &mdash; from{" "}
-                <span className="fw-semibold">multimodal RAG pipelines</span> and{" "}
-                <span className="fw-semibold">LLM orchestration</span> to{" "}
-                <span className="fw-semibold">intelligent automation</span> that turns
-                messy data into reliable, deployed applications.
+                AI Engineer working on{" "}
+                <span className="fw-semibold">multi-agent systems</span>,{" "}
+                <span className="fw-semibold">RAG pipelines</span>, and{" "}
+                <span className="fw-semibold">LLM workflow automation</span>. I
+                care about the parts most demos skip: evaluation, observability,
+                and the engineering between a working prototype and something a
+                real team can use every day.
               </p>
 
               <p className="hero-sub-lead mb-4">
-                Master's student in Automation Engineering at the University of
+                Master&apos;s in Automation Engineering at the University of
                 Bologna, with an Erasmus semester at the University of Twente.
               </p>
 
-              <div className="d-flex flex-wrap align-items-center gap-2 mb-3 hero-explore-row">
+              <div className="d-flex flex-wrap align-items-center gap-2 mb-4 hero-explore-row">
                 <span className="text-muted small">Currently exploring</span>
                 <div className="explore-pill">
                   <span className="explore-dot" />
@@ -67,77 +67,45 @@ const Hero = () => {
                 </div>
               </div>
 
-              <div className="hero-pill-grid">
-                <div className="hero-pill-row">
-                  <a
-                    href={`mailto:${personalInfo.email}`}
-                    className="hero-pill"
-                  >
-                    <FaEnvelope className="hero-pill-icon" />
-                    Email
-                  </a>
-                  <a
-                    href={`tel:${personalInfo.phone}`}
-                    className="hero-pill"
-                  >
-                    <FaPhoneAlt className="hero-pill-icon" />
-                    {personalInfo.phoneDisplay}
-                  </a>
-                  <a
-                    href={personalInfo.whatsapp}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="hero-pill"
-                  >
-                    <FaWhatsapp className="hero-pill-icon" />
-                    WhatsApp
-                  </a>
-                </div>
-                <div className="hero-pill-row">
-                  <a
-                    href={socialLinks.linkedin}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="hero-pill"
-                  >
-                    <FaLinkedinIn className="hero-pill-icon" />
-                    LinkedIn
-                  </a>
-                  <a
-                    href={socialLinks.github}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="hero-pill"
-                  >
-                    <FaGithub className="hero-pill-icon" />
-                    GitHub
-                  </a>
-                  <a
-                    href={socialLinks.leetcode}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="hero-pill"
-                  >
-                    <SiLeetcode className="hero-pill-icon" />
-                    LeetCode
-                  </a>
-                  <a
-                    href={personalInfo.resumeUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="hero-pill"
-                  >
-                    <FaFileAlt className="hero-pill-icon" />
-                    Resume
-                  </a>
-                </div>
+              <div className="hero-cta-row">
+                <a href="#contact" className="hero-cta-primary" onClick={scrollToContact}>
+                  <FaEnvelope />
+                  Let&apos;s connect
+                </a>
+                <a
+                  href={personalInfo.resumeUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hero-cta-secondary"
+                >
+                  <FaFileAlt />
+                  View Resume
+                </a>
+                <a
+                  href={socialLinks.linkedin}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hero-cta-icon"
+                  aria-label="LinkedIn"
+                >
+                  <FaLinkedinIn />
+                </a>
+                <a
+                  href={socialLinks.github}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hero-cta-icon"
+                  aria-label="GitHub"
+                >
+                  <FaGithub />
+                </a>
               </div>
             </div>
           </div>
 
           <div className="col-lg-5 d-flex justify-content-lg-end justify-content-center">
             <div className="profile-wrapper hero-photo-wrapper hero-slide-right">
-              <div className="gradient-border hero-ring">
+              <div className="hero-ring">
                 <picture>
                   <source type="image/avif" srcSet="/images/Profile.avif" />
                   <source type="image/webp" srcSet="/images/Profile.webp" />

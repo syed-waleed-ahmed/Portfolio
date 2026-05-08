@@ -1,120 +1,37 @@
-// src/components/Skills.jsx
-import { useEffect, useRef, useState } from "react";
 import Reveal from "./Reveal";
 import { skillGroups } from "../data/skills";
 
 const Skills = () => {
-  const sectionRef = useRef(null);
-  const rafRef = useRef(null);
-  const lastUpdateRef = useRef(0);
-
-  const [animate, setAnimate] = useState(false);
-
-  const [displayPercents, setDisplayPercents] = useState(
-    skillGroups.map((group) => group.skills.map(() => 0))
-  );
-
-  // Trigger animation when section enters viewport
-  useEffect(() => {
-    // If IntersectionObserver isn't available, just animate immediately
-    if (!("IntersectionObserver" in window)) {
-      setAnimate(true);
-      return;
-    }
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry?.isIntersecting) {
-          setAnimate(true);
-          observer.disconnect();
-        }
-      },
-      { threshold: 0.35 }
-    );
-
-    if (sectionRef.current) observer.observe(sectionRef.current);
-
-    return () => observer.disconnect();
-  }, []);
-
-  // Animate numbers from 0 → target when animate=true
-  useEffect(() => {
-    if (!animate) return;
-
-    const targets = skillGroups.map((g) => g.skills.map((s) => s.percent));
-    const duration = 1500; // ms
-    const start = performance.now();
-
-    // Reduce React renders: update at ~20fps (every 50ms)
-    const minFrameInterval = 50;
-
-    const tick = (now) => {
-      const progress = Math.min(1, (now - start) / duration);
-
-      // Throttle state updates
-      if (now - lastUpdateRef.current >= minFrameInterval || progress === 1) {
-        lastUpdateRef.current = now;
-
-        const current = targets.map((group) =>
-          group.map((p) => Math.round(p * progress))
-        );
-        setDisplayPercents(current);
-      }
-
-      if (progress < 1) {
-        rafRef.current = requestAnimationFrame(tick);
-      }
-    };
-
-    rafRef.current = requestAnimationFrame(tick);
-
-    return () => {
-      if (rafRef.current) cancelAnimationFrame(rafRef.current);
-    };
-  }, [animate]);
-
   return (
-    <div className="container" ref={sectionRef}>
-        <Reveal>
-          <h2 className="section-title text-center mb-5">Skills</h2>
-        </Reveal>
+    <div className="container">
+      <Reveal>
+        <div className="section-header">
+          <span className="section-eyebrow">Toolbox</span>
+          <h2 className="section-title">Skills</h2>
+          <p className="section-subtitle">
+            What I actually reach for day-to-day, grouped by where I use it.
+          </p>
+        </div>
+      </Reveal>
 
-        <div className="row g-4 justify-content-center">
-          {skillGroups.map((group, gi) => (
-            <div className="col-md-6 col-lg-4 d-flex" key={group.title}>
-              <Reveal delay={gi * 0.05} className="w-100">
-                <div className="neo-card skill-card h-100 p-4">
-                  <h3 className="mb-4">{group.title}</h3>
-
-                  {group.skills.map((skill, si) => (
-                    <div className="mb-3" key={skill.name}>
-                      <div className="d-flex justify-content-between align-items-center mb-1">
-                        <span className="skill-name">{skill.name}</span>
-                        <span className="skill-percent">
-                          {displayPercents[gi][si]}%
-                        </span>
-                      </div>
-
-                      <div className="progress skill-progress">
-                        <div
-                          className="progress-bar"
-                          role="progressbar"
-                          aria-label={`${skill.name} proficiency`}
-                          aria-valuemin={0}
-                          aria-valuemax={100}
-                          aria-valuenow={displayPercents[gi][si]}
-                          style={{
-                            width: animate ? `${displayPercents[gi][si]}%` : "0%",
-                          }}
-                        />
-                      </div>
-                    </div>
+      <div className="row g-4 justify-content-center">
+        {skillGroups.map((group, gi) => (
+          <div className="col-md-6 col-lg-4 d-flex" key={group.title}>
+            <Reveal delay={gi * 0.05} className="w-100">
+              <div className="neo-card skill-card h-100 p-4">
+                <h3 className="mb-3">{group.title}</h3>
+                <div className="d-flex flex-wrap gap-2">
+                  {group.tags.map((tag) => (
+                    <span key={tag} className="skill-badge">
+                      {tag}
+                    </span>
                   ))}
                 </div>
-              </Reveal>
-            </div>
-          ))}
-        </div>
+              </div>
+            </Reveal>
+          </div>
+        ))}
+      </div>
     </div>
   );
 };

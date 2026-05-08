@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run *)",
+      "Bash(curl -s -o /dev/null -w \"HTTP %{http_code} — %{size_download} bytes\\\\n\" http://localhost:5173/)",
+      "Bash(curl -s -o /dev/null -w \"HTTP %{http_code}\\\\n\" http://localhost:5173/)",
+      "Bash(grep -E \"\\\\.\\(webp|png|jpg|jpeg|avif|svg\\)$\")",
+      "Bash(npm uninstall *)",
+      "Bash(npm install *)"
+    ]
+  }
+}

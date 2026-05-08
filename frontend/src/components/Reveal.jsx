@@ -1,20 +1,40 @@
-// src/components/Reveal.jsx
-import { motion } from "framer-motion";
+import { useEffect, useRef, useState } from "react";
 
-// make ESLint clearly see that `motion` is used in JS
-const MotionDiv = motion.div;
+const Reveal = ({ children, delay = 0, className = "" }) => {
+  const ref = useRef(null);
+  const [visible, setVisible] = useState(false);
 
-const Reveal = ({ children, delay = 0, className }) => {
+  useEffect(() => {
+    const node = ref.current;
+    if (!node) return;
+
+    if (!("IntersectionObserver" in window)) {
+      setVisible(true);
+      return;
+    }
+
+    const obs = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setVisible(true);
+          obs.disconnect();
+        }
+      },
+      { threshold: 0.18 }
+    );
+
+    obs.observe(node);
+    return () => obs.disconnect();
+  }, []);
+
   return (
-    <MotionDiv
-      className={className}
-      initial={{ opacity: 0, y: 40 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, amount: 0.2 }}
-      transition={{ duration: 0.7, delay, ease: "easeOut" }}
+    <div
+      ref={ref}
+      className={`reveal${visible ? " is-visible" : ""}${className ? ` ${className}` : ""}`}
+      style={delay ? { transitionDelay: `${delay}s` } : undefined}
     >
       {children}
-    </MotionDiv>
+    </div>
   );
 };
 

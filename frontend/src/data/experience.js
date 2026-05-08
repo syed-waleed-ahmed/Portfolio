@@ -1,37 +1,35 @@
 export const experiences = [
   {
-    title: "Thesis Student",
+    title: "AI Systems Thesis Student",
     company: "MemorAIz",
-    period: "Feb 2026 \u2013 Present \u00B7 Bologna, Italy",
-      bullets: [
-    "Productizing a modular AI assistant platform for the EDU Suite, enabling rapid integration of external capabilities into reusable, UI-driven micro-experiences.",
-    "Designed a capability pipeline (scan → shortlist → test → integrate → render) to improve capability velocity and reduce feature delivery time from weeks to days.",
-    "Built reusable agent modules with structured JSON outputs, powering dynamic UI components such as quizzes, flashcards, and study plans instead of plain chat responses.",
-    "Developed the orchestration layer for multi-step agent ↔ module ↔ UI flows with routing, retries/fallbacks, and observability hooks for tracing, latency, and failure tracking."
-  ],
+    period: "Feb 2026 – Present · Bologna, Italy",
+    bullets: [
+      "Built a modular AI assistant platform that wires APIs, MCP servers, and LLM capabilities into reusable micro-experiences for education workflows.",
+      "Designed a capability velocity framework that cut new AI feature integration time from weeks to days.",
+      "Wrote multi-agent workflows that turn raw content into structured outputs: quizzes, flashcards, and study plans.",
+      "Implemented real-time data ingestion and AI-driven UI using the Vercel AI SDK for interactive learning.",
+    ],
   },
   {
-    title: "Data Clustering & AI Model Intern",
-    company: "Fruugle",
-    period: "Jan 2026 \u2013 April 2026 \u00B7 Riga, Latvia (Remote)",
+    title: "Data Analytics & AI Intern",
+    company: "Fruugle SIA",
+    period: "Jan 2026 – Apr 2026 · Riga, Latvia (Remote)",
     bullets: [
-      "Analyzed and preprocessed massive product and pricing datasets (1M+ records) from multiple supermarket sources for a multimodal AI-powered e-grocery assistant.",
-      "Built data clustering and grouping pipelines (K-means, DBSCAN, hierarchical) to create comparable product segments for real-time price comparison.",
-      "Collaborated with AI engineers to support multimodal model training across text, image, and numerical data.",
-      "Optimized algorithms for product similarity and recommendation logic using data normalization and feature extraction.",
-      "Visualized cluster insights to help business and product teams understand pricing patterns.",
+      "Processed and engineered 1M+ retail records to feed multimodal AI pipelines for product comparison and recommendation.",
+      "Built clustering models with K-Means, DBSCAN, and hierarchical clustering to improve product grouping and price comparison accuracy.",
+      "Sharpened recommendation logic by combining text, image, and numerical signals for closer product matches.",
+      "Shipped dashboards and analytical insights that fed pricing strategy and day-to-day product decisions.",
     ],
   },
   {
     title: "Tech Trainee",
     company: "Jubilee Life Insurance Co. Ltd.",
-    period: "Dec 2023 \u2013 Oct 2024 \u00B7 Karachi, Pakistan",
+    period: "Jan 2024 – Oct 2024 · Karachi, Pakistan",
     bullets: [
-      "Completed a 12-month rotational program across IT domains including networking, cybersecurity, web development, and database administration.",
-      "Managed threat monitoring and incident response using IBM QRadar (SIEM, SOAR, PAM); implemented IT governance and compliance frameworks.",
-      "Built dynamic web applications using HTML/CSS, JavaScript, PHP, ASP.NET Core, React, and MySQL.",
-      "Designed databases, stored procedures, SSRS reports, and Power BI dashboards for data-driven decision-making.",
-      "Customized SharePoint and CRM solutions for workflow automation and cross-team collaboration.",
+      "Built ETL pipelines on 100K+ records and improved query and database performance by ~40%.",
+      "Developed full-stack apps with React, .NET ASP Core, MySQL, and REST APIs, plus Power BI dashboards for business analytics.",
+      "Automated SharePoint and internal business workflows, cutting manual effort by ~60%.",
+      "Analyzed system and security data with IBM QRadar to flag anomalies and support operational monitoring.",
     ],
   },
 ];

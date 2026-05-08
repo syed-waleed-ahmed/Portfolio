@@ -37,9 +37,9 @@ export const sectionIds = [
 ];
 
 export const exploreItems = [
-  "Agentic AI Systems",
-  "Multimodal RAG Pipelines",
-  "Multi-Agent Orchestration",
-  "LLM Engineering & Tool Use",
-  "Data Intelligence Pipelines",
+  "Multi-Agent Systems",
+  "RAG Pipelines",
+  "LLM Evaluation",
+  "AI-Driven Automation",
+  "MLOps & Deployment",
 ];

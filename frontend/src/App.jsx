@@ -1,11 +1,12 @@
-import { useEffect, useState, Suspense, lazy } from "react";
+import { useEffect, lazy } from "react";
 import Navbar from "./components/Navbar";
 import Hero from "./components/Hero";
 import Footer from "./components/Footer";
 import LazyMountSection from "./components/LazyMountSection";
 import ErrorBoundary from "./components/ErrorBoundary";
+import ScrollToTop from "./components/ScrollToTop";
+import ScrollProgress from "./components/ScrollProgress";
 
-// Lazy-load below-the-fold sections to reduce unused JS + DOM on initial load
 const About = lazy(() => import("./components/About"));
 const Experience = lazy(() => import("./components/Experience"));
 const Projects = lazy(() => import("./components/Projects"));
@@ -13,33 +14,17 @@ const Skills = lazy(() => import("./components/Skills"));
 const Interests = lazy(() => import("./components/Interests"));
 const Contact = lazy(() => import("./components/Contact"));
 
-const ParticlesBackground = lazy(() => import("./components/ParticlesBackground"));
-
 function App() {
-  const [showParticles, setShowParticles] = useState(false);
-
   useEffect(() => {
     window.scrollTo(0, 0);
-    if ("scrollRestoration" in window.history) window.history.scrollRestoration = "manual";
-
-    // Load particles only after first user scroll (never during Lighthouse audit)
-    const onScroll = () => {
-      setShowParticles(true);
-      window.removeEventListener("scroll", onScroll);
-    };
-    window.addEventListener("scroll", onScroll, { once: true, passive: true });
-
-    return () => window.removeEventListener("scroll", onScroll);
+    if ("scrollRestoration" in window.history) {
+      window.history.scrollRestoration = "manual";
+    }
   }, []);
 
   return (
     <div className="app-root">
-      {showParticles && (
-        <Suspense fallback={null}>
-          <ParticlesBackground />
-        </Suspense>
-      )}
-
+      <ScrollProgress />
       <Navbar />
 
       <ErrorBoundary>
@@ -73,6 +58,7 @@ function App() {
       </ErrorBoundary>
 
       <Footer />
+      <ScrollToTop />
     </div>
   );
 }

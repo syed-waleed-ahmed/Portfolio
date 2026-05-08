@@ -1,37 +1,52 @@
 export const projects = [
   {
-    title: "Adversarial Training vs Domain Randomization",
-    role: "Academic Project \u2022 Group",
-    period: "2025 \u2013 2026",
-    stack: ["PPO", "LSTM", "SAC", "OpenAI Gym"],
+    title: "Multi-Agent AI Workflow System",
+    role: "AI/ML Project",
+    period: "2025 – 2026",
+    stack: ["Python", "LangGraph", "Groq", "OpenAI"],
     description:
-      "Benchmarked RL agent robustness in a modified Lunar Lander environment using adversarial self-play and domain randomization under visible and latent wind conditions.",
+      "Production-ready multi-agent system that automates marketing campaign generation. Specialized agents (research, copy, brief, QA) coordinate through a shared workflow, replacing what used to be a multi-day manual process.",
     highlight:
-      "LSTM-PPO with latent disturbances achieved the highest robustness by inferring hidden wind through temporal memory.",
-    github:
-      "https://github.com/syed-waleed-ahmed/LunarLander_AdversaryLearning",
+      "Cut manual effort by 90% through role-based agent orchestration with structured handoffs.",
   },
   {
-    title: "Adversarial Attacks & Defenses on CelebA",
-    role: "Academic Project \u2022 Group",
-    period: "2025 \u2013 2026",
-    stack: ["ResNet-18", "FGSM", "PGD", "PyTorch"],
+    title: "Self-Correcting RAG Pipeline",
+    role: "AI/ML Project",
+    period: "2025 – 2026",
+    stack: ["LangChain", "Vector Search", "OpenAI", "Python"],
     description:
-      "Studied adversarial robustness in face attribute classification using FGSM and PGD attacks on a pretrained ResNet-18, with FGSM adversarial training as defense.",
+      "RAG system with retrieve → evaluate → correct loops. The pipeline grades its own answers and re-retrieves when the evaluator flags low confidence, instead of hallucinating its way through.",
     highlight:
-      "PGD drove accuracy to 0%; FGSM adversarial training defended only against FGSM, revealing the limits of single-attack defenses.",
-    github:
-      "https://github.com/syed-waleed-ahmed/celeba-adversarial-attacks-defenses",
+      "Closed the loop between retrieval and answer quality, reducing hallucinated outputs.",
   },
   {
-    title: "Memoraiz Onboarding Assistant",
-    role: "Testing Project",
-    period: "2026",
-    stack: ["Next.js", "Mastra", "OpenAI", "pgvector"],
+    title: "LLM-as-Judge Evaluation Framework",
+    role: "AI/ML Project",
+    period: "2025",
+    stack: ["LangChain", "OpenAI", "Python", "Eval"],
     description:
-      "Built an AI-powered onboarding platform with a split-screen conversational interface that auto-fills company profiles in real time using parallel LLM racing, hybrid caching, and streaming.",
+      "Evaluation framework that benchmarks LLM outputs against custom rubrics for quality, relevance, and creativity. Used for comparing models and tracking regressions on internal prompts.",
     highlight:
-      "Replaced manual form filling with an agent-driven workflow combining RAG retrieval, real-time canvas updates, and sub-second response times.",
-    github: "https://github.com/syed-waleed-ahmed/memoraiz-onboarding",
+      "Custom scoring criteria let teams ship LLM features without flying blind.",
+  },
+  {
+    title: "Visual Inspection of Connecting Rods",
+    role: "Academic Project · Master's",
+    period: "Oct 2024 – Jan 2025",
+    stack: ["Computer Vision", "OpenCV", "Python"],
+    description:
+      "CV-based industrial classification system that inspects motorcycle connecting rods for defects. Replaced a slow manual inspection step on the production floor.",
+    highlight:
+      "95%+ classification accuracy and ~80% reduction in manual inspection time.",
+  },
+  {
+    title: "Delay Classification for Tele-Robotic Systems",
+    role: "Bachelor's Thesis",
+    period: "Oct 2022 – Aug 2023",
+    stack: ["Time-Series", "ML", "Python"],
+    description:
+      "Time-series and ML pipeline that classifies network delay across LAN, WAN, and 4G environments to keep tele-robotic control loops stable.",
+    highlight:
+      "~25% improvement in system stability under variable network conditions.",
   },
 ];

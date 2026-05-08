@@ -6,7 +6,14 @@ const Projects = () => {
   return (
       <div className="container">
         <Reveal>
-          <h2 className="section-title text-center mb-5">Projects</h2>
+          <div className="section-header">
+            <span className="section-eyebrow">Selected Work</span>
+            <h2 className="section-title">Projects</h2>
+            <p className="section-subtitle">
+              AI/ML projects from work and study. Code I&apos;ve actually
+              shipped or wrote a thesis around &mdash; not pitch-deck mockups.
+            </p>
+          </div>
         </Reveal>
 
         <div className="row g-4 justify-content-center">
@@ -15,7 +22,7 @@ const Projects = () => {
               <Reveal delay={0.06 * (idx + 1)} className="w-100">
                 <div className="neo-card project-card h-100 p-4 d-flex flex-column">
                   <div className="mb-3">
-                    <div className="d-flex justify-content-between align-items-start">
+                    <div className="d-flex justify-content-between align-items-start gap-3">
                       <h3 className="mb-1">{project.title}</h3>
                       {project.github && (
                         <a
@@ -37,14 +44,14 @@ const Projects = () => {
 
                   <p className="flex-grow-1 mb-3">{project.description}</p>
 
-                  <p className="small text-muted mb-3">
-                    <span className="fw-semibold text-accent">Highlight:</span>{" "}
+                  <p className="project-highlight mb-3">
+                    <span className="fw-semibold">Highlight:</span>{" "}
                     {project.highlight}
                   </p>
 
                   <div className="d-flex flex-wrap gap-2 mt-auto">
                     {project.stack.map((tech) => (
-                      <span key={tech} className="badge bg-dark border skill-badge">
+                      <span key={tech} className="skill-badge">
                         {tech}
                       </span>
                     ))}
