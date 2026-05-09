@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { FaEnvelope, FaFileAlt, FaLinkedinIn, FaGithub } from "react-icons/fa";
-import { personalInfo, socialLinks, exploreItems } from "../data/portfolio";
+import { personalInfo, socialLinks, exploreItems } from "@/data/portfolio";
 
 const Hero = () => {
   const [exploreIndex, setExploreIndex] = useState(0);

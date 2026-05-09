@@ -6,7 +6,7 @@ import {
   FaCommentDots,
   FaPaperPlane,
 } from "react-icons/fa";
-import Reveal from "./Reveal";
+import Reveal from "@/components/ui/Reveal";
 
 const initialState = {
   name: "",

@@ -1,6 +1,6 @@
 import { FaLinkedinIn, FaGithub, FaEnvelope } from "react-icons/fa";
 import { SiLeetcode } from "react-icons/si";
-import { personalInfo, socialLinks } from "../data/portfolio";
+import { personalInfo, socialLinks } from "@/data/portfolio";
 
 const Footer = () => {
   return (

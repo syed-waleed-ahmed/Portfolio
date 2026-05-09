@@ -1,5 +1,5 @@
-import Reveal from "./Reveal";
-import { skillGroups } from "../data/skills";
+import Reveal from "@/components/ui/Reveal";
+import { skillGroups } from "@/data/skills";
 
 const Skills = () => {
   return (

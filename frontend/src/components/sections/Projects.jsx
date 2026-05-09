@@ -1,6 +1,6 @@
-import Reveal from "./Reveal";
+import Reveal from "@/components/ui/Reveal";
 import { FaGithub } from "react-icons/fa";
-import { projects } from "../data/projects";
+import { projects } from "@/data/projects";
 
 const Projects = () => {
   return (

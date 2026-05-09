@@ -111,21 +111,26 @@ portfolio/
 |   |   |   +-- hero.css
 |   |   |   +-- components.css
 |   |   +-- components/
-|   |   |   +-- Hero.jsx
-|   |   |   +-- About.jsx
-|   |   |   +-- Experience.jsx
-|   |   |   +-- Projects.jsx
-|   |   |   +-- Skills.jsx
-|   |   |   +-- Interests.jsx
-|   |   |   +-- Contact.jsx
-|   |   |   +-- Navbar.jsx
-|   |   |   +-- Footer.jsx
-|   |   |   +-- ScrollProgress.jsx
-|   |   |   +-- ScrollToTop.jsx
-|   |   |   +-- SkipLink.jsx                # Keyboard accessibility
-|   |   |   +-- Reveal.jsx
-|   |   |   +-- LazyMountSection.jsx
-|   |   |   +-- ErrorBoundary.jsx
+|   |   |   +-- layout/                   # App chrome (header / footer)
+|   |   |   |   +-- Navbar.jsx
+|   |   |   |   +-- Footer.jsx
+|   |   |   +-- sections/                 # One file per page section
+|   |   |   |   +-- Hero.jsx
+|   |   |   |   +-- About.jsx
+|   |   |   |   +-- Experience.jsx
+|   |   |   |   +-- Projects.jsx
+|   |   |   |   +-- Skills.jsx
+|   |   |   |   +-- Interests.jsx
+|   |   |   |   +-- Contact.jsx
+|   |   |   +-- ui/                       # Reusable primitives, no domain coupling
+|   |   |       +-- ErrorBoundary.jsx
+|   |   |       +-- LazyMountSection.jsx
+|   |   |       +-- Reveal.jsx
+|   |   |       +-- ScrollProgress.jsx
+|   |   |       +-- ScrollToTop.jsx
+|   |   |       +-- SkipLink.jsx
+|   |   +-- hooks/                        # Shared React hooks
+|   |   |   +-- useInView.js              # IntersectionObserver wrapper
 |   |   +-- App.jsx
 |   |   +-- main.jsx
 |   |   +-- index.css
@@ -150,6 +155,34 @@ portfolio/
 +-- netlify.toml                          # Pins NODE_VERSION on Netlify
 +-- README.md
 +-- SECURITY.md                           # Vulnerability reporting policy
+```
+
+---
+
+## Architecture
+
+The frontend follows a **layered component structure** so new code has an
+obvious home as the project grows:
+
+| Layer | What lives here | Examples |
+|-------|-----------------|----------|
+| `components/layout/` | App chrome that frames every page | `Navbar`, `Footer` |
+| `components/sections/` | One file per visible page section | `Hero`, `About`, `Projects`, `Contact` |
+| `components/ui/` | Reusable primitives with no domain coupling | `Reveal`, `ScrollProgress`, `ScrollToTop`, `SkipLink`, `ErrorBoundary`, `LazyMountSection` |
+| `hooks/` | Cross-cutting React hooks | `useInView` (used by `Reveal` + `LazyMountSection`) |
+| `data/` | Pure content (no JSX), edited to update site copy | `experience.js`, `projects.js`, ... |
+| `styles/` | Global CSS — tokens, layout, components | `base.css`, `navbar.css`, `hero.css`, `components.css` |
+
+Imports use the **`@/` alias** that maps to `frontend/src/` (configured in
+`vite.config.js`), so paths stay flat regardless of folder depth:
+
+```js
+// good — same wherever this lives
+import Reveal from "@/components/ui/Reveal";
+import { projects } from "@/data/projects";
+
+// bad — fragile if the file moves
+import Reveal from "../../ui/Reveal";
 ```
 
 ---

@@ -569,13 +569,12 @@ textarea.form-control.glass-input::-moz-placeholder {
     display: none !important;
   }
 
-  .glass-nav,
+  .site-nav,
+  .scroll-progress,
   .hero-orbit,
-  .neon-btn,
   .footer-social,
   .scroll-top-btn,
-  .hero-scroll-cue,
-  #tsparticles {
+  .skip-link {
     display: none !important;
   }
 
@@ -602,7 +601,6 @@ textarea.form-control.glass-input::-moz-placeholder {
     color: #555;
   }
 
-  .hero-pill::after,
   .footer-icon::after {
     content: none !important;
   }

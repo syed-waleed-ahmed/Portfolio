@@ -1,5 +1,5 @@
-import Reveal from "./Reveal";
-import { experiences } from "../data/experience";
+import Reveal from "@/components/ui/Reveal";
+import { experiences } from "@/data/experience";
 
 const Experience = () => {
   return (

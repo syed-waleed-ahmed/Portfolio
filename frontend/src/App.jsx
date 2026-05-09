@@ -1,19 +1,19 @@
 import { useEffect, lazy } from "react";
-import Navbar from "./components/Navbar";
-import Hero from "./components/Hero";
-import Footer from "./components/Footer";
-import LazyMountSection from "./components/LazyMountSection";
-import ErrorBoundary from "./components/ErrorBoundary";
-import ScrollToTop from "./components/ScrollToTop";
-import ScrollProgress from "./components/ScrollProgress";
-import SkipLink from "./components/SkipLink";
+import Navbar from "@/components/layout/Navbar";
+import Footer from "@/components/layout/Footer";
+import Hero from "@/components/sections/Hero";
+import LazyMountSection from "@/components/ui/LazyMountSection";
+import ErrorBoundary from "@/components/ui/ErrorBoundary";
+import ScrollToTop from "@/components/ui/ScrollToTop";
+import ScrollProgress from "@/components/ui/ScrollProgress";
+import SkipLink from "@/components/ui/SkipLink";
 
-const About = lazy(() => import("./components/About"));
-const Experience = lazy(() => import("./components/Experience"));
-const Projects = lazy(() => import("./components/Projects"));
-const Skills = lazy(() => import("./components/Skills"));
-const Interests = lazy(() => import("./components/Interests"));
-const Contact = lazy(() => import("./components/Contact"));
+const About = lazy(() => import("@/components/sections/About"));
+const Experience = lazy(() => import("@/components/sections/Experience"));
+const Projects = lazy(() => import("@/components/sections/Projects"));
+const Skills = lazy(() => import("@/components/sections/Skills"));
+const Interests = lazy(() => import("@/components/sections/Interests"));
+const Contact = lazy(() => import("@/components/sections/Contact"));
 
 function App() {
   useEffect(() => {

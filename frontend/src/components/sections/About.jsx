@@ -1,5 +1,5 @@
 import { FaUserAstronaut, FaGraduationCap } from "react-icons/fa";
-import Reveal from "./Reveal";
+import Reveal from "@/components/ui/Reveal";
 
 const About = () => {
   return (

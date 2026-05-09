@@ -14,7 +14,12 @@
       "Bash(node --check server.js)",
       "Bash(git fetch *)",
       "Bash([ -f \"/d/portfolio/$f\" ])",
-      "Bash(node --check /d/portfolio/backend/server.js)"
+      "Bash(node --check /d/portfolio/backend/server.js)",
+      "Bash(mkdir -p layout sections ui)",
+      "Bash(mv Navbar.jsx Footer.jsx layout/)",
+      "Bash(mv Hero.jsx About.jsx Experience.jsx Projects.jsx Skills.jsx Interests.jsx Contact.jsx sections/)",
+      "Bash(mv ErrorBoundary.jsx LazyMountSection.jsx Reveal.jsx ScrollProgress.jsx ScrollToTop.jsx SkipLink.jsx ui/)",
+      "Read(//d/d/portfolio/frontend/src/components/**)"
     ]
   }
 }

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { navLinks, sectionIds } from "../data/portfolio";
+import { navLinks, sectionIds } from "@/data/portfolio";
 
 const Navbar = () => {
   const [activeSection, setActiveSection] = useState("top");
