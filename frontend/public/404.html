@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#0a0e1a" />
+    <meta name="robots" content="noindex" />
+    <title>404 — Page Not Found · Syed Waleed Ahmed</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="canonical" href="https://syedwaleedahmed.me/" />
+    <style>
+      :root {
+        color-scheme: dark;
+      }
+      *, *::before, *::after { box-sizing: border-box; }
+      html, body {
+        margin: 0;
+        height: 100%;
+        font-family: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+        background:
+          radial-gradient(900px 540px at 8% -8%, rgba(99, 102, 241, 0.12), transparent 60%),
+          radial-gradient(700px 480px at 96% 6%, rgba(34, 211, 238, 0.10), transparent 60%),
+          radial-gradient(circle at top, #0a0e1a 0, #0a0e1a 50%, #04060d 100%);
+        color: #e2e8f0;
+        -webkit-font-smoothing: antialiased;
+      }
+      .wrap {
+        min-height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem 1rem;
+      }
+      .card {
+        max-width: 480px;
+        text-align: center;
+      }
+      .code {
+        font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+        font-size: 0.78rem;
+        letter-spacing: 0.22em;
+        text-transform: uppercase;
+        color: #22d3ee;
+        margin-bottom: 1rem;
+      }
+      h1 {
+        font-size: clamp(2rem, 6vw, 3rem);
+        font-weight: 700;
+        letter-spacing: 0.005em;
+        line-height: 1.15;
+        margin: 0 0 0.75rem;
+        color: #f8fafc;
+      }
+      h1 span {
+        background: linear-gradient(135deg, #6366f1 0%, #22d3ee 100%);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+      }
+      p {
+        color: #94a3b8;
+        line-height: 1.65;
+        margin: 0 0 1.75rem;
+      }
+      a.cta {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.78rem 1.5rem;
+        border-radius: 999px;
+        background: linear-gradient(135deg, #6366f1 0%, #22d3ee 100%);
+        color: #0a0e1a;
+        font-weight: 600;
+        font-size: 0.9rem;
+        text-decoration: none;
+        box-shadow: 0 8px 24px rgba(99, 102, 241, 0.28);
+        transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
+      }
+      a.cta:hover {
+        transform: translateY(-2px);
+        filter: brightness(1.06);
+        box-shadow: 0 12px 30px rgba(34, 211, 238, 0.35);
+      }
+    </style>
+  </head>
+  <body>
+    <main class="wrap">
+      <div class="card">
+        <div class="code">Error · 404</div>
+        <h1>Page <span>Not Found</span></h1>
+        <p>
+          That URL doesn't exist on this site (or it used to and got moved).
+          Head back to the homepage to keep browsing.
+        </p>
+        <a class="cta" href="/">&larr; Back to home</a>
+      </div>
+    </main>
+  </body>
+</html>

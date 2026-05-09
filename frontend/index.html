@@ -6,36 +6,39 @@
     <!-- Viewport -->
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <!-- Primary Title (VERY important for ranking) -->
-    <title>
-      Syed Waleed Ahmed – AI Engineer & Automation Specialist | Portfolio
-    </title>
-
-    <!-- Meta Description (Google snippet) -->
-    <meta
-      name="description"
-      content="Syed Waleed Ahmed is an AI Engineer building production-grade agentic AI systems. Master's student at the University of Bologna specializing in Multimodal RAG, LLM orchestration, multi-agent systems, and full-stack AI applications."
-    />
-
-    <!-- Author -->
-    <meta name="author" content="Syed Waleed Ahmed" />
-
-    <!-- Theme -->
+    <!-- Color scheme + theme color -->
+    <meta name="color-scheme" content="dark" />
     <meta name="theme-color" content="#0a0e1a" />
 
-    <!-- Favicons -->
+    <!-- Primary title (Google snippet) -->
+    <title>Syed Waleed Ahmed — AI Engineer · Portfolio</title>
+
+    <!-- Meta description (~155 chars sweet spot) -->
+    <meta
+      name="description"
+      content="Syed Waleed Ahmed — AI Engineer building production-grade multi-agent systems, RAG pipelines, and LLM workflow automation. Master's student at the University of Bologna."
+    />
+
+    <!-- Author / language hints -->
+    <meta name="author" content="Syed Waleed Ahmed" />
+    <meta name="language" content="English" />
+    <meta name="robots" content="index, follow, max-image-preview:large" />
+    <meta name="googlebot" content="index, follow" />
+
+    <!-- Favicons / app icons -->
     <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="shortcut icon" href="/favicon.ico" />
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
 
-    <!-- Canonical URL (VERY important for SEO) -->
+    <!-- Canonical URL -->
     <link rel="canonical" href="https://syedwaleedahmed.me/" />
 
-    <!-- DNS prefetch for backend API -->
+    <!-- Backend connection hint (DNS + TCP + TLS warmed before contact form submit) -->
     <link rel="dns-prefetch" href="https://portfolio-backend-kmum.onrender.com" />
+    <link rel="preconnect" href="https://portfolio-backend-kmum.onrender.com" crossorigin />
 
-    <!-- LCP Optimization: preload only the best format -->
+    <!-- LCP optimization: preload the hero portrait in its best format -->
     <link
       rel="preload"
       as="image"
@@ -44,26 +47,30 @@
       fetchpriority="high"
     />
 
-    <!-- Open Graph -->
+    <!-- ====== Open Graph ====== -->
     <meta property="og:type" content="website" />
-    <meta property="og:title" content="Syed Waleed Ahmed – AI Engineer & Automation Specialist" />
+    <meta property="og:site_name" content="Syed Waleed Ahmed — Portfolio" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:title" content="Syed Waleed Ahmed — AI Engineer · Portfolio" />
     <meta
       property="og:description"
-      content="AI Engineer specializing in LLMs, multi-agent systems, intelligent automation, and full-stack AI development."
+      content="AI Engineer specializing in multi-agent systems, RAG pipelines, and LLM workflow automation."
     />
     <meta property="og:url" content="https://syedwaleedahmed.me/" />
     <meta property="og:image" content="https://syedwaleedahmed.me/images/Profile.webp" />
+    <meta property="og:image:alt" content="Portrait of Syed Waleed Ahmed" />
 
-    <!-- Twitter Card -->
+    <!-- ====== Twitter / X card ====== -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Syed Waleed Ahmed – AI Engineer & Automation Specialist" />
+    <meta name="twitter:title" content="Syed Waleed Ahmed — AI Engineer · Portfolio" />
     <meta
       name="twitter:description"
-      content="AI Engineer working on LLMs, RAG pipelines, and multi-agent systems. Portfolio and projects."
+      content="AI Engineer working on multi-agent systems, RAG pipelines, and LLM workflow automation."
     />
     <meta name="twitter:image" content="https://syedwaleedahmed.me/images/Profile.webp" />
+    <meta name="twitter:image:alt" content="Portrait of Syed Waleed Ahmed" />
 
-    <!-- ✅ STRUCTURED DATA (CRITICAL FOR GOOGLE RANKING) -->
+    <!-- ====== Structured data: Person ====== -->
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
@@ -72,10 +79,30 @@
         "url": "https://syedwaleedahmed.me/",
         "image": "https://syedwaleedahmed.me/images/Profile.webp",
         "jobTitle": "AI Engineer",
-        "alumniOf": {
-          "@type": "CollegeOrUniversity",
-          "name": "University of Bologna"
+        "description": "AI Engineer building production-grade multi-agent systems, RAG pipelines, and LLM workflow automation.",
+        "email": "mailto:syedwaleedahmed9@gmail.com",
+        "address": {
+          "@type": "PostalAddress",
+          "addressLocality": "Bologna",
+          "addressCountry": "IT"
         },
+        "alumniOf": [
+          {
+            "@type": "CollegeOrUniversity",
+            "name": "University of Bologna",
+            "sameAs": "https://www.unibo.it/"
+          },
+          {
+            "@type": "CollegeOrUniversity",
+            "name": "University of Twente",
+            "sameAs": "https://www.utwente.nl/"
+          },
+          {
+            "@type": "CollegeOrUniversity",
+            "name": "NED University of Engineering and Technology",
+            "sameAs": "https://www.neduet.edu.pk/"
+          }
+        ],
         "sameAs": [
           "https://www.linkedin.com/in/syed-waleed-ahmed/",
           "https://github.com/syed-waleed-ahmed",
@@ -85,12 +112,30 @@
           "Artificial Intelligence",
           "Machine Learning",
           "Large Language Models",
-          "Multimodal RAG Pipelines",
-          "Agentic AI Systems",
-          "Multi-Agent Orchestration",
-          "Data Intelligence",
+          "Retrieval-Augmented Generation",
+          "Multi-Agent Systems",
+          "LLM Orchestration",
+          "MLOps",
           "Full-Stack AI Development"
-        ]
+        ],
+        "knowsLanguage": ["English", "Italian", "Urdu"]
+      }
+    </script>
+
+    <!-- ====== Structured data: WebSite ====== -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "Syed Waleed Ahmed — Portfolio",
+        "url": "https://syedwaleedahmed.me/",
+        "inLanguage": "en",
+        "author": { "@id": "https://syedwaleedahmed.me/#person" },
+        "publisher": {
+          "@type": "Person",
+          "name": "Syed Waleed Ahmed",
+          "url": "https://syedwaleedahmed.me/"
+        }
       }
     </script>
   </head>

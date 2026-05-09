@@ -1,0 +1,15 @@
+/* TEAM */
+Author: Syed Waleed Ahmed
+Site: https://syedwaleedahmed.me/
+Contact: syedwaleedahmed9 [at] gmail [dot] com
+LinkedIn: https://www.linkedin.com/in/syed-waleed-ahmed/
+GitHub: https://github.com/syed-waleed-ahmed
+Location: Bologna, Italy
+
+/* SITE */
+Last update: 2026/05/09
+Standards: HTML5, CSS3, ES2022
+Components: React 19, Vite 7, Bootstrap 5 (CSS only), react-icons
+Backend: Node.js 20, Express 4, Resend, Helmet, express-rate-limit
+Hosting: Netlify (frontend), Render (backend)
+Source: https://github.com/syed-waleed-ahmed/Portfolio

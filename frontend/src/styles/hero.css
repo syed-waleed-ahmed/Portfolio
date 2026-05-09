@@ -4,7 +4,6 @@
 
 .hero-gradient {
   position: relative;
-  padding-block: 3.5rem;
   background: transparent;
   isolation: isolate;
 }
@@ -13,13 +12,13 @@
   min-height: 100vh;
   display: flex;
   align-items: center;
-  padding-top: 88px;
-  padding-bottom: 5rem;
+  padding-top: 96px;
+  padding-bottom: 96px;
   overflow: hidden;
 }
 
 .hero-wrapper {
-  padding-bottom: 40px;
+  /* spacing handled by #hero padding above */
 }
 
 /* ========= Entrance animations ========= */
@@ -322,14 +321,16 @@
 }
 
 /* ========= Hero responsive ========= */
-@media (max-width: 768px) {
-  .hero-gradient {
-    padding-block: 2.5rem;
-  }
-
+@media (max-width: 991px) {
   #hero.hero-gradient {
     padding-top: 84px;
-    padding-bottom: 3rem;
+    padding-bottom: 72px;
+  }
+}
+
+@media (max-width: 768px) {
+  #hero.hero-gradient {
+    padding-bottom: 56px;
   }
 
   .profile-img {

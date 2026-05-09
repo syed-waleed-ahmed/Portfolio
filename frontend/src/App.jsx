@@ -6,6 +6,7 @@ import LazyMountSection from "./components/LazyMountSection";
 import ErrorBoundary from "./components/ErrorBoundary";
 import ScrollToTop from "./components/ScrollToTop";
 import ScrollProgress from "./components/ScrollProgress";
+import SkipLink from "./components/SkipLink";
 
 const About = lazy(() => import("./components/About"));
 const Experience = lazy(() => import("./components/Experience"));
@@ -24,34 +25,35 @@ function App() {
 
   return (
     <div className="app-root">
+      <SkipLink />
       <ScrollProgress />
       <Navbar />
 
       <ErrorBoundary>
-        <main>
+        <main id="main" tabIndex="-1">
           <Hero />
 
-          <LazyMountSection id="about" className="py-5 section-wrapper">
+          <LazyMountSection id="about" className="section-wrapper">
             <About />
           </LazyMountSection>
 
-          <LazyMountSection id="experience" className="py-5 section-wrapper">
+          <LazyMountSection id="experience" className="section-wrapper">
             <Experience />
           </LazyMountSection>
 
-          <LazyMountSection id="projects" className="py-5 section-wrapper">
+          <LazyMountSection id="projects" className="section-wrapper">
             <Projects />
           </LazyMountSection>
 
-          <LazyMountSection id="skills" className="py-5 section-wrapper">
+          <LazyMountSection id="skills" className="section-wrapper">
             <Skills />
           </LazyMountSection>
 
-          <LazyMountSection id="interests" className="py-5 section-wrapper">
+          <LazyMountSection id="interests" className="section-wrapper">
             <Interests />
           </LazyMountSection>
 
-          <LazyMountSection id="contact" className="py-5 section-wrapper">
+          <LazyMountSection id="contact" className="section-wrapper">
             <Contact />
           </LazyMountSection>
         </main>

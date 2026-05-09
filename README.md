@@ -14,12 +14,14 @@ Designed with a focus on **performance**, **accessibility**, **security**, and *
 - **Modern UI** -- glassmorphism cards, gradient accents, monospace HUD-style section labels, top-of-page scroll progress bar
 - **Hand-rolled animations** -- vanilla `IntersectionObserver` reveal hook + CSS keyframes (no `framer-motion`, no `tsparticles`)
 - **Custom navbar** -- own collapse logic, no Bootstrap JS dependency
+- **Accessibility** -- skip-to-content link, focus-visible rings, semantic landmarks, `prefers-reduced-motion` honored
+- **Custom 404 page** -- branded standalone page Netlify auto-serves on missing routes
 - **Fully responsive** -- desktop, tablet, mobile (375px+ baseline)
 - **Hardened backend** -- Helmet security headers, `express-rate-limit`, body-size cap, trust-proxy, graceful shutdown
 - **CI/CD** -- GitHub Actions runs lint, build, syntax check, `npm audit`, and gitleaks secret scan on every push and PR
 - **Auto dependency updates** -- Dependabot opens grouped weekly PRs for minor + patch upgrades (majors are manual)
 - **Pinned Node version** -- `.nvmrc`, `netlify.toml`, and `engines` field keep Netlify, CI, and local installs aligned
-- **SEO-ready** -- canonical URL, Person structured data, sitemap, robots.txt
+- **SEO-ready** -- canonical URL, expanded `Person` + `WebSite` JSON-LD schemas, OG + Twitter cards, sitemap, robots.txt, humans.txt
 - **Content Security Policy** -- Netlify `_headers` with strict CSP and friends
 - **Print-friendly** -- dedicated print stylesheet
 - **Custom domain + HTTPS** -- syedwaleedahmed.me
@@ -86,6 +88,8 @@ portfolio/
 |   |   |   +-- Profile.avif
 |   |   |   +-- Profile.webp
 |   |   +-- _headers                      # Netlify security headers (CSP, X-Frame-Options, ...)
+|   |   +-- 404.html                      # Branded 404 page Netlify auto-serves
+|   |   +-- humans.txt                    # Authorship + tech-stack signal
 |   |   +-- apple-touch-icon.png
 |   |   +-- favicon.ico
 |   |   +-- favicon-96x96.png
@@ -118,6 +122,7 @@ portfolio/
 |   |   |   +-- Footer.jsx
 |   |   |   +-- ScrollProgress.jsx
 |   |   |   +-- ScrollToTop.jsx
+|   |   |   +-- SkipLink.jsx                # Keyboard accessibility
 |   |   |   +-- Reveal.jsx
 |   |   |   +-- LazyMountSection.jsx
 |   |   |   +-- ErrorBoundary.jsx
