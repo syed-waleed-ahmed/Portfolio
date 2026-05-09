@@ -5,6 +5,36 @@
   Permissions-Policy: camera=(), microphone=(), geolocation=()
   Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' 'sha256-DcZnhiXzGRqf7Ap1FmHxA25PvMu+ebywXAvTxOAgB+E=' https://www.googletagmanager.com https://*.googletagmanager.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://www.googletagmanager.com https://*.google-analytics.com; connect-src 'self' https://portfolio-backend-kmum.onrender.com https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com; font-src 'self' data:; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests;
 
+# ===== Caching =====
+# HTML: never cache. Browsers must revalidate on every visit so a deploy
+# is visible immediately. (Netlify's CDN still caches at edge, and purges
+# on deploy, so this only hits the browser-cache layer.)
+/
+  Cache-Control: public, max-age=0, must-revalidate
+
+/index.html
+  Cache-Control: public, max-age=0, must-revalidate
+
+/404.html
+  Cache-Control: public, max-age=0, must-revalidate
+
+# Service worker: also no-cache so the kill-switch update reaches users
+# on their next visit instead of waiting up to 24 h for a stale SW check.
+/sw.js
+  Cache-Control: public, max-age=0, must-revalidate
+  Service-Worker-Allowed: /
+
+# Fingerprinted bundle assets: safe to cache forever (filename changes
+# whenever the content changes, so there's nothing stale to serve).
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# Images and other static files: 1-day cache so swaps roll out fast,
+# but repeat visits within a day are still instant.
+/images/*
+  Cache-Control: public, max-age=86400
+
+# Plain-text helpers
 /robots.txt
   Content-Type: text/plain; charset=utf-8
 
@@ -13,11 +43,3 @@
 
 /humans.txt
   Content-Type: text/plain; charset=utf-8
-
-# Long cache for fingerprinted assets
-/assets/*
-  Cache-Control: public, max-age=31536000, immutable
-
-# Static images can also be cached aggressively
-/images/*
-  Cache-Control: public, max-age=31536000, immutable

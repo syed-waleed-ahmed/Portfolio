@@ -159,6 +159,34 @@ portfolio/
 
 ---
 
+## Caching & Cache-Busting
+
+Cache rules live in `frontend/public/_headers` (Netlify edge headers):
+
+| Path | Cache | Why |
+|------|-------|-----|
+| `/`, `/index.html`, `/404.html` | `max-age=0, must-revalidate` | A deploy is visible on the next browser visit -- never serve stale HTML |
+| `/sw.js` | `max-age=0, must-revalidate` | Kill-switch SW (see below) needs to reach users without a 24 h delay |
+| `/assets/*` | `max-age=31536000, immutable` | Filenames are content-hashed by Vite -- 1-year cache is correct |
+| `/images/*` | `max-age=86400` | 1-day cache -- swap a portrait and it propagates within a day |
+
+### Stale service worker recovery
+
+The site briefly shipped with `vite-plugin-pwa`. Visitors from that
+window still have a service worker installed locally that intercepts
+every request and serves cached files. To recover:
+
+- `frontend/public/sw.js` is a **kill-switch SW** -- on next update, it
+  deletes every cache the old SW created, unregisters itself, and
+  reloads open tabs.
+- An inline script in `index.html` defensively unregisters any leftover
+  SW and clears `caches` storage on every page load. Idempotent.
+
+Both run together so users can't get stuck on a stale build. Once
+analytics show no SW traffic for ~30 days, `sw.js` can be deleted.
+
+---
+
 ## Architecture
 
 The frontend follows a **layered component structure** so new code has an
