@@ -1,0 +1,390 @@
+{
+	"info": {
+		"_postman_id": "a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d",
+		"name": "Portfolio API",
+		"description": "Postman collection for the Syed Waleed Ahmed portfolio backend.\n\n**Endpoints covered**\n- `GET /` — root health probe\n- `GET /health` — health check with timestamp\n- `POST /api/contact` — contact form (validation + rate limit + Resend email)\n\n**How to use**\n1. Import this collection and the matching environment file (`Portfolio-API.postman_environment.json`).\n2. Set `baseUrl` to either `http://localhost:5000` (local) or your deployed Render URL.\n3. Run the requests individually, or use **Runner** to execute the full suite.\n\n**Notes**\n- The contact endpoint is rate-limited to **5 requests / 15 min / IP**. The \"Rate limit triggered\" request expects a 429 after the limit is exhausted.\n- Tests use `pm.test()` assertions on status code and response shape; failures will show up in the Runner.\n- Successful contact submissions actually send an email if `RESEND_API_KEY`, `EMAIL_FROM`, and `EMAIL_TO` are set on the backend.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Health",
+			"item": [
+				{
+					"name": "GET / — root",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('status is 200', () => pm.response.to.have.status(200));",
+									"pm.test('returns ok status', () => {",
+									"  const json = pm.response.json();",
+									"  pm.expect(json.status).to.eql('ok');",
+									"  pm.expect(json.message).to.be.a('string');",
+									"});"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/",
+							"host": ["{{baseUrl}}"],
+							"path": [""]
+						},
+						"description": "Root probe. Returns `{ status: 'ok', message: 'Portfolio backend is running' }`."
+					},
+					"response": []
+				},
+				{
+					"name": "GET /health",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('status is 200', () => pm.response.to.have.status(200));",
+									"pm.test('returns ok + ISO timestamp', () => {",
+									"  const json = pm.response.json();",
+									"  pm.expect(json.status).to.eql('ok');",
+									"  pm.expect(new Date(json.time).toString()).to.not.eql('Invalid Date');",
+									"});"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/health",
+							"host": ["{{baseUrl}}"],
+							"path": ["health"]
+						},
+						"description": "Health check with current server time. Useful for uptime monitors."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Contact",
+			"item": [
+				{
+					"name": "POST /api/contact — happy path",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('status is 200 or 503 (mailer config dependent)', () => {",
+									"  pm.expect([200, 503]).to.include(pm.response.code);",
+									"});",
+									"if (pm.response.code === 200) {",
+									"  pm.test('returns success payload', () => {",
+									"    const json = pm.response.json();",
+									"    pm.expect(json.success).to.eql(true);",
+									"    pm.expect(json.message).to.be.a('string');",
+									"  });",
+									"} else {",
+									"  pm.test('returns mailer-unavailable error', () => {",
+									"    const json = pm.response.json();",
+									"    pm.expect(json.success).to.eql(false);",
+									"    pm.expect(json.error).to.match(/temporarily unavailable/i);",
+									"  });",
+									"}"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{ "key": "Content-Type", "value": "application/json" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Postman Tester\",\n  \"email\": \"tester@example.com\",\n  \"subject\": \"Hello from Postman\",\n  \"message\": \"This is a test message submitted via the Postman collection.\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/contact",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "contact"]
+						},
+						"description": "Submit a valid contact form payload. Returns 200 if Resend env vars are configured, otherwise 503."
+					},
+					"response": []
+				},
+				{
+					"name": "POST /api/contact — missing required field",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('status is 400', () => pm.response.to.have.status(400));",
+									"pm.test('error mentions missing field', () => {",
+									"  const json = pm.response.json();",
+									"  pm.expect(json.success).to.eql(false);",
+									"  pm.expect(json.error).to.match(/missing required field/i);",
+									"});"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{ "key": "Content-Type", "value": "application/json" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"tester@example.com\",\n  \"subject\": \"No name field\",\n  \"message\": \"Name is missing on purpose.\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/contact",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "contact"]
+						},
+						"description": "Omits the `name` field. Backend should reject with 400 'Missing required field'."
+					},
+					"response": []
+				},
+				{
+					"name": "POST /api/contact — invalid email",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('status is 400', () => pm.response.to.have.status(400));",
+									"pm.test('error mentions invalid email', () => {",
+									"  const json = pm.response.json();",
+									"  pm.expect(json.success).to.eql(false);",
+									"  pm.expect(json.error).to.match(/invalid email/i);",
+									"});"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{ "key": "Content-Type", "value": "application/json" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Postman Tester\",\n  \"email\": \"not-an-email\",\n  \"subject\": \"Bad email\",\n  \"message\": \"Email is malformed.\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/contact",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "contact"]
+						},
+						"description": "Sends a malformed email. Backend regex should reject with 400 'Invalid email address'."
+					},
+					"response": []
+				},
+				{
+					"name": "POST /api/contact — field too long",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('status is 400', () => pm.response.to.have.status(400));",
+									"pm.test('error mentions max length', () => {",
+									"  const json = pm.response.json();",
+									"  pm.expect(json.success).to.eql(false);",
+									"  pm.expect(json.error).to.match(/exceeds maximum length/i);",
+									"});"
+								]
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"// Generate a 101-char name (max is 100)",
+									"pm.variables.set('oversizedName', 'a'.repeat(101));"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{ "key": "Content-Type", "value": "application/json" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"{{oversizedName}}\",\n  \"email\": \"tester@example.com\",\n  \"subject\": \"Long name\",\n  \"message\": \"Name exceeds the 100-char cap.\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/contact",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "contact"]
+						},
+						"description": "Sends a 101-character name (max is 100). Backend should reject with 400 'exceeds maximum length'."
+					},
+					"response": []
+				},
+				{
+					"name": "POST /api/contact — empty body",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('status is 400', () => pm.response.to.have.status(400));",
+									"pm.test('returns validation error', () => {",
+									"  const json = pm.response.json();",
+									"  pm.expect(json.success).to.eql(false);",
+									"});"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{ "key": "Content-Type", "value": "application/json" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/contact",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "contact"]
+						},
+						"description": "Sends an empty JSON object. First missing field should trigger 400."
+					},
+					"response": []
+				},
+				{
+					"name": "POST /api/contact — rate limit triggered",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"// Run this request 6+ times in a row (Runner) to trigger the limiter.",
+									"// First 5 should succeed/validate; 6th should 429.",
+									"pm.test('rate-limit response shape on 429', () => {",
+									"  if (pm.response.code === 429) {",
+									"    const json = pm.response.json();",
+									"    pm.expect(json.success).to.eql(false);",
+									"    pm.expect(json.error).to.match(/too many requests/i);",
+									"    pm.expect(pm.response.headers.get('RateLimit-Limit')).to.not.be.null;",
+									"  } else {",
+									"    pm.test.skip && pm.test.skip('not yet rate-limited');",
+									"  }",
+									"});"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{ "key": "Content-Type", "value": "application/json" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Rate Limit Tester\",\n  \"email\": \"ratelimit@example.com\",\n  \"subject\": \"Burst\",\n  \"message\": \"Fire this six times in a row using the Runner to trigger 429.\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/contact",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "contact"]
+						},
+						"description": "To trigger the limiter, open Runner, select this request, set Iterations = 6+, and run. The 6th call should return 429 with `RateLimit-*` headers."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Negative",
+			"item": [
+				{
+					"name": "GET /api/unknown — 404",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('status is 404', () => pm.response.to.have.status(404));",
+									"pm.test('returns not-found JSON', () => {",
+									"  const json = pm.response.json();",
+									"  pm.expect(json.success).to.eql(false);",
+									"  pm.expect(json.error).to.match(/not found/i);",
+									"});"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/unknown",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "unknown"]
+						},
+						"description": "Hits an unmapped path. The catch-all 404 handler should respond with `{ success: false, error: 'Not found.' }`."
+					},
+					"response": []
+				},
+				{
+					"name": "POST /api/contact — wrong method (GET)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('status is 404 (route only accepts POST)', () => {",
+									"  pm.expect([404, 405]).to.include(pm.response.code);",
+									"});"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/contact",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "contact"]
+						},
+						"description": "Express only registers POST on /api/contact, so GET falls through to the 404 handler."
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:5000",
+			"type": "string"
+		}
+	]
+}

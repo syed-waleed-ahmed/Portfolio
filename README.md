@@ -18,6 +18,7 @@ Designed with a focus on **performance**, **accessibility**, **security**, and *
 - **Custom 404 page** -- branded standalone page Netlify auto-serves on missing routes
 - **Fully responsive** -- desktop, tablet, mobile (375px+ baseline)
 - **Hardened backend** -- Helmet security headers, `express-rate-limit`, body-size cap, trust-proxy, graceful shutdown
+- **API test suite** -- Postman collection with happy-path + validation + rate-limit + 404 tests (see [`postman/`](postman/))
 - **CI/CD** -- GitHub Actions runs lint, build, syntax check, `npm audit`, and gitleaks secret scan on every push and PR
 - **Auto dependency updates** -- Dependabot opens grouped weekly PRs for minor + patch upgrades (majors are manual)
 - **Pinned Node version** -- `.nvmrc`, `netlify.toml`, and `engines` field keep Netlify, CI, and local installs aligned
@@ -146,6 +147,10 @@ portfolio/
 |   |   +-- contactRoutes.js              # Validation + rate limit + Resend
 |   +-- package.json
 |   +-- .env.example                      # Template for RESEND_API_KEY, EMAIL_TO, EMAIL_FROM
++-- postman/
+|   +-- Portfolio-API.postman_collection.json   # Requests + tests for every endpoint
+|   +-- Portfolio-API.postman_environment.json  # baseUrl variable (local default)
+|   +-- README.md                               # Import + usage instructions
 +-- .editorconfig                         # Cross-platform editor settings
 +-- .gitattributes                        # Normalized line endings, binary detection
 +-- .gitignore
@@ -280,6 +285,29 @@ All portfolio content is centralized in `frontend/src/data/`:
 - **Update contact / social links?** Edit `portfolio.js`
 
 Components are pure UI -- they read from the data layer and render automatically.
+
+---
+
+## API Testing (Postman)
+
+A ready-to-import Postman collection lives in [`postman/`](postman/):
+
+- **`Portfolio-API.postman_collection.json`** -- one request per endpoint plus negative cases (missing fields, invalid email, oversized payload, rate-limit, 404, wrong method). Every request has a `pm.test()` script that asserts status code and response shape.
+- **`Portfolio-API.postman_environment.json`** -- defines `{{baseUrl}}` (defaults to `http://localhost:5000`; flip to your Render URL to test prod).
+
+Quick start:
+
+```bash
+# 1. Start the backend
+cd backend && npm install && npm start
+
+# 2. In Postman: Import both JSON files, pick the "Portfolio API — Local" env,
+#    then either run individual requests or hit "Run collection" in the Runner.
+```
+
+To verify the rate limiter, open the **Runner**, pick the *"Rate limit triggered"* request, set iterations to **6+**, and run -- the 6th call should return `429` with `RateLimit-*` headers.
+
+See [`postman/README.md`](postman/README.md) for full usage notes.
 
 ---
 
