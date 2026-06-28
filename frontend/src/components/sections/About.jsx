@@ -31,14 +31,12 @@ const About = () => {
                   happen to run.
                 </p>
                 <p className="mb-3">
-                  At <strong>MemorAIz</strong> I built and deployed{" "}
-                  <strong>RemindrAI</strong> &mdash; a production, serverless AI
-                  backend that holds multi-turn conversations across Email,
-                  WhatsApp, Telegram, and Discord and ships scheduled reminders
-                  with idempotent, retryable delivery, packaged as a reusable
-                  Mastra capability. At <strong>Fruugle</strong> I clustered and
-                  normalized 1M+ supermarket records so a multimodal AI assistant
-                  could do real-time price comparison.
+                  At <strong>MemorAIz</strong> I built{" "}
+                  <strong>RemindrAI</strong>, a serverless AI backend that
+                  schedules reminders and chats with users across Email,
+                  WhatsApp, Telegram, and Discord. At <strong>Fruugle</strong> I
+                  clustered and normalized 1M+ supermarket records so a
+                  multimodal AI assistant could do real-time price comparison.
                 </p>
                 <p className="mb-0">
                   Before that, a year at <strong>Jubilee Life Insurance</strong>{" "}

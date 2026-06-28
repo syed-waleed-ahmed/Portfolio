@@ -4,10 +4,10 @@ export const experiences = [
     company: "MemorAIz",
     period: "Feb 2026 – Present · Bologna, Italy",
     bullets: [
-      "Built and deployed RemindrAI — a production-ready, serverless AI reminder & multi-channel communication backend (Next.js 15, TypeScript) on Vercel, packaged as a reusable Mastra capability other apps integrate with just a URL + token.",
-      "Engineered a multi-turn AI agent (Vercel AI SDK + OpenAI) with server-side tool calling and persistent per-channel memory that creates, reschedules, and cancels reminders across Email, WhatsApp, Telegram, and Discord.",
-      "Designed a serverless reminder engine with idempotent, retryable cross-channel delivery: atomic DB claims (Turso/libSQL), exponential backoff + jitter retries, a crash-recovery reaper, and an Upstash QStash queue.",
-      "Hardened the service to production standards: constant-time bearer auth, signature-verified webhooks (Twilio/Telegram/Discord/Svix), CSP + HSTS headers, distributed rate limiting, per-user data isolation, and full CI gates (typecheck, lint, dead-code, build).",
+      "Built RemindrAI, a serverless AI backend that schedules reminders and chats with users over Email, WhatsApp, Telegram, and Discord.",
+      "Wired up an AI agent on the Vercel AI SDK that creates, reschedules, and cancels reminders straight from chat messages.",
+      "Made delivery reliable with retries, no duplicate sends, and automatic recovery from crashed jobs.",
+      "Packaged the backend as a reusable Mastra tool other apps can plug in, secured with auth and signed webhooks.",
     ],
   },
   {
