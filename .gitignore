@@ -41,11 +41,6 @@ logs/
 # === Local AI / agent caches ===
 .claude/
 
-# === Private/proprietary reference docs (safeguard — never commit here) ===
-# The MemorAIz summary was a local reference for proprietary work and has been
-# deleted. Keep it ignored so it can never be re-added to this public repo.
-/MemorAIz Summary.md
-
 # === graphify knowledge graph ===
 # Track the deliverables (graph.html, graph.json, GRAPH_REPORT.md); ignore the
 # regenerable working state so the repo stays clean.
