@@ -155,6 +155,10 @@ portfolio/
 |   +-- Portfolio-API.postman_environment.json             # baseUrl variable (local default)
 |   +-- Portfolio-API.postman_environment.production.json  # baseUrl variable (live Render backend)
 |   +-- README.md                                          # Import + usage instructions
++-- graphify-out/                         # Knowledge graph (html + json + audit report)
+|   +-- graph.html                        # Interactive graph (open in browser)
+|   +-- graph.json                        # Raw graph data (GraphRAG-ready)
+|   +-- GRAPH_REPORT.md                   # Communities, hub nodes, knowledge gaps
 +-- .editorconfig                         # Cross-platform editor settings
 +-- .gitattributes                        # Normalized line endings, binary detection
 +-- .gitignore
@@ -222,6 +226,23 @@ import { projects } from "@/data/projects";
 // bad — fragile if the file moves
 import Reveal from "../../ui/Reveal";
 ```
+
+---
+
+## Knowledge Graph
+
+A machine-generated knowledge graph of the whole project (code + docs) lives in
+[`graphify-out/`](graphify-out/):
+
+| File | What it is |
+|------|------------|
+| `graph.html` | Interactive graph — open in any browser, no server needed |
+| `GRAPH_REPORT.md` | Plain-language audit: communities, hub nodes, knowledge gaps |
+| `graph.json` | Raw graph data (GraphRAG-ready) |
+
+107 nodes across 34 communities (Backend & Contact API, Security & Caching, SEO
+& Document Head, Frontend Architecture, …). Regenerable working state (cache,
+manifest, cost) is gitignored — only the three deliverables are tracked.
 
 ---
 

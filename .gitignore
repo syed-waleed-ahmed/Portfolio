@@ -41,6 +41,15 @@ logs/
 # === Local AI / agent caches ===
 .claude/
 
+# === graphify knowledge graph ===
+# Track the deliverables (graph.html, graph.json, GRAPH_REPORT.md); ignore the
+# regenerable working state so the repo stays clean.
+graphify-out/cache/
+graphify-out/manifest.json
+graphify-out/cost.json
+.graphify_*
+.graphify_python
+
 # === Secrets / keys / certificates (live app — never commit these) ===
 *.pem
 *.key
