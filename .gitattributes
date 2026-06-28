@@ -37,3 +37,6 @@
 # GitHub linguist hints — exclude generated/vendored content from language stats
 package-lock.json linguist-generated=true
 **/dist/**       linguist-generated=true
+# graphify knowledge-graph artifacts are machine-generated — keep them out of
+# language stats and collapse them in diffs by default.
+graphify-out/**  linguist-generated=true

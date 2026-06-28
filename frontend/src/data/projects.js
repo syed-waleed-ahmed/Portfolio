@@ -1,5 +1,15 @@
 export const projects = [
   {
+    title: "RemindrAI — Multi-Channel AI Reminder Platform",
+    role: "AI Systems · MemorAIz",
+    period: "2026",
+    stack: ["Next.js 15", "TypeScript", "Mastra", "Vercel AI SDK", "Turso", "QStash"],
+    description:
+      "Production-ready serverless backend for an AI reminder + multi-channel communication platform, packaged as a drop-in Mastra capability. An AI agent holds multi-turn conversations across Email, WhatsApp, Telegram, and Discord and creates, reschedules, and cancels reminders via server-side tool calls; a serverless engine then delivers them on schedule.",
+    highlight:
+      "Idempotent, retryable cross-channel delivery — atomic DB claims, backoff retries, and crash recovery — consumable by any Mastra app with just a URL + token.",
+  },
+  {
     title: "Multi-Agent AI Workflow System",
     role: "AI/ML Project",
     period: "2025 – 2026",

@@ -6,6 +6,8 @@ export const skillGroups = [
       "RAG",
       "Prompt Engineering",
       "Fine-tuning",
+      "Mastra",
+      "Vercel AI SDK",
       "LangChain",
       "LangGraph",
       "Hugging Face",
@@ -32,14 +34,14 @@ export const skillGroups = [
   },
   {
     title: "Web & Backend",
-    tags: ["React", ".NET ASP Core", "REST APIs", "HTML/CSS", "Node.js"],
+    tags: ["React", "Next.js", "Node.js", ".NET ASP Core", "REST APIs", "Serverless", "Webhooks", "HTML/CSS"],
   },
   {
     title: "Databases",
-    tags: ["MySQL", "PostgreSQL", "SQL Server", "MongoDB"],
+    tags: ["MySQL", "PostgreSQL", "SQL Server", "MongoDB", "Turso / libSQL"],
   },
   {
     title: "Tools & Platforms",
-    tags: ["Docker", "Git", "Linux", "Jupyter", "VS Code", "Power BI", "Azure"],
+    tags: ["Docker", "Git", "Linux", "Vercel", "Upstash QStash", "Twilio", "Jupyter", "VS Code", "Power BI", "Azure"],
   },
 ];

@@ -4,10 +4,10 @@ export const experiences = [
     company: "MemorAIz",
     period: "Feb 2026 – Present · Bologna, Italy",
     bullets: [
-      "Built a modular AI assistant platform that wires APIs, MCP servers, and LLM capabilities into reusable micro-experiences for education workflows.",
-      "Designed a capability velocity framework that cut new AI feature integration time from weeks to days.",
-      "Wrote multi-agent workflows that turn raw content into structured outputs: quizzes, flashcards, and study plans.",
-      "Implemented real-time data ingestion and AI-driven UI using the Vercel AI SDK for interactive learning.",
+      "Built and deployed RemindrAI — a production-ready, serverless AI reminder & multi-channel communication backend (Next.js 15, TypeScript) on Vercel, packaged as a reusable Mastra capability other apps integrate with just a URL + token.",
+      "Engineered a multi-turn AI agent (Vercel AI SDK + OpenAI) with server-side tool calling and persistent per-channel memory that creates, reschedules, and cancels reminders across Email, WhatsApp, Telegram, and Discord.",
+      "Designed a serverless reminder engine with idempotent, retryable cross-channel delivery: atomic DB claims (Turso/libSQL), exponential backoff + jitter retries, a crash-recovery reaper, and an Upstash QStash queue.",
+      "Hardened the service to production standards: constant-time bearer auth, signature-verified webhooks (Twilio/Telegram/Discord/Svix), CSP + HSTS headers, distributed rate limiting, per-user data isolation, and full CI gates (typecheck, lint, dead-code, build).",
     ],
   },
   {

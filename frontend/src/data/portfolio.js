@@ -38,6 +38,7 @@ export const sectionIds = [
 
 export const exploreItems = [
   "Multi-Agent Systems",
+  "Agentic Backends",
   "RAG Pipelines",
   "LLM Evaluation",
   "AI-Driven Automation",
