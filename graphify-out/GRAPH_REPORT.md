@@ -1,25 +1,24 @@
-# Graph Report - D:/portfolio  (2026-06-28)
+# Graph Report - d:/portfolio  (2026-06-28)
 
 ## Corpus Check
-- Corpus is ~12,024 words - fits in a single context window. You may not need a graph.
+- Corpus is ~21,237 words - fits in a single context window. You may not need a graph.
 
 ## Summary
-- 107 nodes · 96 edges · 34 communities detected
-- Extraction: 84% EXTRACTED · 16% INFERRED · 0% AMBIGUOUS · INFERRED: 15 edges (avg confidence: 0.74)
+- 130 nodes · 137 edges · 35 communities detected
+- Extraction: 80% EXTRACTED · 20% INFERRED · 0% AMBIGUOUS · INFERRED: 28 edges (avg confidence: 0.81)
 - Token cost: 0 input · 0 output
 
 ## Community Hubs (Navigation)
-- [[_COMMUNITY_Backend & Contact API|Backend & Contact API]]
-- [[_COMMUNITY_Security & Caching Infra|Security & Caching Infra]]
-- [[_COMMUNITY_SEO & Document Head|SEO & Document Head]]
-- [[_COMMUNITY_Author & Education|Author & Education]]
-- [[_COMMUNITY_Error Boundary|Error Boundary]]
-- [[_COMMUNITY_Reveal & Lazy-Mount Hooks|Reveal & Lazy-Mount Hooks]]
-- [[_COMMUNITY_Branding & Icons|Branding & Icons]]
-- [[_COMMUNITY_Frontend Architecture|Frontend Architecture]]
-- [[_COMMUNITY_CICD & Automation|CI/CD & Automation]]
-- [[_COMMUNITY_Server Lifecycle|Server Lifecycle]]
-- [[_COMMUNITY_Contact Route Validation|Contact Route Validation]]
+- [[_COMMUNITY_Hosting, Security & Tech Stack|Hosting, Security & Tech Stack]]
+- [[_COMMUNITY_Education & Work History|Education & Work History]]
+- [[_COMMUNITY_AIML Projects & Tooling|AI/ML Projects & Tooling]]
+- [[_COMMUNITY_RemindrAI & Agent Stack|RemindrAI & Agent Stack]]
+- [[_COMMUNITY_Postman API & Disclosure Policy|Postman API & Disclosure Policy]]
+- [[_COMMUNITY_ErrorBoundary Component|ErrorBoundary Component]]
+- [[_COMMUNITY_Scroll Reveal & Lazy Mount|Scroll Reveal & Lazy Mount]]
+- [[_COMMUNITY_Brand & Visual Assets|Brand & Visual Assets]]
+- [[_COMMUNITY_Backend Server|Backend Server]]
+- [[_COMMUNITY_Contact Route & Sanitization|Contact Route & Sanitization]]
 - [[_COMMUNITY_App Root|App Root]]
 - [[_COMMUNITY_Footer|Footer]]
 - [[_COMMUNITY_Navbar|Navbar]]
@@ -33,190 +32,196 @@
 - [[_COMMUNITY_Scroll Progress|Scroll Progress]]
 - [[_COMMUNITY_Scroll To Top|Scroll To Top]]
 - [[_COMMUNITY_Skip Link|Skip Link]]
-- [[_COMMUNITY_Robots & Sitemap|Robots & Sitemap]]
+- [[_COMMUNITY_Crawler Directives|Crawler Directives]]
 - [[_COMMUNITY_ESLint Config|ESLint Config]]
 - [[_COMMUNITY_PostCSS Config|PostCSS Config]]
 - [[_COMMUNITY_Vite Config|Vite Config]]
 - [[_COMMUNITY_Service Worker|Service Worker]]
-- [[_COMMUNITY_Main Entry|Main Entry]]
+- [[_COMMUNITY_App Entry Point|App Entry Point]]
 - [[_COMMUNITY_Experience Data|Experience Data]]
 - [[_COMMUNITY_Portfolio Data|Portfolio Data]]
 - [[_COMMUNITY_Projects Data|Projects Data]]
 - [[_COMMUNITY_Skills Data|Skills Data]]
+- [[_COMMUNITY_404 Page|404 Page]]
+- [[_COMMUNITY_Search Console Verification|Search Console Verification]]
 
 ## God Nodes (most connected - your core abstractions)
-1. `Frontend index.html` - 8 edges
-2. `Syed Waleed Ahmed (AI Engineer)` - 7 edges
-3. `Backend (Node.js + Express)` - 6 edges
-4. `ErrorBoundary` - 5 edges
-5. `Frontend (React 19 + Vite)` - 5 edges
-6. `Netlify (Frontend Hosting)` - 5 edges
-7. `Security Policy` - 5 edges
-8. `Apple Touch Icon (Portfolio Brand Mark)` - 5 edges
-9. `Portfolio README` - 4 edges
-10. `Resend (Transactional Email)` - 4 edges
+1. `Syed Waleed Ahmed` - 19 edges
+2. `Syed Waleed Ahmed Portfolio Website` - 12 edges
+3. `Multi-Channel AI Reminder Platform` - 10 edges
+4. `Self-Correcting RAG Pipeline` - 8 edges
+5. `RemindrAI` - 7 edges
+6. `Multi-Agent AI Workflow System` - 7 edges
+7. `LLM-as-Judge Evaluation Framework` - 7 edges
+8. `Projects Section Component` - 7 edges
+9. `Tech Trainee (Jubilee Life)` - 6 edges
+10. `ErrorBoundary` - 5 edges
 
 ## Surprising Connections (you probably didn't know these)
-- `humans.txt (Authorship Signal)` --conceptually_related_to--> `Frontend (React 19 + Vite)`  [INFERRED]
-  frontend/public/humans.txt → README.md
-- `LazyMountSection()` --calls--> `useInView()`  [INFERRED]
-  D:\portfolio\frontend\src\components\ui\LazyMountSection.jsx → D:\portfolio\frontend\src\hooks\useInView.js
-- `Reveal()` --calls--> `useInView()`  [INFERRED]
-  D:\portfolio\frontend\src\components\ui\Reveal.jsx → D:\portfolio\frontend\src\hooks\useInView.js
-- `Postman Local Environment` --references--> `Backend (Node.js + Express)`  [EXTRACTED]
-  postman/README.md → README.md
-- `Inline SW Cleanup Script` --conceptually_related_to--> `Kill-switch Service Worker (sw.js)`  [INFERRED]
-  frontend/index.html → README.md
+- `About Section Component` --implements--> `Data-Driven Architecture (content in src/data, pure-UI components)`  [INFERRED]
+  frontend/src/components/sections/About.jsx → README.md
+- `Syed Waleed Ahmed` --built--> `Syed Waleed Ahmed Portfolio Website`  [EXTRACTED]
+  frontend/src/data/portfolio.js → README.md
+- `Syed Waleed Ahmed Portfolio Website` --uses--> `React`  [EXTRACTED]
+  README.md → frontend/src/data/skills.js
+- `Portfolio Contact API (/api/contact on Render)` --uses--> `Resend`  [EXTRACTED]
+  frontend/src/components/sections/Contact.jsx → README.md
+- `Portfolio Contact API (/api/contact on Render)` --uses--> `Express`  [EXTRACTED]
+  frontend/src/components/sections/Contact.jsx → README.md
 
 ## Hyperedges (group relationships)
-- **Contact Form Submission Pipeline** — readme_frontend, readme_contact_endpoint, readme_ratelimit, readme_resend, readme_contact_flow [EXTRACTED 0.95]
-- **Stale Service Worker Recovery** — readme_sw_killswitch, index_sw_cleanup, readme_sw_rationale, readme_caching [EXTRACTED 0.90]
-- **SEO & Discoverability Signals** — index_jsonld_person, index_jsonld_website, index_og_twitter, robots_txt, sitemap_xml, humans_txt [INFERRED 0.80]
+- **RemindrAI serverless reminder backend stack** — experience_remindrai, projects_multi_channel_ai_reminder, tech_mastra, tech_vercel_ai_sdk, tech_turso, tech_qstash [INFERRED 0.85]
+- **Stale service-worker recovery mechanism** — readme_killswitch_sw_rationale, index_killswitch_inline_script, readme_html_cache_rationale, portfolio_personal_website [INFERRED 0.80]
+- **Data-driven architecture: data layer feeds pure-UI sections** — readme_data_driven_architecture, projects_projects_section, projects_about_section, projects_multi_channel_ai_reminder [INFERRED 0.75]
 
 ## Communities
 
-### Community 0 - "Backend & Contact API"
-Cohesion: 0.18
-Nodes (17): humans.txt (Authorship Signal), Portfolio-API Postman Collection, Postman Local Environment, Postman Production Environment, Postman Collection README, Backend (Node.js + Express), POST /api/contact, Contact Form Flow (+9 more)
+### Community 0 - "Hosting, Security & Tech Stack"
+Cohesion: 0.1
+Nodes (21): Portfolio Contact API (/api/contact on Render), Netlify (frontend hosting), Render (backend hosting), Tech Trainee (Jubilee Life), Defensive SW cleanup inline script, Syed Waleed Ahmed Portfolio Website, Contact Section Component, @/ Import Alias (paths stay flat regardless of depth) (+13 more)
 
-### Community 1 - "Security & Caching Infra"
-Cohesion: 0.29
-Nodes (8): Inline SW Cleanup Script, Caching & Cache-Busting, Content Security Policy (Netlify _headers), Helmet Security Headers, Netlify (Frontend Hosting), Pinned Node 20 (.nvmrc/netlify.toml/engines), Kill-switch Service Worker (sw.js), Stale SW Recovery Rationale
+### Community 1 - "Education & Work History"
+Cohesion: 0.21
+Nodes (15): Bachelor's in Electrical Engineering, Master's in Automation Engineering, NED University of Engineering and Technology, University of Bologna, University of Twente, Fruugle SIA, Jubilee Life Insurance Co. Ltd., MemorAIz (+7 more)
 
-### Community 2 - "SEO & Document Head"
-Cohesion: 0.32
-Nodes (8): Google Analytics (deferred gtag), Frontend index.html, JSON-LD Person Schema, JSON-LD WebSite Schema, LCP Hero Portrait Preload (AVIF), main.jsx Module Entry, Open Graph + Twitter Cards, Backend DNS-prefetch / preconnect
+### Community 2 - "AI/ML Projects & Tooling"
+Cohesion: 0.2
+Nodes (15): LLM-as-Judge Evaluation Framework, Multi-Agent AI Workflow System, Projects Section Component, Self-Correcting RAG Pipeline, Visual Inspection of Connecting Rods, Data-Driven Architecture (content in src/data, pure-UI components), LLM Evaluation, RAG (Retrieval-Augmented Generation) (+7 more)
 
-### Community 3 - "Author & Education"
-Cohesion: 0.29
-Nodes (7): Google Search Console Verification, NED University of Engineering and Technology, University of Bologna, University of Twente, Branded 404.html Page, Syed Waleed Ahmed (AI Engineer), Custom 404 Page
+### Community 3 - "RemindrAI & Agent Stack"
+Cohesion: 0.24
+Nodes (10): RemindrAI, AI / ML / Full-Stack AI Roles (sought), Multi-Channel AI Reminder Platform, Multi-Agent Systems, Mastra, Next.js, QStash (Upstash), Turso / libSQL (+2 more)
 
-### Community 4 - "Error Boundary"
+### Community 4 - "Postman API & Disclosure Policy"
+Cohesion: 0.25
+Nodes (8): Portfolio-API Postman Collection, Postman Local Environment, Postman Production Environment, Postman Collection README, Render Backend (portfolio-backend-kmum), Responsible Disclosure Process, Security Policy, Safe-harbor Terms
+
+### Community 5 - "ErrorBoundary Component"
 Cohesion: 0.33
 Nodes (1): ErrorBoundary
 
-### Community 5 - "Reveal & Lazy-Mount Hooks"
+### Community 6 - "Scroll Reveal & Lazy Mount"
 Cohesion: 0.33
 Nodes (3): LazyMountSection(), Reveal(), useInView()
 
-### Community 6 - "Branding & Icons"
+### Community 7 - "Brand & Visual Assets"
 Cohesion: 0.6
 Nodes (6): Apple Touch Icon (Portfolio Brand Mark), Folder + Person Card Motif, Purple-Magenta Gradient Branding, 96x96 Favicon (Browser Tab Icon), Favicon SVG (Vector Brand Mark), Profile Hero Portrait
 
-### Community 7 - "Frontend Architecture"
-Cohesion: 0.4
-Nodes (5): @/ Import Alias, Data-driven Architecture (src/data), Layered Component Architecture, Lean Bundle Rationale (no animation lib), useInView Hook (IntersectionObserver)
-
-### Community 8 - "CI/CD & Automation"
-Cohesion: 0.67
-Nodes (3): CI/CD (GitHub Actions), Dependabot Auto-updates, gitleaks Secret Scan
-
-### Community 9 - "Server Lifecycle"
+### Community 8 - "Backend Server"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 10 - "Contact Route Validation"
+### Community 9 - "Contact Route & Sanitization"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 11 - "App Root"
+### Community 10 - "App Root"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 12 - "Footer"
+### Community 11 - "Footer"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 13 - "Navbar"
+### Community 12 - "Navbar"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 14 - "About Section"
+### Community 13 - "About Section"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 15 - "Contact Section"
+### Community 14 - "Contact Section"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 16 - "Experience Section"
+### Community 15 - "Experience Section"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 17 - "Hero Section"
+### Community 16 - "Hero Section"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 18 - "Interests Section"
+### Community 17 - "Interests Section"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 19 - "Projects Section"
+### Community 18 - "Projects Section"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 20 - "Skills Section"
+### Community 19 - "Skills Section"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 21 - "Scroll Progress"
+### Community 20 - "Scroll Progress"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 22 - "Scroll To Top"
+### Community 21 - "Scroll To Top"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 23 - "Skip Link"
+### Community 22 - "Skip Link"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 24 - "Robots & Sitemap"
+### Community 23 - "Crawler Directives"
 Cohesion: 1.0
 Nodes (1): sitemap.xml
 
-### Community 25 - "ESLint Config"
+### Community 24 - "ESLint Config"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 26 - "PostCSS Config"
+### Community 25 - "PostCSS Config"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 27 - "Vite Config"
+### Community 26 - "Vite Config"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 28 - "Service Worker"
+### Community 27 - "Service Worker"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 29 - "Main Entry"
+### Community 28 - "App Entry Point"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 30 - "Experience Data"
+### Community 29 - "Experience Data"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 31 - "Portfolio Data"
+### Community 30 - "Portfolio Data"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 32 - "Projects Data"
+### Community 31 - "Projects Data"
 Cohesion: 1.0
 Nodes (0): 
 
-### Community 33 - "Skills Data"
+### Community 32 - "Skills Data"
 Cohesion: 1.0
 Nodes (0): 
+
+### Community 33 - "404 Page"
+Cohesion: 1.0
+Nodes (1): Branded 404.html Page
+
+### Community 34 - "Search Console Verification"
+Cohesion: 1.0
+Nodes (1): Google Search Console Verification
 
 ## Knowledge Gaps
-- **17 isolated node(s):** `Data-driven Architecture (src/data)`, `@/ Import Alias`, `gitleaks Secret Scan`, `Dependabot Auto-updates`, `Render (Backend Hosting)` (+12 more)
+- **32 isolated node(s):** `Responsible Disclosure Process`, `Safe-harbor Terms`, `Branded 404.html Page`, `Google Search Console Verification`, `sitemap.xml` (+27 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **Thin community `Server Lifecycle`** (2 nodes): `server.js`, `shutdown()`
+- **Thin community `Backend Server`** (2 nodes): `server.js`, `shutdown()`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Contact Route Validation`** (2 nodes): `escapeHtml()`, `contactRoutes.js`
+- **Thin community `Contact Route & Sanitization`** (2 nodes): `escapeHtml()`, `contactRoutes.js`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
 - **Thin community `App Root`** (2 nodes): `App()`, `App.jsx`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
@@ -244,7 +249,7 @@ Nodes (0):
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
 - **Thin community `Skip Link`** (2 nodes): `SkipLink.jsx`, `SkipLink()`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Robots & Sitemap`** (2 nodes): `robots.txt`, `sitemap.xml`
+- **Thin community `Crawler Directives`** (2 nodes): `robots.txt`, `sitemap.xml`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
 - **Thin community `ESLint Config`** (1 nodes): `eslint.config.js`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
@@ -254,7 +259,7 @@ Nodes (0):
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
 - **Thin community `Service Worker`** (1 nodes): `sw.js`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Main Entry`** (1 nodes): `main.jsx`
+- **Thin community `App Entry Point`** (1 nodes): `main.jsx`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
 - **Thin community `Experience Data`** (1 nodes): `experience.js`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
@@ -264,17 +269,25 @@ Nodes (0):
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
 - **Thin community `Skills Data`** (1 nodes): `skills.js`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `404 Page`** (1 nodes): `Branded 404.html Page`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Search Console Verification`** (1 nodes): `Google Search Console Verification`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `Frontend (React 19 + Vite)` connect `Backend & Contact API` to `Security & Caching Infra`, `Frontend Architecture`?**
-  _High betweenness centrality (0.074) - this node is a cross-community bridge._
-- **Why does `Syed Waleed Ahmed (AI Engineer)` connect `Author & Education` to `Backend & Contact API`, `SEO & Document Head`?**
-  _High betweenness centrality (0.048) - this node is a cross-community bridge._
-- **Why does `Frontend index.html` connect `SEO & Document Head` to `Security & Caching Infra`?**
-  _High betweenness centrality (0.043) - this node is a cross-community bridge._
-- **Are the 2 inferred relationships involving `Syed Waleed Ahmed (AI Engineer)` (e.g. with `Branded 404.html Page` and `Google Search Console Verification`) actually correct?**
-  _`Syed Waleed Ahmed (AI Engineer)` has 2 INFERRED edges - model-reasoned connections that need verification._
-- **What connects `Data-driven Architecture (src/data)`, `@/ Import Alias`, `gitleaks Secret Scan` to the rest of the system?**
-  _17 weakly-connected nodes found - possible documentation gaps or missing edges._
+- **Why does `Syed Waleed Ahmed` connect `Education & Work History` to `Hosting, Security & Tech Stack`, `AI/ML Projects & Tooling`, `RemindrAI & Agent Stack`?**
+  _High betweenness centrality (0.150) - this node is a cross-community bridge._
+- **Why does `Syed Waleed Ahmed Portfolio Website` connect `Hosting, Security & Tech Stack` to `Education & Work History`, `AI/ML Projects & Tooling`?**
+  _High betweenness centrality (0.096) - this node is a cross-community bridge._
+- **Why does `Multi-Channel AI Reminder Platform` connect `RemindrAI & Agent Stack` to `Education & Work History`, `AI/ML Projects & Tooling`?**
+  _High betweenness centrality (0.035) - this node is a cross-community bridge._
+- **Are the 9 inferred relationships involving `Syed Waleed Ahmed` (e.g. with `AI Systems Thesis Student (MemorAIz)` and `Data Clustering & AI Model Intern (Fruugle)`) actually correct?**
+  _`Syed Waleed Ahmed` has 9 INFERRED edges - model-reasoned connections that need verification._
+- **Are the 2 inferred relationships involving `Multi-Channel AI Reminder Platform` (e.g. with `RemindrAI` and `Syed Waleed Ahmed`) actually correct?**
+  _`Multi-Channel AI Reminder Platform` has 2 INFERRED edges - model-reasoned connections that need verification._
+- **Are the 3 inferred relationships involving `Self-Correcting RAG Pipeline` (e.g. with `Syed Waleed Ahmed` and `RAG (Retrieval-Augmented Generation)`) actually correct?**
+  _`Self-Correcting RAG Pipeline` has 3 INFERRED edges - model-reasoned connections that need verification._
+- **Are the 2 inferred relationships involving `RemindrAI` (e.g. with `Multi-Channel AI Reminder Platform` and `Multi-Agent Systems`) actually correct?**
+  _`RemindrAI` has 2 INFERRED edges - model-reasoned connections that need verification._

@@ -240,9 +240,10 @@ A machine-generated knowledge graph of the whole project (code + docs) lives in
 | `GRAPH_REPORT.md` | Plain-language audit: communities, hub nodes, knowledge gaps |
 | `graph.json` | Raw graph data (GraphRAG-ready) |
 
-107 nodes across 34 communities (Backend & Contact API, Security & Caching, SEO
-& Document Head, Frontend Architecture, …). Regenerable working state (cache,
-manifest, cost) is gitignored — only the three deliverables are tracked.
+130 nodes across 35 communities (Education & Work History, AI/ML Projects &
+Tooling, RemindrAI & Agent Stack, Hosting/Security & Tech Stack, …). Regenerable
+working state (cache, manifest, cost) is gitignored — only the three
+deliverables are tracked.
 
 ---
 
