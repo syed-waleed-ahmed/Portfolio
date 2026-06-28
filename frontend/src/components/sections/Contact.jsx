@@ -101,7 +101,7 @@ const Contact = () => {
           <span className="section-eyebrow">Get in Touch</span>
           <h2 className="section-title">Contact</h2>
           <p className="section-subtitle">
-            Got a role, a question, or an idea? Drop a note &mdash; I read every
+            Got a role, a question, or an idea? Drop a note. I read every
             message.
           </p>
         </div>

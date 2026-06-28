@@ -26,23 +26,24 @@ const About = () => {
                 <p className="mb-3">
                   My background is split between full-stack engineering and
                   AI/ML. That mix shapes how I work: I build models the way
-                  I&apos;d build any other service &mdash; with proper APIs,
-                  error handling, and observability, not just notebooks that
-                  happen to run.
+                  I&apos;d build any other service, with proper APIs, error
+                  handling, and observability. Not notebooks that only run on my
+                  machine.
                 </p>
                 <p className="mb-3">
                   At <strong>MemorAIz</strong> I built{" "}
                   <strong>RemindrAI</strong>, a serverless AI backend that
                   schedules reminders and chats with users across Email,
                   WhatsApp, Telegram, and Discord. At <strong>Fruugle</strong> I
-                  clustered and normalized 1M+ supermarket records so a
-                  multimodal AI assistant could do real-time price comparison.
+                  built the ML that matches and categorizes the same grocery
+                  item across six Italian supermarket chains, so the app could
+                  compare prices across 80K+ scraped products.
                 </p>
                 <p className="mb-0">
                   Before that, a year at <strong>Jubilee Life Insurance</strong>{" "}
                   rotating through cybersecurity, web development, and database
-                  administration. That breadth means I can wire whole systems
-                  together, not just the ML parts.
+                  administration. That breadth means I can wire up a whole
+                  system, not only the ML parts.
                 </p>
               </div>
             </Reveal>

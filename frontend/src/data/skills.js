@@ -21,6 +21,7 @@ export const skillGroups = [
       "PyTorch",
       "TensorFlow",
       "Scikit-learn",
+      "XGBoost",
       "Pandas",
       "NumPy",
       "Matplotlib",

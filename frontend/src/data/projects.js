@@ -15,7 +15,7 @@ export const projects = [
     period: "2025 – 2026",
     stack: ["Python", "LangGraph", "Groq", "OpenAI"],
     description:
-      "Production-ready multi-agent system that automates marketing campaign generation. Specialized agents (research, copy, brief, QA) coordinate through a shared workflow, replacing what used to be a multi-day manual process.",
+      "Multi-agent system that automates marketing campaign generation. Specialized agents (research, copy, brief, QA) coordinate through a shared workflow, replacing what used to be a multi-day manual process.",
     highlight:
       "Cut manual effort by 90% through role-based agent orchestration with structured handoffs.",
   },
@@ -55,7 +55,7 @@ export const projects = [
     period: "Oct 2022 – Aug 2023",
     stack: ["Time-Series", "ML", "Python"],
     description:
-      "Time-series and ML pipeline that classifies network delay across LAN, WAN, and 4G environments to keep tele-robotic control loops stable.",
+      "Time-series and ML pipeline that classifies network delay across LAN, WAN, and 4G environments. Built from captured latency traces, it flags the conditions that would destabilize a remote control loop.",
     highlight:
       "~25% improvement in system stability under variable network conditions.",
   },

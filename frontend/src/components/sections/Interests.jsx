@@ -28,9 +28,9 @@ const Interests = () => {
                 <p>
                   I&apos;m looking for <strong>AI engineer</strong>,{" "}
                   <strong>ML engineer</strong>, or <strong>full-stack AI</strong>{" "}
-                  roles where I can own a system end to end &mdash; from the
-                  model up through the API and the interface that someone
-                  actually clicks on.
+                  roles where I can own a system end to end, from the model up
+                  through the API and the interface that someone actually clicks
+                  on.
                 </p>
                 <p className="mb-0">
                   What I care about: clean architecture, reproducible workflows,

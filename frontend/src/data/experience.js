@@ -11,14 +11,14 @@ export const experiences = [
     ],
   },
   {
-    title: "Data Analytics & AI Intern",
+    title: "Data Clustering & AI Model Intern",
     company: "Fruugle SIA",
-    period: "Jan 2026 – Apr 2026 · Riga, Latvia (Remote)",
+    period: "Jan 2026 – Apr 2026 · Jelgava, Latvia (Remote)",
     bullets: [
-      "Processed and engineered 1M+ retail records to feed multimodal AI pipelines for product comparison and recommendation.",
-      "Built clustering models with K-Means, DBSCAN, and hierarchical clustering to improve product grouping and price comparison accuracy.",
-      "Sharpened recommendation logic by combining text, image, and numerical signals for closer product matches.",
-      "Shipped dashboards and analytical insights that fed pricing strategy and day-to-day product decisions.",
+      "Built an XGBoost model that matches the same grocery item across 6 Italian supermarket chains, hitting 97.5% accuracy against a 95% target.",
+      "Trained a second model to sort products into 16 categories at 99.5% accuracy, with class weighting so the rare ones weren't ignored.",
+      "Engineered the pipeline over 80K+ scraped products: Italian-text cleaning, a quantity parser, and hard-negative sampling for the tricky pairs.",
+      "Wrote an inference script that grouped 24K+ unsorted products, with guardrails to block matches that were obviously wrong.",
     ],
   },
   {

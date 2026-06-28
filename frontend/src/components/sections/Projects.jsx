@@ -11,7 +11,7 @@ const Projects = () => {
             <h2 className="section-title">Projects</h2>
             <p className="section-subtitle">
               AI/ML projects from work and study. Code I&apos;ve actually
-              shipped or wrote a thesis around &mdash; not pitch-deck mockups.
+              shipped or wrote a thesis around, not pitch-deck mockups.
             </p>
           </div>
         </Reveal>
