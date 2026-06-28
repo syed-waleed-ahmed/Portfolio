@@ -41,6 +41,30 @@ logs/
 # === Local AI / agent caches ===
 .claude/
 
+# === Secrets / keys / certificates (live app — never commit these) ===
+*.pem
+*.key
+*.crt
+*.cert
+*.p12
+*.pfx
+*.keystore
+id_rsa
+id_rsa.*
+secrets.json
+.secrets/
+
+# === Deployment / platform artifacts ===
+.netlify/
+.render/
+.vercel/
+.cache/
+
+# === Test / coverage output ===
+coverage/
+*.lcov
+.nyc_output/
+
 # === OS ===
 .DS_Store
 Thumbs.db

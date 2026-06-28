@@ -1,5 +1,10 @@
 # Syed Waleed Ahmed -- Portfolio
 
+[![CI](https://github.com/syed-waleed-ahmed/Portfolio/actions/workflows/ci.yml/badge.svg)](https://github.com/syed-waleed-ahmed/Portfolio/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![Node](https://img.shields.io/badge/node-%3E%3D20-brightgreen.svg)](.nvmrc)
+[![Live](https://img.shields.io/badge/live-syedwaleedahmed.me-0a7cff.svg)](https://syedwaleedahmed.me/)
+
 A modern, responsive **personal portfolio website** built with **React 19 + Vite** on the frontend and **Node.js + Express** on the backend.
 Designed with a focus on **performance**, **accessibility**, **security**, and **clean UI/UX**.
 
@@ -146,9 +151,10 @@ portfolio/
 |   +-- package.json
 |   +-- .env.example                      # Template for RESEND_API_KEY, EMAIL_TO, EMAIL_FROM
 +-- postman/
-|   +-- Portfolio-API.postman_collection.json   # Requests + tests for every endpoint
-|   +-- Portfolio-API.postman_environment.json  # baseUrl variable (local default)
-|   +-- README.md                               # Import + usage instructions
+|   +-- Portfolio-API.postman_collection.json              # Requests + tests for every endpoint
+|   +-- Portfolio-API.postman_environment.json             # baseUrl variable (local default)
+|   +-- Portfolio-API.postman_environment.production.json  # baseUrl variable (live Render backend)
+|   +-- README.md                                          # Import + usage instructions
 +-- .editorconfig                         # Cross-platform editor settings
 +-- .gitattributes                        # Normalized line endings, binary detection
 +-- .gitignore
@@ -310,7 +316,22 @@ Components are pure UI -- they read from the data layer and render automatically
 A ready-to-import Postman collection lives in [`postman/`](postman/):
 
 - **`Portfolio-API.postman_collection.json`** -- one request per endpoint plus negative cases (missing fields, invalid email, oversized payload, rate-limit, 404, wrong method). Every request has a `pm.test()` script that asserts status code and response shape.
-- **`Portfolio-API.postman_environment.json`** -- defines `{{baseUrl}}` (defaults to `http://localhost:5000`; flip to your Render URL to test prod).
+- **`Portfolio-API.postman_environment.json`** -- `{{baseUrl}}` for local dev (`http://localhost:5000`).
+- **`Portfolio-API.postman_environment.production.json`** -- `{{baseUrl}}` for the **live backend** on Render.
+
+### Test the live API (no clone needed)
+
+In Postman, **Import → Link** and paste these raw URLs, then select the
+**Portfolio API — Production** environment:
+
+- Collection: `https://raw.githubusercontent.com/syed-waleed-ahmed/Portfolio/main/postman/Portfolio-API.postman_collection.json`
+- Production env: `https://raw.githubusercontent.com/syed-waleed-ahmed/Portfolio/main/postman/Portfolio-API.postman_environment.production.json`
+
+The production env targets `https://portfolio-backend-kmum.onrender.com`. The
+backend runs on Render's free tier, so the first call after idle can cold-start
+(~30–60 s). **Heads-up:** a successful `POST /api/contact` against prod sends a
+real email — use the validation / 404 / rate-limit requests for safe smoke tests.
+See [`postman/README.md`](postman/README.md) for full notes.
 
 Quick start:
 

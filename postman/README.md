@@ -7,7 +7,27 @@ Postman assets for testing the backend in [`../backend`](../backend).
 | File | Purpose |
 |------|---------|
 | `Portfolio-API.postman_collection.json` | Requests + test scripts for every backend endpoint |
-| `Portfolio-API.postman_environment.json` | `baseUrl` variable (defaults to `http://localhost:5000`) |
+| `Portfolio-API.postman_environment.json` | `baseUrl` for local dev (`http://localhost:5000`) |
+| `Portfolio-API.postman_environment.production.json` | `baseUrl` for the live backend on Render |
+
+## Test the live API (no clone needed)
+
+You can import straight from GitHub — in Postman, **Import → Link** and paste
+each raw URL, then pick the **Production** environment:
+
+- Collection:
+  `https://raw.githubusercontent.com/syed-waleed-ahmed/Portfolio/main/postman/Portfolio-API.postman_collection.json`
+- Production environment:
+  `https://raw.githubusercontent.com/syed-waleed-ahmed/Portfolio/main/postman/Portfolio-API.postman_environment.production.json`
+
+The production environment targets `https://portfolio-backend-kmum.onrender.com`.
+The backend is on Render's free tier, so the first request after idle may take
+~30–60 s to cold-start — re-run if it times out.
+
+> **Want a one-click "Run in Postman" button?** Open the collection in your own
+> Postman account → **Share → Via API / Public link**, then paste the generated
+> `https://run.pstmn.io/button.svg` snippet into the README. That step has to be
+> done from your account because the button embeds your hosted collection ID.
 
 ## Endpoints covered
 
@@ -31,7 +51,13 @@ Postman assets for testing the backend in [`../backend`](../backend).
 
 ## Switching to production
 
-Edit the `baseUrl` variable to point at your deployed backend (e.g. the Render URL). The collection has no other environment-specific values.
+Select the **Portfolio API — Production** environment (imported from
+`Portfolio-API.postman_environment.production.json`) instead of **Local** — it
+already points `baseUrl` at the Render URL. The collection has no other
+environment-specific values.
+
+> Note: hitting the live contact endpoint sends a **real email** via Resend.
+> Use the validation/404/rate-limit requests for safe smoke tests against prod.
 
 ## Notes
 
