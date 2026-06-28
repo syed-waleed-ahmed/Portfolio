@@ -41,6 +41,9 @@ jobs:
         env:
           NODE_ENV: production
 
+      - name: Audit (production deps only, fail on high+)
+        run: npm audit --omit=dev --audit-level=high
+
   backend:
     name: Backend (syntax + audit)
     runs-on: ubuntu-latest

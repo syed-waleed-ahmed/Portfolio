@@ -71,7 +71,7 @@ Designed with a focus on **performance**, **accessibility**, **security**, and *
 
 ### CI / CD
 - **GitHub Actions** (`.github/workflows/ci.yml`):
-  - Frontend job: `npm ci` -> `eslint` -> `vite build`
+  - Frontend job: `npm ci` -> `eslint` -> `vite build` -> `npm audit --omit=dev --audit-level=high`
   - Backend job: `npm ci` -> `node --check server.js` -> `npm audit --omit=dev --audit-level=high`
   - Secret-scan job: `gitleaks` over full git history
   - Concurrency-cancelled to avoid stale runs
