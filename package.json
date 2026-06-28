@@ -1,0 +1,24 @@
+{
+  "name": "portfolio",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Personal portfolio — React 19 + Vite frontend, Node + Express backend.",
+  "author": "Syed Waleed Ahmed",
+  "license": "MIT",
+  "homepage": "https://syedwaleedahmed.me/",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/syed-waleed-ahmed/Portfolio.git"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "install:all": "npm install --prefix frontend && npm install --prefix backend",
+    "dev:frontend": "npm --prefix frontend run dev",
+    "dev:backend": "npm --prefix backend run dev",
+    "build": "npm --prefix frontend run build",
+    "lint": "npm --prefix frontend run lint",
+    "start": "npm --prefix backend start"
+  }
+}

@@ -96,8 +96,6 @@ portfolio/
 |   |   +-- favicon-96x96.png
 |   |   +-- favicon.svg
 |   |   +-- googleb4ba9f6faa31c433.html   # Google Search Console verification
-|   |   +-- web-app-manifest-192x192.png
-|   |   +-- web-app-manifest-512x512.png
 |   |   +-- sitemap.xml
 |   |   +-- robots.txt
 |   +-- src/
@@ -158,6 +156,7 @@ portfolio/
 +-- .nvmrc                                # Node 20
 +-- LICENSE                               # MIT
 +-- netlify.toml                          # Pins NODE_VERSION on Netlify
++-- package.json                          # Root scripts: install:all, dev:*, build, lint
 +-- README.md
 +-- SECURITY.md                           # Vulnerability reporting policy
 ```
@@ -231,7 +230,25 @@ git clone https://github.com/syed-waleed-ahmed/Portfolio.git
 cd Portfolio
 ```
 
-### 2. Frontend
+### 2. Install both workspaces
+
+Root convenience scripts (in `package.json`) install and run each side
+without changing directories:
+
+```bash
+npm run install:all        # installs frontend + backend deps
+```
+
+| Script | What it does |
+|--------|--------------|
+| `npm run install:all` | Install dependencies for both `frontend/` and `backend/` |
+| `npm run dev:frontend` | Start the Vite dev server (`http://localhost:5173`) |
+| `npm run dev:backend` | Start the API with auto-reload (`http://localhost:5000`) |
+| `npm run build` | Production build of the frontend |
+| `npm run lint` | Lint the frontend |
+| `npm start` | Start the backend (production mode) |
+
+### 3. Frontend
 
 ```bash
 cd frontend
@@ -242,13 +259,13 @@ npm run dev
 
 Runs at `http://localhost:5173`
 
-### 3. Backend
+### 4. Backend
 
 ```bash
 cd backend
 cp .env.example .env       # required -- fill in real values
 npm install
-npm start
+npm run dev                # auto-reloads on change (or `npm start` for prod)
 ```
 
 Runs at `http://localhost:5000`
