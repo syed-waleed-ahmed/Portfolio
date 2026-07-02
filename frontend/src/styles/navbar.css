@@ -1,5 +1,5 @@
 /* =========================
-   navbar.css — own implementation, no Bootstrap collapse JS
+   navbar.css - own implementation, no Bootstrap collapse JS
    ========================= */
 
 .site-nav {
@@ -45,9 +45,9 @@
   justify-content: center;
   width: 32px;
   height: 32px;
-  border-radius: 8px;
+  border-radius: var(--radius-xs);
   background: var(--gradient-accent);
-  color: #0a0e1a;
+  color: var(--text-on-accent);
   font-weight: 700;
   font-size: 0.78rem;
   letter-spacing: 0.05em;
@@ -176,7 +176,7 @@
   .site-nav-link {
     display: block;
     padding: 0.85rem 0.85rem;
-    border-radius: 8px;
+    border-radius: var(--radius-xs);
     font-size: 0.85rem;
     letter-spacing: 0.1em;
   }

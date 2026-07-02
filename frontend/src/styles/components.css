@@ -1,5 +1,5 @@
 /* =========================
-   components.css — cards, timeline, skills, interests, contact, footer
+   components.css - cards, timeline, skills, interests, contact, footer
    ========================= */
 
 /* ========= Cards ========= */
@@ -100,7 +100,7 @@
 
 .project-link-icon:hover {
   color: var(--accent-2);
-  border-color: rgba(34, 211, 238, 0.55);
+  border-color: var(--border-accent-hover);
   transform: translateY(-2px);
   background: rgba(34, 211, 238, 0.06);
 }
@@ -195,7 +195,7 @@
   justify-content: center;
   width: 28px;
   height: 28px;
-  border-radius: 8px;
+  border-radius: var(--radius-xs);
   background: rgba(34, 211, 238, 0.08);
   border: 1px solid rgba(34, 211, 238, 0.25);
   font-size: 0.85rem;
@@ -298,7 +298,7 @@
 }
 
 .skill-badge:hover {
-  border-color: rgba(34, 211, 238, 0.55);
+  border-color: var(--border-accent-hover);
   background: rgba(34, 211, 238, 0.06);
   color: var(--text-strong);
   transform: translateY(-1px);
@@ -415,7 +415,7 @@
   border-radius: 999px;
   border: none;
   background: var(--gradient-accent);
-  color: #0a0e1a;
+  color: var(--text-on-accent);
   font-weight: 600;
   font-size: 0.92rem;
   letter-spacing: 0.03em;
@@ -466,7 +466,7 @@
 
 .glass-input {
   background: rgba(15, 23, 42, 0.7) !important;
-  border-radius: 12px;
+  border-radius: var(--radius-sm);
   border: 1px solid var(--border-default);
   color: var(--text-strong) !important;
   caret-color: var(--text-strong);
@@ -567,7 +567,7 @@ textarea.form-control.glass-input::-moz-placeholder {
 
 .footer-icon:hover {
   color: var(--accent-2);
-  border-color: rgba(34, 211, 238, 0.55);
+  border-color: var(--border-accent-hover);
   background: rgba(34, 211, 238, 0.06);
   transform: translateY(-3px);
 }

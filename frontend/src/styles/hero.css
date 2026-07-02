@@ -1,5 +1,5 @@
 /* =========================
-   hero.css — hero section, animations, orbs, profile, CTAs
+   hero.css - hero section, animations, orbs, profile, CTAs
    ========================= */
 
 .hero-gradient {
@@ -216,7 +216,7 @@
   border-radius: 999px;
   border: none;
   background: var(--gradient-accent);
-  color: #0a0e1a;
+  color: var(--text-on-accent);
   font-weight: 600;
   font-size: 0.9rem;
   letter-spacing: 0.02em;
@@ -230,7 +230,7 @@
   transform: translateY(-2px);
   filter: brightness(1.06);
   box-shadow: 0 12px 30px rgba(34, 211, 238, 0.35);
-  color: #0a0e1a;
+  color: var(--text-on-accent);
 }
 
 .hero-cta-secondary {
