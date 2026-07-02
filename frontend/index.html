@@ -18,18 +18,18 @@
     -->
 
     <!-- Primary title (Google snippet) -->
-    <title>Syed Waleed Ahmed — AI Engineer · Portfolio</title>
+    <title>Syed Waleed Ahmed · AI Engineer · Portfolio</title>
 
     <!-- Meta description (~155 chars sweet spot) -->
     <meta
       name="description"
-      content="Syed Waleed Ahmed — AI Engineer building production-grade multi-agent systems, RAG pipelines, and LLM workflow automation. Master's student at the University of Bologna."
+      content="Syed Waleed Ahmed, AI Engineer building production-grade multi-agent systems, RAG pipelines, and LLM workflow automation. Master's student at the University of Bologna."
     />
 
     <!-- Author / language hints -->
     <meta name="author" content="Syed Waleed Ahmed" />
     <meta name="language" content="English" />
-    <meta name="robots" content="index, follow, max-image-preview:large" />
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
     <meta name="googlebot" content="index, follow" />
 
     <!-- Favicons / app icons -->
@@ -56,9 +56,9 @@
 
     <!-- ====== Open Graph ====== -->
     <meta property="og:type" content="website" />
-    <meta property="og:site_name" content="Syed Waleed Ahmed — Portfolio" />
+    <meta property="og:site_name" content="Syed Waleed Ahmed · Portfolio" />
     <meta property="og:locale" content="en_US" />
-    <meta property="og:title" content="Syed Waleed Ahmed — AI Engineer · Portfolio" />
+    <meta property="og:title" content="Syed Waleed Ahmed · AI Engineer · Portfolio" />
     <meta
       property="og:description"
       content="AI Engineer specializing in multi-agent systems, RAG pipelines, and LLM workflow automation."
@@ -69,7 +69,7 @@
 
     <!-- ====== Twitter / X card ====== -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Syed Waleed Ahmed — AI Engineer · Portfolio" />
+    <meta name="twitter:title" content="Syed Waleed Ahmed · AI Engineer · Portfolio" />
     <meta
       name="twitter:description"
       content="AI Engineer working on multi-agent systems, RAG pipelines, and LLM workflow automation."
@@ -137,7 +137,8 @@
       {
         "@context": "https://schema.org",
         "@type": "WebSite",
-        "name": "Syed Waleed Ahmed — Portfolio",
+        "@id": "https://syedwaleedahmed.me/#website",
+        "name": "Syed Waleed Ahmed · Portfolio",
         "url": "https://syedwaleedahmed.me/",
         "inLanguage": "en",
         "author": { "@id": "https://syedwaleedahmed.me/#person" },
@@ -148,6 +149,22 @@
         }
       }
     </script>
+
+    <!-- ====== Structured data: ProfilePage (Google profile-page markup) ====== -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "ProfilePage",
+        "@id": "https://syedwaleedahmed.me/#webpage",
+        "url": "https://syedwaleedahmed.me/",
+        "name": "Syed Waleed Ahmed · AI Engineer · Portfolio",
+        "isPartOf": { "@id": "https://syedwaleedahmed.me/#website" },
+        "about": { "@id": "https://syedwaleedahmed.me/#person" },
+        "mainEntity": { "@id": "https://syedwaleedahmed.me/#person" },
+        "inLanguage": "en",
+        "dateModified": "2026-07-03"
+      }
+    </script>
   </head>
 
   <body>
@@ -156,6 +173,33 @@
       (window.requestIdleCallback||setTimeout)(function(){var s=document.createElement('script');s.src='https://www.googletagmanager.com/gtag/js?id=G-E5YE59PWT0';s.async=true;document.head.appendChild(s);window.dataLayer=window.dataLayer||[];function g(){dataLayer.push(arguments)}window.gtag=g;g('js',new Date());g('config','G-E5YE59PWT0')});
     </script>
 
+    <!-- Static fallback for crawlers/clients without JS; React replaces #root on load. -->
+    <noscript>
+      <div style="max-width: 720px; margin: 0 auto; padding: 2rem 1.25rem; color: #e2e8f0; font-family: system-ui, sans-serif; line-height: 1.6;">
+        <h1>Syed Waleed Ahmed · AI Engineer</h1>
+        <p>
+          AI Engineer building production-grade multi-agent systems, RAG
+          pipelines, and LLM workflow automation. Master's student in Automation
+          Engineering at the University of Bologna, with an Erasmus semester at
+          the University of Twente.
+        </p>
+        <p>
+          Sections:
+          <a href="#about">About</a> ·
+          <a href="#experience">Experience</a> ·
+          <a href="#projects">Projects</a> ·
+          <a href="#skills">Skills</a> ·
+          <a href="#contact">Contact</a>
+        </p>
+        <p>
+          Find me on
+          <a href="https://www.linkedin.com/in/syed-waleed-ahmed/">LinkedIn</a>
+          and
+          <a href="https://github.com/syed-waleed-ahmed">GitHub</a>.
+        </p>
+        <p>This site is fully interactive with JavaScript enabled.</p>
+      </div>
+    </noscript>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
   </body>
