@@ -204,7 +204,7 @@
 									"pm.test('error mentions max length', () => {",
 									"  const json = pm.response.json();",
 									"  pm.expect(json.success).to.eql(false);",
-									"  pm.expect(json.error).to.match(/exceeds maximum length/i);",
+									"  pm.expect(json.error).to.match(/too long/i);",
 									"});"
 								]
 							}
@@ -234,7 +234,7 @@
 							"host": ["{{baseUrl}}"],
 							"path": ["api", "contact"]
 						},
-						"description": "Sends a 101-character name (max is 100). Backend should reject with 400 'exceeds maximum length'."
+						"description": "Sends a 101-character name (max is 100). Backend should reject with 400 'Field \"name\" is too long'."
 					},
 					"response": []
 				},
