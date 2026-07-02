@@ -1,4 +1,4 @@
-// Backend API tests — Node's built-in runner (`node --test`), no extra deps.
+// Backend API tests - Node's built-in runner (`node --test`), no extra deps.
 // Importing server.js here also validates that config/ and services/ modules
 // load correctly, so a missing/broken import fails the suite (and CI).
 //

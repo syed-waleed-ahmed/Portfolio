@@ -10,8 +10,8 @@ const resend = isMailerConfigured ? new Resend(config.resendApiKey) : null;
 // Tweak these to restyle every contact email. Colors match the portfolio.
 const BRAND = {
   name: "Syed Waleed Ahmed",
-  accent: "#6366f1", // indigo — header + button
-  accent2: "#22d3ee", // cyan — accent stripe
+  accent: "#6366f1", // indigo - header + button
+  accent2: "#22d3ee", // cyan - accent stripe
   ink: "#0a0e1a", // near-black text
   muted: "#6b7280", // labels / footer
   border: "#e5e7eb", // hairlines
@@ -150,6 +150,6 @@ function renderContactText({ name, email, subject, message }) {
     "Message:",
     message,
     "",
-    "— Sent from your portfolio contact form. Reply directly to respond.",
+    "- Sent from your portfolio contact form. Reply directly to respond.",
   ].join("\n");
 }

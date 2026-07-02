@@ -2,7 +2,7 @@ export const experiences = [
   {
     title: "AI Systems Thesis",
     company: "MemorAIz",
-    period: "Jan 2026 – Present · Bologna, Italy",
+    period: "Jan 2026 - Present · Bologna, Italy",
     bullets: [
       "Thesis capstone: built RemindrAI, a production serverless backend where an AI agent schedules reminders and chats with users over Email, WhatsApp, Telegram, and Discord.",
       "Wired an OpenAI agent on the Vercel AI SDK that creates, reschedules, and cancels reminders straight from chat, with memory that persists per channel.",
@@ -13,7 +13,7 @@ export const experiences = [
   {
     title: "Data Clustering & AI Model Intern",
     company: "Fruugle SIA",
-    period: "Jan 2026 – Apr 2026 · Jelgava, Latvia (Remote)",
+    period: "Jan 2026 - Apr 2026 · Jelgava, Latvia (Remote)",
     bullets: [
       "Built an XGBoost model that matches the same grocery item across 6 Italian supermarket chains, hitting 97.5% accuracy against a 95% target.",
       "Trained a second model to sort products into 16 categories at 99.5% accuracy, with class weighting so the rare ones weren't ignored.",
@@ -24,7 +24,7 @@ export const experiences = [
   {
     title: "Tech Trainee",
     company: "Jubilee Life Insurance Co. Ltd.",
-    period: "Jan 2024 – Oct 2024 · Karachi, Pakistan",
+    period: "Jan 2024 - Oct 2024 · Karachi, Pakistan",
     bullets: [
       "Rotated through web development, databases, networking, and cybersecurity, building full-stack apps with React, .NET ASP Core, PHP, and MySQL.",
       "Built ETL pipelines over 100K+ records and tuned queries and stored procedures, cutting database response times by ~40%.",

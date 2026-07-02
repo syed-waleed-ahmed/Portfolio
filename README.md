@@ -222,17 +222,17 @@ obvious home as the project grows:
 | `components/ui/` | Reusable primitives with no domain coupling | `Reveal`, `ScrollProgress`, `ScrollToTop`, `SkipLink`, `ErrorBoundary`, `LazyMountSection` |
 | `hooks/` | Cross-cutting React hooks | `useInView` (used by `Reveal` + `LazyMountSection`) |
 | `data/` | Pure content (no JSX), edited to update site copy | `experience.js`, `projects.js`, ... |
-| `styles/` | Global CSS — reset, tokens, layout, components | `reset.css`, `base.css`, `navbar.css`, `hero.css`, `components.css` |
+| `styles/` | Global CSS - reset, tokens, layout, components | `reset.css`, `base.css`, `navbar.css`, `hero.css`, `components.css` |
 
 Imports use the **`@/` alias** that maps to `frontend/src/` (configured in
 `vite.config.js`), so paths stay flat regardless of folder depth:
 
 ```js
-// good — same wherever this lives
+// good - same wherever this lives
 import Reveal from "@/components/ui/Reveal";
 import { projects } from "@/data/projects";
 
-// bad — fragile if the file moves
+// bad - fragile if the file moves
 import Reveal from "../../ui/Reveal";
 ```
 
@@ -245,14 +245,14 @@ A machine-generated knowledge graph of the whole project (code + docs) lives in
 
 | File | What it is |
 |------|------------|
-| `graph.html` | Interactive graph — open in any browser, no server needed |
+| `graph.html` | Interactive graph - open in any browser, no server needed |
 | `GRAPH_REPORT.md` | Plain-language audit: communities, hub nodes, knowledge gaps |
 | `graph.json` | Raw graph data (GraphRAG-ready) |
 
 120 nodes across 41 communities (Backend Security & Contact Flow, Frontend
 Architecture & Rationale, Mailer Service Internals, API Testing & Security
 Policy, …). Regenerable
-working state (cache, manifest, cost) is gitignored — only the three
+working state (cache, manifest, cost) is gitignored - only the three
 deliverables are tracked.
 
 ---
@@ -349,8 +349,8 @@ Components are pure UI -- they read from the data layer and render automatically
 
 Two layers:
 
-- **Automated** — backend API tests run with `npm test` (from the repo root or `backend/`). They use Node's built-in test runner (`node --test`), spin the app up on an ephemeral port, and assert validation, health, and 404 behavior without sending real email. CI runs them on every push/PR.
-- **Manual / live** — a ready-to-import Postman collection in [`postman/`](postman/):
+- **Automated** - backend API tests run with `npm test` (from the repo root or `backend/`). They use Node's built-in test runner (`node --test`), spin the app up on an ephemeral port, and assert validation, health, and 404 behavior without sending real email. CI runs them on every push/PR.
+- **Manual / live** - a ready-to-import Postman collection in [`postman/`](postman/):
 
 - **`Portfolio-API.postman_collection.json`** -- one request per endpoint plus negative cases (missing fields, invalid email, oversized payload, rate-limit, 404, wrong method). Every request has a `pm.test()` script that asserts status code and response shape.
 - **`Portfolio-API.postman_environment.json`** -- `{{baseUrl}}` for local dev (`http://localhost:5000`).
@@ -359,7 +359,7 @@ Two layers:
 ### Test the live API (no clone needed)
 
 In Postman, **Import → Link** and paste these raw URLs, then select the
-**Portfolio API — Production** environment:
+**Portfolio API - Production** environment:
 
 - Collection: `https://raw.githubusercontent.com/syed-waleed-ahmed/Portfolio/main/postman/Portfolio-API.postman_collection.json`
 - Production env: `https://raw.githubusercontent.com/syed-waleed-ahmed/Portfolio/main/postman/Portfolio-API.postman_environment.production.json`
@@ -367,7 +367,7 @@ In Postman, **Import → Link** and paste these raw URLs, then select the
 The production env targets `https://portfolio-backend-kmum.onrender.com`. The
 backend runs on Render's free tier, so the first call after idle can cold-start
 (~30–60 s). **Heads-up:** a successful `POST /api/contact` against prod sends a
-real email — use the validation / 404 / rate-limit requests for safe smoke tests.
+real email - use the validation / 404 / rate-limit requests for safe smoke tests.
 See [`postman/README.md`](postman/README.md) for full notes.
 
 Quick start:
@@ -376,7 +376,7 @@ Quick start:
 # 1. Start the backend
 cd backend && npm install && npm start
 
-# 2. In Postman: Import both JSON files, pick the "Portfolio API — Local" env,
+# 2. In Postman: Import both JSON files, pick the "Portfolio API - Local" env,
 #    then either run individual requests or hit "Run collection" in the Runner.
 ```
 

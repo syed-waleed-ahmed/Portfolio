@@ -63,9 +63,9 @@ const About = () => {
                       Master&apos;s in Automation Engineering
                     </div>
                     <div className="timeline-meta">
-                      Alma Mater Studiorum &ndash; Universit&agrave; di Bologna, Italy
+                      Alma Mater Studiorum - Universit&agrave; di Bologna, Italy
                       <br />
-                      Sep 2024 &ndash; Present
+                      Sep 2024 - Present
                     </div>
                   </li>
 
@@ -76,7 +76,7 @@ const About = () => {
                     <div className="timeline-meta">
                       University of Twente, Enschede, Netherlands
                       <br />
-                      Sep 2025 &ndash; Jan 2026
+                      Sep 2025 - Jan 2026
                     </div>
                   </li>
 
@@ -88,7 +88,7 @@ const About = () => {
                       NED University of Engineering and Technology, Karachi,
                       Pakistan
                       <br />
-                      Oct 2019 &ndash; Aug 2023 &middot; CGPA: 3.46
+                      Oct 2019 - Aug 2023 &middot; CGPA: 3.46
                     </div>
                   </li>
                 </ul>

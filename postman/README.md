@@ -1,4 +1,4 @@
-# Portfolio API — Postman Collection
+# Portfolio API - Postman Collection
 
 Postman assets for testing the backend in [`../backend`](../backend).
 
@@ -12,7 +12,7 @@ Postman assets for testing the backend in [`../backend`](../backend).
 
 ## Test the live API (no clone needed)
 
-You can import straight from GitHub — in Postman, **Import → Link** and paste
+You can import straight from GitHub - in Postman, **Import → Link** and paste
 each raw URL, then pick the **Production** environment:
 
 - Collection:
@@ -22,7 +22,7 @@ each raw URL, then pick the **Production** environment:
 
 The production environment targets `https://portfolio-backend-kmum.onrender.com`.
 The backend is on Render's free tier, so the first request after idle may take
-~30–60 s to cold-start — re-run if it times out.
+~30–60 s to cold-start - re-run if it times out.
 
 > **Want a one-click "Run in Postman" button?** Open the collection in your own
 > Postman account → **Share → Via API / Public link**, then paste the generated
@@ -31,15 +31,15 @@ The backend is on Render's free tier, so the first request after idle may take
 
 ## Endpoints covered
 
-- `GET /` — root health probe
-- `GET /health` — health check with timestamp
-- `POST /api/contact` — contact form (validation, rate limit, Resend email)
+- `GET /` - root health probe
+- `GET /health` - health check with timestamp
+- `POST /api/contact` - contact form (validation, rate limit, Resend email)
 - Negative cases: 404 catch-all, wrong HTTP method, invalid payloads
 
 ## Usage
 
 1. Open Postman → **Import** → drop both JSON files in.
-2. Select the **Portfolio API — Local** environment in the top-right dropdown.
+2. Select the **Portfolio API - Local** environment in the top-right dropdown.
 3. Start the backend locally:
    ```bash
    cd ../backend
@@ -51,8 +51,8 @@ The backend is on Render's free tier, so the first request after idle may take
 
 ## Switching to production
 
-Select the **Portfolio API — Production** environment (imported from
-`Portfolio-API.postman_environment.production.json`) instead of **Local** — it
+Select the **Portfolio API - Production** environment (imported from
+`Portfolio-API.postman_environment.production.json`) instead of **Local** - it
 already points `baseUrl` at the Render URL. The collection has no other
 environment-specific values.
 
@@ -63,4 +63,4 @@ environment-specific values.
 
 - The contact endpoint is rate-limited (5 requests / 15 min / IP). The **"Rate limit triggered"** request is designed to be run 6+ times in the Runner to verify the 429 path.
 - Happy-path POST returns **200** when the email sends. If the mailer is unconfigured (missing `RESEND_API_KEY` / `EMAIL_FROM` / `EMAIL_TO`) it returns **503**; if Resend accepts the request but rejects the send it returns **502**. The test script accepts all three.
-- All tests use Postman's built-in `pm.test()` / Chai assertions — no external runner needed.
+- All tests use Postman's built-in `pm.test()` / Chai assertions - no external runner needed.

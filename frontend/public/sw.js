@@ -3,7 +3,7 @@
  *
  * The site briefly shipped with `vite-plugin-pwa`, which registered a
  * service worker on visitors' devices. We've since removed PWA support,
- * but any visitor who hit the old version still has that SW running —
+ * but any visitor who hit the old version still has that SW running -
  * intercepting every request and serving stale cached files.
  *
  * This file replaces the old SW. When their browser checks for an
@@ -52,7 +52,7 @@ self.addEventListener("activate", (event) => {
   );
 });
 
-// While we're alive, never intercept fetches — fall through to network.
+// While we're alive, never intercept fetches - fall through to network.
 self.addEventListener("fetch", () => {
   /* no-op */
 });
