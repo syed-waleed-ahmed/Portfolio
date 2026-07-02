@@ -23,6 +23,7 @@ Designed with a focus on **performance**, **accessibility**, **security**, and *
 - **Custom 404 page** -- branded standalone page Netlify auto-serves on missing routes
 - **Fully responsive** -- desktop, tablet, mobile (375px+ baseline)
 - **Hardened backend** -- Helmet security headers, `express-rate-limit`, body-size cap, trust-proxy, graceful shutdown
+- **Automated tests** -- backend API tests via Node's built-in runner (`npm test`, no extra deps); importing the app also verifies every module loads
 - **API test suite** -- Postman collection with happy-path + validation + rate-limit + 404 tests (see [`postman/`](postman/))
 - **CI/CD** -- GitHub Actions runs lint, build, syntax check, `npm audit`, and gitleaks secret scan on every push and PR
 - **Auto dependency updates** -- Dependabot opens grouped weekly PRs for minor + patch upgrades (majors are manual)
@@ -73,7 +74,7 @@ Designed with a focus on **performance**, **accessibility**, **security**, and *
 ### CI / CD
 - **GitHub Actions** (`.github/workflows/ci.yml`):
   - Frontend job: `npm ci` -> `eslint` -> `vite build` -> `npm audit --omit=dev --audit-level=high`
-  - Backend job: `npm ci` -> `node --check server.js` -> `npm audit --omit=dev --audit-level=high`
+  - Backend job: `npm ci` -> `npm test` (Node's built-in runner; also proves every module imports cleanly) -> `npm audit --omit=dev --audit-level=high`
   - Secret-scan job: `gitleaks` over full git history
   - Concurrency-cancelled to avoid stale runs
 - **Dependabot** (`.github/dependabot.yml`): grouped weekly minor+patch PRs for `frontend/` and `backend/`, monthly GitHub Actions updates. Major-version bumps are ignored (manual review only).
@@ -96,6 +97,7 @@ portfolio/
 |   |   |   +-- Profile.webp
 |   |   +-- _headers                      # Netlify security headers (CSP, X-Frame-Options, ...)
 |   |   +-- 404.html                      # Branded 404 page Netlify auto-serves
+|   |   +-- sw.js                         # Kill-switch service worker (see Caching section)
 |   |   +-- humans.txt                    # Authorship + tech-stack signal
 |   |   +-- apple-touch-icon.png
 |   |   +-- favicon.ico
@@ -146,13 +148,15 @@ portfolio/
 |   +-- package.json
 |   +-- .env.example                      # Template for VITE_API_BASE_URL
 +-- backend/
-|   +-- server.js                         # Helmet, CORS, body cap, error handler, graceful shutdown
+|   +-- server.js                         # Builds app (Helmet, CORS, body cap, error handler); exports app, listens when run directly
 |   +-- config/
 |   |   +-- env.js                        # Central env parsing + validation (single config object)
 |   +-- routes/
 |   |   +-- contactRoutes.js              # Validation + rate limit -> mailer service
 |   +-- services/
 |   |   +-- mailerService.js              # Resend delivery + branded HTML/text email template
+|   +-- test/
+|   |   +-- contact.test.js               # API tests (node --test): validation, health, 404
 |   +-- package.json
 |   +-- .env.example                      # Template for RESEND_API_KEY, EMAIL_TO, EMAIL_FROM, ALLOWED_ORIGINS
 +-- postman/
@@ -280,6 +284,7 @@ npm run install:all        # installs frontend + backend deps
 | `npm run dev:backend` | Start the API with auto-reload (`http://localhost:5000`) |
 | `npm run build` | Production build of the frontend |
 | `npm run lint` | Lint the frontend |
+| `npm test` | Run the backend API test suite (`node --test`) |
 | `npm start` | Start the backend (production mode) |
 
 ### 3. Frontend
@@ -340,9 +345,12 @@ Components are pure UI -- they read from the data layer and render automatically
 
 ---
 
-## API Testing (Postman)
+## Testing
 
-A ready-to-import Postman collection lives in [`postman/`](postman/):
+Two layers:
+
+- **Automated** — backend API tests run with `npm test` (from the repo root or `backend/`). They use Node's built-in test runner (`node --test`), spin the app up on an ephemeral port, and assert validation, health, and 404 behavior without sending real email. CI runs them on every push/PR.
+- **Manual / live** — a ready-to-import Postman collection in [`postman/`](postman/):
 
 - **`Portfolio-API.postman_collection.json`** -- one request per endpoint plus negative cases (missing fields, invalid email, oversized payload, rate-limit, 404, wrong method). Every request has a `pm.test()` script that asserts status code and response shape.
 - **`Portfolio-API.postman_environment.json`** -- `{{baseUrl}}` for local dev (`http://localhost:5000`).
