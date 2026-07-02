@@ -1,15 +1,14 @@
 // backend/server.js
 import express from "express";
-import dotenv from "dotenv";
 import cors from "cors";
 import helmet from "helmet";
+import { config, validateEnv } from "./config/env.js";
 import contactRoutes from "./routes/contactRoutes.js";
 
-dotenv.config();
+// Surface missing config at boot rather than mid-request.
+validateEnv();
 
 const app = express();
-const PORT = process.env.PORT || 5000;
-const isProduction = process.env.NODE_ENV === "production";
 
 // Render / proxies forward the client IP via X-Forwarded-For.
 // "1" means trust the first hop only (the platform proxy).
@@ -22,19 +21,12 @@ app.use(
   })
 );
 
-// ===== CORS (silent reject — no leaky 500) =====
-const allowedOrigins = new Set([
-  "http://localhost:5173",
-  "https://syedwaleedahmed.netlify.app",
-  "https://syedwaleedahmed.me",
-  "https://www.syedwaleedahmed.me",
-]);
-
+// ===== CORS (silent reject, no leaky 500) =====
 app.use(
   cors({
     origin: (origin, cb) => {
-      if (!origin || allowedOrigins.has(origin)) return cb(null, true);
-      // Returning false rejects without throwing — produces a 403 with no body
+      if (!origin || config.allowedOrigins.has(origin)) return cb(null, true);
+      // Returning false rejects without throwing (produces a 403 with no body)
       return cb(null, false);
     },
     methods: ["GET", "POST", "OPTIONS"],
@@ -43,7 +35,7 @@ app.use(
   })
 );
 
-// ===== Body parsing (cap to 16kb — way more than a contact form needs) =====
+// ===== Body parsing (cap to 16kb, more than a contact form needs) =====
 app.use(express.json({ limit: "16kb" }));
 
 // ===== Health Routes =====
@@ -76,13 +68,15 @@ app.use((err, _req, res, _next) => {
   if (res.headersSent) return;
   res.status(500).json({
     success: false,
-    error: isProduction ? "Internal server error." : err?.message || "Internal server error.",
+    error: config.isProduction
+      ? "Internal server error."
+      : err?.message || "Internal server error.",
   });
 });
 
 // ===== Start server =====
-const server = app.listen(PORT, () => {
-  console.log(`[server] running on port ${PORT}`);
+const server = app.listen(config.port, () => {
+  console.log(`[server] running on port ${config.port}`);
 });
 
 // Graceful shutdown so platform restarts don't drop in-flight requests
