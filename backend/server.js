@@ -1,12 +1,11 @@
 // backend/server.js
+import { realpathSync } from "fs";
+import { fileURLToPath } from "url";
 import express from "express";
 import cors from "cors";
 import helmet from "helmet";
 import { config, validateEnv } from "./config/env.js";
 import contactRoutes from "./routes/contactRoutes.js";
-
-// Surface missing config at boot rather than mid-request.
-validateEnv();
 
 const app = express();
 
@@ -74,20 +73,42 @@ app.use((err, _req, res, _next) => {
   });
 });
 
-// ===== Start server =====
-const server = app.listen(config.port, () => {
-  console.log(`[server] running on port ${config.port}`);
-});
+// Exported so tests can import the app without binding a port.
+export default app;
 
-// Graceful shutdown so platform restarts don't drop in-flight requests
-const shutdown = (signal) => {
-  console.log(`[server] received ${signal}, shutting down...`);
-  server.close(() => {
-    console.log("[server] closed");
-    process.exit(0);
+// ===== Start server =====
+function start() {
+  // Surface missing config at boot rather than mid-request.
+  validateEnv();
+
+  const server = app.listen(config.port, () => {
+    console.log(`[server] running on port ${config.port}`);
   });
-  // Force-exit if it hangs
-  setTimeout(() => process.exit(1), 10_000).unref();
-};
-process.on("SIGTERM", () => shutdown("SIGTERM"));
-process.on("SIGINT", () => shutdown("SIGINT"));
+
+  // Graceful shutdown so platform restarts don't drop in-flight requests
+  const shutdown = (signal) => {
+    console.log(`[server] received ${signal}, shutting down...`);
+    server.close(() => {
+      console.log("[server] closed");
+      process.exit(0);
+    });
+    // Force-exit if it hangs
+    setTimeout(() => process.exit(1), 10_000).unref();
+  };
+  process.on("SIGTERM", () => shutdown("SIGTERM"));
+  process.on("SIGINT", () => shutdown("SIGINT"));
+}
+
+// Boot only when run directly (`node server.js`), not when imported by tests.
+const invokedDirectly = (() => {
+  try {
+    return (
+      process.argv[1] &&
+      realpathSync(process.argv[1]) === realpathSync(fileURLToPath(import.meta.url))
+    );
+  } catch {
+    return false;
+  }
+})();
+
+if (invokedDirectly) start();
