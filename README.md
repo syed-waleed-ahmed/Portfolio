@@ -62,7 +62,8 @@ Designed with a focus on **performance**, **accessibility**, **security**, and *
 
 ### Backend
 - Node.js 20, Express 4 (ESM)
-- Resend for transactional email
+- **Layered structure**: `config/` (env parsing + validation) → `routes/` (validation + rate limit) → `services/` (Resend delivery + email template), so `server.js` stays thin
+- Resend for transactional email, with a branded HTML + plain-text template
 - **Security**: Helmet (CSP / X-Frame-Options / no-sniff / etc.), `express-rate-limit` (5 req / 15 min / IP), 16 KB JSON body cap, trust-proxy=1, silent CORS reject (no leaky 500s), centralized error handler, graceful SIGTERM shutdown
 
 ### Deployment
@@ -109,7 +110,8 @@ portfolio/
 |   |   |   +-- experience.js
 |   |   |   +-- projects.js
 |   |   |   +-- skills.js
-|   |   +-- styles/                       # Modular CSS
+|   |   +-- styles/                       # Modular CSS (all stylesheets live here)
+|   |   |   +-- reset.css                  # Minimal CSS reset (imported first)
 |   |   |   +-- base.css
 |   |   |   +-- navbar.css
 |   |   |   +-- hero.css
@@ -136,8 +138,7 @@ portfolio/
 |   |   +-- hooks/                        # Shared React hooks
 |   |   |   +-- useInView.js              # IntersectionObserver wrapper
 |   |   +-- App.jsx
-|   |   +-- main.jsx
-|   |   +-- index.css
+|   |   +-- main.jsx                       # Entry: mounts App, imports global CSS
 |   +-- index.html
 |   +-- vite.config.js
 |   +-- postcss.config.js
@@ -146,10 +147,14 @@ portfolio/
 |   +-- .env.example                      # Template for VITE_API_BASE_URL
 +-- backend/
 |   +-- server.js                         # Helmet, CORS, body cap, error handler, graceful shutdown
+|   +-- config/
+|   |   +-- env.js                        # Central env parsing + validation (single config object)
 |   +-- routes/
-|   |   +-- contactRoutes.js              # Validation + rate limit + Resend
+|   |   +-- contactRoutes.js              # Validation + rate limit -> mailer service
+|   +-- services/
+|   |   +-- mailerService.js              # Resend delivery + branded HTML/text email template
 |   +-- package.json
-|   +-- .env.example                      # Template for RESEND_API_KEY, EMAIL_TO, EMAIL_FROM
+|   +-- .env.example                      # Template for RESEND_API_KEY, EMAIL_TO, EMAIL_FROM, ALLOWED_ORIGINS
 +-- postman/
 |   +-- Portfolio-API.postman_collection.json              # Requests + tests for every endpoint
 |   +-- Portfolio-API.postman_environment.json             # baseUrl variable (local default)
@@ -213,7 +218,7 @@ obvious home as the project grows:
 | `components/ui/` | Reusable primitives with no domain coupling | `Reveal`, `ScrollProgress`, `ScrollToTop`, `SkipLink`, `ErrorBoundary`, `LazyMountSection` |
 | `hooks/` | Cross-cutting React hooks | `useInView` (used by `Reveal` + `LazyMountSection`) |
 | `data/` | Pure content (no JSX), edited to update site copy | `experience.js`, `projects.js`, ... |
-| `styles/` | Global CSS — tokens, layout, components | `base.css`, `navbar.css`, `hero.css`, `components.css` |
+| `styles/` | Global CSS — reset, tokens, layout, components | `reset.css`, `base.css`, `navbar.css`, `hero.css`, `components.css` |
 
 Imports use the **`@/` alias** that maps to `frontend/src/` (configured in
 `vite.config.js`), so paths stay flat regardless of folder depth:
@@ -240,8 +245,9 @@ A machine-generated knowledge graph of the whole project (code + docs) lives in
 | `GRAPH_REPORT.md` | Plain-language audit: communities, hub nodes, knowledge gaps |
 | `graph.json` | Raw graph data (GraphRAG-ready) |
 
-130 nodes across 35 communities (Education & Work History, AI/ML Projects &
-Tooling, RemindrAI & Agent Stack, Hosting/Security & Tech Stack, …). Regenerable
+120 nodes across 41 communities (Backend Security & Contact Flow, Frontend
+Architecture & Rationale, Mailer Service Internals, API Testing & Security
+Policy, …). Regenerable
 working state (cache, manifest, cost) is gitignored — only the three
 deliverables are tracked.
 
@@ -311,6 +317,7 @@ Runs at `http://localhost:5000`
 | `RESEND_API_KEY` | yes | API key from https://resend.com |
 | `EMAIL_FROM` | yes | Verified sender (or `onboarding@resend.dev` for testing) |
 | `EMAIL_TO` | yes | Where contact-form messages land |
+| `ALLOWED_ORIGINS` | no | Comma-separated browser origins allowed to call the API. Unset = built-in defaults (localhost + live domains) |
 
 ### `frontend/.env` (optional)
 
@@ -376,9 +383,9 @@ See [`postman/README.md`](postman/README.md) for full usage notes.
 1. User submits the form (name / email / subject / message)
 2. Frontend POSTs to `/api/contact` on the backend
 3. `express-rate-limit` checks the requester's IP (5 / 15 min)
-4. Backend validates input (required, length caps, email regex)
-5. HTML-escaped email is sent via Resend with the user's address as `replyTo`
-6. Errors flow through a centralized handler -- nothing leaks stack traces
+4. `contactRoutes` validates input (required, length caps, email regex)
+5. `mailerService` renders a branded HTML + plain-text email (user input HTML-escaped, header fields sanitized) and sends it via Resend with the sender's address as `replyTo`
+6. Errors map to precise codes -- `503` if the mailer is unconfigured, `502` if Resend rejects the send -- and a centralized handler ensures nothing leaks stack traces
 
 ---
 
@@ -387,6 +394,7 @@ See [`postman/README.md`](postman/README.md) for full usage notes.
 - **Content Security Policy** -- HTTP header via Netlify `_headers`
 - **Backend security headers** -- `helmet()` middleware (CSP-ready, X-Frame-Options DENY, no-sniff, Referrer-Policy)
 - **HTML escaping** -- all user input is escaped before rendering in email templates
+- **Email header-injection guard** -- CR/LF and control chars are stripped from header-bound fields (subject, reply-to) so a crafted value can't inject extra email headers
 - **Rate limiting** -- `express-rate-limit` (5 requests / 15 min window, standard `RateLimit-*` headers)
 - **Input validation** -- max lengths enforced (name: 100, email: 100, subject: 200, message: 5000)
 - **Body-size cap** -- `express.json({ limit: "16kb" })` to prevent payload abuse

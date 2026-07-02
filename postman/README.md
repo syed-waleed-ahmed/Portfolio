@@ -62,5 +62,5 @@ environment-specific values.
 ## Notes
 
 - The contact endpoint is rate-limited (5 requests / 15 min / IP). The **"Rate limit triggered"** request is designed to be run 6+ times in the Runner to verify the 429 path.
-- Happy-path POST returns **200** when Resend env vars (`RESEND_API_KEY`, `EMAIL_FROM`, `EMAIL_TO`) are configured on the server; otherwise it returns **503**. The test script accepts either.
+- Happy-path POST returns **200** when the email sends. If the mailer is unconfigured (missing `RESEND_API_KEY` / `EMAIL_FROM` / `EMAIL_TO`) it returns **503**; if Resend accepts the request but rejects the send it returns **502**. The test script accepts all three.
 - All tests use Postman's built-in `pm.test()` / Chai assertions — no external runner needed.

@@ -82,8 +82,8 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"pm.test('status is 200 or 503 (mailer config dependent)', () => {",
-									"  pm.expect([200, 503]).to.include(pm.response.code);",
+									"pm.test('status is 200, 502, or 503 (mailer dependent)', () => {",
+									"  pm.expect([200, 502, 503]).to.include(pm.response.code);",
 									"});",
 									"if (pm.response.code === 200) {",
 									"  pm.test('returns success payload', () => {",
@@ -92,10 +92,10 @@
 									"    pm.expect(json.message).to.be.a('string');",
 									"  });",
 									"} else {",
-									"  pm.test('returns mailer-unavailable error', () => {",
+									"  pm.test('returns mailer error payload (503 not configured / 502 delivery failed)', () => {",
 									"    const json = pm.response.json();",
 									"    pm.expect(json.success).to.eql(false);",
-									"    pm.expect(json.error).to.match(/temporarily unavailable/i);",
+									"    pm.expect(json.error).to.match(/not configured|delivery failed/i);",
 									"  });",
 									"}"
 								]
@@ -116,7 +116,7 @@
 							"host": ["{{baseUrl}}"],
 							"path": ["api", "contact"]
 						},
-						"description": "Submit a valid contact form payload. Returns 200 if Resend env vars are configured, otherwise 503."
+						"description": "Submit a valid contact form payload. Returns 200 when the email sends, 503 if the mailer is unconfigured (missing Resend env vars), or 502 if Resend rejects the send."
 					},
 					"response": []
 				},
