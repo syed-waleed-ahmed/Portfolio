@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 
 /**
- * useInView — observe an element with IntersectionObserver and flip a
+ * useInView: observe an element with IntersectionObserver and flip a
  * boolean to true the first time it enters the viewport. Disconnects
  * after the first hit, so it's a one-shot trigger by design.
  *

@@ -1,4 +1,4 @@
-// Centralized portfolio constants — edit here to update across the whole site.
+// Centralized portfolio constants. Edit here to update across the whole site.
 
 export const personalInfo = {
   name: "Syed Waleed Ahmed",

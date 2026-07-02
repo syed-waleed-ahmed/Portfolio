@@ -154,6 +154,28 @@
   }
 }
 
+/* ========= Overflow safety =========
+   Belt-and-suspenders so no card can break its box, whatever gets edited in
+   later: flex/grid children may shrink, long tokens wrap, badges stay inside. */
+.neo-card,
+.neo-card > *,
+.neo-card h3 {
+  min-width: 0;
+}
+
+.neo-card h3,
+.neo-card p,
+.neo-card li,
+.project-highlight,
+.timeline-meta,
+.card-subtitle-accent {
+  overflow-wrap: break-word;
+}
+
+.skill-badge {
+  max-width: 100%;
+}
+
 /* About / Interests card heading helper */
 .card-heading {
   display: inline-flex;
@@ -203,6 +225,12 @@
   position: relative;
   padding-left: 1.5rem;
   margin-bottom: 1.1rem;
+}
+
+/* Fill variant: item spacing is handled by flex distribution, so drop the
+   per-item margin to keep the vertical gaps even across the card height. */
+.timeline-fill li {
+  margin-bottom: 0;
 }
 
 .timeline li::before {
@@ -608,6 +636,7 @@ textarea.form-control.glass-input::-moz-placeholder {
   .gradient-text {
     background: none !important;
     -webkit-background-clip: unset !important;
+    background-clip: unset !important;
     color: #111 !important;
   }
 

@@ -1,13 +1,13 @@
 export const experiences = [
   {
-    title: "AI Systems Thesis Student",
+    title: "AI Systems Thesis",
     company: "MemorAIz",
-    period: "Feb 2026 – Present · Bologna, Italy",
+    period: "Jan 2026 – Present · Bologna, Italy",
     bullets: [
-      "Built RemindrAI, a serverless AI backend that schedules reminders and chats with users over Email, WhatsApp, Telegram, and Discord.",
-      "Wired up an AI agent on the Vercel AI SDK that creates, reschedules, and cancels reminders straight from chat messages.",
-      "Made delivery reliable with retries, no duplicate sends, and automatic recovery from crashed jobs.",
-      "Packaged the backend as a reusable Mastra tool other apps can plug in, secured with auth and signed webhooks.",
+      "Thesis capstone: built RemindrAI, a production serverless backend where an AI agent schedules reminders and chats with users over Email, WhatsApp, Telegram, and Discord.",
+      "Wired an OpenAI agent on the Vercel AI SDK that creates, reschedules, and cancels reminders straight from chat, with memory that persists per channel.",
+      "Made delivery reliable with automatic retries, crash recovery, and no duplicate sends, then packaged the backend as a drop-in Mastra capability other apps add in one line.",
+      "Got there through the building blocks: an AI onboarding platform for energy communities (GPT-4o Vision) and a modular RAG-based educational assistant.",
     ],
   },
   {
@@ -26,10 +26,10 @@ export const experiences = [
     company: "Jubilee Life Insurance Co. Ltd.",
     period: "Jan 2024 – Oct 2024 · Karachi, Pakistan",
     bullets: [
-      "Built ETL pipelines on 100K+ records and improved query and database performance by ~40%.",
-      "Developed full-stack apps with React, .NET ASP Core, MySQL, and REST APIs, plus Power BI dashboards for business analytics.",
-      "Automated SharePoint and internal business workflows, cutting manual effort by ~60%.",
-      "Analyzed system and security data with IBM QRadar to flag anomalies and support operational monitoring.",
+      "Rotated through web development, databases, networking, and cybersecurity, building full-stack apps with React, .NET ASP Core, PHP, and MySQL.",
+      "Built ETL pipelines over 100K+ records and tuned queries and stored procedures, cutting database response times by ~40%.",
+      "Automated SharePoint and CRM workflows for internal teams, reducing manual effort by ~60% and speeding up client response.",
+      "Monitored threats on IBM QRadar (SIEM/SOAR/PAM) and delivered 15+ SSRS reports and Power BI dashboards for business analytics.",
     ],
   },
 ];

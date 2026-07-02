@@ -56,7 +56,7 @@ const Navbar = () => {
     <nav className={`site-nav${scrolled ? " is-scrolled" : ""}`}>
       <div className="site-nav-inner container">
         <a
-          href="#"
+          href="#hero"
           className="site-nav-brand"
           onClick={(e) => handleNavClick(e, "top")}
           aria-label="Home"
@@ -82,19 +82,22 @@ const Navbar = () => {
           id="primary-menu"
           className={`site-nav-list${menuOpen ? " is-open" : ""}`}
         >
-          {navLinks.map((link) => (
-            <li key={link.label}>
-              <a
-                href="#"
-                className={`site-nav-link${
-                  activeSection === link.target ? " is-active" : ""
-                }`}
-                onClick={(e) => handleNavClick(e, link.target)}
-              >
-                {link.label}
-              </a>
-            </li>
-          ))}
+          {navLinks.map((link) => {
+            const isActive = activeSection === link.target;
+            const href = link.target === "top" ? "#hero" : `#${link.target}`;
+            return (
+              <li key={link.label}>
+                <a
+                  href={href}
+                  className={`site-nav-link${isActive ? " is-active" : ""}`}
+                  aria-current={isActive ? "page" : undefined}
+                  onClick={(e) => handleNavClick(e, link.target)}
+                >
+                  {link.label}
+                </a>
+              </li>
+            );
+          })}
         </ul>
       </div>
     </nav>

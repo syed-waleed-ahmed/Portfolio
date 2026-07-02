@@ -31,10 +31,11 @@ const About = () => {
                   machine.
                 </p>
                 <p className="mb-3">
-                  At <strong>MemorAIz</strong> I built{" "}
+                  My Master&apos;s thesis at <strong>MemorAIz</strong> was{" "}
                   <strong>RemindrAI</strong>, a serverless AI backend that
                   schedules reminders and chats with users across Email,
-                  WhatsApp, Telegram, and Discord. At <strong>Fruugle</strong> I
+                  WhatsApp, Telegram, and Discord. I packaged it as a drop-in
+                  capability other apps can reuse. At <strong>Fruugle</strong> I
                   built the ML that matches and categorizes the same grocery
                   item across six Italian supermarket chains, so the app could
                   compare prices across 80K+ scraped products.
@@ -51,13 +52,13 @@ const About = () => {
 
           <div className="col-md-6 d-flex">
             <Reveal delay={0.08} className="w-100">
-              <div className="neo-card about-card flex-fill h-100 p-4">
+              <div className="neo-card about-card flex-fill h-100 p-4 d-flex flex-column">
                 <div className="card-heading">
                   <span className="card-heading-icon"><FaGraduationCap /></span>
                   Education
                 </div>
-                <ul className="timeline mb-0">
-                  <li className="mb-3">
+                <ul className="timeline timeline-fill flex-grow-1 d-flex flex-column justify-content-between mb-0">
+                  <li>
                     <div className="fw-semibold">
                       Master&apos;s in Automation Engineering
                     </div>
@@ -68,7 +69,7 @@ const About = () => {
                     </div>
                   </li>
 
-                  <li className="mb-3">
+                  <li>
                     <div className="fw-semibold">
                       Erasmus+ Mobility
                     </div>

@@ -67,6 +67,8 @@ body {
   position: relative;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
+  /* Inherited by all text: long unbroken tokens wrap instead of overflowing. */
+  overflow-wrap: break-word;
 }
 
 .app-root {

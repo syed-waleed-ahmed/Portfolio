@@ -11,24 +11,11 @@
     <meta name="theme-color" content="#0a0e1a" />
 
     <!--
-      Defensive cache cleanup: unregister any leftover service worker
-      and wipe its caches. We briefly shipped with vite-plugin-pwa, and
-      this protects users who still have the old SW from being stuck on
-      a stale version. Idempotent — safe to leave running indefinitely.
+      Note: leftover service workers from the old vite-plugin-pwa build are
+      cleaned up by /sw.js (a kill-switch SW that unregisters itself and wipes
+      its caches on next visit). No inline cleanup script here, so the CSP can
+      stay strict without an extra script hash.
     -->
-    <script>
-      (function () {
-        if (!("serviceWorker" in navigator)) return;
-        navigator.serviceWorker.getRegistrations().then(function (regs) {
-          regs.forEach(function (r) { r.unregister(); });
-        }).catch(function () {});
-        if (window.caches && caches.keys) {
-          caches.keys().then(function (keys) {
-            keys.forEach(function (k) { caches.delete(k); });
-          }).catch(function () {});
-        }
-      })();
-    </script>
 
     <!-- Primary title (Google snippet) -->
     <title>Syed Waleed Ahmed — AI Engineer · Portfolio</title>
@@ -95,6 +82,7 @@
       {
         "@context": "https://schema.org",
         "@type": "Person",
+        "@id": "https://syedwaleedahmed.me/#person",
         "name": "Syed Waleed Ahmed",
         "url": "https://syedwaleedahmed.me/",
         "image": "https://syedwaleedahmed.me/images/Profile.webp",
