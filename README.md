@@ -25,10 +25,10 @@ Designed with a focus on **performance**, **accessibility**, **security**, and *
 - **Hardened backend** -- Helmet security headers, `express-rate-limit`, body-size cap, trust-proxy, graceful shutdown
 - **Automated tests** -- backend API tests via Node's built-in runner (`npm test`, no extra deps); importing the app also verifies every module loads
 - **API test suite** -- Postman collection with happy-path + validation + rate-limit + 404 tests (see [`postman/`](postman/))
-- **CI/CD** -- GitHub Actions runs lint, build, syntax check, `npm audit`, and gitleaks secret scan on every push and PR
+- **CI/CD** -- GitHub Actions runs lint, build, backend tests, `npm audit`, and gitleaks secret scan on every push and PR
 - **Auto dependency updates** -- Dependabot opens grouped weekly PRs for minor + patch upgrades (majors are manual)
 - **Pinned Node version** -- `.nvmrc`, `netlify.toml`, and `engines` field keep Netlify, CI, and local installs aligned
-- **SEO-ready** -- canonical URL, expanded `Person` + `WebSite` JSON-LD schemas, OG + Twitter cards, sitemap, robots.txt, humans.txt
+- **SEO-ready** -- canonical URL, `Person` + `WebSite` + `ProfilePage` JSON-LD schemas, OG + Twitter cards, `noscript` fallback, sitemap (+image), robots.txt, humans.txt
 - **Content Security Policy** -- Netlify `_headers` with strict CSP and friends
 - **Print-friendly** -- dedicated print stylesheet
 - **Custom domain + HTTPS** -- syedwaleedahmed.me
@@ -87,7 +87,7 @@ Designed with a focus on **performance**, **accessibility**, **security**, and *
 portfolio/
 +-- .github/
 |   +-- workflows/
-|   |   +-- ci.yml                        # Lint + build + audit + gitleaks
+|   |   +-- ci.yml                        # Lint + build + test + audit + gitleaks
 |   +-- dependabot.yml                    # Auto-PRs for npm + actions
 |   +-- PULL_REQUEST_TEMPLATE.md          # PR checklist
 +-- frontend/
