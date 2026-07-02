@@ -17,7 +17,7 @@
 
 - [ ] `npm run lint` passes (frontend)
 - [ ] `npm run build` succeeds (frontend)
-- [ ] `node --check server.js` succeeds (backend, if backend changed)
+- [ ] `npm test` passes (backend, if backend changed)
 - [ ] No real secrets committed (`.env`, API keys)
 - [ ] README / docs updated if behavior changed
 - [ ] Tested locally on the affected viewport(s) if UI changed
