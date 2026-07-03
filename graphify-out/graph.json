@@ -50,20 +50,20 @@
     {
       "label": "server.js",
       "file_type": "code",
-      "source_file": "backend\\server.js",
+      "source_file": "D:\\portfolio\\backend\\server.js",
       "source_location": "L1",
-      "id": "backend_server_js",
-      "community": 9,
+      "id": "d_portfolio_backend_server_js",
+      "community": 8,
       "norm_label": "server.js"
     },
     {
-      "label": "shutdown()",
+      "label": "start()",
       "file_type": "code",
-      "source_file": "backend\\server.js",
-      "source_location": "L83",
-      "id": "server_shutdown",
-      "community": 9,
-      "norm_label": "shutdown()"
+      "source_file": "D:\\portfolio\\backend\\server.js",
+      "source_location": "L80",
+      "id": "server_start",
+      "community": 8,
+      "norm_label": "start()"
     },
     {
       "label": "env.js",
@@ -98,7 +98,7 @@
       "source_file": "backend\\routes\\contactRoutes.js",
       "source_location": "L1",
       "id": "backend_routes_contactroutes_js",
-      "community": 10,
+      "community": 9,
       "norm_label": "contactroutes.js"
     },
     {
@@ -107,22 +107,22 @@
       "source_file": "backend\\routes\\contactRoutes.js",
       "source_location": "L33",
       "id": "contactroutes_validatecontact",
-      "community": 10,
+      "community": 9,
       "norm_label": "validatecontact()"
     },
     {
       "label": "mailerService.js",
       "file_type": "code",
-      "source_file": "backend\\services\\mailerService.js",
+      "source_file": "D:\\portfolio\\backend\\services\\mailerService.js",
       "source_location": "L1",
-      "id": "backend_services_mailerservice_js",
+      "id": "d_portfolio_backend_services_mailerservice_js",
       "community": 2,
       "norm_label": "mailerservice.js"
     },
     {
       "label": "escapeHtml()",
       "file_type": "code",
-      "source_file": "backend\\services\\mailerService.js",
+      "source_file": "D:\\portfolio\\backend\\services\\mailerService.js",
       "source_location": "L21",
       "id": "mailerservice_escapehtml",
       "community": 2,
@@ -131,7 +131,7 @@
     {
       "label": "sanitizeHeader()",
       "file_type": "code",
-      "source_file": "backend\\services\\mailerService.js",
+      "source_file": "D:\\portfolio\\backend\\services\\mailerService.js",
       "source_location": "L31",
       "id": "mailerservice_sanitizeheader",
       "community": 2,
@@ -140,7 +140,7 @@
     {
       "label": "MailerNotConfiguredError",
       "file_type": "code",
-      "source_file": "backend\\services\\mailerService.js",
+      "source_file": "D:\\portfolio\\backend\\services\\mailerService.js",
       "source_location": "L39",
       "id": "mailerservice_mailernotconfigurederror",
       "community": 2,
@@ -149,7 +149,7 @@
     {
       "label": ".constructor()",
       "file_type": "code",
-      "source_file": "backend\\services\\mailerService.js",
+      "source_file": "D:\\portfolio\\backend\\services\\mailerService.js",
       "source_location": "L40",
       "id": "mailerservice_mailernotconfigurederror_constructor",
       "community": 2,
@@ -158,7 +158,7 @@
     {
       "label": "EmailDeliveryError",
       "file_type": "code",
-      "source_file": "backend\\services\\mailerService.js",
+      "source_file": "D:\\portfolio\\backend\\services\\mailerService.js",
       "source_location": "L47",
       "id": "mailerservice_emaildeliveryerror",
       "community": 2,
@@ -167,7 +167,7 @@
     {
       "label": ".constructor()",
       "file_type": "code",
-      "source_file": "backend\\services\\mailerService.js",
+      "source_file": "D:\\portfolio\\backend\\services\\mailerService.js",
       "source_location": "L48",
       "id": "mailerservice_emaildeliveryerror_constructor",
       "community": 2,
@@ -176,7 +176,7 @@
     {
       "label": "sendContactEmail()",
       "file_type": "code",
-      "source_file": "backend\\services\\mailerService.js",
+      "source_file": "D:\\portfolio\\backend\\services\\mailerService.js",
       "source_location": "L57",
       "id": "mailerservice_sendcontactemail",
       "community": 2,
@@ -185,7 +185,7 @@
     {
       "label": "detailRow()",
       "file_type": "code",
-      "source_file": "backend\\services\\mailerService.js",
+      "source_file": "D:\\portfolio\\backend\\services\\mailerService.js",
       "source_location": "L82",
       "id": "mailerservice_detailrow",
       "community": 2,
@@ -194,7 +194,7 @@
     {
       "label": "renderContactEmail()",
       "file_type": "code",
-      "source_file": "backend\\services\\mailerService.js",
+      "source_file": "D:\\portfolio\\backend\\services\\mailerService.js",
       "source_location": "L93",
       "id": "mailerservice_rendercontactemail",
       "community": 2,
@@ -203,11 +203,29 @@
     {
       "label": "renderContactText()",
       "file_type": "code",
-      "source_file": "backend\\services\\mailerService.js",
+      "source_file": "D:\\portfolio\\backend\\services\\mailerService.js",
       "source_location": "L142",
       "id": "mailerservice_rendercontacttext",
       "community": 2,
       "norm_label": "rendercontacttext()"
+    },
+    {
+      "label": "contact.test.js",
+      "file_type": "code",
+      "source_file": "D:\\portfolio\\backend\\test\\contact.test.js",
+      "source_location": "L1",
+      "id": "d_portfolio_backend_test_contact_test_js",
+      "community": 10,
+      "norm_label": "contact.test.js"
+    },
+    {
+      "label": "postContact()",
+      "file_type": "code",
+      "source_file": "D:\\portfolio\\backend\\test\\contact.test.js",
+      "source_location": "L25",
+      "id": "contact_test_postcontact",
+      "community": 10,
+      "norm_label": "postcontact()"
     },
     {
       "label": "eslint.config.js",
@@ -311,16 +329,16 @@
     {
       "label": "About.jsx",
       "file_type": "code",
-      "source_file": "frontend\\src\\components\\sections\\About.jsx",
+      "source_file": "D:\\portfolio\\frontend\\src\\components\\sections\\About.jsx",
       "source_location": "L1",
-      "id": "frontend_src_components_sections_about_jsx",
+      "id": "d_portfolio_frontend_src_components_sections_about_jsx",
       "community": 14,
       "norm_label": "about.jsx"
     },
     {
       "label": "About()",
       "file_type": "code",
-      "source_file": "frontend\\src\\components\\sections\\About.jsx",
+      "source_file": "D:\\portfolio\\frontend\\src\\components\\sections\\About.jsx",
       "source_location": "L4",
       "id": "about_about",
       "community": 14,
@@ -579,9 +597,9 @@
     {
       "label": "experience.js",
       "file_type": "code",
-      "source_file": "frontend\\src\\data\\experience.js",
+      "source_file": "D:\\portfolio\\frontend\\src\\data\\experience.js",
       "source_location": "L1",
-      "id": "frontend_src_data_experience_js",
+      "id": "d_portfolio_frontend_src_data_experience_js",
       "community": 30,
       "norm_label": "experience.js"
     },
@@ -597,9 +615,9 @@
     {
       "label": "projects.js",
       "file_type": "code",
-      "source_file": "frontend\\src\\data\\projects.js",
+      "source_file": "D:\\portfolio\\frontend\\src\\data\\projects.js",
       "source_location": "L1",
-      "id": "frontend_src_data_projects_js",
+      "id": "d_portfolio_frontend_src_data_projects_js",
       "community": 32,
       "norm_label": "projects.js"
     },
@@ -721,9 +739,9 @@
       "captured_at": null,
       "author": "Syed Waleed Ahmed",
       "contributor": null,
-      "id": "security_policy",
       "community": 3,
-      "norm_label": "security policy"
+      "norm_label": "security policy",
+      "id": "security_policy"
     },
     {
       "label": "Responsible Disclosure Process",
@@ -734,9 +752,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "security_disclosure",
       "community": 3,
-      "norm_label": "responsible disclosure process"
+      "norm_label": "responsible disclosure process",
+      "id": "security_disclosure"
     },
     {
       "label": "Safe-harbor Terms",
@@ -747,35 +765,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "security_safe_harbor",
       "community": 3,
-      "norm_label": "safe-harbor terms"
-    },
-    {
-      "label": "Branded 404.html Page",
-      "file_type": "code",
-      "source_file": "frontend/public/404.html",
-      "source_location": null,
-      "source_url": null,
-      "captured_at": null,
-      "author": null,
-      "contributor": null,
-      "id": "page404_html",
-      "community": 39,
-      "norm_label": "branded 404.html page"
-    },
-    {
-      "label": "Google Search Console Verification",
-      "file_type": "code",
-      "source_file": "frontend/public/googleb4ba9f6faa31c433.html",
-      "source_location": null,
-      "source_url": null,
-      "captured_at": null,
-      "author": null,
-      "contributor": null,
-      "id": "google_verification",
-      "community": 40,
-      "norm_label": "google search console verification"
+      "norm_label": "safe-harbor terms",
+      "id": "security_safe_harbor"
     },
     {
       "label": "robots.txt",
@@ -786,9 +778,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "robots_txt",
       "community": 23,
-      "norm_label": "robots.txt"
+      "norm_label": "robots.txt",
+      "id": "robots_txt"
     },
     {
       "label": "sitemap.xml",
@@ -799,9 +791,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "sitemap_xml",
       "community": 23,
-      "norm_label": "sitemap.xml"
+      "norm_label": "sitemap.xml",
+      "id": "sitemap_xml"
     },
     {
       "label": "Postman Collection README",
@@ -812,9 +804,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "postman_readme",
       "community": 3,
-      "norm_label": "postman collection readme"
+      "norm_label": "postman collection readme",
+      "id": "postman_readme"
     },
     {
       "label": "Portfolio-API Postman Collection",
@@ -825,9 +817,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "postman_collection",
       "community": 3,
-      "norm_label": "portfolio-api postman collection"
+      "norm_label": "portfolio-api postman collection",
+      "id": "postman_collection"
     },
     {
       "label": "Postman Local Environment",
@@ -838,9 +830,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "postman_env_local",
       "community": 3,
-      "norm_label": "postman local environment"
+      "norm_label": "postman local environment",
+      "id": "postman_env_local"
     },
     {
       "label": "Postman Production Environment",
@@ -851,9 +843,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "postman_env_prod",
       "community": 3,
-      "norm_label": "postman production environment"
+      "norm_label": "postman production environment",
+      "id": "postman_env_prod"
     },
     {
       "label": "Render Backend (portfolio-backend-kmum)",
@@ -864,9 +856,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "render_backend_url",
       "community": 3,
-      "norm_label": "render backend (portfolio-backend-kmum)"
+      "norm_label": "render backend (portfolio-backend-kmum)",
+      "id": "render_backend_url"
     },
     {
       "label": "Apple Touch Icon (Portfolio Brand Mark)",
@@ -877,9 +869,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "appletouchicon_brandicon",
       "community": 7,
-      "norm_label": "apple touch icon (portfolio brand mark)"
+      "norm_label": "apple touch icon (portfolio brand mark)",
+      "id": "appletouchicon_brandicon"
     },
     {
       "label": "Folder + Person Card Motif",
@@ -890,9 +882,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "appletouchicon_folderpersonmotif",
       "community": 7,
-      "norm_label": "folder + person card motif"
+      "norm_label": "folder + person card motif",
+      "id": "appletouchicon_folderpersonmotif"
     },
     {
       "label": "Purple-Magenta Gradient Branding",
@@ -903,9 +895,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "appletouchicon_purplegradient",
       "community": 7,
-      "norm_label": "purple-magenta gradient branding"
+      "norm_label": "purple-magenta gradient branding",
+      "id": "appletouchicon_purplegradient"
     },
     {
       "label": "96x96 Favicon (Browser Tab Icon)",
@@ -916,9 +908,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "favicon96x96_browsericon",
       "community": 7,
-      "norm_label": "96x96 favicon (browser tab icon)"
+      "norm_label": "96x96 favicon (browser tab icon)",
+      "id": "favicon96x96_browsericon"
     },
     {
       "label": "Favicon SVG (Vector Brand Mark)",
@@ -929,9 +921,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "faviconsvg_vectoricon",
       "community": 7,
-      "norm_label": "favicon svg (vector brand mark)"
+      "norm_label": "favicon svg (vector brand mark)",
+      "id": "faviconsvg_vectoricon"
     },
     {
       "label": "Profile Hero Portrait",
@@ -942,9 +934,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "profile_heroportrait",
       "community": 7,
-      "norm_label": "profile hero portrait"
+      "norm_label": "profile hero portrait",
+      "id": "profile_heroportrait"
     },
     {
       "label": "Portfolio Project",
@@ -955,9 +947,9 @@
       "captured_at": null,
       "author": "Syed Waleed Ahmed",
       "contributor": null,
-      "id": "readme_portfolio_project",
       "community": 0,
-      "norm_label": "portfolio project"
+      "norm_label": "portfolio project",
+      "id": "readme_portfolio_project"
     },
     {
       "label": "React 19 + Vite Frontend",
@@ -968,9 +960,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "readme_react_vite_frontend",
       "community": 4,
-      "norm_label": "react 19 + vite frontend"
+      "norm_label": "react 19 + vite frontend",
+      "id": "readme_react_vite_frontend"
     },
     {
       "label": "Node.js + Express Backend",
@@ -981,9 +973,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "readme_express_backend",
       "community": 0,
-      "norm_label": "node.js + express backend"
+      "norm_label": "node.js + express backend",
+      "id": "readme_express_backend"
     },
     {
       "label": "Layered Backend Structure (config/routes/services)",
@@ -994,9 +986,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "readme_layered_backend_structure",
       "community": 1,
-      "norm_label": "layered backend structure (config/routes/services)"
+      "norm_label": "layered backend structure (config/routes/services)",
+      "id": "readme_layered_backend_structure"
     },
     {
       "label": "config/ Env Parsing Layer",
@@ -1007,9 +999,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "readme_config_layer",
       "community": 1,
-      "norm_label": "config/ env parsing layer"
+      "norm_label": "config/ env parsing layer",
+      "id": "readme_config_layer"
     },
     {
       "label": "contactRoutes (Validation + Rate Limit)",
@@ -1020,9 +1012,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "readme_contact_routes",
       "community": 1,
-      "norm_label": "contactroutes (validation + rate limit)"
+      "norm_label": "contactroutes (validation + rate limit)",
+      "id": "readme_contact_routes"
     },
     {
       "label": "mailerService (Resend Delivery)",
@@ -1033,9 +1025,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "readme_mailer_service",
       "community": 1,
-      "norm_label": "mailerservice (resend delivery)"
+      "norm_label": "mailerservice (resend delivery)",
+      "id": "readme_mailer_service"
     },
     {
       "label": "Resend Transactional Email",
@@ -1046,9 +1038,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "readme_resend_email",
       "community": 1,
-      "norm_label": "resend transactional email"
+      "norm_label": "resend transactional email",
+      "id": "readme_resend_email"
     },
     {
       "label": "Contact Form Flow",
@@ -1059,9 +1051,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "readme_contact_form_flow",
       "community": 1,
-      "norm_label": "contact form flow"
+      "norm_label": "contact form flow",
+      "id": "readme_contact_form_flow"
     },
     {
       "label": "Backend Security Hardening",
@@ -1072,9 +1064,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "readme_security_hardening",
       "community": 1,
-      "norm_label": "backend security hardening"
+      "norm_label": "backend security hardening",
+      "id": "readme_security_hardening"
     },
     {
       "label": "Helmet Security Headers",
@@ -1085,9 +1077,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "readme_helmet_headers",
       "community": 1,
-      "norm_label": "helmet security headers"
+      "norm_label": "helmet security headers",
+      "id": "readme_helmet_headers"
     },
     {
       "label": "express-rate-limit (5/15min)",
@@ -1098,9 +1090,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "readme_rate_limit",
       "community": 1,
-      "norm_label": "express-rate-limit (5/15min)"
+      "norm_label": "express-rate-limit (5/15min)",
+      "id": "readme_rate_limit"
     },
     {
       "label": "Email Header-Injection Guard",
@@ -1111,9 +1103,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "readme_email_header_injection_guard",
       "community": 1,
-      "norm_label": "email header-injection guard"
+      "norm_label": "email header-injection guard",
+      "id": "readme_email_header_injection_guard"
     },
     {
       "label": "Content Security Policy",
@@ -1124,9 +1116,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "readme_csp",
       "community": 1,
-      "norm_label": "content security policy"
+      "norm_label": "content security policy",
+      "id": "readme_csp"
     },
     {
       "label": "Netlify Frontend Deploy",
@@ -1137,9 +1129,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "readme_netlify_deploy",
       "community": 4,
-      "norm_label": "netlify frontend deploy"
+      "norm_label": "netlify frontend deploy",
+      "id": "readme_netlify_deploy"
     },
     {
       "label": "Render Backend Deploy",
@@ -1150,9 +1142,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "readme_render_deploy",
       "community": 0,
-      "norm_label": "render backend deploy"
+      "norm_label": "render backend deploy",
+      "id": "readme_render_deploy"
     },
     {
       "label": "GitHub Actions CI/CD",
@@ -1163,9 +1155,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "readme_cicd_actions",
       "community": 0,
-      "norm_label": "github actions ci/cd"
+      "norm_label": "github actions ci/cd",
+      "id": "readme_cicd_actions"
     },
     {
       "label": "gitleaks Secret Scan",
@@ -1176,9 +1168,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "readme_gitleaks_scan",
       "community": 0,
-      "norm_label": "gitleaks secret scan"
+      "norm_label": "gitleaks secret scan",
+      "id": "readme_gitleaks_scan"
     },
     {
       "label": "Dependabot Auto Updates",
@@ -1189,9 +1181,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "readme_dependabot",
       "community": 0,
-      "norm_label": "dependabot auto updates"
+      "norm_label": "dependabot auto updates",
+      "id": "readme_dependabot"
     },
     {
       "label": "Data-Driven Content Architecture",
@@ -1202,9 +1194,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "readme_data_driven_architecture",
       "community": 4,
-      "norm_label": "data-driven content architecture"
+      "norm_label": "data-driven content architecture",
+      "id": "readme_data_driven_architecture"
     },
     {
       "label": "IntersectionObserver Reveal Hook",
@@ -1215,9 +1207,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "readme_intersection_observer_reveal",
       "community": 4,
-      "norm_label": "intersectionobserver reveal hook"
+      "norm_label": "intersectionobserver reveal hook",
+      "id": "readme_intersection_observer_reveal"
     },
     {
       "label": "Kill-Switch Service Worker Recovery",
@@ -1228,9 +1220,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "readme_kill_switch_sw",
       "community": 0,
-      "norm_label": "kill-switch service worker recovery"
+      "norm_label": "kill-switch service worker recovery",
+      "id": "readme_kill_switch_sw"
     },
     {
       "label": "Caching & Cache-Busting Rules",
@@ -1241,9 +1233,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "readme_cache_busting",
       "community": 0,
-      "norm_label": "caching & cache-busting rules"
+      "norm_label": "caching & cache-busting rules",
+      "id": "readme_cache_busting"
     },
     {
       "label": "Rationale: Lean Bundle (No Animation Lib/PWA)",
@@ -1254,9 +1246,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "readme_lean_bundle_rationale",
       "community": 4,
-      "norm_label": "rationale: lean bundle (no animation lib/pwa)"
+      "norm_label": "rationale: lean bundle (no animation lib/pwa)",
+      "id": "readme_lean_bundle_rationale"
     },
     {
       "label": "Rationale: @/ Import Alias",
@@ -1267,9 +1259,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "readme_alias_import_rationale",
       "community": 4,
-      "norm_label": "rationale: @/ import alias"
+      "norm_label": "rationale: @/ import alias",
+      "id": "readme_alias_import_rationale"
     },
     {
       "label": "Postman API Test Suite",
@@ -1280,9 +1272,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "readme_postman_suite",
       "community": 1,
-      "norm_label": "postman api test suite"
+      "norm_label": "postman api test suite",
+      "id": "readme_postman_suite"
     },
     {
       "label": "Frontend HTML Shell",
@@ -1293,9 +1285,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "index_html_shell",
       "community": 0,
-      "norm_label": "frontend html shell"
+      "norm_label": "frontend html shell",
+      "id": "index_html_shell"
     },
     {
       "label": "SEO Meta Tags (OG/Twitter/canonical)",
@@ -1306,9 +1298,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "index_seo_meta",
       "community": 0,
-      "norm_label": "seo meta tags (og/twitter/canonical)"
+      "norm_label": "seo meta tags (og/twitter/canonical)",
+      "id": "index_seo_meta"
     },
     {
       "label": "JSON-LD Person Schema",
@@ -1319,9 +1311,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "index_jsonld_person",
       "community": 0,
-      "norm_label": "json-ld person schema"
+      "norm_label": "json-ld person schema",
+      "id": "index_jsonld_person"
     },
     {
       "label": "JSON-LD WebSite Schema",
@@ -1332,9 +1324,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "index_jsonld_website",
       "community": 0,
-      "norm_label": "json-ld website schema"
+      "norm_label": "json-ld website schema",
+      "id": "index_jsonld_website"
     },
     {
       "label": "Backend DNS-Prefetch / Preconnect Hint",
@@ -1345,9 +1337,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "index_backend_preconnect",
       "community": 0,
-      "norm_label": "backend dns-prefetch / preconnect hint"
+      "norm_label": "backend dns-prefetch / preconnect hint",
+      "id": "index_backend_preconnect"
     },
     {
       "label": "LCP Hero Portrait Preload",
@@ -1358,9 +1350,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "index_lcp_preload",
       "community": 4,
-      "norm_label": "lcp hero portrait preload"
+      "norm_label": "lcp hero portrait preload",
+      "id": "index_lcp_preload"
     },
     {
       "label": "Deferred Google Analytics",
@@ -1371,23 +1363,35 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "index_deferred_analytics",
       "community": 0,
-      "norm_label": "deferred google analytics"
+      "norm_label": "deferred google analytics",
+      "id": "index_deferred_analytics"
     }
   ],
   "links": [
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "backend\\server.js",
-      "source_location": "L83",
+      "source_file": "D:\\portfolio\\backend\\server.js",
+      "source_location": "L80",
       "weight": 1.0,
-      "_src": "backend_server_js",
-      "_tgt": "server_shutdown",
-      "source": "backend_server_js",
-      "target": "server_shutdown",
+      "_src": "d_portfolio_backend_server_js",
+      "_tgt": "server_start",
+      "source": "d_portfolio_backend_server_js",
+      "target": "server_start",
       "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "D:\\portfolio\\backend\\server.js",
+      "source_location": "L82",
+      "weight": 1.0,
+      "_src": "server_start",
+      "_tgt": "env_validateenv",
+      "source": "server_start",
+      "target": "env_validateenv"
     },
     {
       "relation": "contains",
@@ -1428,103 +1432,103 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "backend\\services\\mailerService.js",
+      "source_file": "D:\\portfolio\\backend\\services\\mailerService.js",
       "source_location": "L21",
       "weight": 1.0,
-      "_src": "backend_services_mailerservice_js",
+      "_src": "d_portfolio_backend_services_mailerservice_js",
       "_tgt": "mailerservice_escapehtml",
-      "source": "backend_services_mailerservice_js",
+      "source": "d_portfolio_backend_services_mailerservice_js",
       "target": "mailerservice_escapehtml",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "backend\\services\\mailerService.js",
+      "source_file": "D:\\portfolio\\backend\\services\\mailerService.js",
       "source_location": "L31",
       "weight": 1.0,
-      "_src": "backend_services_mailerservice_js",
+      "_src": "d_portfolio_backend_services_mailerservice_js",
       "_tgt": "mailerservice_sanitizeheader",
-      "source": "backend_services_mailerservice_js",
+      "source": "d_portfolio_backend_services_mailerservice_js",
       "target": "mailerservice_sanitizeheader",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "backend\\services\\mailerService.js",
+      "source_file": "D:\\portfolio\\backend\\services\\mailerService.js",
       "source_location": "L39",
       "weight": 1.0,
-      "_src": "backend_services_mailerservice_js",
+      "_src": "d_portfolio_backend_services_mailerservice_js",
       "_tgt": "mailerservice_mailernotconfigurederror",
-      "source": "backend_services_mailerservice_js",
+      "source": "d_portfolio_backend_services_mailerservice_js",
       "target": "mailerservice_mailernotconfigurederror",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "backend\\services\\mailerService.js",
+      "source_file": "D:\\portfolio\\backend\\services\\mailerService.js",
       "source_location": "L47",
       "weight": 1.0,
-      "_src": "backend_services_mailerservice_js",
+      "_src": "d_portfolio_backend_services_mailerservice_js",
       "_tgt": "mailerservice_emaildeliveryerror",
-      "source": "backend_services_mailerservice_js",
+      "source": "d_portfolio_backend_services_mailerservice_js",
       "target": "mailerservice_emaildeliveryerror",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "backend\\services\\mailerService.js",
+      "source_file": "D:\\portfolio\\backend\\services\\mailerService.js",
       "source_location": "L57",
       "weight": 1.0,
-      "_src": "backend_services_mailerservice_js",
+      "_src": "d_portfolio_backend_services_mailerservice_js",
       "_tgt": "mailerservice_sendcontactemail",
-      "source": "backend_services_mailerservice_js",
+      "source": "d_portfolio_backend_services_mailerservice_js",
       "target": "mailerservice_sendcontactemail",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "backend\\services\\mailerService.js",
+      "source_file": "D:\\portfolio\\backend\\services\\mailerService.js",
       "source_location": "L82",
       "weight": 1.0,
-      "_src": "backend_services_mailerservice_js",
+      "_src": "d_portfolio_backend_services_mailerservice_js",
       "_tgt": "mailerservice_detailrow",
-      "source": "backend_services_mailerservice_js",
+      "source": "d_portfolio_backend_services_mailerservice_js",
       "target": "mailerservice_detailrow",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "backend\\services\\mailerService.js",
+      "source_file": "D:\\portfolio\\backend\\services\\mailerService.js",
       "source_location": "L93",
       "weight": 1.0,
-      "_src": "backend_services_mailerservice_js",
+      "_src": "d_portfolio_backend_services_mailerservice_js",
       "_tgt": "mailerservice_rendercontactemail",
-      "source": "backend_services_mailerservice_js",
+      "source": "d_portfolio_backend_services_mailerservice_js",
       "target": "mailerservice_rendercontactemail",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "backend\\services\\mailerService.js",
+      "source_file": "D:\\portfolio\\backend\\services\\mailerService.js",
       "source_location": "L142",
       "weight": 1.0,
-      "_src": "backend_services_mailerservice_js",
+      "_src": "d_portfolio_backend_services_mailerservice_js",
       "_tgt": "mailerservice_rendercontacttext",
-      "source": "backend_services_mailerservice_js",
+      "source": "d_portfolio_backend_services_mailerservice_js",
       "target": "mailerservice_rendercontacttext",
       "confidence_score": 1.0
     },
     {
       "relation": "calls",
       "confidence": "EXTRACTED",
-      "source_file": "backend\\services\\mailerService.js",
+      "source_file": "D:\\portfolio\\backend\\services\\mailerService.js",
       "source_location": "L98",
       "weight": 1.0,
       "_src": "mailerservice_rendercontactemail",
@@ -1536,7 +1540,7 @@
     {
       "relation": "calls",
       "confidence": "EXTRACTED",
-      "source_file": "backend\\services\\mailerService.js",
+      "source_file": "D:\\portfolio\\backend\\services\\mailerService.js",
       "source_location": "L60",
       "weight": 1.0,
       "_src": "mailerservice_sendcontactemail",
@@ -1548,7 +1552,7 @@
     {
       "relation": "method",
       "confidence": "EXTRACTED",
-      "source_file": "backend\\services\\mailerService.js",
+      "source_file": "D:\\portfolio\\backend\\services\\mailerService.js",
       "source_location": "L40",
       "weight": 1.0,
       "_src": "mailerservice_mailernotconfigurederror",
@@ -1560,7 +1564,7 @@
     {
       "relation": "method",
       "confidence": "EXTRACTED",
-      "source_file": "backend\\services\\mailerService.js",
+      "source_file": "D:\\portfolio\\backend\\services\\mailerService.js",
       "source_location": "L48",
       "weight": 1.0,
       "_src": "mailerservice_emaildeliveryerror",
@@ -1572,7 +1576,7 @@
     {
       "relation": "calls",
       "confidence": "EXTRACTED",
-      "source_file": "backend\\services\\mailerService.js",
+      "source_file": "D:\\portfolio\\backend\\services\\mailerService.js",
       "source_location": "L63",
       "weight": 1.0,
       "_src": "mailerservice_sendcontactemail",
@@ -1584,7 +1588,7 @@
     {
       "relation": "calls",
       "confidence": "EXTRACTED",
-      "source_file": "backend\\services\\mailerService.js",
+      "source_file": "D:\\portfolio\\backend\\services\\mailerService.js",
       "source_location": "L64",
       "weight": 1.0,
       "_src": "mailerservice_sendcontactemail",
@@ -1596,13 +1600,25 @@
     {
       "relation": "calls",
       "confidence": "EXTRACTED",
-      "source_file": "backend\\services\\mailerService.js",
+      "source_file": "D:\\portfolio\\backend\\services\\mailerService.js",
       "source_location": "L113",
       "weight": 1.0,
       "_src": "mailerservice_rendercontactemail",
       "_tgt": "mailerservice_detailrow",
       "source": "mailerservice_detailrow",
       "target": "mailerservice_rendercontactemail",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "D:\\portfolio\\backend\\test\\contact.test.js",
+      "source_location": "L25",
+      "weight": 1.0,
+      "_src": "d_portfolio_backend_test_contact_test_js",
+      "_tgt": "contact_test_postcontact",
+      "source": "d_portfolio_backend_test_contact_test_js",
+      "target": "contact_test_postcontact",
       "confidence_score": 1.0
     },
     {
@@ -1644,12 +1660,12 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "frontend\\src\\components\\sections\\About.jsx",
+      "source_file": "D:\\portfolio\\frontend\\src\\components\\sections\\About.jsx",
       "source_location": "L4",
       "weight": 1.0,
-      "_src": "frontend_src_components_sections_about_jsx",
+      "_src": "d_portfolio_frontend_src_components_sections_about_jsx",
       "_tgt": "about_about",
-      "source": "frontend_src_components_sections_about_jsx",
+      "source": "d_portfolio_frontend_src_components_sections_about_jsx",
       "target": "about_about",
       "confidence_score": 1.0
     },
@@ -1696,8 +1712,8 @@
       "source_file": "frontend/src/components/sections/Interests.jsx",
       "source_location": null,
       "weight": 1.0,
-      "_src": "skills_concept_multi_agent_systems",
-      "_tgt": "interests_role_ai_engineer",
+      "_src": "interests_role_ai_engineer",
+      "_tgt": "skills_concept_multi_agent_systems",
       "source": "interests_role_ai_engineer",
       "target": "skills_concept_multi_agent_systems"
     },
@@ -2020,8 +2036,8 @@
       "source_file": "frontend/public/images/Profile.webp",
       "source_location": null,
       "weight": 1.0,
-      "_src": "profile_heroportrait",
-      "_tgt": "appletouchicon_brandicon",
+      "_src": "appletouchicon_brandicon",
+      "_tgt": "profile_heroportrait",
       "source": "appletouchicon_brandicon",
       "target": "profile_heroportrait"
     },
@@ -2032,8 +2048,8 @@
       "source_file": "frontend/public/favicon-96x96.png",
       "source_location": null,
       "weight": 1.0,
-      "_src": "favicon96x96_browsericon",
-      "_tgt": "appletouchicon_folderpersonmotif",
+      "_src": "appletouchicon_folderpersonmotif",
+      "_tgt": "favicon96x96_browsericon",
       "source": "appletouchicon_folderpersonmotif",
       "target": "favicon96x96_browsericon"
     },
@@ -2044,8 +2060,8 @@
       "source_file": "frontend/public/favicon.svg",
       "source_location": null,
       "weight": 1.0,
-      "_src": "faviconsvg_vectoricon",
-      "_tgt": "appletouchicon_folderpersonmotif",
+      "_src": "appletouchicon_folderpersonmotif",
+      "_tgt": "faviconsvg_vectoricon",
       "source": "appletouchicon_folderpersonmotif",
       "target": "faviconsvg_vectoricon"
     },
@@ -2056,8 +2072,8 @@
       "source_file": "frontend/public/images/Profile.webp",
       "source_location": null,
       "weight": 1.0,
-      "_src": "profile_heroportrait",
-      "_tgt": "appletouchicon_folderpersonmotif",
+      "_src": "appletouchicon_folderpersonmotif",
+      "_tgt": "profile_heroportrait",
       "source": "appletouchicon_folderpersonmotif",
       "target": "profile_heroportrait"
     },
@@ -2140,8 +2156,8 @@
       "source_file": "README.md",
       "source_location": null,
       "weight": 1.0,
-      "_src": "index_seo_meta",
-      "_tgt": "readme_portfolio_project",
+      "_src": "readme_portfolio_project",
+      "_tgt": "index_seo_meta",
       "source": "readme_portfolio_project",
       "target": "index_seo_meta"
     },
@@ -2188,8 +2204,8 @@
       "source_file": "README.md",
       "source_location": null,
       "weight": 1.0,
-      "_src": "readme_lean_bundle_rationale",
-      "_tgt": "readme_react_vite_frontend",
+      "_src": "readme_react_vite_frontend",
+      "_tgt": "readme_lean_bundle_rationale",
       "source": "readme_react_vite_frontend",
       "target": "readme_lean_bundle_rationale"
     },
@@ -2272,8 +2288,8 @@
       "source_file": "README.md",
       "source_location": null,
       "weight": 1.0,
-      "_src": "readme_contact_form_flow",
-      "_tgt": "readme_contact_routes",
+      "_src": "readme_contact_routes",
+      "_tgt": "readme_contact_form_flow",
       "source": "readme_contact_routes",
       "target": "readme_contact_form_flow"
     },
@@ -2284,8 +2300,8 @@
       "source_file": "README.md",
       "source_location": null,
       "weight": 1.0,
-      "_src": "readme_rate_limit",
-      "_tgt": "readme_contact_routes",
+      "_src": "readme_contact_routes",
+      "_tgt": "readme_rate_limit",
       "source": "readme_contact_routes",
       "target": "readme_rate_limit"
     },
@@ -2308,8 +2324,8 @@
       "source_file": "README.md",
       "source_location": null,
       "weight": 1.0,
-      "_src": "readme_contact_form_flow",
-      "_tgt": "readme_mailer_service",
+      "_src": "readme_mailer_service",
+      "_tgt": "readme_contact_form_flow",
       "source": "readme_mailer_service",
       "target": "readme_contact_form_flow"
     },
@@ -2320,8 +2336,8 @@
       "source_file": "README.md",
       "source_location": null,
       "weight": 1.0,
-      "_src": "readme_email_header_injection_guard",
-      "_tgt": "readme_mailer_service",
+      "_src": "readme_mailer_service",
+      "_tgt": "readme_email_header_injection_guard",
       "source": "readme_mailer_service",
       "target": "readme_email_header_injection_guard"
     },
@@ -2344,8 +2360,8 @@
       "source_file": "README.md",
       "source_location": null,
       "weight": 1.0,
-      "_src": "readme_postman_suite",
-      "_tgt": "readme_contact_form_flow",
+      "_src": "readme_contact_form_flow",
+      "_tgt": "readme_postman_suite",
       "source": "readme_contact_form_flow",
       "target": "readme_postman_suite"
     },
@@ -2404,8 +2420,8 @@
       "source_file": "frontend/index.html",
       "source_location": null,
       "weight": 1.0,
-      "_src": "index_backend_preconnect",
-      "_tgt": "readme_render_deploy",
+      "_src": "readme_render_deploy",
+      "_tgt": "index_backend_preconnect",
       "source": "readme_render_deploy",
       "target": "index_backend_preconnect"
     },
@@ -2428,8 +2444,8 @@
       "source_file": "README.md",
       "source_location": null,
       "weight": 1.0,
-      "_src": "readme_alias_import_rationale",
-      "_tgt": "readme_data_driven_architecture",
+      "_src": "readme_data_driven_architecture",
+      "_tgt": "readme_alias_import_rationale",
       "source": "readme_data_driven_architecture",
       "target": "readme_alias_import_rationale"
     },
@@ -2440,8 +2456,8 @@
       "source_file": "README.md",
       "source_location": null,
       "weight": 1.0,
-      "_src": "readme_lean_bundle_rationale",
-      "_tgt": "readme_intersection_observer_reveal",
+      "_src": "readme_intersection_observer_reveal",
+      "_tgt": "readme_lean_bundle_rationale",
       "source": "readme_intersection_observer_reveal",
       "target": "readme_lean_bundle_rationale"
     },
@@ -2464,8 +2480,8 @@
       "source_file": "frontend/index.html",
       "source_location": null,
       "weight": 1.0,
-      "_src": "index_html_shell",
-      "_tgt": "readme_kill_switch_sw",
+      "_src": "readme_kill_switch_sw",
+      "_tgt": "index_html_shell",
       "source": "readme_kill_switch_sw",
       "target": "index_html_shell"
     },
@@ -2476,8 +2492,8 @@
       "source_file": "README.md",
       "source_location": null,
       "weight": 1.0,
-      "_src": "index_lcp_preload",
-      "_tgt": "readme_lean_bundle_rationale",
+      "_src": "readme_lean_bundle_rationale",
+      "_tgt": "index_lcp_preload",
       "source": "readme_lean_bundle_rationale",
       "target": "index_lcp_preload"
     },
@@ -2560,8 +2576,8 @@
       "source_file": "frontend/index.html",
       "source_location": null,
       "weight": 1.0,
-      "_src": "index_jsonld_person",
-      "_tgt": "index_seo_meta",
+      "_src": "index_seo_meta",
+      "_tgt": "index_jsonld_person",
       "source": "index_seo_meta",
       "target": "index_jsonld_person"
     },
@@ -2572,8 +2588,8 @@
       "source_file": "frontend/index.html",
       "source_location": null,
       "weight": 1.0,
-      "_src": "index_jsonld_website",
-      "_tgt": "index_jsonld_person",
+      "_src": "index_jsonld_person",
+      "_tgt": "index_jsonld_website",
       "source": "index_jsonld_person",
       "target": "index_jsonld_website"
     }
