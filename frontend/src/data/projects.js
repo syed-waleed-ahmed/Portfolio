@@ -53,7 +53,7 @@ export const projects = [
     title: "Delay Classification for Tele-Robotic Systems",
     role: "Bachelor's Thesis",
     period: "Oct 2022 - Aug 2023",
-    stack: ["Time-Series", "ML", "Python", "scikit-learn"],
+    stack: ["Signal Processing", "TCP/IP", "UDP" ,"Networking", "C++"],
     description:
       "A time-series and ML pipeline that classifies network delay across LAN, WAN, and 4G environments. Built from captured latency traces, it flags the conditions that would destabilize a remote tele-robotic control loop before they cause failures.",
     highlight:
