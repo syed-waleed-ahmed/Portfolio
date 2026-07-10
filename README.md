@@ -14,7 +14,7 @@ Designed with a focus on **performance**, **accessibility**, **security**, and *
 
 ## Highlights
 
-- **Lean bundle** -- no animation library, no PWA shell, no Bootstrap JS. ~9 KB CSS gzipped, ~70 KB JS gzipped after code-splitting
+- **Lean bundle** -- no animation library, no PWA shell, no Bootstrap JS. ~10 KB CSS gzipped, ~70 KB JS gzipped after code-splitting
 - **Fast build & delivery** -- Vite, code-splitting, lazy-mounted sections (`content-visibility: auto`)
 - **Modern UI** -- glassmorphism cards, gradient accents, monospace HUD-style section labels, top-of-page scroll progress bar
 - **Hand-rolled animations** -- vanilla `IntersectionObserver` reveal hook + CSS keyframes (no `framer-motion`, no `tsparticles`)
@@ -59,7 +59,7 @@ Designed with a focus on **performance**, **accessibility**, **security**, and *
 - Vanilla `IntersectionObserver` for scroll-reveal -- no animation library
 - CSS keyframes for hero entrance and "explore" pill cycle
 - AVIF / WebP profile image with `<picture>` + `fetchpriority="high"`
-- PurgeCSS in production trims unused Bootstrap utilities to ~9 KB gzipped
+- PurgeCSS in production trims unused Bootstrap utilities to ~10 KB gzipped
 
 ### Backend
 - Node.js 20, Express 4 (ESM)
@@ -202,11 +202,11 @@ every request and serves cached files. To recover:
 - `frontend/public/sw.js` is a **kill-switch SW** -- on next update, it
   deletes every cache the old SW created, unregisters itself, and
   reloads open tabs.
-- An inline script in `index.html` defensively unregisters any leftover
-  SW and clears `caches` storage on every page load. Idempotent.
 
-Both run together so users can't get stuck on a stale build. Once
-analytics show no SW traffic for ~30 days, `sw.js` can be deleted.
+No inline cleanup script lives in `index.html`, so the CSP stays strict
+(no extra script hash to maintain) -- the kill-switch SW handles recovery
+on its own. Once analytics show no SW traffic for ~30 days, `sw.js` can be
+deleted.
 
 ---
 

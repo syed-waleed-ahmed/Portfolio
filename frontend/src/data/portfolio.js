@@ -3,9 +3,6 @@
 export const personalInfo = {
   name: "Syed Waleed Ahmed",
   email: "syedwaleedahmed9@gmail.com",
-  phone: "+393519609532",
-  phoneDisplay: "+39 351 960 9532",
-  whatsapp: "https://wa.me/393519609532",
   resumeUrl:
     "https://drive.google.com/file/d/1aAgugSve_VTAkvC_Vaj0QDZMONPELuU3/view?usp=sharing",
 };
