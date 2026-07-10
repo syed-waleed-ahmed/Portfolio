@@ -606,9 +606,9 @@
     {
       "label": "portfolio.js",
       "file_type": "code",
-      "source_file": "frontend\\src\\data\\portfolio.js",
+      "source_file": "D:\\portfolio\\frontend\\src\\data\\portfolio.js",
       "source_location": "L1",
-      "id": "frontend_src_data_portfolio_js",
+      "id": "d_portfolio_frontend_src_data_portfolio_js",
       "community": 31,
       "norm_label": "portfolio.js"
     },
