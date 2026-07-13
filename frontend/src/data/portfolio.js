@@ -4,7 +4,7 @@ export const personalInfo = {
   name: "Syed Waleed Ahmed",
   email: "syedwaleedahmed9@gmail.com",
   resumeUrl:
-    "https://drive.google.com/file/d/1QqL7iZJXs5sQfQz2Ehmwqm2Ze5OHSW-U/view?usp=sharing",
+  "https://drive.google.com/file/d/1gPdW6Rf8X2NBD8h9NTKfysr-8Wx_3NoK/view?usp=sharing",
 };
 
 export const socialLinks = {

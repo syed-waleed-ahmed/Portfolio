@@ -22,6 +22,7 @@ export const skillGroups = [
       "TensorFlow",
       "Scikit-learn",
       "XGBoost",
+      "OpenCV",
       "Pandas",
       "NumPy",
       "Matplotlib",
@@ -38,11 +39,11 @@ export const skillGroups = [
     tags: ["React", "Next.js", "Node.js", ".NET ASP Core", "REST APIs", "Serverless", "Webhooks", "HTML/CSS"],
   },
   {
-    title: "Databases",
-    tags: ["MySQL", "PostgreSQL", "SQL Server", "MongoDB", "Turso / libSQL"],
+    title: "Databases & Messaging",
+    tags: ["MySQL", "PostgreSQL", "SQL Server", "MongoDB", "Turso / libSQL", "Redis", "Kafka"],
   },
   {
-    title: "Tools & Platforms",
-    tags: ["Docker", "Git", "Linux", "Vercel", "Upstash QStash", "Twilio", "Jupyter", "VS Code", "Power BI", "Azure"],
+    title: "Cloud & DevOps",
+    tags: ["AWS", "Docker", "Kubernetes", "Terraform", "CI/CD", "Git", "Linux", "Vercel", "Upstash QStash", "Twilio", "Jupyter", "VS Code", "Power BI"],
   },
 ];
