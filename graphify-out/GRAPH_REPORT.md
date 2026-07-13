@@ -1,12 +1,12 @@
 # Graph Report - D:\portfolio  (2026-07-13)
 
 ## Corpus Check
-- 31 files · ~23,545 words
+- 31 files · ~23,066 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 120 nodes · 102 edges · 39 communities detected
-- Extraction: 81% EXTRACTED · 19% INFERRED · 0% AMBIGUOUS · INFERRED: 19 edges (avg confidence: 0.75)
+- 114 nodes · 101 edges · 34 communities detected
+- Extraction: 82% EXTRACTED · 18% INFERRED · 0% AMBIGUOUS · INFERRED: 18 edges (avg confidence: 0.76)
 - Token cost: 0 input · 0 output
 
 ## Community Hubs (Navigation)
@@ -44,11 +44,6 @@
 - [[_COMMUNITY_Community 31|Community 31]]
 - [[_COMMUNITY_Community 32|Community 32]]
 - [[_COMMUNITY_Community 33|Community 33]]
-- [[_COMMUNITY_Community 34|Community 34]]
-- [[_COMMUNITY_Community 35|Community 35]]
-- [[_COMMUNITY_Community 36|Community 36]]
-- [[_COMMUNITY_Community 37|Community 37]]
-- [[_COMMUNITY_Community 38|Community 38]]
 
 ## God Nodes (most connected - your core abstractions)
 1. `Frontend HTML Shell` - 8 edges
@@ -171,11 +166,11 @@ Nodes (0):
 
 ### Community 22 - "Community 22"
 Cohesion: 1.0
-Nodes (2): AI / ML / Full-Stack AI Roles (sought), Multi-Agent Systems
+Nodes (1): sitemap.xml
 
 ### Community 23 - "Community 23"
 Cohesion: 1.0
-Nodes (1): sitemap.xml
+Nodes (0): 
 
 ### Community 24 - "Community 24"
 Cohesion: 1.0
@@ -195,7 +190,7 @@ Nodes (0):
 
 ### Community 28 - "Community 28"
 Cohesion: 1.0
-Nodes (0): 
+Nodes (1): AI / ML / Full-Stack AI Roles (sought)
 
 ### Community 29 - "Community 29"
 Cohesion: 1.0
@@ -215,30 +210,10 @@ Nodes (0):
 
 ### Community 33 - "Community 33"
 Cohesion: 1.0
-Nodes (1): XGBoost
-
-### Community 34 - "Community 34"
-Cohesion: 1.0
-Nodes (1): React
-
-### Community 35 - "Community 35"
-Cohesion: 1.0
-Nodes (1): .NET ASP Core
-
-### Community 36 - "Community 36"
-Cohesion: 1.0
-Nodes (1): MySQL
-
-### Community 37 - "Community 37"
-Cohesion: 1.0
-Nodes (1): Power BI
-
-### Community 38 - "Community 38"
-Cohesion: 1.0
-Nodes (1): RAG (Retrieval-Augmented Generation)
+Nodes (0): 
 
 ## Knowledge Gaps
-- **28 isolated node(s):** `Contact Section Component`, `Portfolio Contact API (/api/contact on Render)`, `AI / ML / Full-Stack AI Roles (sought)`, `Projects Section Component`, `XGBoost` (+23 more)
+- **21 isolated node(s):** `Contact Section Component`, `Portfolio Contact API (/api/contact on Render)`, `AI / ML / Full-Stack AI Roles (sought)`, `Projects Section Component`, `Responsible Disclosure Process` (+16 more)
   These have ≤1 connection - possible missing edges or undocumented components.
 - **Thin community `Community 9`** (2 nodes): `contactRoutes.js`, `validateContact()`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
@@ -266,19 +241,19 @@ Nodes (1): RAG (Retrieval-Augmented Generation)
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
 - **Thin community `Community 21`** (2 nodes): `SkipLink.jsx`, `SkipLink()`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 22`** (2 nodes): `AI / ML / Full-Stack AI Roles (sought)`, `Multi-Agent Systems`
+- **Thin community `Community 22`** (2 nodes): `robots.txt`, `sitemap.xml`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 23`** (2 nodes): `robots.txt`, `sitemap.xml`
+- **Thin community `Community 23`** (1 nodes): `eslint.config.js`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 24`** (1 nodes): `eslint.config.js`
+- **Thin community `Community 24`** (1 nodes): `postcss.config.js`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 25`** (1 nodes): `postcss.config.js`
+- **Thin community `Community 25`** (1 nodes): `vite.config.js`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 26`** (1 nodes): `vite.config.js`
+- **Thin community `Community 26`** (1 nodes): `sw.js`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 27`** (1 nodes): `sw.js`
+- **Thin community `Community 27`** (1 nodes): `main.jsx`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 28`** (1 nodes): `main.jsx`
+- **Thin community `Community 28`** (1 nodes): `AI / ML / Full-Stack AI Roles (sought)`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
 - **Thin community `Community 29`** (1 nodes): `Projects Section Component`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
@@ -288,31 +263,21 @@ Nodes (1): RAG (Retrieval-Augmented Generation)
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
 - **Thin community `Community 32`** (1 nodes): `projects.js`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 33`** (1 nodes): `XGBoost`
-  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 34`** (1 nodes): `React`
-  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 35`** (1 nodes): `.NET ASP Core`
-  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 36`** (1 nodes): `MySQL`
-  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 37`** (1 nodes): `Power BI`
-  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 38`** (1 nodes): `RAG (Retrieval-Augmented Generation)`
+- **Thin community `Community 33`** (1 nodes): `skills.js`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `Portfolio Project` connect `Community 0` to `Community 4`?**
-  _High betweenness centrality (0.045) - this node is a cross-community bridge._
+  _High betweenness centrality (0.050) - this node is a cross-community bridge._
 - **Why does `Node.js + Express Backend` connect `Community 0` to `Community 1`?**
-  _High betweenness centrality (0.036) - this node is a cross-community bridge._
+  _High betweenness centrality (0.040) - this node is a cross-community bridge._
 - **Why does `Layered Backend Structure (config/routes/services)` connect `Community 1` to `Community 0`?**
-  _High betweenness centrality (0.034) - this node is a cross-community bridge._
+  _High betweenness centrality (0.038) - this node is a cross-community bridge._
 - **Are the 2 inferred relationships involving `Portfolio Project` (e.g. with `Frontend HTML Shell` and `SEO Meta Tags (OG/Twitter/canonical)`) actually correct?**
   _`Portfolio Project` has 2 INFERRED edges - model-reasoned connections that need verification._
 - **Are the 2 inferred relationships involving `Apple Touch Icon (Portfolio Brand Mark)` (e.g. with `Favicon SVG (Vector Brand Mark)` and `Profile Hero Portrait`) actually correct?**
   _`Apple Touch Icon (Portfolio Brand Mark)` has 2 INFERRED edges - model-reasoned connections that need verification._
 - **What connects `Contact Section Component`, `Portfolio Contact API (/api/contact on Render)`, `AI / ML / Full-Stack AI Roles (sought)` to the rest of the system?**
-  _28 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _21 weakly-connected nodes found - possible documentation gaps or missing edges._
