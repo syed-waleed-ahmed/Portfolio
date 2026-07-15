@@ -17,7 +17,7 @@ const About = () => {
         <div className="row g-4 align-items-stretch justify-content-center">
           <div className="col-md-6 d-flex">
             <Reveal delay={0.04} className="w-100">
-              <div className="neo-card about-card flex-fill h-100 p-4">
+              <div className="neo-card flex-fill h-100 p-4">
                 <div className="card-heading">
                   <span className="card-heading-icon"><FaUserAstronaut /></span>
                   My Approach
@@ -51,7 +51,7 @@ const About = () => {
 
           <div className="col-md-6 d-flex">
             <Reveal delay={0.08} className="w-100">
-              <div className="neo-card about-card flex-fill h-100 p-4 d-flex flex-column">
+              <div className="neo-card flex-fill h-100 p-4 d-flex flex-column">
                 <div className="card-heading">
                   <span className="card-heading-icon"><FaGraduationCap /></span>
                   Education

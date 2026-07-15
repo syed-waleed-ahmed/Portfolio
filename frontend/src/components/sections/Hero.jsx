@@ -10,7 +10,7 @@ const Hero = () => {
   return (
     <section
       id="hero"
-      className="hero-gradient hero-wrapper d-flex align-items-center hero-entrance"
+      className="hero-gradient d-flex align-items-center hero-entrance"
     >
       <div className="container position-relative">
         <div className="row align-items-center g-5">

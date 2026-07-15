@@ -17,17 +17,12 @@
   overflow: hidden;
 }
 
-.hero-wrapper {
-  /* spacing handled by #hero padding above */
-}
-
 /* ========= Entrance animations ========= */
 .hero-entrance {
   animation: heroFadeIn 0.7s ease-out both;
 }
 
 .hero-slide-left {
-  max-width: 640px;
   animation: heroSlideLeft 0.8s ease-out both;
 }
 
