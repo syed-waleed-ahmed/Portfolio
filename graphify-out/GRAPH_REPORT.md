@@ -1,12 +1,12 @@
 # Graph Report - D:\portfolio  (2026-07-15)
 
 ## Corpus Check
-- 31 files · ~23,184 words
+- 31 files · ~24,020 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 114 nodes · 101 edges · 34 communities detected
-- Extraction: 82% EXTRACTED · 18% INFERRED · 0% AMBIGUOUS · INFERRED: 18 edges (avg confidence: 0.76)
+- 116 nodes · 103 edges · 34 communities detected
+- Extraction: 83% EXTRACTED · 17% INFERRED · 0% AMBIGUOUS · INFERRED: 18 edges (avg confidence: 0.76)
 - Token cost: 0 input · 0 output
 
 ## Community Hubs (Navigation)
@@ -138,7 +138,7 @@ Nodes (0):
 
 ### Community 15 - "Community 15"
 Cohesion: 1.0
-Nodes (2): Portfolio Contact API (/api/contact on Render), Contact Section Component
+Nodes (0): 
 
 ### Community 16 - "Community 16"
 Cohesion: 1.0
@@ -166,7 +166,7 @@ Nodes (0):
 
 ### Community 22 - "Community 22"
 Cohesion: 1.0
-Nodes (1): sitemap.xml
+Nodes (0): 
 
 ### Community 23 - "Community 23"
 Cohesion: 1.0
@@ -174,7 +174,7 @@ Nodes (0):
 
 ### Community 24 - "Community 24"
 Cohesion: 1.0
-Nodes (0): 
+Nodes (1): sitemap.xml
 
 ### Community 25 - "Community 25"
 Cohesion: 1.0
@@ -190,11 +190,11 @@ Nodes (0):
 
 ### Community 28 - "Community 28"
 Cohesion: 1.0
-Nodes (1): AI / ML / Full-Stack AI Roles (sought)
+Nodes (0): 
 
 ### Community 29 - "Community 29"
 Cohesion: 1.0
-Nodes (1): Projects Section Component
+Nodes (0): 
 
 ### Community 30 - "Community 30"
 Cohesion: 1.0
@@ -213,7 +213,7 @@ Cohesion: 1.0
 Nodes (0): 
 
 ## Knowledge Gaps
-- **21 isolated node(s):** `Contact Section Component`, `Portfolio Contact API (/api/contact on Render)`, `AI / ML / Full-Stack AI Roles (sought)`, `Projects Section Component`, `Responsible Disclosure Process` (+16 more)
+- **17 isolated node(s):** `Responsible Disclosure Process`, `Safe-harbor Terms`, `sitemap.xml`, `Portfolio-API Postman Collection`, `Postman Local Environment` (+12 more)
   These have ≤1 connection - possible missing edges or undocumented components.
 - **Thin community `Community 9`** (2 nodes): `contactRoutes.js`, `validateContact()`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
@@ -227,35 +227,35 @@ Nodes (0):
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
 - **Thin community `Community 14`** (2 nodes): `About()`, `About.jsx`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 15`** (2 nodes): `Portfolio Contact API (/api/contact on Render)`, `Contact Section Component`
+- **Thin community `Community 15`** (2 nodes): `Contact()`, `Contact.jsx`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
 - **Thin community `Community 16`** (2 nodes): `Experience.jsx`, `Experience()`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
 - **Thin community `Community 17`** (2 nodes): `Hero.jsx`, `Hero()`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 18`** (2 nodes): `Skills.jsx`, `Skills()`
+- **Thin community `Community 18`** (2 nodes): `Interests.jsx`, `Interests()`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 19`** (2 nodes): `ScrollProgress.jsx`, `ScrollProgress()`
+- **Thin community `Community 19`** (2 nodes): `Projects.jsx`, `Projects()`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 20`** (2 nodes): `ScrollToTop.jsx`, `ScrollToTop()`
+- **Thin community `Community 20`** (2 nodes): `Skills.jsx`, `Skills()`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 21`** (2 nodes): `SkipLink.jsx`, `SkipLink()`
+- **Thin community `Community 21`** (2 nodes): `ScrollProgress.jsx`, `ScrollProgress()`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 22`** (2 nodes): `robots.txt`, `sitemap.xml`
+- **Thin community `Community 22`** (2 nodes): `ScrollToTop.jsx`, `ScrollToTop()`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 23`** (1 nodes): `eslint.config.js`
+- **Thin community `Community 23`** (2 nodes): `SkipLink.jsx`, `SkipLink()`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 24`** (1 nodes): `postcss.config.js`
+- **Thin community `Community 24`** (2 nodes): `robots.txt`, `sitemap.xml`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 25`** (1 nodes): `vite.config.js`
+- **Thin community `Community 25`** (1 nodes): `eslint.config.js`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 26`** (1 nodes): `sw.js`
+- **Thin community `Community 26`** (1 nodes): `postcss.config.js`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 27`** (1 nodes): `main.jsx`
+- **Thin community `Community 27`** (1 nodes): `vite.config.js`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 28`** (1 nodes): `AI / ML / Full-Stack AI Roles (sought)`
+- **Thin community `Community 28`** (1 nodes): `sw.js`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 29`** (1 nodes): `Projects Section Component`
+- **Thin community `Community 29`** (1 nodes): `main.jsx`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
 - **Thin community `Community 30`** (1 nodes): `experience.js`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
@@ -270,14 +270,14 @@ Nodes (0):
 _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `Portfolio Project` connect `Community 0` to `Community 4`?**
-  _High betweenness centrality (0.050) - this node is a cross-community bridge._
+  _High betweenness centrality (0.048) - this node is a cross-community bridge._
 - **Why does `Node.js + Express Backend` connect `Community 0` to `Community 1`?**
-  _High betweenness centrality (0.040) - this node is a cross-community bridge._
-- **Why does `Layered Backend Structure (config/routes/services)` connect `Community 1` to `Community 0`?**
   _High betweenness centrality (0.038) - this node is a cross-community bridge._
+- **Why does `Layered Backend Structure (config/routes/services)` connect `Community 1` to `Community 0`?**
+  _High betweenness centrality (0.037) - this node is a cross-community bridge._
 - **Are the 2 inferred relationships involving `Portfolio Project` (e.g. with `Frontend HTML Shell` and `SEO Meta Tags (OG/Twitter/canonical)`) actually correct?**
   _`Portfolio Project` has 2 INFERRED edges - model-reasoned connections that need verification._
 - **Are the 2 inferred relationships involving `Apple Touch Icon (Portfolio Brand Mark)` (e.g. with `Favicon SVG (Vector Brand Mark)` and `Profile Hero Portrait`) actually correct?**
   _`Apple Touch Icon (Portfolio Brand Mark)` has 2 INFERRED edges - model-reasoned connections that need verification._
-- **What connects `Contact Section Component`, `Portfolio Contact API (/api/contact on Render)`, `AI / ML / Full-Stack AI Roles (sought)` to the rest of the system?**
-  _21 weakly-connected nodes found - possible documentation gaps or missing edges._
+- **What connects `Responsible Disclosure Process`, `Safe-harbor Terms`, `sitemap.xml` to the rest of the system?**
+  _17 weakly-connected nodes found - possible documentation gaps or missing edges._
