@@ -121,6 +121,27 @@ text - `.btn-outlined--icon`, `.card-heading-icon`, `.project-link-icon`,
 `.btn-icon`, `.contact-label-icon` and `.scroll-top-btn` stay at their
 unscaled values.
 
+### Generated assets
+
+Three binaries in `public/` are generated rather than hand-drawn, so they need
+regenerating rather than editing:
+
+| Asset | Source | How |
+|-------|--------|-----|
+| `images/og-card.png` | `images/Profile.avif` + `fonts/ntr-latin-400.woff2` | `npm i --no-save sharp fontkit && node scripts/gen-og-card.mjs` |
+| `images/Profile.{avif,webp}` | 680x680 (2x the 340px hero slot), square-cropped from the 1908x2392 original | re-crop from the original if the photo changes |
+| `favicon.*`, `apple-touch-icon.png` | `favicon.svg` | rasterised from the SVG; the touch icon bakes in `--bg-main` |
+
+`gen-og-card.mjs` reads only files already in the repo, so the card is
+reproducible from a clean checkout. It renders text as vector paths rather than
+`<text>`, so it doesn't need NTR installed as a system font - which would
+otherwise silently substitute a fallback and produce a card in the wrong
+typeface. It throws rather than emitting a card with text running off the edge.
+
+`sharp` and `fontkit` are installed on demand, not kept in `package.json`:
+sharp ships ~30 MB of native binaries and CI has no reason to pull that in to
+lint and build a static site.
+
 ### Buttons
 
 There is **one** button, `.btn-outlined` in `base.css`, with two modifiers:
@@ -251,6 +272,8 @@ portfolio/
 |   +-- Portfolio-API.postman_environment.json             # baseUrl variable (local default)
 |   +-- Portfolio-API.postman_environment.production.json  # baseUrl variable (live Render backend)
 |   +-- README.md                                          # Import + usage instructions
++-- scripts/
+|   +-- gen-og-card.mjs                   # Rebuilds the 1200x630 social card (see Design)
 +-- graphify-out/                         # Knowledge graph (html + json + audit report)
 |   +-- graph.html                        # Interactive graph (open in browser)
 |   +-- graph.json                        # Raw graph data (GraphRAG-ready)
@@ -496,7 +519,7 @@ See [`postman/README.md`](postman/README.md) for full usage notes.
 - **HTML escaping** -- all user input is escaped before rendering in email templates
 - **Email header-injection guard** -- CR/LF and control chars are stripped from header-bound fields (subject, reply-to) so a crafted value can't inject extra email headers
 - **Rate limiting** -- `express-rate-limit` (5 requests / 15 min window, standard `RateLimit-*` headers)
-- **Honeypot** -- the contact form carries a hidden `website` field. It is deliberately *not* `display:none`, since bots skip fields the browser reports as hidden; it is positioned off-screen and taken out of the tab order and the accessibility tree instead. A submission that fills it gets the same `200` a real send gets, and is dropped without sending
+- **Honeypot** -- the contact form carries a hidden `website` field. It is deliberately *not* `display:none`, since bots skip fields the browser reports as hidden; it is positioned off-screen and taken out of the tab order and the accessibility tree instead. A submission that fills it gets the same `200` a real send gets, and is dropped without sending. **A trip is logged with the sender's name and email** -- a false positive (an autofill or password manager filling the trap) would otherwise lose a real message silently, and with no email link in the UI the form is the only way to reach the site owner
 - **Input validation** -- max lengths enforced (name: 100, email: 100, subject: 200, message: 5000)
 - **Body-size cap** -- `express.json({ limit: "16kb" })` to prevent payload abuse
 - **Trust-proxy=1** -- IP is read from the platform proxy hop only (Render); not blindly from client headers
