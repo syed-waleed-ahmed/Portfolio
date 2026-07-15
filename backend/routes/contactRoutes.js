@@ -55,7 +55,17 @@ router.post("/", contactLimiter, async (req, res, next) => {
   // gets: a bot that could tell rejection from success would just retry
   // without the field. Nothing is sent and nothing is logged as an error.
   if (typeof req.body?.[HONEYPOT_FIELD] === "string" && req.body[HONEYPOT_FIELD].trim()) {
-    console.warn("[contact] honeypot tripped - dropping submission");
+    // Logged with the sender attached on purpose. A false positive - an
+    // autofill or password manager filling the trap - would otherwise lose a
+    // real message silently, and the form is the only way to reach us. This
+    // line is the difference between "recoverable" and "gone".
+    // %j, not %s: a crafted name containing newlines could otherwise forge
+    // extra log lines.
+    console.warn(
+      "[contact] honeypot tripped - dropping submission. name=%j email=%j",
+      typeof req.body.name === "string" ? req.body.name.slice(0, 100) : "",
+      typeof req.body.email === "string" ? req.body.email.slice(0, 100) : ""
+    );
     return res.json({ success: true, message: "Message sent successfully." });
   }
 
