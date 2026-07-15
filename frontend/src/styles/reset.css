@@ -55,6 +55,11 @@ p {
   opacity: 0;
   transform: translateY(28px);
   transition: opacity 0.7s ease-out, transform 0.7s ease-out;
+}
+
+/* Scoped to the pending state so each element's compositor layer is released
+   once it has animated in, rather than being held for the life of the page. */
+.reveal:not(.is-visible) {
   will-change: opacity, transform;
 }
 

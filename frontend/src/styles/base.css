@@ -167,19 +167,19 @@ body::before {
    72px tablet   -> 144px
    56px mobile   -> 112px
 */
+/* No content-visibility here: it makes off-screen sections report an estimated
+   height instead of their real one, so an anchor jump computes its target from
+   the wrong document height and stops short. */
 .section-wrapper {
   position: relative;
   padding-block: 96px;
   scroll-margin-top: 80px;
-  content-visibility: auto;
-  contain-intrinsic-block-size: 800px;
 }
 
 @media (max-width: 991px) {
   .section-wrapper {
     padding-block: 72px;
     scroll-margin-top: 72px;
-    contain-intrinsic-block-size: 760px;
   }
 }
 
@@ -187,7 +187,6 @@ body::before {
   .section-wrapper {
     padding-block: 56px;
     scroll-margin-top: 68px;
-    contain-intrinsic-block-size: 720px;
   }
 }
 

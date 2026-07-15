@@ -1,29 +1,40 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef } from "react";
 
 const ScrollProgress = () => {
-  const [progress, setProgress] = useState(0);
+  const barRef = useRef(null);
 
   useEffect(() => {
+    let frame = 0;
+
+    // The transform is written straight to the node inside a rAF. Holding the
+    // value in state instead re-rendered the component on every scroll event,
+    // which is far more work than a scroll frame has time for.
     const update = () => {
-      const scrolled = window.scrollY;
+      frame = 0;
+      const bar = barRef.current;
+      if (!bar) return;
       const max = document.documentElement.scrollHeight - window.innerHeight;
-      setProgress(max > 0 ? (scrolled / max) * 100 : 0);
+      const ratio = max > 0 ? window.scrollY / max : 0;
+      bar.style.transform = `scaleX(${Math.min(Math.max(ratio, 0), 1)})`;
     };
+
+    const schedule = () => {
+      if (!frame) frame = requestAnimationFrame(update);
+    };
+
     update();
-    window.addEventListener("scroll", update, { passive: true });
-    window.addEventListener("resize", update);
+    window.addEventListener("scroll", schedule, { passive: true });
+    window.addEventListener("resize", schedule, { passive: true });
     return () => {
-      window.removeEventListener("scroll", update);
-      window.removeEventListener("resize", update);
+      if (frame) cancelAnimationFrame(frame);
+      window.removeEventListener("scroll", schedule);
+      window.removeEventListener("resize", schedule);
     };
   }, []);
 
   return (
     <div className="scroll-progress" aria-hidden="true">
-      <div
-        className="scroll-progress-bar"
-        style={{ transform: `scaleX(${progress / 100})` }}
-      />
+      <div className="scroll-progress-bar" ref={barRef} />
     </div>
   );
 };
