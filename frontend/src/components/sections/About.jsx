@@ -6,7 +6,6 @@ const About = () => {
       <div className="container">
         <Reveal>
           <div className="section-header">
-            <span className="section-eyebrow">Who I Am</span>
             <h2 className="section-title">About Me &amp; Education</h2>
             <p className="section-subtitle">
               Half full-stack engineer, half AI/ML. Here&apos;s a quick

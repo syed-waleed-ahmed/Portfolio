@@ -1,6 +1,9 @@
+// icon: a key, not a component - Skills.jsx maps it to an <svg>. Keeps this
+// file free of JSX so it stays pure content.
 export const skillGroups = [
   {
     title: "AI / LLM Engineering",
+    icon: "ai",
     tags: [
       "Multi-Agent Systems",
       "RAG",
@@ -17,6 +20,7 @@ export const skillGroups = [
   },
   {
     title: "ML & Data Science",
+    icon: "ml",
     tags: [
       "PyTorch",
       "TensorFlow",
@@ -32,18 +36,22 @@ export const skillGroups = [
   },
   {
     title: "Languages",
+    icon: "code",
     tags: ["Python", "SQL", "JavaScript", "TypeScript", "C++"],
   },
   {
     title: "Web & Backend",
+    icon: "web",
     tags: ["React", "Next.js", "Node.js", ".NET ASP Core", "REST APIs", "Serverless", "Webhooks", "HTML/CSS"],
   },
   {
     title: "Databases & Messaging",
+    icon: "data",
     tags: ["MySQL", "PostgreSQL", "SQL Server", "MongoDB", "Turso / libSQL", "Redis", "Kafka"],
   },
   {
     title: "Cloud & DevOps",
+    icon: "cloud",
     tags: ["AWS", "Docker", "Kubernetes", "Terraform", "CI/CD", "Git", "Linux", "Vercel", "Upstash QStash", "Twilio", "Jupyter", "VS Code", "Power BI"],
   },
 ];

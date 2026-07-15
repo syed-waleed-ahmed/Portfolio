@@ -6,7 +6,7 @@
   position: fixed;
   inset: 0 0 auto 0;
   z-index: 50;
-  background: linear-gradient(180deg, rgba(10, 14, 26, 0.78) 0%, rgba(10, 14, 26, 0.62) 100%);
+  background: linear-gradient(180deg, rgba(var(--navy-rgb), 0.78) 0%, rgba(var(--navy-rgb), 0.62) 100%);
   backdrop-filter: blur(20px) saturate(140%);
   -webkit-backdrop-filter: blur(20px) saturate(140%);
   border-bottom: 1px solid var(--border-subtle);
@@ -14,7 +14,7 @@
 }
 
 .site-nav.is-scrolled {
-  background: rgba(10, 14, 26, 0.92);
+  background: rgba(var(--navy-rgb), 0.92);
   border-bottom-color: rgba(99, 102, 241, 0.18);
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.32);
 }
@@ -27,34 +27,15 @@
   padding-block: 0.75rem;
 }
 
-/* ========= Brand ========= */
+/* ========= Brand (left) ========= */
 .site-nav-brand {
   display: inline-flex;
   align-items: center;
-  gap: 0.65rem;
   text-decoration: none;
   color: var(--text-strong);
-  font-weight: 600;
-  font-size: 0.92rem;
-  letter-spacing: 0.01em;
-}
-
-.site-nav-brand-mark {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 32px;
-  height: 32px;
-  border-radius: var(--radius-xs);
-  background: var(--gradient-accent);
-  color: var(--text-on-accent);
   font-weight: 700;
-  font-size: 0.78rem;
-  letter-spacing: 0.05em;
-  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.25);
-}
-
-.site-nav-brand-text {
+  font-size: 1.2rem;
+  letter-spacing: 0.01em;
   white-space: nowrap;
 }
 
@@ -62,7 +43,7 @@
 .site-nav-list {
   display: flex;
   align-items: center;
-  gap: 0.25rem;
+  gap: 0.15rem;
   list-style: none;
   padding: 0;
   margin: 0;
@@ -71,11 +52,9 @@
 .site-nav-link {
   position: relative;
   display: inline-block;
-  padding: 0.6rem 0.85rem;
-  font-size: 0.78rem;
+  padding: 0.5rem 0.7rem;
+  font-size: 1.08rem;
   font-weight: 500;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
   color: var(--text-muted);
   text-decoration: none;
   transition: color 0.18s ease;
@@ -157,7 +136,7 @@
     align-items: stretch;
     gap: 0;
     padding: 0.5rem 1rem 1rem;
-    background: rgba(10, 14, 26, 0.96);
+    background: rgba(var(--navy-rgb), 0.96);
     backdrop-filter: blur(20px) saturate(140%);
     -webkit-backdrop-filter: blur(20px) saturate(140%);
     border-bottom: 1px solid var(--border-subtle);
@@ -177,8 +156,7 @@
     display: block;
     padding: 0.85rem 0.85rem;
     border-radius: var(--radius-xs);
-    font-size: 0.85rem;
-    letter-spacing: 0.1em;
+    font-size: 1.14rem;
   }
 
   .site-nav-link:hover,

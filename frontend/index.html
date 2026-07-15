@@ -8,7 +8,7 @@
 
     <!-- Color scheme + theme color -->
     <meta name="color-scheme" content="dark" />
-    <meta name="theme-color" content="#0a0e1a" />
+    <meta name="theme-color" content="#0a192f" />
 
     <!--
       Note: leftover service workers from the old vite-plugin-pwa build are
@@ -44,6 +44,17 @@
     <!-- Backend connection hint (DNS + TCP + TLS warmed before contact form submit) -->
     <link rel="dns-prefetch" href="https://portfolio-backend-kmum.onrender.com" />
     <link rel="preconnect" href="https://portfolio-backend-kmum.onrender.com" crossorigin />
+
+    <!-- Preload the body font: it's needed for the hero headline, and
+         font-display:swap would otherwise flash the fallback first.
+         crossorigin is required even same-origin - font fetches are CORS-mode. -->
+    <link
+      rel="preload"
+      as="font"
+      type="font/woff2"
+      href="/fonts/ntr-latin-400.woff2"
+      crossorigin
+    />
 
     <!-- LCP optimization: preload the hero portrait in its best format -->
     <link

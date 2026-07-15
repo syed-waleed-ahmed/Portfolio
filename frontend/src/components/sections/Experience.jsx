@@ -6,7 +6,6 @@ const Experience = () => {
       <div className="container">
         <Reveal>
           <div className="section-header">
-            <span className="section-eyebrow">Career</span>
             <h2 className="section-title">Professional Experience</h2>
             <p className="section-subtitle">
               Where I&apos;ve worked and what I built while I was there.

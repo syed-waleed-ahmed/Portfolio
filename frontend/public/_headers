@@ -29,6 +29,14 @@
 /assets/*
   Cache-Control: public, max-age=31536000, immutable
 
+# Fonts: also safe to cache forever. The filename encodes family+subset+weight,
+# so a font file's bytes never change - switching typeface means a new file at a
+# new URL. That's the same guarantee /assets/* gets, just versioned by hand
+# rather than by a content hash. (Contrast /images/* below, where the same
+# filename really is reused for new content.)
+/fonts/*
+  Cache-Control: public, max-age=31536000, immutable
+
 # Images: revalidate every visit. Unlike /assets/*, these filenames are stable
 # (Profile.webp stays Profile.webp when the photo changes), so there's no
 # fingerprint to invalidate the cache for us - a max-age here is a window in

@@ -2,7 +2,7 @@
 
 export const personalInfo = {
   name: "Syed Waleed Ahmed",
-  email: "syedwaleedahmed9@gmail.com",
+  shortName: "Waleed", // the name the hero greets with
   resumeUrl:
   "https://drive.google.com/file/d/1gPdW6Rf8X2NBD8h9NTKfysr-8Wx_3NoK/view?usp=sharing",
 };
@@ -10,7 +10,6 @@ export const personalInfo = {
 export const socialLinks = {
   linkedin: "https://www.linkedin.com/in/syed-waleed-ahmed/",
   github: "https://github.com/syed-waleed-ahmed",
-  leetcode: "https://leetcode.com/u/syed-waleed-ahmed/",
 };
 
 export const navLinks = [
@@ -31,13 +30,4 @@ export const sectionIds = [
   "skills",
   "interests",
   "contact",
-];
-
-export const exploreItems = [
-  "Multi-Agent Systems",
-  "Agentic Backends",
-  "RAG Pipelines",
-  "LLM Evaluation",
-  "AI-Driven Automation",
-  "MLOps & Deployment",
 ];

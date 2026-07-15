@@ -7,7 +7,6 @@ const Projects = () => {
       <div className="container">
         <Reveal>
           <div className="section-header">
-            <span className="section-eyebrow">Selected Work</span>
             <h2 className="section-title">Projects</h2>
             <p className="section-subtitle">
               AI/ML projects from work and study. Code I&apos;ve actually

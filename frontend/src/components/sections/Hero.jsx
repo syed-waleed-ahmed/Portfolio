@@ -1,24 +1,7 @@
-import { useEffect, useMemo, useState } from "react";
 import { FaEnvelope, FaFileAlt, FaLinkedinIn, FaGithub } from "react-icons/fa";
-import { personalInfo, socialLinks, exploreItems } from "@/data/portfolio";
+import { personalInfo, socialLinks } from "@/data/portfolio";
 
 const Hero = () => {
-  const [exploreIndex, setExploreIndex] = useState(0);
-
-  useEffect(() => {
-    const mq = window.matchMedia?.("(prefers-reduced-motion: reduce)");
-    if (mq?.matches) return;
-    const id = setInterval(() => {
-      setExploreIndex((i) => (i + 1) % exploreItems.length);
-    }, 2600);
-    return () => clearInterval(id);
-  }, []);
-
-  const currentExplore = useMemo(
-    () => exploreItems[exploreIndex],
-    [exploreIndex]
-  );
-
   const scrollToContact = (e) => {
     e.preventDefault();
     document.getElementById("contact")?.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -30,16 +13,35 @@ const Hero = () => {
       className="hero-gradient hero-wrapper d-flex align-items-center hero-entrance"
     >
       <div className="container position-relative">
-        <div className="hero-orbit hero-orbit-1" />
-        <div className="hero-orbit hero-orbit-2" />
-
         <div className="row align-items-center g-5">
-          <div className="col-lg-7">
-            <div className="hero-slide-left">
-              <span className="hero-role-badge">AI Engineer · Multi-Agent &amp; RAG Systems</span>
+          {/* Photo sits left on desktop, but after the copy once stacked, so the
+              headline still leads on mobile. */}
+          <div className="col-lg-5 order-2 order-lg-1 d-flex justify-content-center justify-content-lg-start">
+            <div className="profile-wrapper hero-photo-wrapper hero-slide-left">
+              <div className="hero-ring">
+                <picture>
+                  <source type="image/avif" srcSet="/images/Profile.avif" />
+                  <source type="image/webp" srcSet="/images/Profile.webp" />
+                  <img
+                    src="/images/Profile.webp"
+                    alt={personalInfo.name}
+                    className="profile-img"
+                    width="300"
+                    height="300"
+                    loading="eager"
+                    fetchPriority="high"
+                    decoding="async"
+                  />
+                </picture>
+              </div>
+            </div>
+          </div>
 
-              <h1 className="fw-bold hero-title mb-3">
-                Hi, I&apos;m <span className="gradient-text">{personalInfo.name}</span>
+          <div className="col-lg-7 order-1 order-lg-2">
+            <div className="hero-slide-right">
+              <h1 className="hero-title mb-4">
+                hi, <span className="gradient-text">{personalInfo.shortName}</span> here.
+                <span className="hero-cursor" aria-hidden="true" />
               </h1>
 
               <p className="hero-lead mb-4">
@@ -52,20 +54,10 @@ const Hero = () => {
                 real team can use every day.
               </p>
 
-              <p className="hero-sub-lead mb-4">
+              <p className="hero-sub-lead mb-5">
                 Master&apos;s in Automation Engineering at the University of
                 Bologna, with an Erasmus semester at the University of Twente.
               </p>
-
-              <div className="d-flex flex-wrap align-items-center gap-2 mb-4 hero-explore-row">
-                <span className="text-muted small">Currently exploring</span>
-                <div className="explore-pill">
-                  <span className="explore-dot" />
-                  <span className="explore-cycle-text" key={currentExplore}>
-                    {currentExplore}
-                  </span>
-                </div>
-              </div>
 
               <div className="hero-cta-row">
                 <a href="#contact" className="hero-cta-primary" onClick={scrollToContact}>
@@ -99,28 +91,6 @@ const Hero = () => {
                 >
                   <FaGithub />
                 </a>
-              </div>
-            </div>
-          </div>
-
-          <div className="col-lg-5 d-flex justify-content-lg-end justify-content-center">
-            <div className="profile-wrapper hero-photo-wrapper hero-slide-right">
-              <div className="hero-ring">
-                <picture>
-                  <source type="image/avif" srcSet="/images/Profile.avif" />
-                  <source type="image/webp" srcSet="/images/Profile.webp" />
-                  <img
-                    src="/images/Profile.webp"
-                    alt={personalInfo.name}
-                    className="profile-img"
-                    width="300"
-                    height="300"
-                    sizes="(max-width: 768px) 240px, 300px"
-                    loading="eager"
-                    fetchPriority="high"
-                    decoding="async"
-                  />
-                </picture>
               </div>
             </div>
           </div>

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   FaUser,
   FaEnvelope,
@@ -24,6 +24,23 @@ const Contact = () => {
   const [submitError, setSubmitError] = useState("");
   const [submitSuccess, setSubmitSuccess] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const messageRef = useRef(null);
+
+  // Grow the message box to fit what's typed. Keyed off the value rather than
+  // the change handler so it also shrinks back when the form resets on send.
+  //
+  // scrollHeight covers content + padding but not the border, and box-sizing is
+  // border-box globally - so assigning it straight to height leaves the content
+  // area a border short and the box scrolls by exactly that much. Add it back.
+  useEffect(() => {
+    const el = messageRef.current;
+    if (!el) return;
+    const cs = window.getComputedStyle(el);
+    const borders =
+      parseFloat(cs.borderTopWidth) + parseFloat(cs.borderBottomWidth);
+    el.style.height = "auto";
+    el.style.height = `${el.scrollHeight + borders}px`;
+  }, [form.message]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -98,7 +115,6 @@ const Contact = () => {
     <div className="container">
       <Reveal>
         <div className="section-header">
-          <span className="section-eyebrow">Get in Touch</span>
           <h2 className="section-title">Contact</h2>
           <p className="section-subtitle">
             Got a role, a question, or an idea? Drop a note. I read every
@@ -173,6 +189,8 @@ const Contact = () => {
                 <textarea
                   id="message"
                   name="message"
+                  ref={messageRef}
+                  rows={1}
                   className={`form-control glass-input contact-message ${errors.message ? "is-invalid" : ""}`}
                   placeholder="Hi Waleed, I came across your portfolio and would like to discuss..."
                   value={form.message}

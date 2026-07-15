@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { navLinks, sectionIds } from "@/data/portfolio";
+import { navLinks, sectionIds, personalInfo } from "@/data/portfolio";
 
 const Navbar = () => {
   const [activeSection, setActiveSection] = useState("top");
@@ -55,28 +55,15 @@ const Navbar = () => {
   return (
     <nav className={`site-nav${scrolled ? " is-scrolled" : ""}`}>
       <div className="site-nav-inner container">
+        {/* Name anchors the left, links sit on the right. */}
         <a
           href="#hero"
           className="site-nav-brand"
           onClick={(e) => handleNavClick(e, "top")}
           aria-label="Home"
         >
-          <span className="site-nav-brand-mark" aria-hidden="true">SW</span>
-          <span className="site-nav-brand-text">Syed Waleed Ahmed</span>
+          {personalInfo.name}
         </a>
-
-        <button
-          type="button"
-          className={`site-nav-toggle${menuOpen ? " is-open" : ""}`}
-          aria-controls="primary-menu"
-          aria-expanded={menuOpen}
-          aria-label="Toggle navigation"
-          onClick={() => setMenuOpen((v) => !v)}
-        >
-          <span className="site-nav-toggle-line" />
-          <span className="site-nav-toggle-line" />
-          <span className="site-nav-toggle-line" />
-        </button>
 
         <ul
           id="primary-menu"
@@ -99,6 +86,19 @@ const Navbar = () => {
             );
           })}
         </ul>
+
+        <button
+          type="button"
+          className={`site-nav-toggle${menuOpen ? " is-open" : ""}`}
+          aria-controls="primary-menu"
+          aria-expanded={menuOpen}
+          aria-label="Toggle navigation"
+          onClick={() => setMenuOpen((v) => !v)}
+        >
+          <span className="site-nav-toggle-line" />
+          <span className="site-nav-toggle-line" />
+          <span className="site-nav-toggle-line" />
+        </button>
       </div>
     </nav>
   );

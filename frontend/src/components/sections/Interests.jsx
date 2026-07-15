@@ -6,7 +6,6 @@ const Interests = () => {
       <div className="container">
         <Reveal>
           <div className="section-header">
-            <span className="section-eyebrow">What&apos;s Next</span>
             <h2 className="section-title">
               Interests &amp; What I&apos;m Looking For
             </h2>
