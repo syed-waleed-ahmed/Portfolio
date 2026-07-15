@@ -7,15 +7,18 @@ updates:
       day: "monday"
       time: "09:00"
     open-pull-requests-limit: 5
-    # Group minor + patch into a single PR. Skip majors entirely —
-    # major bumps can break things and should be reviewed manually,
-    # not opened as auto-PRs.
+    # Group minor + patch into a single PR. Skip majors — a major bump can
+    # break the app and deserves a manual read of the changelog, not an
+    # auto-PR. (Contrast the github-actions block below.)
     groups:
       minor-and-patch:
         update-types: ["minor", "patch"]
     ignore:
       - dependency-name: "*"
         update-types: ["version-update:semver-major"]
+    commit-message:
+      prefix: "chore(deps)"
+      prefix-development: "chore(deps-dev)"
     labels: ["dependencies", "frontend"]
 
   - package-ecosystem: "npm"
@@ -31,13 +34,26 @@ updates:
     ignore:
       - dependency-name: "*"
         update-types: ["version-update:semver-major"]
+    commit-message:
+      prefix: "chore(deps)"
+      prefix-development: "chore(deps-dev)"
     labels: ["dependencies", "backend"]
 
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
-      interval: "monthly"
-    ignore:
-      - dependency-name: "*"
-        update-types: ["version-update:semver-major"]
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+    open-pull-requests-limit: 5
+    # Majors are NOT ignored here, unlike the npm blocks above. An Action's
+    # major is how it ships a new runner (node20 -> node24) or drops a
+    # deprecated input — it's the update you most need, and skipping them is
+    # what left checkout/setup-node three majors behind and gitleaks two.
+    # They're grouped so it stays one PR to review.
+    groups:
+      actions:
+        patterns: ["*"]
+    commit-message:
+      prefix: "chore(ci)"
     labels: ["dependencies", "ci"]

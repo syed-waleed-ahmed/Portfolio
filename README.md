@@ -2,7 +2,7 @@
 
 [![CI](https://github.com/syed-waleed-ahmed/Portfolio/actions/workflows/ci.yml/badge.svg)](https://github.com/syed-waleed-ahmed/Portfolio/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Node](https://img.shields.io/badge/node-%3E%3D20-brightgreen.svg)](.nvmrc)
+[![Node](https://img.shields.io/badge/node-%3E%3D22.13-brightgreen.svg)](.nvmrc)
 [![Live](https://img.shields.io/badge/live-syedwaleedahmed.me-0a7cff.svg)](https://syedwaleedahmed.me/)
 
 A modern, responsive **personal portfolio website** built with **React 19 + Vite** on the frontend and **Node.js + Express** on the backend.
@@ -26,8 +26,8 @@ Designed with a focus on **performance**, **accessibility**, **security**, and *
 - **Automated tests** -- backend API tests via Node's built-in runner (`npm test`, no extra deps); importing the app also verifies every module loads
 - **API test suite** -- Postman collection with happy-path + validation + body-cap + rate-limit + 404 tests (see [`postman/`](postman/))
 - **CI/CD** -- GitHub Actions runs lint, build, backend tests, `npm audit`, and gitleaks secret scan on every push and PR
-- **Auto dependency updates** -- Dependabot opens grouped weekly PRs for minor + patch upgrades (majors are manual)
-- **Pinned Node version** -- `.nvmrc`, `netlify.toml`, and `engines` field keep Netlify, CI, and local installs aligned
+- **Auto dependency updates** -- Dependabot opens grouped weekly PRs: minor + patch for npm (majors are manual), and *all* updates for GitHub Actions, majors included
+- **Pinned Node version** -- `.nvmrc` is the single source of truth; CI reads it via `node-version-file`, and `netlify.toml` + `engines` are kept in step
 - **SEO-ready** -- canonical URL, `Person` + `WebSite` + `ProfilePage` JSON-LD schemas, OG + Twitter cards, `noscript` fallback, sitemap (+image), robots.txt, humans.txt
 - **Content Security Policy** -- Netlify `_headers` with strict CSP and friends
 - **Print-friendly** -- dedicated print stylesheet
@@ -167,13 +167,13 @@ expanded `::after` would not count).
 - PurgeCSS in production trims unused Bootstrap utilities to ~9 KB gzipped
 
 ### Backend
-- Node.js 20, Express 4 (ESM)
+- Node.js 24, Express 4 (ESM)
 - **Layered structure**: `config/` (env parsing + validation) → `routes/` (validation + rate limit) → `services/` (Resend delivery + email template), so `server.js` stays thin
 - Resend for transactional email, with a branded HTML + plain-text template
 - **Security**: Helmet (CSP / X-Frame-Options / no-sniff / etc.), `express-rate-limit` (5 req / 15 min / IP), 16 KB JSON body cap, trust-proxy=1, silent CORS reject (no leaky 500s), centralized error handler, graceful SIGTERM shutdown
 
 ### Deployment
-- Frontend: **Netlify** (syedwaleedahmed.me) -- `netlify.toml` pins `NODE_VERSION=20`
+- Frontend: **Netlify** (syedwaleedahmed.me) -- `netlify.toml` pins `NODE_VERSION=24`
 - Backend: **Render**
 
 ### CI / CD
@@ -182,7 +182,12 @@ expanded `::after` would not count).
   - Backend job: `npm ci` -> `npm test` (Node's built-in runner; also proves every module imports cleanly) -> `npm audit --omit=dev --audit-level=high`
   - Secret-scan job: `gitleaks` over full git history
   - Concurrency-cancelled to avoid stale runs
-- **Dependabot** (`.github/dependabot.yml`): grouped weekly minor+patch PRs for `frontend/` and `backend/`, monthly GitHub Actions updates. Major-version bumps are ignored (manual review only).
+  - `permissions: contents: read` at workflow level (least privilege)
+  - Node comes from `node-version-file: .nvmrc`, never a hardcoded number, so CI can't drift from local
+  - The build runs with `NODE_ENV=production`. That's load-bearing: `postcss.config.js` gates PurgeCSS on it, so without it the CSS ships all of Bootstrap
+- **Dependabot** (`.github/dependabot.yml`): grouped weekly PRs for `frontend/`, `backend/` and GitHub Actions.
+  - **npm**: minor + patch only. A major can break the app and deserves a manual read of the changelog.
+  - **GitHub Actions**: majors *included*, grouped into one PR. An Action's major is how it ships a new runner or drops a deprecated input -- it's the update you most need. Ignoring them is what previously left `checkout`/`setup-node` three majors behind and `gitleaks-action` two.
 
 ---
 
@@ -282,7 +287,7 @@ portfolio/
 +-- .gitattributes                        # Normalized line endings, binary detection
 +-- .gitignore
 +-- .npmrc                                # Strict engine enforcement
-+-- .nvmrc                                # Node 20
++-- .nvmrc                                # Node 24 (Active LTS) - CI reads this file
 +-- LICENSE                               # MIT
 +-- netlify.toml                          # Pins NODE_VERSION on Netlify
 +-- package.json                          # Root scripts: install:all, dev:*, build, lint
@@ -369,7 +374,7 @@ deliverables are tracked.
 
 ## Local Setup
 
-Requires **Node.js 20+** (use [nvm](https://github.com/nvm-sh/nvm): `nvm use`).
+Requires **Node.js 22.13+** (24 recommended - use [nvm](https://github.com/nvm-sh/nvm): `nvm use`).
 
 ### 1. Clone
 
