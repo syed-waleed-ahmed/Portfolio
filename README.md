@@ -14,9 +14,9 @@ Designed with a focus on **performance**, **accessibility**, **security**, and *
 
 ## Highlights
 
-- **Lean bundle** -- no animation library, no PWA shell, no Bootstrap JS. ~10 KB CSS gzipped, ~70 KB JS gzipped after code-splitting
-- **Fast build & delivery** -- Vite, code-splitting, lazy-mounted sections (`content-visibility: auto`)
-- **Modern UI** -- glassmorphism cards, gradient accents, monospace HUD-style section labels, top-of-page scroll progress bar
+- **Lean bundle** -- no animation library, no PWA shell, no Bootstrap JS. ~9 KB CSS gzipped, ~69 KB JS gzipped after code-splitting
+- **Fast build & delivery** -- Vite, code-splitting, sections code-split and mounted on `requestIdleCallback` after first paint
+- **Modern UI** -- flat navy surfaces, gradient accent on headings, subject icons on skill groups, top-of-page scroll progress bar
 - **Hand-rolled animations** -- vanilla `IntersectionObserver` reveal hook + CSS keyframes (no `framer-motion`, no `tsparticles`)
 - **Custom navbar** -- own collapse logic, no Bootstrap JS dependency
 - **Accessibility** -- skip-to-content link, focus-visible rings, semantic landmarks, `prefers-reduced-motion` honored
@@ -41,13 +41,85 @@ Designed with a focus on **performance**, **accessibility**, **security**, and *
 
 | Section | Description |
 |---------|-------------|
-| Hero | Animated intro, role badge, rotating "currently exploring" pill, primary CTAs + LinkedIn / GitHub icon links |
+| Hero | Portrait, animated intro, headline with blinking caret, lead copy, outlined CTAs + resume + LinkedIn / GitHub icon links |
 | About | Background summary + education timeline |
 | Experience | Work history cards (MemorAIz thesis, Fruugle internship, Jubilee trainee) |
 | Projects | Featured AI/ML and academic projects with tech tags + GitHub links |
-| Skills | Bento-style tag groups across AI/LLM, ML, Languages, Web, Databases, Tools |
+| Skills | Bento-style tag groups across AI/LLM, ML, Languages, Web, Databases, Tools, each with a subject icon |
 | Interests | What I'm looking for next + topics I'm exploring |
-| Contact | Contact form (name, email, subject, message) with email delivery via Resend |
+| Contact | Contact form (name, email, subject, message) with an auto-growing message field, and email delivery via Resend |
+
+---
+
+## Design
+
+Every colour is a token in `:root` (`frontend/src/styles/base.css`). The page
+background is flat top to bottom -- no gradients, no glows -- and cards are
+defined purely by sitting a shade lighter than it.
+
+| Token | Value | Use |
+|-------|-------|-----|
+| `--bg-main` | `#0a192f` | Page background, uniform throughout |
+| `--bg-card` | `#112240` | Raised blocks -- cards, panels, inputs |
+| `--bg-card-hover` | `#233554` | Card hover |
+| `--accent` | `#6366f1` | Indigo -- gradient start, timeline dots |
+| `--accent-2` | `#22d3ee` | Cyan -- outlined CTAs, card headings, focus |
+| `--gradient-accent` | indigo → cyan | Accented type, logo mark, progress bar |
+
+Two rules keep it consistent:
+
+1. **Translucent surfaces compose from the palette**, never from a separate
+   hardcoded colour: `rgba(var(--light-navy-rgb), 0.5)`, not `rgba(15, 23, 42, 0.5)`.
+   `--navy-rgb` / `--light-navy-rgb` hold the raw triplets for exactly this.
+2. **Two files inline the palette by hand** and can't read the tokens, so they
+   need updating in step:
+   - `frontend/public/404.html` -- standalone page, no bundled CSS
+   - `frontend/public/apple-touch-icon.png` -- `--bg-main` is baked in, since
+     iOS composites transparent icons onto white
+
+`<meta name="theme-color">` in `index.html` and `404.html` also tracks `--bg-main`.
+
+### Typography
+
+**NTR** (self-hosted, latin subset only, ~12 KB) with a `system-ui` fallback.
+It's served from `public/fonts/` rather than Google Fonts, so the CSP stays at
+`font-src 'self'` and there's no third-party request on the critical path.
+`index.html` preloads it, since the hero headline would otherwise flash the
+fallback under `font-display: swap`.
+
+`404.html` redeclares the same `@font-face` because it can't reach the bundled
+CSS -- it points at the same file, so there's still one copy.
+
+**NTR ships a single 400 weight.** Anything heavier (`fw-bold`, `.hero-title
+.gradient-text`, headings) is synthesised by the browser rather than a real
+bold cut.
+
+A second `@font-face` (`NTR Fallback`) exists purely to stop layout shift.
+Because every size is tuned to NTR's small x-height, the fallback that paints
+first under `font-display: swap` would draw them ~20% too large and reflow the
+page on swap. `size-adjust: 79.8%` matches the fallback to NTR's x-height --
+the best single fit across Segoe UI, SF, Roboto and Arial -- leaving under 3%
+residual. If no `local()` matches, the face is skipped and the stack falls
+through to plain `system-ui`.
+
+#### Why the font sizes look large
+
+NTR's x-height is **0.412 em** against ~0.50 for Segoe UI and system-ui
+generally, so it renders roughly **20% smaller** than those at the same
+`font-size`. Every text size is therefore scaled **1.2x** from a
+system-font-normalised baseline: body copy is `1.26rem` (~20px), the hero
+headline tops out at `5rem` (80px). Those land on the same optical size the
+old system-font stack produced, and independently match what the reference
+design uses with the same face.
+
+If the typeface ever changes, rescale by the x-height ratio rather than
+copying these numbers across.
+
+**`font-size` on icon containers is not part of that scale.** `react-icons`
+renders SVGs sized in `em`, so `font-size` there controls a glyph, not NTR
+text - `.hero-cta-icon`, `.card-heading-icon`, `.project-link-icon`,
+`.btn-icon`, `.contact-label-icon` and `.scroll-top-btn` stay at their
+unscaled values.
 
 ---
 
@@ -57,9 +129,9 @@ Designed with a focus on **performance**, **accessibility**, **security**, and *
 - React 19, Vite 7, Bootstrap 5 (CSS only -- no Bootstrap JS)
 - `react-icons` for the icon set
 - Vanilla `IntersectionObserver` for scroll-reveal -- no animation library
-- CSS keyframes for hero entrance and "explore" pill cycle
+- CSS keyframes for the hero entrance and the headline caret blink
 - AVIF / WebP profile image with `<picture>` + `fetchpriority="high"`
-- PurgeCSS in production trims unused Bootstrap utilities to ~10 KB gzipped
+- PurgeCSS in production trims unused Bootstrap utilities to ~9 KB gzipped
 
 ### Backend
 - Node.js 20, Express 4 (ESM)
@@ -92,6 +164,8 @@ portfolio/
 |   +-- PULL_REQUEST_TEMPLATE.md          # PR checklist
 +-- frontend/
 |   +-- public/
+|   |   +-- fonts/
+|   |   |   +-- ntr-latin-400.woff2       # Self-hosted body font (see Design section)
 |   |   +-- images/
 |   |   |   +-- Profile.avif
 |   |   |   +-- Profile.webp
@@ -191,7 +265,8 @@ Cache rules live in `frontend/public/_headers` (Netlify edge headers):
 | `/`, `/index.html`, `/404.html` | `max-age=0, must-revalidate` | A deploy is visible on the next browser visit -- never serve stale HTML |
 | `/sw.js` | `max-age=0, must-revalidate` | Kill-switch SW (see below) needs to reach users without a 24 h delay |
 | `/assets/*` | `max-age=31536000, immutable` | Filenames are content-hashed by Vite -- 1-year cache is correct |
-| `/images/*` | `max-age=86400` | 1-day cache -- swap a portrait and it propagates within a day |
+| `/fonts/*` | `max-age=31536000, immutable` | Filename encodes family+subset+weight, so the bytes never change -- a new typeface means a new file at a new URL |
+| `/images/*` | `max-age=0, must-revalidate` | Unlike `/assets/*`, these filenames are stable -- a `max-age` here would keep serving an old portrait after a swap |
 
 ### Stale service worker recovery
 
@@ -249,7 +324,7 @@ A machine-generated knowledge graph of the whole project (code + docs) lives in
 | `GRAPH_REPORT.md` | Plain-language audit: communities, hub nodes, knowledge gaps |
 | `graph.json` | Raw graph data (GraphRAG-ready) |
 
-120 nodes across 39 communities (Contact Form Request Pipeline, Backend
+116 nodes across 34 communities (Contact Form Request Pipeline, Backend
 Security Hardening Stack, SEO & Structured Data Layer, …). Regenerable
 working state (cache, manifest, cost) is gitignored - only the three
 deliverables are tracked.
