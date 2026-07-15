@@ -381,6 +381,56 @@
 					"response": []
 				},
 				{
+					"name": "POST /api/contact — honeypot tripped",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"// Answers exactly like a real send, on purpose: a bot that could tell",
+									"// rejection from success would just retry without the field.",
+									"pm.test('status is 200', () => pm.response.to.have.status(200));",
+									"pm.test('looks like a normal success', () => {",
+									"  const json = pm.response.json();",
+									"  pm.expect(json.success).to.eql(true);",
+									"});",
+									"// Nothing was actually sent. Against a configured backend a real send",
+									"// returns an `id` from Resend; a dropped one has none.",
+									"pm.test('no mail id — message was dropped', () => {",
+									"  pm.expect(pm.response.json().id).to.be.undefined;",
+									"});"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Spam Bot\",\n  \"email\": \"bot@example.com\",\n  \"subject\": \"Buy things\",\n  \"message\": \"Spam body.\",\n  \"website\": \"http://spam.example.com\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/contact",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"contact"
+							]
+						},
+						"description": "Fills the hidden `website` honeypot field. The backend drops the submission without sending, but answers with the same 200 a real send gets so a bot cannot detect the trap. Safe to run against production - no email is sent. Note it DOES consume rate-limit quota, since the check runs inside the router, after the limiter."
+					},
+					"response": []
+				},
+				{
 					"name": "POST /api/contact — rate limit triggered",
 					"event": [
 						{
