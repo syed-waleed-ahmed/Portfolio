@@ -360,7 +360,7 @@ A machine-generated knowledge graph of the whole project (code + docs) lives in
 | `GRAPH_REPORT.md` | Plain-language audit: communities, hub nodes, knowledge gaps |
 | `graph.json` | Raw graph data (GraphRAG-ready) |
 
-116 nodes across 34 communities (Contact Form Request Pipeline, Backend
+118 nodes across 35 communities (Contact Form Request Pipeline, Backend
 Security Hardening Stack, SEO & Structured Data Layer, …). Regenerable
 working state (cache, manifest, cost) is gitignored - only the three
 deliverables are tracked.
