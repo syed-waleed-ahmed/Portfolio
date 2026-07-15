@@ -426,7 +426,7 @@ Two layers:
 - **Automated** - backend API tests run with `npm test` (from the repo root or `backend/`). They use Node's built-in test runner (`node --test`), spin the app up on an ephemeral port, and assert validation, health, and 404 behavior without sending real email. CI runs them on every push/PR.
 - **Manual / live** - a ready-to-import Postman collection in [`postman/`](postman/):
 
-- **`Portfolio-API.postman_collection.json`** -- one request per endpoint plus negative cases (missing fields, invalid email, oversized payload, rate-limit, 404, wrong method). Every request has a `pm.test()` script that asserts status code and response shape.
+- **`Portfolio-API.postman_collection.json`** -- one request per endpoint plus negative cases (missing fields, invalid email, over-length field, 16 KB body cap, rate-limit, 404, wrong method). Every request has a `pm.test()` script that asserts status code and response shape.
 - **`Portfolio-API.postman_environment.json`** -- `{{baseUrl}}` for local dev (`http://localhost:5000`).
 - **`Portfolio-API.postman_environment.production.json`** -- `{{baseUrl}}` for the **live backend** on Render.
 

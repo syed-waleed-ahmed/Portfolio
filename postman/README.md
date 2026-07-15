@@ -34,7 +34,8 @@ The backend is on Render's free tier, so the first request after idle may take
 - `GET /` - root health probe
 - `GET /health` - health check with timestamp
 - `POST /api/contact` - contact form (validation, rate limit, Resend email)
-- Negative cases: 404 catch-all, wrong HTTP method, invalid payloads
+- Negative cases: 404 catch-all, wrong HTTP method, invalid payloads, and the
+  16 KB body cap
 
 ## Usage
 
@@ -62,5 +63,6 @@ environment-specific values.
 ## Notes
 
 - The contact endpoint is rate-limited (5 requests / 15 min / IP). The **"Rate limit triggered"** request is designed to be run 6+ times in the Runner to verify the 429 path.
+- **"Field too long"** and **"Payload too large"** are different paths, despite the similar names. The first sends a 101-char name against the 100-char cap and gets a **400** from route validation. The second sends a ~20 KB body against `express.json({ limit: "16kb" })` and gets a **413** from the body parser - which is registered before the router, so it rejects ahead of the rate limiter and costs no quota. That makes it safe to run against production.
 - Happy-path POST returns **200** when the email sends. If the mailer is unconfigured (missing `RESEND_API_KEY` / `EMAIL_FROM` / `EMAIL_TO`) it returns **503**; if Resend accepts the request but rejects the send it returns **502**. The test script accepts all three.
 - All tests use Postman's built-in `pm.test()` / Chai assertions - no external runner needed.

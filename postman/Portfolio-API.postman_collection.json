@@ -32,8 +32,12 @@
 						"header": [],
 						"url": {
 							"raw": "{{baseUrl}}/",
-							"host": ["{{baseUrl}}"],
-							"path": [""]
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								""
+							]
 						},
 						"description": "Root probe. Returns `{ status: 'ok', message: 'Portfolio backend is running' }`."
 					},
@@ -62,8 +66,12 @@
 						"header": [],
 						"url": {
 							"raw": "{{baseUrl}}/health",
-							"host": ["{{baseUrl}}"],
-							"path": ["health"]
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"health"
+							]
 						},
 						"description": "Health check with current server time. Useful for uptime monitors."
 					},
@@ -105,7 +113,10 @@
 					"request": {
 						"method": "POST",
 						"header": [
-							{ "key": "Content-Type", "value": "application/json" }
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
 						],
 						"body": {
 							"mode": "raw",
@@ -113,8 +124,13 @@
 						},
 						"url": {
 							"raw": "{{baseUrl}}/api/contact",
-							"host": ["{{baseUrl}}"],
-							"path": ["api", "contact"]
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"contact"
+							]
 						},
 						"description": "Submit a valid contact form payload. Returns 200 when the email sends, 503 if the mailer is unconfigured (missing Resend env vars), or 502 if Resend rejects the send."
 					},
@@ -141,7 +157,10 @@
 					"request": {
 						"method": "POST",
 						"header": [
-							{ "key": "Content-Type", "value": "application/json" }
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
 						],
 						"body": {
 							"mode": "raw",
@@ -149,8 +168,13 @@
 						},
 						"url": {
 							"raw": "{{baseUrl}}/api/contact",
-							"host": ["{{baseUrl}}"],
-							"path": ["api", "contact"]
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"contact"
+							]
 						},
 						"description": "Omits the `name` field. Backend should reject with 400 'Missing required field'."
 					},
@@ -177,7 +201,10 @@
 					"request": {
 						"method": "POST",
 						"header": [
-							{ "key": "Content-Type", "value": "application/json" }
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
 						],
 						"body": {
 							"mode": "raw",
@@ -185,8 +212,13 @@
 						},
 						"url": {
 							"raw": "{{baseUrl}}/api/contact",
-							"host": ["{{baseUrl}}"],
-							"path": ["api", "contact"]
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"contact"
+							]
 						},
 						"description": "Sends a malformed email. Backend regex should reject with 400 'Invalid email address'."
 					},
@@ -223,7 +255,10 @@
 					"request": {
 						"method": "POST",
 						"header": [
-							{ "key": "Content-Type", "value": "application/json" }
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
 						],
 						"body": {
 							"mode": "raw",
@@ -231,8 +266,13 @@
 						},
 						"url": {
 							"raw": "{{baseUrl}}/api/contact",
-							"host": ["{{baseUrl}}"],
-							"path": ["api", "contact"]
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"contact"
+							]
 						},
 						"description": "Sends a 101-character name (max is 100). Backend should reject with 400 'Field \"name\" is too long'."
 					},
@@ -258,7 +298,10 @@
 					"request": {
 						"method": "POST",
 						"header": [
-							{ "key": "Content-Type", "value": "application/json" }
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
 						],
 						"body": {
 							"mode": "raw",
@@ -266,10 +309,74 @@
 						},
 						"url": {
 							"raw": "{{baseUrl}}/api/contact",
-							"host": ["{{baseUrl}}"],
-							"path": ["api", "contact"]
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"contact"
+							]
 						},
 						"description": "Sends an empty JSON object. First missing field should trigger 400."
+					},
+					"response": []
+				},
+				{
+					"name": "POST /api/contact — payload too large",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('status is 413', () => pm.response.to.have.status(413));",
+									"pm.test('returns payload-too-large error', () => {",
+									"  const json = pm.response.json();",
+									"  pm.expect(json.success).to.eql(false);",
+									"  pm.expect(json.error).to.match(/payload too large/i);",
+									"});",
+									"// express.json() is registered before the router, so the body is",
+									"// rejected ahead of the rate limiter - this request costs no quota.",
+									"pm.test('did not consume rate-limit quota', () => {",
+									"  pm.expect(pm.response.headers.has('RateLimit-Remaining')).to.eql(false);",
+									"});"
+								]
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"// Body cap is express.json({ limit: '16kb' }). Overshoot it clearly.",
+									"pm.variables.set('oversizedMessage', 'a'.repeat(20000));"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Postman Tester\",\n  \"email\": \"tester@example.com\",\n  \"subject\": \"Oversized body\",\n  \"message\": \"{{oversizedMessage}}\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/contact",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"contact"
+							]
+						},
+						"description": "Sends a ~20 KB JSON body against the 16 KB cap (express.json({ limit: '16kb' })). Backend should reject with 413 'Payload too large.' before the router runs, so it does not consume rate-limit quota. Distinct from 'field too long', which is the 100-char name validation and returns 400."
 					},
 					"response": []
 				},
@@ -300,7 +407,10 @@
 					"request": {
 						"method": "POST",
 						"header": [
-							{ "key": "Content-Type", "value": "application/json" }
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
 						],
 						"body": {
 							"mode": "raw",
@@ -308,8 +418,13 @@
 						},
 						"url": {
 							"raw": "{{baseUrl}}/api/contact",
-							"host": ["{{baseUrl}}"],
-							"path": ["api", "contact"]
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"contact"
+							]
 						},
 						"description": "To trigger the limiter, open Runner, select this request, set Iterations = 6+, and run. The 6th call should return 429 with `RateLimit-*` headers."
 					},
@@ -343,8 +458,13 @@
 						"header": [],
 						"url": {
 							"raw": "{{baseUrl}}/api/unknown",
-							"host": ["{{baseUrl}}"],
-							"path": ["api", "unknown"]
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"unknown"
+							]
 						},
 						"description": "Hits an unmapped path. The catch-all 404 handler should respond with `{ success: false, error: 'Not found.' }`."
 					},
@@ -370,8 +490,13 @@
 						"header": [],
 						"url": {
 							"raw": "{{baseUrl}}/api/contact",
-							"host": ["{{baseUrl}}"],
-							"path": ["api", "contact"]
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"contact"
+							]
 						},
 						"description": "Express only registers POST on /api/contact, so GET falls through to the 404 handler."
 					},
