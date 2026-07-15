@@ -228,6 +228,10 @@
   overflow: hidden;
 }
 
+/* The file is already cropped square to the framing that object-position:
+   center 20% used to produce, so no offset is needed here. object-fit and
+   aspect-ratio stay as guards: they keep the box square, and reserve its
+   space, if the image is ever swapped for a non-square one. */
 .profile-img {
   border-radius: 50%;
   display: block;
@@ -235,7 +239,6 @@
   max-width: 340px;
   aspect-ratio: 1 / 1;
   object-fit: cover;
-  object-position: center 20%;
 }
 
 /* ========= Hero responsive ========= */

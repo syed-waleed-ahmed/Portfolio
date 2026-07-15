@@ -26,8 +26,8 @@ const Hero = () => {
                     src="/images/Profile.webp"
                     alt={personalInfo.name}
                     className="profile-img"
-                    width="300"
-                    height="300"
+                    width="680"
+                    height="680"
                     loading="eager"
                     fetchPriority="high"
                     decoding="async"
