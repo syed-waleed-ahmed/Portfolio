@@ -60,7 +60,7 @@ const Hero = () => {
               </p>
 
               <div className="hero-cta-row">
-                <a href="#contact" className="hero-cta-primary" onClick={scrollToContact}>
+                <a href="#contact" className="btn-outlined btn-outlined--accent" onClick={scrollToContact}>
                   <FaEnvelope />
                   Let&apos;s connect
                 </a>
@@ -68,7 +68,7 @@ const Hero = () => {
                   href={personalInfo.resumeUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="hero-cta-secondary"
+                  className="btn-outlined"
                 >
                   <FaFileAlt />
                   View Resume
@@ -77,7 +77,7 @@ const Hero = () => {
                   href={socialLinks.linkedin}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="hero-cta-icon"
+                  className="btn-outlined btn-outlined--icon"
                   aria-label="LinkedIn"
                 >
                   <FaLinkedinIn />
@@ -86,7 +86,7 @@ const Hero = () => {
                   href={socialLinks.github}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="hero-cta-icon"
+                  className="btn-outlined btn-outlined--icon"
                   aria-label="GitHub"
                 >
                   <FaGithub />

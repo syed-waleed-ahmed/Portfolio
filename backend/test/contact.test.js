@@ -74,6 +74,50 @@ test("POST /api/contact rejects an over-length field with 400", async () => {
   assert.equal(res.status, 400);
 });
 
+test("POST /api/contact rejects a body over the 16kb cap with 413", async () => {
+  const res = await postContact({
+    name: "Jane",
+    email: "jane@example.com",
+    subject: "Oversized",
+    // Comfortably past express.json({ limit: "16kb" }) in server.js.
+    message: "a".repeat(20000),
+  });
+  assert.equal(res.status, 413);
+  const json = await res.json();
+  assert.equal(json.success, false);
+  assert.match(json.error, /payload too large/i);
+  // express.json runs before the router, so this never reaches the limiter.
+  assert.equal(res.headers.has("ratelimit-remaining"), false);
+});
+
+test("POST /api/contact silently drops a submission that trips the honeypot", async () => {
+  const res = await postContact({
+    name: "Spam Bot",
+    email: "bot@example.com",
+    subject: "Buy things",
+    message: "Spam body.",
+    website: "http://spam.example.com",
+  });
+  // Answers like a real send so a bot can't detect the trap. Nothing is sent -
+  // if it had reached the mailer this would be 502/503 here, since the suite
+  // runs without Resend configured.
+  assert.equal(res.status, 200);
+  const json = await res.json();
+  assert.equal(json.success, true);
+});
+
+test("POST /api/contact ignores an empty honeypot field", async () => {
+  const res = await postContact({
+    name: "",
+    email: "",
+    subject: "",
+    message: "",
+    website: "",
+  });
+  // Empty honeypot must not short-circuit: this should still fail validation.
+  assert.equal(res.status, 400);
+});
+
 test("unknown route returns 404", async () => {
   const res = await fetch(`${baseUrl}/does-not-exist`);
   assert.equal(res.status, 404);

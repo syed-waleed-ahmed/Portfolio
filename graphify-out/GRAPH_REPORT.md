@@ -1,7 +1,7 @@
 # Graph Report - D:\portfolio  (2026-07-15)
 
 ## Corpus Check
-- 31 files · ~25,315 words
+- 31 files · ~29,265 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
@@ -215,7 +215,7 @@ Nodes (0):
 ## Knowledge Gaps
 - **17 isolated node(s):** `Responsible Disclosure Process`, `Safe-harbor Terms`, `sitemap.xml`, `Portfolio-API Postman Collection`, `Postman Local Environment` (+12 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **Thin community `Community 9`** (2 nodes): `contactRoutes.js`, `validateContact()`
+- **Thin community `Community 9`** (2 nodes): `validateContact()`, `contactRoutes.js`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
 - **Thin community `Community 10`** (2 nodes): `postContact()`, `contact.test.js`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.

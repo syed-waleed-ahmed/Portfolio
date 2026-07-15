@@ -21,7 +21,7 @@ export default class ErrorBoundary extends Component {
           <div className="text-center py-5 text-muted">
             <p>Something went wrong loading this section.</p>
             <button
-              className="btn btn-sm btn-outline-light"
+              className="btn-outlined"
               onClick={() => this.setState({ hasError: false })}
             >
               Try again

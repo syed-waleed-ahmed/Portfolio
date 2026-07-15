@@ -318,6 +318,23 @@
 }
 
 /* ========= Contact ========= */
+
+/* Honeypot. Deliberately NOT display:none or visibility:hidden - bots skip
+   fields the browser reports as hidden, which is exactly the ones we want
+   them to fill. This keeps it rendered and hit-testable but off-screen. */
+.honeypot {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  border: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  pointer-events: none;
+}
+
 .contact-card {
   padding: 2.5rem !important;
 }
@@ -345,35 +362,9 @@
   opacity: 0.95;
 }
 
-/* Outlined, matching .hero-cta-primary - the site has no filled gradient
-   buttons. */
-.contact-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.55rem;
-  padding: 0.8rem 2.1rem;
-  border-radius: var(--radius-xs);
-  border: 1px solid var(--accent-2);
-  background: transparent;
-  color: var(--accent-2);
-  font-weight: 600;
-  font-size: 1.1rem;
-  letter-spacing: 0.03em;
-  cursor: pointer;
-  transition: transform 0.2s ease, background 0.2s ease, opacity 0.2s ease;
-}
-
-.contact-btn:hover:not(:disabled) {
-  transform: translateY(-2px);
-  background: rgba(34, 211, 238, 0.09);
-}
-
-.contact-btn:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-.contact-btn .btn-icon {
+/* The submit button itself is .btn-outlined (base.css); this only sizes its
+   icon, which is an SVG and so stays off the type scale. */
+.btn-icon {
   font-size: 1rem;
 }
 

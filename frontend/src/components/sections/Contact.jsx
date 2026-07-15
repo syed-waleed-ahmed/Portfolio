@@ -13,6 +13,8 @@ const initialState = {
   email: "",
   subject: "",
   message: "",
+  // Honeypot - hidden from people, bots fill it. See contactRoutes.js.
+  website: "",
 };
 
 const API_BASE_URL =
@@ -126,6 +128,22 @@ const Contact = () => {
       <Reveal delay={0.08}>
         <div className="neo-card contact-card">
           <form noValidate onSubmit={handleSubmit}>
+            {/* Honeypot. Hidden from sight, from screen readers and from the
+                tab order, so no real person can fill it in - but it's a plain
+                input in the DOM, which is all a bot looks at. */}
+            <div className="honeypot" aria-hidden="true">
+              <label htmlFor="website">Website</label>
+              <input
+                id="website"
+                name="website"
+                type="text"
+                tabIndex={-1}
+                autoComplete="off"
+                value={form.website}
+                onChange={handleChange}
+              />
+            </div>
+
             <div className="row g-4">
               <div className="col-md-6">
                 <label className="contact-label mb-2" htmlFor="name">
@@ -201,7 +219,7 @@ const Contact = () => {
             </div>
 
             <div className="d-flex flex-wrap align-items-center gap-3 mt-4">
-              <button type="submit" className="contact-btn" disabled={isSubmitting}>
+              <button type="submit" className="btn-outlined btn-outlined--accent" disabled={isSubmitting}>
                 <FaPaperPlane className="btn-icon" />
                 {isSubmitting ? "Sending..." : "Send Message"}
               </button>

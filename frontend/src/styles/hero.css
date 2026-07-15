@@ -127,83 +127,11 @@
   }
 }
 
-/* ========= CTA buttons =========
-   Outlined rather than filled: transparent ground, accent border and label,
-   tinting on hover. */
 .hero-cta-row {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   gap: 0.75rem;
-}
-
-.hero-cta-primary {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.55rem;
-  padding: 0.78rem 1.5rem;
-  border-radius: var(--radius-xs);
-  border: 1px solid var(--accent-2);
-  background: transparent;
-  color: var(--accent-2);
-  font-weight: 600;
-  font-size: 1.08rem;
-  letter-spacing: 0.02em;
-  text-decoration: none;
-  cursor: pointer;
-  transition: transform 0.2s ease, background 0.2s ease;
-}
-
-.hero-cta-primary:hover {
-  transform: translateY(-2px);
-  background: rgba(34, 211, 238, 0.09);
-  color: var(--accent-2);
-}
-
-.hero-cta-secondary {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.55rem;
-  padding: 0.78rem 1.5rem;
-  border-radius: var(--radius-xs);
-  border: 1px solid var(--border-default);
-  background: transparent;
-  color: var(--text-main);
-  font-weight: 500;
-  font-size: 1.08rem;
-  letter-spacing: 0.02em;
-  text-decoration: none;
-  cursor: pointer;
-  transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease, color 0.2s ease;
-}
-
-.hero-cta-secondary:hover {
-  transform: translateY(-2px);
-  border-color: var(--accent-2);
-  background: rgba(34, 211, 238, 0.06);
-  color: var(--accent-2);
-}
-
-.hero-cta-icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 44px;
-  height: 44px;
-  border-radius: var(--radius-xs);
-  border: 1px solid var(--border-default);
-  background: transparent;
-  color: var(--text-muted);
-  font-size: 1rem;
-  text-decoration: none;
-  transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease, color 0.2s ease;
-}
-
-.hero-cta-icon:hover {
-  transform: translateY(-2px);
-  border-color: var(--accent-2);
-  background: rgba(34, 211, 238, 0.06);
-  color: var(--accent-2);
 }
 
 /* ========= Profile photo =========

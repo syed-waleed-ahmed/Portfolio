@@ -19,6 +19,11 @@ const FIELDS = {
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
+// Honeypot: a field the form hides from people but bots tend to fill. Named
+// something a scraper would want to autofill rather than anything suggesting a
+// trap. Must match the input name in Contact.jsx.
+const HONEYPOT_FIELD = "website";
+
 // 5 submissions per IP per 15 min. Keyed on the real client IP thanks to
 // `trust proxy` in server.js.
 const contactLimiter = rateLimit({
@@ -46,6 +51,14 @@ function validateContact(body = {}) {
 }
 
 router.post("/", contactLimiter, async (req, res, next) => {
+  // Checked before validation, and answered with the same 200 a real send
+  // gets: a bot that could tell rejection from success would just retry
+  // without the field. Nothing is sent and nothing is logged as an error.
+  if (typeof req.body?.[HONEYPOT_FIELD] === "string" && req.body[HONEYPOT_FIELD].trim()) {
+    console.warn("[contact] honeypot tripped - dropping submission");
+    return res.json({ success: true, message: "Message sent successfully." });
+  }
+
   const { values, error } = validateContact(req.body);
   if (error) return res.status(400).json({ success: false, error });
 

@@ -292,6 +292,80 @@ small,
   color: var(--text-muted) !important;
 }
 
+/* ========= Buttons =========
+   One outlined button for the whole site - hero CTAs, the contact submit and
+   the error-boundary retry all render from this, so they can't drift apart.
+   There are no filled buttons; --accent marks the primary action in a group. */
+.btn-outlined {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
+  padding: 0.78rem 1.5rem;
+  border-radius: var(--radius-xs);
+  border: 1px solid var(--border-default);
+  background: transparent;
+  color: var(--text-main);
+  font-family: inherit;
+  font-weight: 500;
+  font-size: 1.08rem;
+  letter-spacing: 0.02em;
+  text-decoration: none;
+  cursor: pointer;
+  transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease,
+    color 0.2s ease, opacity 0.2s ease;
+}
+
+.btn-outlined:hover:not(:disabled) {
+  transform: translateY(-2px);
+  border-color: var(--accent-2);
+  background: rgba(34, 211, 238, 0.06);
+  color: var(--accent-2);
+}
+
+.btn-outlined:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btn-outlined--accent {
+  border-color: var(--accent-2);
+  color: var(--accent-2);
+  font-weight: 600;
+}
+
+.btn-outlined--accent:hover:not(:disabled) {
+  background: rgba(34, 211, 238, 0.09);
+}
+
+/* Icon-only square. font-size sizes the SVG, so it stays off the type scale. */
+.btn-outlined--icon {
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  gap: 0;
+  font-size: 1rem;
+  color: var(--text-muted);
+}
+
+/* ========= Touch target sizing =========
+   Anything tappable gets 48x48 on touch input. Keyed off pointer:coarse rather
+   than a width breakpoint, since it's about the input device, not the screen.
+   Set on the elements themselves: an expanded ::after wouldn't help, because
+   the audit measures each element's own client rect. */
+@media (pointer: coarse) {
+  .btn-outlined--icon,
+  .project-link-icon,
+  .scroll-top-btn {
+    min-width: 48px;
+    min-height: 48px;
+  }
+
+  .btn-outlined {
+    min-height: 48px;
+  }
+}
+
 /* ========= Scroll-to-top button ========= */
 .scroll-top-btn {
   position: fixed;
