@@ -24,7 +24,7 @@ Designed with a focus on **performance**, **accessibility**, **security**, and *
 - **Fully responsive** -- desktop, tablet, mobile (375px+ baseline)
 - **Hardened backend** -- Helmet security headers, `express-rate-limit`, body-size cap, trust-proxy, graceful shutdown
 - **Automated tests** -- backend API tests via Node's built-in runner (`npm test`, no extra deps); importing the app also verifies every module loads
-- **API test suite** -- Postman collection with happy-path + validation + rate-limit + 404 tests (see [`postman/`](postman/))
+- **API test suite** -- Postman collection with happy-path + validation + body-cap + rate-limit + 404 tests (see [`postman/`](postman/))
 - **CI/CD** -- GitHub Actions runs lint, build, backend tests, `npm audit`, and gitleaks secret scan on every push and PR
 - **Auto dependency updates** -- Dependabot opens grouped weekly PRs for minor + patch upgrades (majors are manual)
 - **Pinned Node version** -- `.nvmrc`, `netlify.toml`, and `engines` field keep Netlify, CI, and local installs aligned
@@ -117,16 +117,28 @@ copying these numbers across.
 
 **`font-size` on icon containers is not part of that scale.** `react-icons`
 renders SVGs sized in `em`, so `font-size` there controls a glyph, not NTR
-text - `.hero-cta-icon`, `.card-heading-icon`, `.project-link-icon`,
+text - `.btn-outlined--icon`, `.card-heading-icon`, `.project-link-icon`,
 `.btn-icon`, `.contact-label-icon` and `.scroll-top-btn` stay at their
 unscaled values.
+
+### Buttons
+
+There is **one** button, `.btn-outlined` in `base.css`, with two modifiers:
+`--accent` (the primary action in a group) and `--icon` (icon-only square).
+Hero CTAs, the contact submit and the error-boundary retry all render from it,
+so they cannot drift apart. Nothing on the site is a filled button.
+
+Anything tappable gets a 48x48 floor under `@media (pointer: coarse)` - keyed
+to the input device rather than a width breakpoint, and set on the elements
+themselves, since the audit measures each element's own client rect (an
+expanded `::after` would not count).
 
 ---
 
 ## Tech Stack
 
 ### Frontend
-- React 19, Vite 7, Bootstrap 5 (CSS only -- no Bootstrap JS)
+- React 19, Vite 8, Bootstrap 5 (CSS only -- no Bootstrap JS)
 - `react-icons` for the icon set
 - Vanilla `IntersectionObserver` for scroll-reveal -- no animation library
 - CSS keyframes for the hero entrance and the headline caret blink
@@ -167,8 +179,9 @@ portfolio/
 |   |   +-- fonts/
 |   |   |   +-- ntr-latin-400.woff2       # Self-hosted body font (see Design section)
 |   |   +-- images/
-|   |   |   +-- Profile.avif
+|   |   |   +-- Profile.avif             # 680x680, 2x the 340px hero slot
 |   |   |   +-- Profile.webp
+|   |   |   +-- og-card.png              # 1200x630 social card (og:image / twitter:image)
 |   |   +-- _headers                      # Netlify security headers (CSP, X-Frame-Options, ...)
 |   |   +-- 404.html                      # Branded 404 page Netlify auto-serves
 |   |   +-- sw.js                         # Kill-switch service worker (see Caching section)
@@ -464,10 +477,15 @@ See [`postman/README.md`](postman/README.md) for full usage notes.
 
 1. User submits the form (name / email / subject / message)
 2. Frontend POSTs to `/api/contact` on the backend
-3. `express-rate-limit` checks the requester's IP (5 / 15 min)
-4. `contactRoutes` validates input (required, length caps, email regex)
-5. `mailerService` renders a branded HTML + plain-text email (user input HTML-escaped, header fields sanitized) and sends it via Resend with the sender's address as `replyTo`
-6. Errors map to precise codes -- `503` if the mailer is unconfigured, `502` if Resend rejects the send -- and a centralized handler ensures nothing leaks stack traces
+3. `express.json({ limit: "16kb" })` rejects an oversized body with `413` -- it
+   runs before the router, so this never reaches the limiter
+4. `express-rate-limit` checks the requester's IP (5 / 15 min)
+5. `contactRoutes` checks the honeypot: if the hidden `website` field has a
+   value, it answers with the same `200` a real send gets and drops the message.
+   Rejecting it would just teach a bot to omit the field
+6. `contactRoutes` validates input (required, length caps, email regex)
+7. `mailerService` renders a branded HTML + plain-text email (user input HTML-escaped, header fields sanitized) and sends it via Resend with the sender's address as `replyTo`
+8. Errors map to precise codes -- `503` if the mailer is unconfigured, `502` if Resend rejects the send -- and a centralized handler ensures nothing leaks stack traces
 
 ---
 
@@ -478,6 +496,7 @@ See [`postman/README.md`](postman/README.md) for full usage notes.
 - **HTML escaping** -- all user input is escaped before rendering in email templates
 - **Email header-injection guard** -- CR/LF and control chars are stripped from header-bound fields (subject, reply-to) so a crafted value can't inject extra email headers
 - **Rate limiting** -- `express-rate-limit` (5 requests / 15 min window, standard `RateLimit-*` headers)
+- **Honeypot** -- the contact form carries a hidden `website` field. It is deliberately *not* `display:none`, since bots skip fields the browser reports as hidden; it is positioned off-screen and taken out of the tab order and the accessibility tree instead. A submission that fills it gets the same `200` a real send gets, and is dropped without sending
 - **Input validation** -- max lengths enforced (name: 100, email: 100, subject: 200, message: 5000)
 - **Body-size cap** -- `express.json({ limit: "16kb" })` to prevent payload abuse
 - **Trust-proxy=1** -- IP is read from the platform proxy hop only (Render); not blindly from client headers
