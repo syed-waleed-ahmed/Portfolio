@@ -504,65 +504,21 @@ textarea.form-control.glass-input::-moz-placeholder {
 }
 
 /* ========= Footer ========= */
+/* No background or border-top: the body has already faded to #04060d this far
+   down the page, so painting --bg-main here rendered the footer as a lighter
+   panel sitting on a darker page. Staying transparent keeps it seamless. */
 .footer {
-  border-top: 1px solid var(--border-subtle);
   color: var(--text-muted);
-  background: linear-gradient(180deg, rgba(10, 14, 26, 0.95), var(--bg-main));
   padding-block: 2.5rem !important;
-}
-
-.footer-tagline {
-  color: var(--text-soft);
-  font-size: 0.95rem;
-  margin-bottom: 0.85rem;
-}
-
-.footer-tagline .gradient-text {
-  background: var(--gradient-accent);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  font-weight: 600;
-}
-
-.footer-social {
-  display: flex;
-  justify-content: center;
-  gap: 0.75rem;
-  margin-bottom: 0.85rem;
-}
-
-.footer-icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  border: 1px solid var(--border-subtle);
-  color: var(--text-muted);
-  font-size: 1.05rem;
-  transition: color 0.2s ease, border-color 0.2s ease, transform 0.2s ease, background 0.2s ease;
-}
-
-.footer-icon:hover {
-  color: var(--accent-2);
-  border-color: var(--border-accent-hover);
-  background: rgba(34, 211, 238, 0.06);
-  transform: translateY(-3px);
 }
 
 .footer-meta {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.25rem;
-  color: var(--text-faint);
-  font-size: 0.82rem;
-}
-
-.footer-meta .footer-built {
-  letter-spacing: 0.04em;
+  gap: 0.5rem;
+  color: var(--text-muted);
+  font-size: 0.9rem;
 }
 
 /* ========= Print styles ========= */
@@ -580,7 +536,6 @@ textarea.form-control.glass-input::-moz-placeholder {
   .site-nav,
   .scroll-progress,
   .hero-orbit,
-  .footer-social,
   .scroll-top-btn,
   .skip-link {
     display: none !important;
@@ -607,10 +562,6 @@ textarea.form-control.glass-input::-moz-placeholder {
     content: " (" attr(href) ")";
     font-size: 0.8em;
     color: #555;
-  }
-
-  .footer-icon::after {
-    content: none !important;
   }
 
   .gradient-text {
