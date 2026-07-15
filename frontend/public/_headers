@@ -29,10 +29,14 @@
 /assets/*
   Cache-Control: public, max-age=31536000, immutable
 
-# Images and other static files: 1-day cache so swaps roll out fast,
-# but repeat visits within a day are still instant.
+# Images: revalidate every visit. Unlike /assets/*, these filenames are stable
+# (Profile.webp stays Profile.webp when the photo changes), so there's no
+# fingerprint to invalidate the cache for us - a max-age here is a window in
+# which visitors keep seeing the old image. Revalidating costs one 304 on an
+# already-open connection, and only for repeat visitors, whose JS comes from
+# immutable cache anyway - so it overlaps React's startup rather than delaying it.
 /images/*
-  Cache-Control: public, max-age=86400
+  Cache-Control: public, max-age=0, must-revalidate
 
 # Plain-text helpers
 /robots.txt
