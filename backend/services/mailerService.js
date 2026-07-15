@@ -12,7 +12,7 @@ const BRAND = {
   name: "Syed Waleed Ahmed",
   accent: "#6366f1", // indigo - header + button
   accent2: "#22d3ee", // cyan - accent stripe
-  ink: "#0a0e1a", // near-black text
+  ink: "#0a192f", // navy - body text (matches the site background)
   muted: "#6b7280", // labels / footer
   border: "#e5e7eb", // hairlines
   panel: "#f4f5fb", // message box background
