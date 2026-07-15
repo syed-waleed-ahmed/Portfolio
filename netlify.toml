@@ -3,4 +3,4 @@
 # stay in the Netlify UI to match what's already configured.
 
 [build.environment]
-  NODE_VERSION = "20"
+  NODE_VERSION = "24"

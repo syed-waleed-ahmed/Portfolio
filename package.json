@@ -11,7 +11,7 @@
     "url": "https://github.com/syed-waleed-ahmed/Portfolio.git"
   },
   "engines": {
-    "node": ">=20"
+    "node": ">=22.13.0"
   },
   "scripts": {
     "install:all": "npm install --prefix frontend && npm install --prefix backend",
