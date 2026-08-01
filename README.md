@@ -23,7 +23,7 @@ Designed with a focus on **performance**, **accessibility**, **security**, and *
 - **Custom 404 page** -- branded standalone page Netlify auto-serves on missing routes
 - **Fully responsive** -- desktop, tablet, mobile (375px+ baseline)
 - **Hardened backend** -- Helmet security headers, `express-rate-limit`, body-size cap, trust-proxy, graceful shutdown
-- **Automated tests** -- backend API tests via Node's built-in runner (`npm test`, no extra deps); importing the app also verifies every module loads
+- **Automated tests** -- 9 backend API tests via Node's built-in runner (`npm test`, no extra deps); importing the app also verifies every module loads
 - **API test suite** -- Postman collection with happy-path + validation + body-cap + rate-limit + 404 tests (see [`postman/`](postman/))
 - **CI/CD** -- GitHub Actions runs lint, build, backend tests, `npm audit`, and gitleaks secret scan on every push and PR
 - **Auto dependency updates** -- Dependabot opens grouped weekly PRs: minor + patch for npm (majors are manual), and *all* updates for GitHub Actions, majors included
@@ -45,7 +45,7 @@ Designed with a focus on **performance**, **accessibility**, **security**, and *
 | About | Background summary + education timeline |
 | Experience | Work history cards (MemorAIz thesis, Fruugle internship, Jubilee trainee) |
 | Projects | Featured AI/ML and academic projects with tech tags + GitHub links |
-| Skills | Bento-style tag groups across AI/LLM, ML, Languages, Web, Databases, Tools, each with a subject icon |
+| Skills | Bento-style tag groups across AI/LLM Engineering, ML & Data Science, Languages, Web & Backend, Databases & Messaging, Cloud & DevOps, each with a subject icon |
 | Interests | What I'm looking for next + topics I'm exploring |
 | Contact | Contact form (name, email, subject, message) with an auto-growing message field, and email delivery via Resend |
 
