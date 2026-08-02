@@ -1,5 +1,5 @@
 import Reveal from "@/components/ui/Reveal";
-import { FaGithub } from "react-icons/fa";
+import { FaGithub, FaBolt } from "react-icons/fa";
 import { projects } from "@/data/projects";
 
 const Projects = () => {
@@ -9,55 +9,75 @@ const Projects = () => {
           <div className="section-header">
             <h2 className="section-title">Projects</h2>
             <p className="section-subtitle">
-              AI/ML projects from work and study. Code I&apos;ve actually
-              shipped or wrote a thesis around, not pitch-deck mockups.
+              AI/ML and robotics projects from work and study. Code I&apos;ve
+              actually shipped or wrote a thesis around, not pitch-deck mockups.
             </p>
           </div>
         </Reveal>
 
-        <div className="row g-4 justify-content-center">
+        {/* A CSS grid rather than Bootstrap columns, so the cards can share row
+            tracks via subgrid. That is what keeps the insight block and the tag
+            row on the same line across a row, whatever the description length. */}
+        <div className="projects-grid">
           {projects.map((project, idx) => (
-            <div className="col-md-6 col-lg-4 d-flex" key={project.title}>
-              <Reveal delay={0.06 * (idx + 1)} className="w-100">
-                <div className="neo-card project-card h-100 p-4 d-flex flex-column">
-                  <div className="mb-3">
-                    <div className="d-flex justify-content-between align-items-start gap-3">
-                      <h3 className="mb-1">{project.title}</h3>
-                      {project.github && (
-                        <a
-                          href={project.github}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="project-link-icon"
-                          aria-label={`View ${project.title} on GitHub`}
-                        >
-                          <FaGithub />
-                        </a>
-                      )}
-                    </div>
-                    <div className="text-accent card-subtitle-accent">
-                      {project.role}
-                    </div>
-                    <div className="timeline-meta mb-3">{project.period}</div>
+            <Reveal
+              key={project.title}
+              delay={0.06 * (idx + 1)}
+              className="project-cell"
+            >
+              <article
+                className={`neo-card project-card${
+                  project.featured ? " project-card--featured" : ""
+                }`}
+              >
+                <div className="project-body">
+                  <div className="project-head">
+                    <h3 className="mb-0">{project.title}</h3>
+                    {project.github && (
+                      <a
+                        href={project.github}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="project-link-icon"
+                        aria-label={`View ${project.title} on GitHub`}
+                      >
+                        <FaGithub />
+                      </a>
+                    )}
                   </div>
 
-                  <p className="flex-grow-1 mb-3">{project.description}</p>
-
-                  <p className="project-highlight mb-3">
-                    <span className="fw-semibold">Highlight:</span>{" "}
-                    {project.highlight}
+                  {/* Role and period on one line: the accent rule under the role
+                      used to land on the date sitting right beneath it. */}
+                  <p className="project-meta">
+                    <span className="project-role">{project.role}</span>
+                    <span className="project-meta-dot" aria-hidden="true" />
+                    <span className="project-period">{project.period}</span>
                   </p>
 
-                  <div className="d-flex flex-wrap gap-2 mt-auto">
-                    {project.stack.map((tech) => (
-                      <span key={tech} className="skill-badge">
-                        {tech}
-                      </span>
-                    ))}
-                  </div>
+                  <p className="project-description mb-0">
+                    {project.description}
+                  </p>
                 </div>
-              </Reveal>
-            </div>
+
+                {/* The word "Highlight:" repeated down every card was noise;
+                    the icon carries it visually, the label stays for SRs. */}
+                <p className="project-highlight mb-0">
+                  <span className="project-highlight-icon" aria-hidden="true">
+                    <FaBolt />
+                  </span>
+                  <span className="visually-hidden">Highlight: </span>
+                  {project.highlight}
+                </p>
+
+                <div className="project-stack">
+                  {project.stack.map((tech) => (
+                    <span key={tech} className="skill-badge">
+                      {tech}
+                    </span>
+                  ))}
+                </div>
+              </article>
+            </Reveal>
           ))}
         </div>
       </div>

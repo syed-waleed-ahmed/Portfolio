@@ -1,13 +1,13 @@
 export const experiences = [
   {
-    title: "AI Systems Thesis",
-    company: "MemorAIz",
+    title: "AI Engineer · Master's Thesis Internship",
+    company: "MemorAIz S.r.l.",
     period: "Jan 2026 - Present · Bologna, Italy",
     bullets: [
-      "Thesis capstone: built RemindrAI, a production serverless backend where an AI agent schedules reminders and chats with users over Email, WhatsApp, Telegram, and Discord.",
-      "Wired an OpenAI agent on the Vercel AI SDK that creates, reschedules, and cancels reminders straight from chat, with memory that persists per channel.",
-      "Made delivery reliable with automatic retries, crash recovery, and no duplicate sends, then packaged the backend as a drop-in Mastra capability other apps add in one line.",
-      "Got there through the building blocks: an AI onboarding platform for energy communities (GPT-4o Vision) and a modular RAG-based educational assistant.",
+      "Thesis: RemindrAI, a portable reminder and memory service conversational assistants adopt instead of rebuilding, built on an agent that covers Email, WhatsApp, Telegram, and Discord.",
+      "Made delivery correct under failure without a queue runtime, using an atomic database claim, per-channel idempotency, and database-owned retries.",
+      "Built the operator console that runs it in production: a content-blind multi-tenant control plane for plans, licences, quotas, and GDPR export and erasure.",
+      "Live on an EU-pinned stack, packaged as a one-line Mastra capability, with the H-FARM Student Assistant as first tenant.",
     ],
   },
   {

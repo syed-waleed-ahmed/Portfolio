@@ -18,9 +18,11 @@
 - [ ] `npm run lint` passes (frontend)
 - [ ] `npm run build` succeeds (frontend)
 - [ ] `npm test` passes (backend, if backend changed)
+- [ ] `npm audit` reviewed if dependencies changed
 - [ ] No real secrets committed (`.env`, API keys)
 - [ ] README / docs updated if behavior changed
 - [ ] Tested locally on the affected viewport(s) if UI changed
+- [ ] CSP hash in `frontend/public/_headers` recomputed if the inline script in `index.html` changed
 
 ## Screenshots / notes
 

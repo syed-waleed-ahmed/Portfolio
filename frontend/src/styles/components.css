@@ -30,7 +30,113 @@
   color: var(--text-strong);
 }
 
+/* The thesis card carries the same indigo -> cyan edge the role cards in
+   Interests use, so "this is the centrepiece" is a system signal rather than
+   a one-off treatment. */
+.project-card--featured::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 2px;
+  background: var(--gradient-accent);
+  opacity: 0.9;
+}
+
+/* ========= Projects grid =========
+   Three shared row bands - body, insight, stack - so every card in a row puts
+   its insight block and its tag row on the same line, however long the
+   description above them runs. The row-gap doubles as the internal spacing
+   between the three bands, which is why it is the only vertical rhythm value
+   here. Without subgrid support the cards fall back to ordinary blocks: the
+   content still reads top to bottom, it just stops lining up. */
+.projects-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  column-gap: 1.5rem;
+  row-gap: 1.25rem;
+}
+
+@media (min-width: 768px) {
+  .projects-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 992px) {
+  .projects-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.project-cell,
+.project-card {
+  display: grid;
+  grid-row: span 3;
+  grid-template-rows: subgrid;
+}
+
+/* Padding lives here rather than on a `p-4` utility: the card is a subgrid, so
+   its box has to be described in one place with the track rules above it. */
+.project-card {
+  padding: 1.5rem;
+}
+
+/* The stack row sits in the last band; a card whose tags wrap to fewer lines
+   than its neighbour still ends level, because the band is sized to the
+   tallest. */
+.project-stack {
+  display: flex;
+  flex-wrap: wrap;
+  align-content: start;
+  gap: 0.5rem;
+}
+
+.project-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.project-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0.55rem 0 1.1rem;
+  font-size: 0.96rem;
+  line-height: 1.4;
+}
+
+.project-role {
+  color: var(--accent-2);
+  font-weight: 500;
+}
+
+.project-meta-dot {
+  width: 4px;
+  height: 4px;
+  flex-shrink: 0;
+  border-radius: 999px;
+  background: var(--gradient-accent);
+}
+
+.project-period {
+  color: var(--text-muted);
+  letter-spacing: 0.02em;
+}
+
+.project-card .project-description {
+  font-size: 1.06rem;
+}
+
+/* Description and highlight stay together and the tag row is what gets pushed
+   to the bottom, so a short description leaves breathing room above the tags
+   instead of a hole in the middle of the card. */
 .project-card .project-highlight {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
   padding: 0.7rem 0.9rem;
   background: rgba(var(--light-navy-rgb), 0.5);
   border-radius: var(--radius-sm);
@@ -40,8 +146,12 @@
   color: var(--text-soft);
 }
 
-.project-card .project-highlight .fw-semibold {
+.project-highlight-icon {
+  display: inline-flex;
+  flex-shrink: 0;
+  margin-top: 0.18em;
   color: var(--accent-2);
+  font-size: 0.9rem;
 }
 
 /* GitHub link icon on project cards */
@@ -209,6 +319,85 @@
   border: 1.5px solid var(--accent-2);
 }
 
+/* ========= About ========= */
+
+/* The section used to repeat the Experience section underneath it - the same
+   three employers, the same facts, twice on one page. What it lacked was any
+   place the proof could be read at a glance, so the employer list went and
+   this band took its place. Figures are aggregated from Experience and
+   Projects; see the note in about.js before editing one. */
+.about-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 1rem;
+  list-style: none;
+  padding: 0;
+  margin: 0 0 1.5rem;
+}
+
+.about-stat {
+  position: relative;
+  overflow: hidden;
+  padding: 1.35rem 1.25rem;
+  border-radius: var(--radius-lg);
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  transition: transform 0.25s ease-out, background 0.25s ease-out,
+    border-color 0.25s ease-out;
+}
+
+/* The same indigo -> cyan edge the featured project card and the role cards
+   carry, so "this is a highlight" stays one system signal. */
+.about-stat::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 2px;
+  background: var(--gradient-accent);
+  opacity: 0.9;
+}
+
+.about-stat:hover {
+  transform: translateY(-3px);
+  background: var(--bg-card-hover);
+  border-color: var(--border-accent-hover);
+}
+
+.about-stat-value {
+  display: block;
+  font-size: 2.3rem;
+  font-weight: 700;
+  line-height: 1.05;
+  letter-spacing: -0.01em;
+  background: var(--gradient-accent);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.about-stat-label {
+  display: block;
+  margin-top: 0.45rem;
+  font-size: 1.02rem;
+  line-height: 1.45;
+  color: var(--text-soft);
+}
+
+/* An unattributed number reads as marketing; naming where it came from makes
+   it checkable against the section below. */
+.about-stat-source {
+  display: block;
+  margin-top: 0.35rem;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+@media (max-width: 375px) {
+  .about-stat-value {
+    font-size: 2rem;
+  }
+}
+
 /* List items inside content cards */
 .experience-card ul,
 .project-card ul {
@@ -285,36 +474,131 @@
   flex-shrink: 0;
 }
 
-/* ========= Interests ========= */
-.interests-card .text-accent {
-  font-size: 1.26rem;
+/* ========= Interests =========
+   Three blocks with deliberately different weights - role cards, a thin
+   principle strip, then topic tiles - so the section reads as structure
+   rather than as two columns of prose. */
+
+/* Small centred label above each block. Lowercase content, uppercased here,
+   so the data file stays readable. */
+.interests-eyebrow {
+  margin: 0 0 1.1rem;
+  text-align: center;
+  font-size: 1rem;
   font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-muted);
 }
 
-.interests-list {
-  list-style: none;
-  padding-left: 0;
-  margin: 0;
-}
-
-.interests-list li {
-  position: relative;
-  padding-left: 1.3rem;
-  margin-bottom: 0.55rem;
-  color: var(--text-soft);
-  font-size: 1.1rem;
-  line-height: 1.65;
-}
-
-.interests-list li::before {
+/* The gradient rule is the section's signature - the same indigo -> cyan the
+   headings and progress bar use, as a 2px edge rather than a surface fill, so
+   the flat-card rule still holds. `.neo-card` already clips to its radius. */
+.role-card::before {
   content: "";
   position: absolute;
-  left: 0.2rem;
-  top: 0.55rem;
+  inset: 0 0 auto 0;
+  height: 2px;
+  background: var(--gradient-accent);
+  opacity: 0.9;
+}
+
+.role-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 46px;
+  height: 46px;
+  margin-bottom: 1rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(34, 211, 238, 0.25);
+  background: rgba(34, 211, 238, 0.08);
+  color: var(--accent-2);
+  font-size: 1.15rem;
+}
+
+.role-card .role-line {
+  font-size: 1.06rem;
+  line-height: 1.6;
+  color: var(--text-muted);
+}
+
+.principle-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem 1.6rem;
+  list-style: none;
+  padding: 0;
+  margin: 2.25rem 0 2.75rem;
+}
+
+.principle-chip {
+  position: relative;
+  padding-left: 1.05rem;
+  font-size: 1.06rem;
+  color: var(--text-muted);
+}
+
+.principle-chip::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.62em;
   width: 6px;
   height: 6px;
   border-radius: 999px;
-  background: var(--accent-2);
+  background: var(--gradient-accent);
+}
+
+/* Tiles size themselves: five across on desktop, three on tablet, one on a
+   phone - no breakpoint list to keep in step with the number of topics. */
+.topic-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.85rem;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.topic-tile {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex: 1 1 210px;
+  max-width: 270px;
+  padding: 0.85rem 1rem;
+  border-radius: var(--radius-sm);
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-soft);
+  font-size: 1.04rem;
+  line-height: 1.35;
+  transition: border-color 0.2s ease, background 0.2s ease, transform 0.2s ease;
+}
+
+.topic-tile:hover {
+  border-color: var(--border-accent-hover);
+  background: var(--bg-card-hover);
+  transform: translateY(-2px);
+}
+
+/* Once stacked, a capped tile reads as inset against the full-width cards
+   above it, so let it fill the column instead. */
+@media (max-width: 575.98px) {
+  .topic-tile {
+    flex-basis: 100%;
+    max-width: 100%;
+  }
+}
+
+.topic-icon {
+  display: inline-flex;
+  flex-shrink: 0;
+  color: var(--accent-2);
+  font-size: 1rem;
 }
 
 /* ========= Contact ========= */

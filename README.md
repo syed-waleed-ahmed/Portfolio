@@ -14,7 +14,7 @@ Designed with a focus on **performance**, **accessibility**, **security**, and *
 
 ## Highlights
 
-- **Lean bundle** -- no animation library, no PWA shell, no Bootstrap JS. ~9 KB CSS gzipped, ~69 KB JS gzipped after code-splitting
+- **Lean bundle** -- no animation library, no PWA shell, no Bootstrap JS. ~10 KB CSS gzipped, ~70 KB JS gzipped after code-splitting
 - **Fast build & delivery** -- Vite, code-splitting, sections code-split and mounted on `requestIdleCallback` after first paint
 - **Modern UI** -- flat navy surfaces, gradient accent on headings, subject icons on skill groups, top-of-page scroll progress bar
 - **Hand-rolled animations** -- vanilla `IntersectionObserver` reveal hook + CSS keyframes (no `framer-motion`, no `tsparticles`)
@@ -29,7 +29,8 @@ Designed with a focus on **performance**, **accessibility**, **security**, and *
 - **Auto dependency updates** -- Dependabot opens grouped weekly PRs: minor + patch for npm (majors are manual), and *all* updates for GitHub Actions, majors included
 - **Pinned Node version** -- `.nvmrc` is the single source of truth; CI reads it via `node-version-file`, and `netlify.toml` + `engines` are kept in step
 - **SEO-ready** -- canonical URL, `Person` + `WebSite` + `ProfilePage` JSON-LD schemas, OG + Twitter cards, `noscript` fallback, sitemap (+image), robots.txt, humans.txt
-- **Content Security Policy** -- Netlify `_headers` with strict CSP and friends
+- **Content Security Policy** -- Netlify `_headers` with a hash-pinned CSP and friends
+- **Analytics** -- GA4, loaded from an inline snippet deferred to `requestIdleCallback` so it never blocks first paint
 - **Print-friendly** -- dedicated print stylesheet
 - **Custom domain + HTTPS** -- syedwaleedahmed.me
 - **Data-driven architecture** -- portfolio content lives in `src/data/`, components are pure UI
@@ -42,11 +43,11 @@ Designed with a focus on **performance**, **accessibility**, **security**, and *
 | Section | Description |
 |---------|-------------|
 | Hero | Portrait, animated intro, headline with blinking caret, lead copy, outlined CTAs + resume + LinkedIn / GitHub icon links |
-| About | Background summary + education timeline |
-| Experience | Work history cards (MemorAIz thesis, Fruugle internship, Jubilee trainee) |
-| Projects | Featured AI/ML and academic projects with tech tags + GitHub links |
+| About | Approach copy, a stat band aggregating figures already claimed elsewhere, and the education timeline |
+| Experience | Work history cards (MemorAIz thesis internship, Fruugle internship, Jubilee trainee) |
+| Projects | AI/ML and robotics projects with role/period meta, an insight block, tech tags and GitHub links; the thesis card is marked `featured` |
 | Skills | Bento-style tag groups across AI/LLM Engineering, ML & Data Science, Languages, Web & Backend, Databases & Messaging, Cloud & DevOps, each with a subject icon |
-| Interests | What I'm looking for next + topics I'm exploring |
+| Interests | Three role cards, a principle strip, and a grid of icon topic tiles |
 | Contact | Contact form (name, email, subject, message) with an auto-growing message field, and email delivery via Resend |
 
 ---
@@ -82,8 +83,8 @@ Two rules keep it consistent:
 ### Typography
 
 **NTR** (self-hosted, latin subset only, ~12 KB) with a `system-ui` fallback.
-It's served from `public/fonts/` rather than Google Fonts, so the CSP stays at
-`font-src 'self'` and there's no third-party request on the critical path.
+It's served from `public/fonts/` rather than Google Fonts, so `font-src` stays
+at `'self' data:` and there's no third-party request on the critical path.
 `index.html` preloads it, since the hero headline would otherwise flash the
 fallback under `font-display: swap`.
 
@@ -154,12 +155,45 @@ to the input device rather than a width breakpoint, and set on the elements
 themselves, since the audit measures each element's own client rect (an
 expanded `::after` would not count).
 
+### Project cards line up on shared rows
+
+Projects is the one section that does **not** use Bootstrap columns. It is a
+CSS grid (`.projects-grid`), and each card spans three shared row bands -
+body, insight, stack - via `grid-template-rows: subgrid`. That is what keeps
+the insight block and the tag row on the same line across a row however long
+the description above them runs; with plain flex cards, each one sized itself
+and the insight block floated to wherever its own text ended.
+
+Three things about it are load-bearing:
+
+1. **The card's padding lives in `components.css`, not in a `p-4` utility.**
+   A subgrid's box has to be described alongside its track rules. Dropping it
+   renders the title clipped against the card edge.
+2. **`row-gap` on `.projects-grid` is the only vertical rhythm value.** It is
+   both the space between cards and the space between the three bands inside
+   one, so per-block margins can't drift apart. Don't reintroduce `mb-*`
+   utilities on the three children.
+3. **The markup nests two subgrids** - `Reveal` renders the grid item
+   (`.project-cell`), the card sits inside it - and both declare
+   `grid-row: span 3`. Adding a wrapper between them breaks the chain, since
+   subgrid only inherits from a direct parent.
+
+`subgrid` is unsupported on Chrome below 117 and Samsung Internet, where the
+cards fall back to ordinary stacked blocks: content still reads top to bottom,
+it just stops lining up. That fallback is the reason the layout carries no
+fixed heights.
+
+The same indigo -> cyan 2px top rule marks the centrepiece in two places - the
+`featured` project card and the Interests role cards - so "this one matters" is
+a system signal rather than a per-section flourish.
+
 ---
 
 ## Tech Stack
 
 ### Frontend
 - React 19, Vite 8, Bootstrap 5 (CSS only -- no Bootstrap JS)
+- CSS Grid + `subgrid` for the Projects card alignment; Bootstrap columns everywhere else
 - `react-icons` for the icon set
 - Vanilla `IntersectionObserver` for scroll-reveal -- no animation library
 - CSS keyframes for the hero entrance and the headline caret blink
@@ -221,10 +255,12 @@ portfolio/
 |   |   +-- robots.txt
 |   +-- src/
 |   |   +-- data/                         # Portfolio content -- edit here to update site
-|   |   |   +-- portfolio.js
+|   |   |   +-- portfolio.js              # Name, resume + social links, nav/section ids
+|   |   |   +-- about.js                  # Approach copy, stat band, education timeline
 |   |   |   +-- experience.js
-|   |   |   +-- projects.js
+|   |   |   +-- projects.js               # `featured: true` marks the centrepiece card
 |   |   |   +-- skills.js
+|   |   |   +-- interests.js              # Roles, principles, exploring topics
 |   |   +-- styles/                       # Modular CSS (all stylesheets live here)
 |   |   |   +-- reset.css                  # Minimal CSS reset (imported first)
 |   |   |   +-- base.css
@@ -269,7 +305,7 @@ portfolio/
 |   +-- services/
 |   |   +-- mailerService.js              # Resend delivery + branded HTML/text email template
 |   +-- test/
-|   |   +-- contact.test.js               # API tests (node --test): validation, health, 404
+|   |   +-- contact.test.js               # 9 API tests (node --test): health, validation, 16 KB cap, honeypot, 404
 |   +-- package.json
 |   +-- .env.example                      # Template for RESEND_API_KEY, EMAIL_TO, EMAIL_FROM, ALLOWED_ORIGINS
 +-- postman/
@@ -279,7 +315,7 @@ portfolio/
 |   +-- README.md                                          # Import + usage instructions
 +-- scripts/
 |   +-- gen-og-card.mjs                   # Rebuilds the 1200x630 social card (see Design)
-+-- graphify-out/                         # Knowledge graph (html + json + audit report)
++-- graphify-out/                         # Knowledge graph output - GITIGNORED, absent on a fresh clone
 |   +-- graph.html                        # Interactive graph (open in browser)
 |   +-- graph.json                        # Raw graph data (GraphRAG-ready)
 |   +-- GRAPH_REPORT.md                   # Communities, hub nodes, knowledge gaps
@@ -319,10 +355,45 @@ every request and serves cached files. To recover:
   deletes every cache the old SW created, unregisters itself, and
   reloads open tabs.
 
-No inline cleanup script lives in `index.html`, so the CSP stays strict
-(no extra script hash to maintain) -- the kill-switch SW handles recovery
-on its own. Once analytics show no SW traffic for ~30 days, `sw.js` can be
-deleted.
+No inline cleanup script lives in `index.html` -- the kill-switch SW handles
+recovery on its own, so this costs no additional CSP script hash beyond the
+analytics snippet the page already carries (see [Analytics](#analytics)). Once
+analytics show no SW traffic for ~30 days, `sw.js` can be deleted.
+
+---
+
+## Analytics
+
+Google Analytics 4 (`G-E5YE59PWT0`), loaded from a small inline snippet at the
+top of `<body>` in `frontend/index.html`. There is no `gtag.js` tag in `<head>`
+and no analytics package in `package.json`.
+
+Two things about it are deliberate and easy to break:
+
+1. **It's deferred to `requestIdleCallback`** (falling back to `setTimeout`).
+   The tag only starts fetching once the main thread is idle, so it never
+   competes with first paint or the hero font preload.
+2. **The snippet is hash-pinned in the CSP.** `frontend/public/_headers`
+   carries `'sha256-DcZnhiXzGRqf7Ap1FmHxA25PvMu+ebywXAvTxOAgB+E='` in
+   `script-src`, and that hash covers the script's bytes *exactly* --
+   whitespace included.
+
+> **Editing the snippet by even one character silently kills analytics.** The
+> browser blocks the script for failing the hash; the page renders perfectly
+> and nothing appears in the console for most users. If you change it,
+> recompute the hash and update `_headers` in the same commit:
+>
+> ```bash
+> # from frontend/ -- prints the value to paste into _headers
+> node -e "const fs=require('fs'),c=require('crypto');const m=fs.readFileSync('index.html','utf8').match(/<script>([\s\S]*?)<\/script>/);console.log('sha256-'+c.createHash('sha256').update(m[1]).digest('base64'))"
+> ```
+
+`script-src` also lists `'unsafe-inline'`, but that is a legacy fallback only:
+per CSP Level 3, a browser that understands hashes ignores `'unsafe-inline'`
+entirely, so the hash is what's actually enforced. The GA/GTM hosts are
+allow-listed narrowly -- `googletagmanager.com` in `script-src`,
+`*.google-analytics.com` in `img-src`, and both plus `*.analytics.google.com`
+in `connect-src`.
 
 ---
 
@@ -337,7 +408,7 @@ obvious home as the project grows:
 | `components/sections/` | One file per visible page section | `Hero`, `About`, `Projects`, `Contact` |
 | `components/ui/` | Reusable primitives with no domain coupling | `Reveal`, `ScrollProgress`, `ScrollToTop`, `SkipLink`, `ErrorBoundary`, `LazyMountSection` |
 | `hooks/` | Cross-cutting React hooks | `useInView` (used by `Reveal` + `LazyMountSection`) |
-| `data/` | Pure content (no JSX), edited to update site copy | `experience.js`, `projects.js`, ... |
+| `data/` | Pure content (no JSX), edited to update site copy | `about.js`, `experience.js`, `projects.js`, `interests.js`, ... |
 | `styles/` | Global CSS - reset, tokens, layout, components | `reset.css`, `base.css`, `navbar.css`, `hero.css`, `components.css` |
 
 Imports use the **`@/` alias** that maps to `frontend/src/` (configured in
@@ -356,8 +427,8 @@ import Reveal from "../../ui/Reveal";
 
 ## Knowledge Graph
 
-A machine-generated knowledge graph of the whole project (code + docs) lives in
-[`graphify-out/`](graphify-out/):
+A machine-generated knowledge graph of the whole project (code + docs) can be
+built into `graphify-out/`:
 
 | File | What it is |
 |------|------------|
@@ -365,10 +436,14 @@ A machine-generated knowledge graph of the whole project (code + docs) lives in
 | `GRAPH_REPORT.md` | Plain-language audit: communities, hub nodes, knowledge gaps |
 | `graph.json` | Raw graph data (GraphRAG-ready) |
 
-118 nodes across 35 communities (Contact Form Request Pipeline, Backend
-Security Hardening Stack, SEO & Structured Data Layer, …). Regenerable
-working state (cache, manifest, cost) is gitignored - only the three
-deliverables are tracked.
+The most recent run indexed 32 files (~30.7k words) into 118 nodes, 104 edges
+and 35 communities (Contact Form Request Pipeline, Backend Security Hardening
+Stack, SEO & Structured Data Layer, …).
+
+**`graphify-out/` is gitignored in full** -- it's regenerated output, not
+project source, so nothing under it ships in the repo. Expect the directory to
+be absent on a fresh clone; rebuild it locally rather than looking for it in
+git history.
 
 ---
 
@@ -454,9 +529,22 @@ All portfolio content is centralized in `frontend/src/data/`:
 - **New experience?** Add an entry to `experience.js`
 - **New project?** Add an entry to `projects.js`
 - **New skill group / tag?** Add an entry to `skills.js`
+- **New role, principle or topic?** Add an entry to `interests.js`
+- **Approach copy, a stat, a degree?** Edit `about.js`
 - **Update contact / social links?** Edit `portfolio.js`
 
 Components are pure UI -- they read from the data layer and render automatically.
+
+**Icons are keys, not components.** `skills.js`, `interests.js` and `about.js`
+carry a string (`icon: "rag"`); the section component maps it to a `react-icons`
+component through a lookup at the top of the file. That's what keeps the data
+files free of JSX. A key with no entry in the map renders no icon rather than
+crashing, so a typo is a missing glyph, not a blank section.
+
+**Stats in `about.js` are aggregates, not new claims.** Every figure there is
+already stated in `experience.js` or `projects.js`; the band exists because a
+recruiter skimming prose never adds them up. Change a figure in one place and
+change it in the other, or the page contradicts itself.
 
 ---
 
@@ -464,7 +552,7 @@ Components are pure UI -- they read from the data layer and render automatically
 
 Two layers:
 
-- **Automated** - backend API tests run with `npm test` (from the repo root or `backend/`). They use Node's built-in test runner (`node --test`), spin the app up on an ephemeral port, and assert validation, health, and 404 behavior without sending real email. CI runs them on every push/PR.
+- **Automated** - 9 backend API tests run with `npm test` (from the repo root or `backend/`). They use Node's built-in test runner (`node --test`), spin the app up on an ephemeral port, and assert both health probes, the three validation paths (missing fields, invalid email, over-length field), the 16 KB body cap's `413`, both honeypot branches (filled → silent drop, empty → normal handling), and the 404 catch-all -- all without sending real email. CI runs them on every push/PR.
 - **Manual / live** - a ready-to-import Postman collection in [`postman/`](postman/):
 
 - **`Portfolio-API.postman_collection.json`** -- one request per endpoint plus negative cases (missing fields, invalid email, over-length field, 16 KB body cap, rate-limit, 404, wrong method). Every request has a `pm.test()` script that asserts status code and response shape.
@@ -481,7 +569,7 @@ In Postman, **Import → Link** and paste these raw URLs, then select the
 
 The production env targets `https://portfolio-backend-kmum.onrender.com`. The
 backend runs on Render's free tier, so the first call after idle can cold-start
-(~30–60 s). **Heads-up:** a successful `POST /api/contact` against prod sends a
+(~30-60 s). **Heads-up:** a successful `POST /api/contact` against prod sends a
 real email - use the validation / 404 / rate-limit requests for safe smoke tests.
 See [`postman/README.md`](postman/README.md) for full notes.
 
@@ -519,7 +607,7 @@ See [`postman/README.md`](postman/README.md) for full usage notes.
 
 ## Security
 
-- **Content Security Policy** -- HTTP header via Netlify `_headers`
+- **Content Security Policy** -- HTTP header via Netlify `_headers`. `object-src 'none'`, `base-uri 'self'`, `form-action 'self'`, `frame-ancestors 'none'`, `upgrade-insecure-requests`. The one inline script (analytics) is pinned by SHA-256 hash rather than allowed wholesale -- see [Analytics](#analytics) for why that hash must be recomputed if the snippet changes
 - **Backend security headers** -- `helmet()` middleware (CSP-ready, X-Frame-Options DENY, no-sniff, Referrer-Policy)
 - **HTML escaping** -- all user input is escaped before rendering in email templates
 - **Email header-injection guard** -- CR/LF and control chars are stripped from header-bound fields (subject, reply-to) so a crafted value can't inject extra email headers

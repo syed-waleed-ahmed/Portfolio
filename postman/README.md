@@ -31,11 +31,23 @@ The backend is on Render's free tier, so the first request after idle may take
 
 ## Endpoints covered
 
-- `GET /` - root health probe
-- `GET /health` - health check with timestamp
-- `POST /api/contact` - contact form (validation, honeypot, rate limit, Resend email)
-- Negative cases: 404 catch-all, wrong HTTP method, invalid payloads, and the
-  16 KB body cap
+Twelve requests across three folders. Every one carries a `pm.test()` script
+asserting status code and response shape.
+
+| Folder | Request | Expects |
+|--------|---------|---------|
+| Health | `GET /` - root | `200` running status |
+| Health | `GET /health` | `200` + timestamp |
+| Contact | `POST /api/contact` - happy path | `200` (or `503`/`502`, see Notes) |
+| Contact | missing required field | `400` |
+| Contact | invalid email | `400` |
+| Contact | field too long | `400` (route validation) |
+| Contact | empty body | `400` |
+| Contact | payload too large | `413` (body parser) |
+| Contact | honeypot tripped | `200`, nothing sent |
+| Contact | rate limit triggered | `429` on the 6th run |
+| Negative | `GET /api/unknown` | `404` catch-all |
+| Negative | `GET /api/contact` - wrong method | `404` |
 
 ## Usage
 

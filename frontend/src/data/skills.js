@@ -42,12 +42,12 @@ export const skillGroups = [
   {
     title: "Web & Backend",
     icon: "web",
-    tags: ["React", "Next.js", "Node.js", ".NET ASP Core", "REST APIs", "Serverless", "Webhooks", "HTML/CSS"],
+    tags: ["React", "Next.js", "Server Components", "Node.js", ".NET ASP Core", "REST APIs", "Serverless", "Multi-Tenancy", "Webhooks", "HTML/CSS"],
   },
   {
     title: "Databases & Messaging",
     icon: "data",
-    tags: ["MySQL", "PostgreSQL", "SQL Server", "MongoDB", "Turso / libSQL", "Redis", "Kafka"],
+    tags: ["MySQL", "PostgreSQL", "SQL Server", "MongoDB", "Turso / libSQL", "pgvector", "Drizzle ORM", "Redis", "Kafka"],
   },
   {
     title: "Cloud & DevOps",

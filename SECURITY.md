@@ -38,6 +38,19 @@ Out of scope:
 - Reports based on outdated dependency advisories that are already fixed
   on `main`
 
+## Automated hygiene
+
+Some classes of issue are already gated in CI on every push and PR, so a
+report in these areas may already be covered:
+
+- **Secret scanning** -- `gitleaks` runs over the full git history
+- **Dependency audit** -- `npm audit --omit=dev --audit-level=high` on both
+  workspaces. Note this gates *production* dependencies at high severity and
+  above; dev-dependency and low-severity findings are reviewed manually rather
+  than blocking a build
+- **Dependency updates** -- Dependabot opens grouped weekly PRs (npm minor +
+  patch; GitHub Actions including majors)
+
 ## Safe-harbor
 
 Good-faith research that follows responsible-disclosure principles will

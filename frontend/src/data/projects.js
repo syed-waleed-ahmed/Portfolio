@@ -1,29 +1,33 @@
 export const projects = [
   {
-    title: "RemindrAI: Multi-Channel AI Reminder Backend",
-    role: "Master's Thesis · MemorAIz",
+    title: "RemindrAI: Portable Multi-Channel Reminder Service",
+    role: "Master's Thesis · MemorAIz S.r.l.",
     period: "2026",
-    stack: ["Next.js 15", "TypeScript", "Vercel AI SDK", "Mastra"],
+    stack: ["Next.js 16", "TypeScript", "Vercel AI SDK", "Mastra", "Turso / libSQL", "Server Components"],
+    // Marks the centrepiece card. Projects.jsx gives it the gradient rule.
+    featured: true,
     description:
-      "My Master's thesis capstone: a serverless backend for an AI reminder service. An agent chats across Email, WhatsApp, Telegram, and Discord to set reminders from plain conversation, while a background engine delivers them reliably on time.",
+      "My Master's thesis: a reminder and memory service conversational assistants adopt instead of rebuilding. An agent sets reminders from plain chat across Email, WhatsApp, Telegram, and Discord, and a durable engine delivers them reliably. A server-rendered operator console runs the control plane behind it.",
     highlight:
-      "Reliable delivery with retries and no duplicate sends, reusable in any app as a one-line Mastra tool.",
+      "Live in production on an EU-pinned stack, with the H-FARM Student Assistant as first tenant, adopted as a one-line Mastra capability.",
   },
   {
-    title: "Modular AI Educational Assistant",
-    role: "AI Systems · MemorAIz × H-FARM",
-    period: "2026",
-    stack: ["Next.js", "React", "RAG / pgvector", "OpenAI"],
+    title: "TIAGo: Autonomous Mapping, Navigation & Pick-and-Place",
+    role: "Robotics Project · Master's",
+    period: "Apr 2026 - Jul 2026",
+    stack: ["ROS 2 Humble", "Nav2 / SLAM", "ArUco", "Gazebo", "Python"],
+    github: "https://github.com/syed-waleed-ahmed/tiago-autonomous-pick-and-place",
     description:
-      "A learning platform built as a shared AI core (LLM routing, RAG, and memory) with swappable feature plugins. I built the split-pane Canvas UI and the RAG features that turn lecture transcripts into quizzes, stories, and audioguides.",
+      "A TIAGo mobile manipulator that maps an unknown indoor space on its own, then recovers where it is from a random start pose, finds two workstations by their ArUco markers, and carries two cubes between them in a required order. It runs end to end with no teleoperation, one launch command per task.",
     highlight:
-      "New subjects ship as plugins that slot into the shared core, so the platform grows without rewrites.",
+      "No map coordinates in the source: every station and cube pose is discovered from markers at runtime, so the mission moves to a new world unchanged.",
   },
   {
     title: "Multi-Agent AI Workflow System",
     role: "AI/ML Project",
     period: "2025 - 2026",
     stack: ["Python", "LangGraph", "Groq", "OpenAI"],
+    github: "https://github.com/syed-waleed-ahmed/Multi-Agent-Workflow",
     description:
       "A multi-agent system that automates marketing campaign generation. Specialized agents for research, copy, brief, and QA coordinate through a shared workflow, replacing what used to be a multi-day manual process and keeping quality consistent across runs.",
     highlight:
@@ -34,6 +38,7 @@ export const projects = [
     role: "AI/ML Project",
     period: "2025 - 2026",
     stack: ["LangChain", "Vector Search", "OpenAI", "Python"],
+    github: "https://github.com/syed-waleed-ahmed/Self-Correcting-RAG",
     description:
       "A RAG pipeline with retrieve → evaluate → correct loops. It grades its own answers and re-retrieves whenever the evaluator flags low confidence, instead of hallucinating its way through, so responses stay grounded in the source documents.",
     highlight:
@@ -44,6 +49,8 @@ export const projects = [
     role: "Academic Project · Master's",
     period: "Oct 2024 - Jan 2025",
     stack: ["Computer Vision", "OpenCV", "Python", "scikit-learn"],
+    github:
+      "https://github.com/syed-waleed-ahmed/Visual-Inspection-of-Motorcycle-Connecting-Rods",
     description:
       "A computer-vision classification system that inspects motorcycle connecting rods for defects on the production line. It replaced a slow manual step, flagging faulty parts automatically from camera images before they moved downstream.",
     highlight:
