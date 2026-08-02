@@ -16,7 +16,7 @@ backend/dist/
 .env.*
 backend/.env
 frontend/.env
-# But DO track .env.example templates — they're checked-in placeholders
+# But DO track .env.example templates - they're checked-in placeholders
 !.env.example
 !**/.env.example
 
@@ -47,7 +47,7 @@ graphify-out/
 .graphify_*
 .graphify_python
 
-# === Secrets / keys / certificates (live app — never commit these) ===
+# === Secrets / keys / certificates (live app - never commit these) ===
 *.pem
 *.key
 *.crt
@@ -70,6 +70,8 @@ secrets.json
 coverage/
 *.lcov
 .nyc_output/
+# newman writes HTML/JSON run reports here when reporters are enabled
+newman/
 
 # === OS ===
 .DS_Store

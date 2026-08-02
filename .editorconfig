@@ -1,4 +1,4 @@
-# EditorConfig — keeps editors and IDEs aligned across platforms
+# EditorConfig - keeps editors and IDEs aligned across platforms
 # https://editorconfig.org
 
 root = true
@@ -15,7 +15,13 @@ trim_trailing_whitespace = true
 [*.md]
 trim_trailing_whitespace = false
 
-# Lockfiles, minified files — leave as-is
+# Postman exports use tabs. Keeping that means re-exporting from Postman
+# produces a clean diff instead of a whole-file reindent.
+[*.postman_*.json]
+indent_style = tab
+indent_size = unset
+
+# Lockfiles, minified files - leave as-is
 [{package-lock.json,*.min.*}]
 indent_size = unset
 insert_final_newline = unset

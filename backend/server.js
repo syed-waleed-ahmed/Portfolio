@@ -25,7 +25,9 @@ app.use(
   cors({
     origin: (origin, cb) => {
       if (!origin || config.allowedOrigins.has(origin)) return cb(null, true);
-      // Returning false rejects without throwing (produces a 403 with no body)
+      // Returning false, rather than throwing, omits Access-Control-Allow-Origin
+      // and lets the request continue. The browser blocks the response on its
+      // side; throwing here would surface as a 500 and advertise the allow-list.
       return cb(null, false);
     },
     methods: ["GET", "POST", "OPTIONS"],

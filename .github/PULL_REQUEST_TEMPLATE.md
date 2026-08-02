@@ -20,9 +20,15 @@
 - [ ] `npm test` passes (backend, if backend changed)
 - [ ] `npm audit` reviewed if dependencies changed
 - [ ] No real secrets committed (`.env`, API keys)
-- [ ] README / docs updated if behavior changed
+- [ ] Docs updated if behavior changed (`README.md` and/or `docs/`)
+- [ ] `CHANGELOG.md` updated under `Unreleased` if the change is user-visible
+- [ ] Postman collection in `postman/` updated if the API surface changed
 - [ ] Tested locally on the affected viewport(s) if UI changed
 - [ ] CSP hash in `frontend/public/_headers` recomputed if the inline script in `index.html` changed
+
+<!-- Contribution scope, conventions and commit format: CONTRIBUTING.md -->
+<!-- Areas with non-obvious invariants: CONTRIBUTING.md#areas-that-need-extra-care -->
+
 
 ## Screenshots / notes
 

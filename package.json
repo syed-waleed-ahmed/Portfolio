@@ -2,7 +2,7 @@
   "name": "portfolio",
   "version": "1.0.0",
   "private": true,
-  "description": "Personal portfolio — React 19 + Vite frontend, Node + Express backend.",
+  "description": "Personal portfolio - React 19 + Vite frontend, Node + Express backend.",
   "author": "Syed Waleed Ahmed",
   "license": "MIT",
   "homepage": "https://syedwaleedahmed.me/",

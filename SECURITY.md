@@ -2,6 +2,21 @@
 
 Thanks for taking the time to help keep this project safe.
 
+This document is the disclosure policy. For an inventory of the controls
+already implemented in the code and the platform configuration, see
+[`docs/security.md`](docs/security.md).
+
+## Supported versions
+
+The project deploys continuously from `main`. Only the currently deployed
+version of the site and API is supported; there are no maintained release
+branches and fixes are not backported.
+
+| Version | Supported |
+|---------|-----------|
+| `main` (live) | Yes |
+| Anything else | No |
+
 ## Reporting a vulnerability
 
 If you find a security issue in this codebase or the deployed site
@@ -32,23 +47,26 @@ In scope:
 
 Out of scope:
 
-- Third-party services I depend on (Resend, Netlify, Render, GitHub) -- please
+- Third-party services I depend on (Resend, Netlify, Render, GitHub) - please
   report those directly to the relevant vendor
 - Findings that require physical access to a developer machine
 - Reports based on outdated dependency advisories that are already fixed
   on `main`
+- Missing headers or hardening with no demonstrated impact, and findings that
+  restate a documented, deliberate decision - the reasoning for each is in
+  [`docs/security.md`](docs/security.md#deliberate-non-goals)
 
 ## Automated hygiene
 
 Some classes of issue are already gated in CI on every push and PR, so a
 report in these areas may already be covered:
 
-- **Secret scanning** -- `gitleaks` runs over the full git history
-- **Dependency audit** -- `npm audit --omit=dev --audit-level=high` on both
+- **Secret scanning** - `gitleaks` runs over the full git history
+- **Dependency audit** - `npm audit --omit=dev --audit-level=high` on both
   workspaces. Note this gates *production* dependencies at high severity and
   above; dev-dependency and low-severity findings are reviewed manually rather
   than blocking a build
-- **Dependency updates** -- Dependabot opens grouped weekly PRs (npm minor +
+- **Dependency updates** - Dependabot opens grouped weekly PRs (npm minor +
   patch; GitHub Actions including majors)
 
 ## Safe-harbor

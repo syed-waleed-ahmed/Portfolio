@@ -2,15 +2,19 @@
 	"info": {
 		"_postman_id": "a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d",
 		"name": "Portfolio API",
-		"description": "Postman collection for the Syed Waleed Ahmed portfolio backend.\n\n**Endpoints covered**\n- `GET /` — root health probe\n- `GET /health` — health check with timestamp\n- `POST /api/contact` — contact form (validation + rate limit + Resend email)\n\n**How to use**\n1. Import this collection and the matching environment file (`Portfolio-API.postman_environment.json`).\n2. Set `baseUrl` to either `http://localhost:5000` (local) or your deployed Render URL.\n3. Run the requests individually, or use **Runner** to execute the full suite.\n\n**Notes**\n- The contact endpoint is rate-limited to **5 requests / 15 min / IP**. The \"Rate limit triggered\" request expects a 429 after the limit is exhausted.\n- Tests use `pm.test()` assertions on status code and response shape; failures will show up in the Runner.\n- Successful contact submissions actually send an email if `RESEND_API_KEY`, `EMAIL_FROM`, and `EMAIL_TO` are set on the backend.",
+		"description": "API tests for the backend of the Syed Waleed Ahmed portfolio (https://syedwaleedahmed.me).\n\nThe service accepts contact-form submissions and relays them as email through Resend. There is no database and no authentication.\n\n## Endpoints\n\n| Method | Path | Purpose |\n| --- | --- | --- |\n| `GET` | `/` | Root probe |\n| `GET` | `/health` | Health check with server time |\n| `POST` | `/api/contact` | Submit the contact form |\n\n## Setup\n\n1. Import this collection and one of the two environment files.\n2. Select **Portfolio API - Local** (`http://localhost:5000`) or **Portfolio API - Production** (the live Render backend) from the environment dropdown.\n3. Run requests individually, or use the Collection Runner for the whole suite.\n\n`{{baseUrl}}` is the only variable. The collection carries a local default, so it still runs if no environment is selected.\n\n## Before running against production\n\nOnly **POST /api/contact - Valid submission** sends a real email. Every other request stops before the mailer.\n\nThe backend is on Render's free tier and sleeps after inactivity, so the first request can take 30 to 60 seconds to cold-start.\n\n## Notes\n\n- `POST /api/contact` is rate-limited to 5 requests per IP per 15 minutes. Running the full collection uses several of those.\n- Every request asserts status code and response shape with `pm.test()`, so the Runner reports real failures.\n- Full API reference: `docs/api.md` in the repository.",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"auth": {
+		"type": "noauth"
 	},
 	"item": [
 		{
 			"name": "Health",
+			"description": "Liveness probes. No parameters, safe everywhere.",
 			"item": [
 				{
-					"name": "GET / — root",
+					"name": "GET / - Root probe",
 					"event": [
 						{
 							"listen": "test",
@@ -18,6 +22,7 @@
 								"type": "text/javascript",
 								"exec": [
 									"pm.test('status is 200', () => pm.response.to.have.status(200));",
+									"",
 									"pm.test('returns ok status', () => {",
 									"  const json = pm.response.json();",
 									"  pm.expect(json.status).to.eql('ok');",
@@ -39,12 +44,41 @@
 								""
 							]
 						},
-						"description": "Root probe. Returns `{ status: 'ok', message: 'Portfolio backend is running' }`."
+						"description": "Liveness probe. Returns `{ \"status\": \"ok\", \"message\": \"Portfolio backend is running\" }`.\n\nTakes no parameters. Safe to run against any environment."
 					},
-					"response": []
+					"response": [
+						{
+							"name": "200 OK",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										""
+									]
+								},
+								"description": "Liveness probe. Returns `{ \"status\": \"ok\", \"message\": \"Portfolio backend is running\" }`.\n\nTakes no parameters. Safe to run against any environment."
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"status\": \"ok\",\n  \"message\": \"Portfolio backend is running\"\n}"
+						}
+					]
 				},
 				{
-					"name": "GET /health",
+					"name": "GET /health - Health check",
 					"event": [
 						{
 							"listen": "test",
@@ -52,7 +86,8 @@
 								"type": "text/javascript",
 								"exec": [
 									"pm.test('status is 200', () => pm.response.to.have.status(200));",
-									"pm.test('returns ok + ISO timestamp', () => {",
+									"",
+									"pm.test('returns ok and a valid ISO timestamp', () => {",
 									"  const json = pm.response.json();",
 									"  pm.expect(json.status).to.eql('ok');",
 									"  pm.expect(new Date(json.time).toString()).to.not.eql('Invalid Date');",
@@ -73,37 +108,221 @@
 								"health"
 							]
 						},
-						"description": "Health check with current server time. Useful for uptime monitors."
+						"description": "Health check with the current server time, for uptime monitors that need to detect a frozen process rather than just an open socket. `time` is an ISO 8601 UTC string generated per request."
 					},
-					"response": []
+					"response": [
+						{
+							"name": "200 OK",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/health",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"health"
+									]
+								},
+								"description": "Health check with the current server time, for uptime monitors that need to detect a frozen process rather than just an open socket. `time` is an ISO 8601 UTC string generated per request."
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"status\": \"ok\",\n  \"time\": \"2026-08-02T07:36:48.512Z\"\n}"
+						}
+					]
 				}
 			]
 		},
 		{
 			"name": "Contact",
+			"description": "The contact endpoint and every documented failure path: validation, the body cap, the honeypot and the rate limiter.\n\nSix of these requests consume rate-limit quota and the limit is 5 per IP per 15 minutes, so a full-folder run exhausts it by design. Their tests report a `429` as **skipped** rather than failed, since the limiter has its own request at the end of the folder. Restart the backend to clear the counter and get a full pass again.",
 			"item": [
 				{
-					"name": "POST /api/contact — happy path",
+					"name": "POST /api/contact - Valid submission",
 					"event": [
 						{
 							"listen": "test",
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"pm.test('status is 200, 502, or 503 (mailer dependent)', () => {",
-									"  pm.expect([200, 502, 503]).to.include(pm.response.code);",
-									"});",
-									"if (pm.response.code === 200) {",
-									"  pm.test('returns success payload', () => {",
-									"    const json = pm.response.json();",
-									"    pm.expect(json.success).to.eql(true);",
-									"    pm.expect(json.message).to.be.a('string');",
-									"  });",
+									"// This endpoint allows 5 requests / IP / 15 min, and a full",
+									"// collection run exceeds that. A 429 here means the window is",
+									"// exhausted, not that the behaviour under test broke - so report",
+									"// it as skipped and let the dedicated rate-limit request cover it.",
+									"if (pm.response.code === 429) {",
+									"  pm.test.skip('skipped: rate-limit window exhausted', () => {});",
 									"} else {",
-									"  pm.test('returns mailer error payload (503 not configured / 502 delivery failed)', () => {",
+									"  pm.test('status is 200, 502 or 503 (mailer dependent)', () => {",
+									"    pm.expect([200, 502, 503]).to.include(pm.response.code);",
+									"  });",
+									"",
+									"  const json = pm.response.json();",
+									"",
+									"  if (pm.response.code === 200) {",
+									"    pm.test('returns success payload', () => {",
+									"      pm.expect(json.success).to.eql(true);",
+									"      pm.expect(json.message).to.be.a('string');",
+									"    });",
+									"  } else {",
+									"    pm.test('returns mailer error payload (503 unconfigured / 502 delivery failed)', () => {",
+									"      pm.expect(json.success).to.eql(false);",
+									"      pm.expect(json.error).to.match(/not configured|delivery failed/i);",
+									"    });",
+									"  }",
+									"}"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/contact",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"contact"
+							]
+						},
+						"description": "Submits a valid payload.\n\n- `200` when the email sends. The response carries Resend's `id`.\n- `503` if the mailer is unconfigured (`RESEND_API_KEY`, `EMAIL_FROM` or `EMAIL_TO` unset on the server).\n- `502` if Resend rejects the send.\n\nThe test accepts all three, so the request passes against a backend running without mail credentials.\n\n**This is the only request in the collection that sends a real email.** Every other request stops before the mailer and is safe to run against production.",
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Postman Tester\",\n  \"email\": \"tester@example.com\",\n  \"subject\": \"Hello from Postman\",\n  \"message\": \"This is a test message submitted via the Postman collection.\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						}
+					},
+					"response": [
+						{
+							"name": "200 Sent",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/api/contact",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"contact"
+									]
+								},
+								"description": "Submits a valid payload.\n\n- `200` when the email sends. The response carries Resend's `id`.\n- `503` if the mailer is unconfigured (`RESEND_API_KEY`, `EMAIL_FROM` or `EMAIL_TO` unset on the server).\n- `502` if Resend rejects the send.\n\nThe test accepts all three, so the request passes against a backend running without mail credentials.\n\n**This is the only request in the collection that sends a real email.** Every other request stops before the mailer and is safe to run against production.",
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"name\": \"Postman Tester\",\n  \"email\": \"tester@example.com\",\n  \"subject\": \"Hello from Postman\",\n  \"message\": \"This is a test message submitted via the Postman collection.\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"success\": true,\n  \"message\": \"Message sent successfully.\",\n  \"id\": \"8f1b2c3d-4e5f-6a7b-8c9d-0e1f2a3b4c5d\"\n}"
+						},
+						{
+							"name": "503 Mailer not configured",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/api/contact",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"contact"
+									]
+								},
+								"description": "Submits a valid payload.\n\n- `200` when the email sends. The response carries Resend's `id`.\n- `503` if the mailer is unconfigured (`RESEND_API_KEY`, `EMAIL_FROM` or `EMAIL_TO` unset on the server).\n- `502` if Resend rejects the send.\n\nThe test accepts all three, so the request passes against a backend running without mail credentials.\n\n**This is the only request in the collection that sends a real email.** Every other request stops before the mailer and is safe to run against production.",
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"name\": \"Postman Tester\",\n  \"email\": \"tester@example.com\",\n  \"subject\": \"Hello from Postman\",\n  \"message\": \"This is a test message submitted via the Postman collection.\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								}
+							},
+							"status": "Service Unavailable",
+							"code": 503,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"success\": false,\n  \"error\": \"Email service is not configured.\"\n}"
+						}
+					]
+				},
+				{
+					"name": "POST /api/contact - Missing required field",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"// This endpoint allows 5 requests / IP / 15 min, and a full",
+									"// collection run exceeds that. A 429 here means the window is",
+									"// exhausted, not that the behaviour under test broke - so report",
+									"// it as skipped and let the dedicated rate-limit request cover it.",
+									"if (pm.response.code === 429) {",
+									"  pm.test.skip('skipped: rate-limit window exhausted', () => {});",
+									"} else {",
+									"  pm.test('status is 400', () => pm.response.to.have.status(400));",
+									"",
+									"  pm.test('error names the missing field', () => {",
 									"    const json = pm.response.json();",
 									"    pm.expect(json.success).to.eql(false);",
-									"    pm.expect(json.error).to.match(/not configured|delivery failed/i);",
+									"    pm.expect(json.error).to.match(/missing required field/i);",
 									"  });",
 									"}"
 								]
@@ -118,10 +337,6 @@
 								"value": "application/json"
 							}
 						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"name\": \"Postman Tester\",\n  \"email\": \"tester@example.com\",\n  \"subject\": \"Hello from Postman\",\n  \"message\": \"This is a test message submitted via the Postman collection.\"\n}"
-						},
 						"url": {
 							"raw": "{{baseUrl}}/api/contact",
 							"host": [
@@ -132,24 +347,86 @@
 								"contact"
 							]
 						},
-						"description": "Submit a valid contact form payload. Returns 200 when the email sends, 503 if the mailer is unconfigured (missing Resend env vars), or 502 if Resend rejects the send."
+						"description": "Omits `name`. Validation stops at the first failure and returns `400` naming the offending field.",
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"tester@example.com\",\n  \"subject\": \"No name field\",\n  \"message\": \"Name is missing on purpose.\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						}
 					},
-					"response": []
+					"response": [
+						{
+							"name": "400 Bad Request",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/api/contact",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"contact"
+									]
+								},
+								"description": "Omits `name`. Validation stops at the first failure and returns `400` naming the offending field.",
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"email\": \"tester@example.com\",\n  \"subject\": \"No name field\",\n  \"message\": \"Name is missing on purpose.\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"success\": false,\n  \"error\": \"Missing required field: name.\"\n}"
+						}
+					]
 				},
 				{
-					"name": "POST /api/contact — missing required field",
+					"name": "POST /api/contact - Invalid email",
 					"event": [
 						{
 							"listen": "test",
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"pm.test('status is 400', () => pm.response.to.have.status(400));",
-									"pm.test('error mentions missing field', () => {",
-									"  const json = pm.response.json();",
-									"  pm.expect(json.success).to.eql(false);",
-									"  pm.expect(json.error).to.match(/missing required field/i);",
-									"});"
+									"// This endpoint allows 5 requests / IP / 15 min, and a full",
+									"// collection run exceeds that. A 429 here means the window is",
+									"// exhausted, not that the behaviour under test broke - so report",
+									"// it as skipped and let the dedicated rate-limit request cover it.",
+									"if (pm.response.code === 429) {",
+									"  pm.test.skip('skipped: rate-limit window exhausted', () => {});",
+									"} else {",
+									"  pm.test('status is 400', () => pm.response.to.have.status(400));",
+									"",
+									"  pm.test('error mentions the email', () => {",
+									"    const json = pm.response.json();",
+									"    pm.expect(json.success).to.eql(false);",
+									"    pm.expect(json.error).to.match(/invalid email/i);",
+									"  });",
+									"}"
 								]
 							}
 						}
@@ -162,10 +439,6 @@
 								"value": "application/json"
 							}
 						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"email\": \"tester@example.com\",\n  \"subject\": \"No name field\",\n  \"message\": \"Name is missing on purpose.\"\n}"
-						},
 						"url": {
 							"raw": "{{baseUrl}}/api/contact",
 							"host": [
@@ -176,121 +449,96 @@
 								"contact"
 							]
 						},
-						"description": "Omits the `name` field. Backend should reject with 400 'Missing required field'."
-					},
-					"response": []
-				},
-				{
-					"name": "POST /api/contact — invalid email",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"type": "text/javascript",
-								"exec": [
-									"pm.test('status is 400', () => pm.response.to.have.status(400));",
-									"pm.test('error mentions invalid email', () => {",
-									"  const json = pm.response.json();",
-									"  pm.expect(json.success).to.eql(false);",
-									"  pm.expect(json.error).to.match(/invalid email/i);",
-									"});"
-								]
+						"description": "Sends a malformed address. The server checks it against `/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/` after the presence and length checks pass.",
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Postman Tester\",\n  \"email\": \"not-an-email\",\n  \"subject\": \"Bad email\",\n  \"message\": \"Email is malformed.\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
 							}
 						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"name\": \"Postman Tester\",\n  \"email\": \"not-an-email\",\n  \"subject\": \"Bad email\",\n  \"message\": \"Email is malformed.\"\n}"
-						},
-						"url": {
-							"raw": "{{baseUrl}}/api/contact",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"api",
-								"contact"
-							]
-						},
-						"description": "Sends a malformed email. Backend regex should reject with 400 'Invalid email address'."
 					},
-					"response": []
+					"response": [
+						{
+							"name": "400 Bad Request",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/api/contact",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"contact"
+									]
+								},
+								"description": "Sends a malformed address. The server checks it against `/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/` after the presence and length checks pass.",
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"name\": \"Postman Tester\",\n  \"email\": \"not-an-email\",\n  \"subject\": \"Bad email\",\n  \"message\": \"Email is malformed.\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"success\": false,\n  \"error\": \"Invalid email address.\"\n}"
+						}
+					]
 				},
 				{
-					"name": "POST /api/contact — field too long",
+					"name": "POST /api/contact - Field over its length cap",
 					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"type": "text/javascript",
-								"exec": [
-									"pm.test('status is 400', () => pm.response.to.have.status(400));",
-									"pm.test('error mentions max length', () => {",
-									"  const json = pm.response.json();",
-									"  pm.expect(json.success).to.eql(false);",
-									"  pm.expect(json.error).to.match(/too long/i);",
-									"});"
-								]
-							}
-						},
 						{
 							"listen": "prerequest",
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"// Generate a 101-char name (max is 100)",
+									"// Name cap is 100 characters. Overshoot it by one.",
 									"pm.variables.set('oversizedName', 'a'.repeat(101));"
 								]
 							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"name\": \"{{oversizedName}}\",\n  \"email\": \"tester@example.com\",\n  \"subject\": \"Long name\",\n  \"message\": \"Name exceeds the 100-char cap.\"\n}"
 						},
-						"url": {
-							"raw": "{{baseUrl}}/api/contact",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"api",
-								"contact"
-							]
-						},
-						"description": "Sends a 101-character name (max is 100). Backend should reject with 400 'Field \"name\" is too long'."
-					},
-					"response": []
-				},
-				{
-					"name": "POST /api/contact — empty body",
-					"event": [
 						{
 							"listen": "test",
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"pm.test('status is 400', () => pm.response.to.have.status(400));",
-									"pm.test('returns validation error', () => {",
-									"  const json = pm.response.json();",
-									"  pm.expect(json.success).to.eql(false);",
-									"});"
+									"// This endpoint allows 5 requests / IP / 15 min, and a full",
+									"// collection run exceeds that. A 429 here means the window is",
+									"// exhausted, not that the behaviour under test broke - so report",
+									"// it as skipped and let the dedicated rate-limit request cover it.",
+									"if (pm.response.code === 429) {",
+									"  pm.test.skip('skipped: rate-limit window exhausted', () => {});",
+									"} else {",
+									"  pm.test('status is 400', () => pm.response.to.have.status(400));",
+									"",
+									"  pm.test('error reports the over-length field', () => {",
+									"    const json = pm.response.json();",
+									"    pm.expect(json.success).to.eql(false);",
+									"    pm.expect(json.error).to.match(/too long/i);",
+									"  });",
+									"}"
 								]
 							}
 						}
@@ -303,10 +551,6 @@
 								"value": "application/json"
 							}
 						],
-						"body": {
-							"mode": "raw",
-							"raw": "{}"
-						},
 						"url": {
 							"raw": "{{baseUrl}}/api/contact",
 							"host": [
@@ -317,32 +561,168 @@
 								"contact"
 							]
 						},
-						"description": "Sends an empty JSON object. First missing field should trigger 400."
+						"description": "Sends a 101-character name against the 100-character cap and gets a `400` from route validation.\n\nDistinct from 'Body over the 16 KB cap', which is rejected by the body parser with a `413` before the router runs. The caps are name 100, email 100, subject 200, message 5000.",
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"{{oversizedName}}\",\n  \"email\": \"tester@example.com\",\n  \"subject\": \"Long name\",\n  \"message\": \"Name exceeds the 100-char cap.\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						}
 					},
-					"response": []
+					"response": [
+						{
+							"name": "400 Bad Request",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/api/contact",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"contact"
+									]
+								},
+								"description": "Sends a 101-character name against the 100-character cap and gets a `400` from route validation.\n\nDistinct from 'Body over the 16 KB cap', which is rejected by the body parser with a `413` before the router runs. The caps are name 100, email 100, subject 200, message 5000.",
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"name\": \"{{oversizedName}}\",\n  \"email\": \"tester@example.com\",\n  \"subject\": \"Long name\",\n  \"message\": \"Name exceeds the 100-char cap.\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"success\": false,\n  \"error\": \"Field \\\"name\\\" is too long.\"\n}"
+						}
+					]
 				},
 				{
-					"name": "POST /api/contact — payload too large",
+					"name": "POST /api/contact - Empty body",
 					"event": [
 						{
 							"listen": "test",
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"pm.test('status is 413', () => pm.response.to.have.status(413));",
-									"pm.test('returns payload-too-large error', () => {",
-									"  const json = pm.response.json();",
-									"  pm.expect(json.success).to.eql(false);",
-									"  pm.expect(json.error).to.match(/payload too large/i);",
-									"});",
-									"// express.json() is registered before the router, so the body is",
-									"// rejected ahead of the rate limiter - this request costs no quota.",
-									"pm.test('did not consume rate-limit quota', () => {",
-									"  pm.expect(pm.response.headers.has('RateLimit-Remaining')).to.eql(false);",
-									"});"
+									"// This endpoint allows 5 requests / IP / 15 min, and a full",
+									"// collection run exceeds that. A 429 here means the window is",
+									"// exhausted, not that the behaviour under test broke - so report",
+									"// it as skipped and let the dedicated rate-limit request cover it.",
+									"if (pm.response.code === 429) {",
+									"  pm.test.skip('skipped: rate-limit window exhausted', () => {});",
+									"} else {",
+									"  pm.test('status is 400', () => pm.response.to.have.status(400));",
+									"",
+									"  pm.test('returns a validation error', () => {",
+									"    const json = pm.response.json();",
+									"    pm.expect(json.success).to.eql(false);",
+									"    pm.expect(json.error).to.be.a('string');",
+									"  });",
+									"}"
 								]
 							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/contact",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"contact"
+							]
 						},
+						"description": "Sends `{}`. Every field is missing, so the first one checked triggers the `400`.",
+						"body": {
+							"mode": "raw",
+							"raw": "{}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						}
+					},
+					"response": [
+						{
+							"name": "400 Bad Request",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/api/contact",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"contact"
+									]
+								},
+								"description": "Sends `{}`. Every field is missing, so the first one checked triggers the `400`.",
+								"body": {
+									"mode": "raw",
+									"raw": "{}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"success\": false,\n  \"error\": \"Missing required field: name.\"\n}"
+						}
+					]
+				},
+				{
+					"name": "POST /api/contact - Body over the 16 KB cap",
+					"event": [
 						{
 							"listen": "prerequest",
 							"script": {
@@ -352,53 +732,24 @@
 									"pm.variables.set('oversizedMessage', 'a'.repeat(20000));"
 								]
 							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"name\": \"Postman Tester\",\n  \"email\": \"tester@example.com\",\n  \"subject\": \"Oversized body\",\n  \"message\": \"{{oversizedMessage}}\"\n}"
 						},
-						"url": {
-							"raw": "{{baseUrl}}/api/contact",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"api",
-								"contact"
-							]
-						},
-						"description": "Sends a ~20 KB JSON body against the 16 KB cap (express.json({ limit: '16kb' })). Backend should reject with 413 'Payload too large.' before the router runs, so it does not consume rate-limit quota. Distinct from 'field too long', which is the 100-char name validation and returns 400."
-					},
-					"response": []
-				},
-				{
-					"name": "POST /api/contact — honeypot tripped",
-					"event": [
 						{
 							"listen": "test",
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"// Answers exactly like a real send, on purpose: a bot that could tell",
-									"// rejection from success would just retry without the field.",
-									"pm.test('status is 200', () => pm.response.to.have.status(200));",
-									"pm.test('looks like a normal success', () => {",
+									"pm.test('status is 413', () => pm.response.to.have.status(413));",
+									"",
+									"pm.test('returns payload-too-large error', () => {",
 									"  const json = pm.response.json();",
-									"  pm.expect(json.success).to.eql(true);",
+									"  pm.expect(json.success).to.eql(false);",
+									"  pm.expect(json.error).to.match(/payload too large/i);",
 									"});",
-									"// Nothing was actually sent. Against a configured backend a real send",
-									"// returns an `id` from Resend; a dropped one has none.",
-									"pm.test('no mail id — message was dropped', () => {",
-									"  pm.expect(pm.response.json().id).to.be.undefined;",
+									"",
+									"// express.json() runs before the router, so the body is rejected",
+									"// ahead of the rate limiter and this request costs no quota.",
+									"pm.test('did not consume rate-limit quota', () => {",
+									"  pm.expect(pm.response.headers.has('RateLimit-Remaining')).to.eql(false);",
 									"});"
 								]
 							}
@@ -412,10 +763,6 @@
 								"value": "application/json"
 							}
 						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"name\": \"Spam Bot\",\n  \"email\": \"bot@example.com\",\n  \"subject\": \"Buy things\",\n  \"message\": \"Spam body.\",\n  \"website\": \"http://spam.example.com\"\n}"
-						},
 						"url": {
 							"raw": "{{baseUrl}}/api/contact",
 							"host": [
@@ -426,29 +773,194 @@
 								"contact"
 							]
 						},
-						"description": "Fills the hidden `website` honeypot field. The backend drops the submission without sending, but answers with the same 200 a real send gets so a bot cannot detect the trap. Safe to run against production - no email is sent. Note it DOES consume rate-limit quota, since the check runs inside the router, after the limiter."
+						"description": "Sends a roughly 20 KB body against `express.json({ limit: '16kb' })`.\n\nThe body parser is registered before the router, so this is rejected with `413` ahead of the rate limiter and costs no quota. The test asserts that by checking no `RateLimit-Remaining` header came back.",
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Postman Tester\",\n  \"email\": \"tester@example.com\",\n  \"subject\": \"Oversized body\",\n  \"message\": \"{{oversizedMessage}}\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						}
 					},
-					"response": []
+					"response": [
+						{
+							"name": "413 Payload Too Large",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/api/contact",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"contact"
+									]
+								},
+								"description": "Sends a roughly 20 KB body against `express.json({ limit: '16kb' })`.\n\nThe body parser is registered before the router, so this is rejected with `413` ahead of the rate limiter and costs no quota. The test asserts that by checking no `RateLimit-Remaining` header came back.",
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"name\": \"Postman Tester\",\n  \"email\": \"tester@example.com\",\n  \"subject\": \"Oversized body\",\n  \"message\": \"{{oversizedMessage}}\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								}
+							},
+							"status": "Payload Too Large",
+							"code": 413,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"success\": false,\n  \"error\": \"Payload too large.\"\n}"
+						}
+					]
 				},
 				{
-					"name": "POST /api/contact — rate limit triggered",
+					"name": "POST /api/contact - Honeypot tripped",
 					"event": [
 						{
 							"listen": "test",
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"// Run this request 6+ times in a row (Runner) to trigger the limiter.",
-									"// First 5 should succeed/validate; 6th should 429.",
-									"pm.test('rate-limit response shape on 429', () => {",
-									"  if (pm.response.code === 429) {",
+									"// This endpoint allows 5 requests / IP / 15 min, and a full",
+									"// collection run exceeds that. A 429 here means the window is",
+									"// exhausted, not that the behaviour under test broke - so report",
+									"// it as skipped and let the dedicated rate-limit request cover it.",
+									"if (pm.response.code === 429) {",
+									"  pm.test.skip('skipped: rate-limit window exhausted', () => {});",
+									"} else {",
+									"  pm.test('status is 200', () => pm.response.to.have.status(200));",
+									"",
+									"  // Answers exactly like a real send, on purpose.",
+									"  pm.test('looks like an ordinary success', () => {",
 									"    const json = pm.response.json();",
-									"    pm.expect(json.success).to.eql(false);",
-									"    pm.expect(json.error).to.match(/too many requests/i);",
-									"    pm.expect(pm.response.headers.get('RateLimit-Limit')).to.not.be.null;",
-									"  } else {",
-									"    pm.test.skip && pm.test.skip('not yet rate-limited');",
-									"  }",
+									"    pm.expect(json.success).to.eql(true);",
+									"    pm.expect(json.message).to.match(/sent successfully/i);",
+									"  });",
+									"",
+									"  // A real send returns Resend's id; a dropped one has none.",
+									"  pm.test('no mail id, so the message was dropped', () => {",
+									"    pm.expect(pm.response.json().id).to.be.undefined;",
+									"  });",
+									"}"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/contact",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"contact"
+							]
+						},
+						"description": "Fills the hidden `website` honeypot field.\n\nThe submission is dropped without sending, but answers with the same `200` and the same message a real send returns - a bot that could tell rejection from success would just retry without the field. The only tell is the absent `id`.\n\nSafe against production: no email is sent. It does, however, consume rate-limit quota, because the check runs inside the router, after the limiter.",
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Spam Bot\",\n  \"email\": \"bot@example.com\",\n  \"subject\": \"Buy things\",\n  \"message\": \"Spam body.\",\n  \"website\": \"http://spam.example.com\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						}
+					},
+					"response": [
+						{
+							"name": "200 OK (dropped)",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/api/contact",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"contact"
+									]
+								},
+								"description": "Fills the hidden `website` honeypot field.\n\nThe submission is dropped without sending, but answers with the same `200` and the same message a real send returns - a bot that could tell rejection from success would just retry without the field. The only tell is the absent `id`.\n\nSafe against production: no email is sent. It does, however, consume rate-limit quota, because the check runs inside the router, after the limiter.",
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"name\": \"Spam Bot\",\n  \"email\": \"bot@example.com\",\n  \"subject\": \"Buy things\",\n  \"message\": \"Spam body.\",\n  \"website\": \"http://spam.example.com\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"success\": true,\n  \"message\": \"Message sent successfully.\"\n}"
+						}
+					]
+				},
+				{
+					"name": "POST /api/contact - Rate limit (run 6+ times)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"// Passes on every iteration: below the limit it checks the normal",
+									"// response, and on the 429 it checks the limiter's contract.",
+									"const limited = pm.response.code === 429;",
+									"",
+									"pm.test('status is a known contact response', () => {",
+									"  pm.expect([200, 400, 429, 502, 503]).to.include(pm.response.code);",
+									"});",
+									"",
+									"pm.test(limited ? 'rate limited as expected' : 'not yet rate limited (run 6+ iterations)', () => {",
+									"  if (!limited) return;",
+									"  const json = pm.response.json();",
+									"  pm.expect(json.success).to.eql(false);",
+									"  pm.expect(json.error).to.match(/too many requests/i);",
+									"  pm.expect(pm.response.headers.get('RateLimit-Limit')).to.not.be.null;",
+									"  pm.expect(pm.response.headers.get('RateLimit-Reset')).to.not.be.null;",
 									"});"
 								]
 							}
@@ -462,10 +974,6 @@
 								"value": "application/json"
 							}
 						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"name\": \"Rate Limit Tester\",\n  \"email\": \"ratelimit@example.com\",\n  \"subject\": \"Burst\",\n  \"message\": \"Fire this six times in a row using the Runner to trigger 429.\"\n}"
-						},
 						"url": {
 							"raw": "{{baseUrl}}/api/contact",
 							"host": [
@@ -476,7 +984,183 @@
 								"contact"
 							]
 						},
-						"description": "To trigger the limiter, open Runner, select this request, set Iterations = 6+, and run. The 6th call should return 429 with `RateLimit-*` headers."
+						"description": "The limiter allows 5 requests per IP per 15 minutes.\n\nTo trigger it, open the Collection Runner, select this request, set Iterations to 6 or more, and run. The first five pass validation; the sixth returns `429` with `RateLimit-*` headers.\n\nThe limiter is in-memory, so restarting the backend clears the counter. This payload is valid, so against a configured backend the first five iterations send real email - prefer running it locally with the mailer unconfigured.",
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Rate Limit Tester\",\n  \"email\": \"ratelimit@example.com\",\n  \"subject\": \"Burst\",\n  \"message\": \"Run this six times in a row with the Runner to trigger a 429.\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						}
+					},
+					"response": [
+						{
+							"name": "429 Too Many Requests",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/api/contact",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"contact"
+									]
+								},
+								"description": "The limiter allows 5 requests per IP per 15 minutes.\n\nTo trigger it, open the Collection Runner, select this request, set Iterations to 6 or more, and run. The first five pass validation; the sixth returns `429` with `RateLimit-*` headers.\n\nThe limiter is in-memory, so restarting the backend clears the counter. This payload is valid, so against a configured backend the first five iterations send real email - prefer running it locally with the mailer unconfigured.",
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"name\": \"Rate Limit Tester\",\n  \"email\": \"ratelimit@example.com\",\n  \"subject\": \"Burst\",\n  \"message\": \"Run this six times in a row with the Runner to trigger a 429.\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								}
+							},
+							"status": "Too Many Requests",
+							"code": 429,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "RateLimit-Limit",
+									"value": "5"
+								},
+								{
+									"key": "RateLimit-Remaining",
+									"value": "0"
+								},
+								{
+									"key": "RateLimit-Reset",
+									"value": "873"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"success\": false,\n  \"error\": \"Too many requests. Please try again later.\"\n}"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "CORS",
+			"description": "Browser-origin allow-list behaviour. These send an `Origin` header explicitly, which Postman otherwise omits.",
+			"item": [
+				{
+					"name": "OPTIONS /api/contact - Preflight from an allowed origin",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('preflight succeeds', () => {",
+									"  pm.expect([200, 204]).to.include(pm.response.code);",
+									"});",
+									"",
+									"pm.test('echoes the allowed origin', () => {",
+									"  pm.expect(pm.response.headers.get('Access-Control-Allow-Origin'))",
+									"    .to.eql('http://localhost:5173');",
+									"});",
+									"",
+									"pm.test('advertises the permitted methods and caches the preflight', () => {",
+									"  pm.expect(pm.response.headers.get('Access-Control-Allow-Methods'))",
+									"    .to.match(/POST/);",
+									"  pm.expect(pm.response.headers.get('Access-Control-Max-Age')).to.eql('86400');",
+									"});"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "OPTIONS",
+						"header": [
+							{
+								"key": "Origin",
+								"value": "http://localhost:5173"
+							},
+							{
+								"key": "Access-Control-Request-Method",
+								"value": "POST"
+							},
+							{
+								"key": "Access-Control-Request-Headers",
+								"value": "Content-Type"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/contact",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"contact"
+							]
+						},
+						"description": "Simulates the browser preflight the site itself sends.\n\n`http://localhost:5173` is on the built-in allow-list, so the response echoes the origin, advertises `GET, POST, OPTIONS`, and caches the preflight for 24 hours."
+					},
+					"response": []
+				},
+				{
+					"name": "OPTIONS /api/contact - Preflight from a disallowed origin",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('no Access-Control-Allow-Origin header is returned', () => {",
+									"  pm.expect(pm.response.headers.has('Access-Control-Allow-Origin')).to.eql(false);",
+									"});",
+									"",
+									"pm.test('does not leak a server error', () => {",
+									"  pm.expect(pm.response.code).to.be.below(500);",
+									"});"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "OPTIONS",
+						"header": [
+							{
+								"key": "Origin",
+								"value": "https://not-allowed.example"
+							},
+							{
+								"key": "Access-Control-Request-Method",
+								"value": "POST"
+							},
+							{
+								"key": "Access-Control-Request-Headers",
+								"value": "Content-Type"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/contact",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"contact"
+							]
+						},
+						"description": "An origin that is not on the allow-list.\n\nThe API does **not** answer with an error status. It simply omits `Access-Control-Allow-Origin`, and the browser blocks the response client-side. Throwing inside the origin callback would surface as a `500` and advertise that an allow-list exists, so the status is deliberately not asserted here - the missing header is the whole contract.\n\nNote that CORS is a browser control, not authentication: Postman and curl send no `Origin` header and are unaffected, which is why the rest of this collection works against production."
 					},
 					"response": []
 				}
@@ -484,9 +1168,10 @@
 		},
 		{
 			"name": "Negative",
+			"description": "Unmapped paths and unsupported methods.",
 			"item": [
 				{
-					"name": "GET /api/unknown — 404",
+					"name": "GET /api/unknown - Unmapped path",
 					"event": [
 						{
 							"listen": "test",
@@ -494,7 +1179,8 @@
 								"type": "text/javascript",
 								"exec": [
 									"pm.test('status is 404', () => pm.response.to.have.status(404));",
-									"pm.test('returns not-found JSON', () => {",
+									"",
+									"pm.test('returns the not-found payload', () => {",
 									"  const json = pm.response.json();",
 									"  pm.expect(json.success).to.eql(false);",
 									"  pm.expect(json.error).to.match(/not found/i);",
@@ -516,12 +1202,42 @@
 								"unknown"
 							]
 						},
-						"description": "Hits an unmapped path. The catch-all 404 handler should respond with `{ success: false, error: 'Not found.' }`."
+						"description": "Any unmatched path falls through to the catch-all handler, which returns `{ \"success\": false, \"error\": \"Not found.\" }`."
 					},
-					"response": []
+					"response": [
+						{
+							"name": "404 Not Found",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/api/unknown",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"unknown"
+									]
+								},
+								"description": "Any unmatched path falls through to the catch-all handler, which returns `{ \"success\": false, \"error\": \"Not found.\" }`."
+							},
+							"status": "Not Found",
+							"code": 404,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"success\": false,\n  \"error\": \"Not found.\"\n}"
+						}
+					]
 				},
 				{
-					"name": "POST /api/contact — wrong method (GET)",
+					"name": "GET /api/contact - Unsupported method",
 					"event": [
 						{
 							"listen": "test",
@@ -529,7 +1245,12 @@
 								"type": "text/javascript",
 								"exec": [
 									"pm.test('status is 404 (route only accepts POST)', () => {",
-									"  pm.expect([404, 405]).to.include(pm.response.code);",
+									"  pm.response.to.have.status(404);",
+									"});",
+									"",
+									"pm.test('returns the not-found payload', () => {",
+									"  const json = pm.response.json();",
+									"  pm.expect(json.success).to.eql(false);",
 									"});"
 								]
 							}
@@ -548,9 +1269,39 @@
 								"contact"
 							]
 						},
-						"description": "Express only registers POST on /api/contact, so GET falls through to the 404 handler."
+						"description": "Only `POST` is registered on `/api/contact`, so a `GET` falls through to the catch-all `404` rather than returning `405`."
 					},
-					"response": []
+					"response": [
+						{
+							"name": "404 Not Found",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/api/contact",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"contact"
+									]
+								},
+								"description": "Only `POST` is registered on `/api/contact`, so a `GET` falls through to the catch-all `404` rather than returning `405`."
+							},
+							"status": "Not Found",
+							"code": 404,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"success\": false,\n  \"error\": \"Not found.\"\n}"
+						}
+					]
 				}
 			]
 		}
@@ -559,7 +1310,8 @@
 		{
 			"key": "baseUrl",
 			"value": "http://localhost:5000",
-			"type": "string"
+			"type": "string",
+			"description": "Backend base URL. Overridden by the selected environment."
 		}
 	]
 }
