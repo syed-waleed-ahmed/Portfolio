@@ -24,7 +24,7 @@ const Skills = () => {
     <div className="container">
       <Reveal>
         <div className="section-header">
-          <h2 className="section-title">Skills</h2>
+          <h2 className="section-title">Technical Skills</h2>
           <p className="section-subtitle">
             What I actually reach for day-to-day, grouped by where I use it.
           </p>

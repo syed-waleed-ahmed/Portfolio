@@ -32,9 +32,7 @@ const Interests = () => {
     <div className="container">
       <Reveal>
         <div className="section-header">
-          <h2 className="section-title">
-            Interests &amp; What I&apos;m Looking For
-          </h2>
+          <h2 className="section-title">Interests &amp; Career Focus</h2>
           <p className="section-subtitle">
             The roles I&apos;m aiming for, how I like to work, and what
             I&apos;m digging into right now.
@@ -43,7 +41,7 @@ const Interests = () => {
       </Reveal>
 
       <Reveal>
-        <p className="interests-eyebrow">Roles I&apos;m aiming for</p>
+        <p className="interests-eyebrow">Target Roles</p>
       </Reveal>
 
       <div className="row g-4 justify-content-center">
@@ -78,7 +76,7 @@ const Interests = () => {
       </Reveal>
 
       <Reveal delay={0.24}>
-        <p className="interests-eyebrow">Currently exploring</p>
+        <p className="interests-eyebrow">Currently Exploring</p>
       </Reveal>
 
       <Reveal delay={0.28}>

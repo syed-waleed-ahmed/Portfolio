@@ -7,7 +7,7 @@ const About = () => {
       <div className="container">
         <Reveal>
           <div className="section-header">
-            <h2 className="section-title">About Me &amp; Education</h2>
+            <h2 className="section-title">About &amp; Education</h2>
             <p className="section-subtitle">
               Half full-stack engineer, half AI/ML. Here&apos;s a quick
               summary of how I got here and what I&apos;m working on now.
@@ -36,7 +36,7 @@ const About = () => {
               <div className="neo-card flex-fill h-100 p-4">
                 <div className="card-heading">
                   <span className="card-heading-icon"><FaUserAstronaut /></span>
-                  My Approach
+                  Approach
                 </div>
                 {approach.map((para, i) => (
                   <p
