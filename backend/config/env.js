@@ -3,7 +3,9 @@
 // `config` instead of reaching into process.env. Add new settings here.
 import dotenv from "dotenv";
 
-dotenv.config();
+// `quiet` suppresses the startup banner dotenv v17 prints by default, so the
+// boot log stays limited to lines this app wrote.
+dotenv.config({ quiet: true });
 
 // Browser origins allowed to hit the API. Override with ALLOWED_ORIGINS
 // (comma-separated) to add a domain without editing code.
