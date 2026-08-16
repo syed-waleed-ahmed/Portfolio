@@ -8,7 +8,7 @@ reviewed.
 | Tool | Version | Notes |
 |------|---------|-------|
 | Node.js | >= 22.13 (24 recommended) | `.nvmrc` pins 24; run `nvm use` to match |
-| npm | 10+ | Ships with Node |
+| npm | 11+ | Ships with Node 24 |
 | Resend account | - | Only needed to exercise the email path locally |
 
 `.npmrc` sets `engine-strict=true`, so an install on an unsupported Node
@@ -76,7 +76,42 @@ Two workspace-level scripts are worth knowing about:
 
 ---
 
+## Dependencies
+
+Both workspaces keep their own `package.json` and lockfile; there is no npm
+workspace linking them, so every command below runs per side.
+
+```bash
+npm outdated --prefix backend      # what has moved
+npm update   --prefix backend      # apply everything inside the existing ranges
+npm audit --omit=dev --audit-level=high --prefix backend   # the gate CI enforces
+```
+
+Dependabot opens grouped weekly PRs for minor and patch bumps and is the normal
+path for keeping current, so a manual `npm update` is usually only needed
+between runs. Majors are deliberately excluded from those PRs and are done by
+hand: read the upgrade guide, bump the range in `package.json`, then run the
+full local gate (`npm test` for the backend, `npm run lint` and `npm run build`
+for the frontend) before pushing.
+
+Two rules are worth stating explicitly:
+
+- **Commit the lockfile with the `package.json` change.** CI installs with
+  `npm ci`, which fails outright if the two disagree.
+- **A transitive advisory is still your advisory.** `npm audit fix` resolves
+  most of them by tightening a nested version in the lockfile alone, which is a
+  lockfile-only commit and needs no `package.json` edit.
+
+The audit gate covers production dependencies at high severity and above. A
+dev-dependency finding does not fail CI, but it is still worth clearing while
+the fix is a one-line lockfile bump.
+
+---
+
 ## Configuration
+
+Both `.env.example` files are annotated templates and are the canonical
+reference for what each variable does. The tables below are the summary.
 
 ### `backend/.env`
 
@@ -192,6 +227,12 @@ error is in the server log, not the response.
 Your frontend origin is not on the allow-list. The defaults cover
 `http://localhost:5173`; if Vite picked a different port because 5173 was busy,
 add that origin to `ALLOWED_ORIGINS` in `backend/.env`.
+
+**The contact form fails with a connection error against localhost.**
+`VITE_API_BASE_URL` in `frontend/.env` and `PORT` in `backend/.env` have to
+name the same port. Both templates default to 5000, as do the docs and the
+Postman local environment; change one and you have to change the other. Note
+that Vite reads `.env` at startup, so restart the dev server after editing it.
 
 **The contact form works in Postman but not in the browser.**
 Same cause. Postman sends no `Origin` header and so is never subject to CORS,

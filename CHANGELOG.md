@@ -20,9 +20,28 @@ milestone rather than by individual commit.
   changelog.
 - Postman CORS folder covering the preflight from an allowed and a disallowed
   origin, and saved response examples on the primary requests.
+- `docs/development.md` gained a Dependencies section: the per-workspace update
+  commands, how majors are handled given that Dependabot skips them, and why a
+  lockfile-only commit is the normal fix for a transitive advisory.
 
 ### Changed
 
+- Backend moved from Express 4 to Express 5 (`4.22.2` to `5.2.1`). Express 4 is
+  in maintenance, and nothing in this codebase depended on the removed API, so
+  the upgrade is a version bump rather than a migration. The full suite passes
+  unchanged.
+- Dependencies refreshed across both workspaces: `express-rate-limit` `8.6.2`,
+  `resend` `6.20.0`, `vite` `8.2.1`, `eslint` `10.8.1`, `globals` `17.11.0`,
+  `@vitejs/plugin-react` `6.0.5`, `eslint-plugin-react-refresh` `0.5.4` and the
+  React type packages. Both workspaces report zero advisories.
+- Both `.env.example` files rewritten as sectioned, fully annotated templates,
+  each stating what breaks when a variable is missing rather than only what it
+  holds. The backend template now lists the built-in CORS defaults, since
+  setting `ALLOWED_ORIGINS` replaces them rather than adding to them.
+- Local development standardized on port 5000, which is what the README, `docs/`
+  and the Postman local environment already documented.
+- `dotenv.config()` runs with `{ quiet: true }`, so the banner dotenv v17 prints
+  by default no longer opens the Render deploy log ahead of the app's own lines.
 - `README.md` restructured as an entry point and documentation index, with the
   detailed reference material moved into `docs/`.
 - `SECURITY.md` scoped to disclosure policy, with implemented controls moved to
@@ -33,6 +52,13 @@ milestone rather than by individual commit.
 
 ### Fixed
 
+- High-severity `ip-address` advisories (SSRF and trust-boundary bypass through
+  leading-zero octets, CIDR suffixes and IPv4-mapped addresses), reached
+  transitively through `express-rate-limit`. Resolved in the lockfile at
+  `10.5.0`. This was a production dependency, so it would have failed the CI
+  audit gate on the next run.
+- High-severity `nanoid` advisory in the frontend's dev tree, resolved in the
+  lockfile. Dev-only, so it was not failing CI.
 - Contact tests in the Postman collection report a `429` as skipped rather than
   failed, so a full-collection run no longer fails on requests whose only
   problem is that the shared 5-per-15-minute window is exhausted.

@@ -92,7 +92,7 @@ Full detail in [`docs/architecture.md`](docs/architecture.md).
 | Layer | Choices |
 |-------|---------|
 | Frontend | React 19, Vite 8, Bootstrap 5 (CSS only), `react-icons`, CSS Grid with `subgrid`, PurgeCSS |
-| Backend | Node.js 24, Express 4 (ESM), Helmet, `express-rate-limit`, Resend |
+| Backend | Node.js 24, Express 5 (ESM), Helmet, `express-rate-limit`, Resend |
 | Testing | `node --test`, Postman |
 | CI/CD | GitHub Actions, Dependabot, gitleaks |
 | Hosting | Netlify (frontend), Render (backend) |
