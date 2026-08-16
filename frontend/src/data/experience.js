@@ -4,10 +4,10 @@ export const experiences = [
     company: "MemorAIz S.r.l.",
     period: "Jan 2026 - Present · Bologna, Italy",
     bullets: [
-      "Thesis: RemindrAI, a portable reminder and memory service conversational assistants adopt instead of rebuilding, built on an agent that covers Email, WhatsApp, Telegram, and Discord.",
-      "Made delivery correct under failure without a queue runtime, using an atomic database claim, per-channel idempotency, and database-owned retries.",
-      "Built the operator console that runs it in production: a content-blind multi-tenant control plane for plans, licences, quotas, and GDPR export and erasure.",
-      "Live on an EU-pinned stack, packaged as a one-line Mastra capability, with the H-FARM Student Assistant as first tenant.",
+      "Thesis: RemindrAI, a reminder and memory service assistants adopt instead of rebuilding — one agent over Email, WhatsApp, Telegram, Discord.",
+      "Made delivery correct under failure with no queue runtime: atomic database claim, per-channel idempotency, DB-owned retries, dead-lettering.",
+      "Built the control plane and operator console: plans, licences and quotas as data, a content-blind audit trail, GDPR export and erasure.",
+      "Live EU-pinned on Vercel, published as a one-line Mastra capability, with H-FARM's Student Assistant as first tenant.",
     ],
   },
   {

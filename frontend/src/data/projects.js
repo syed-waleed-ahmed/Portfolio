@@ -7,9 +7,9 @@ export const projects = [
     // Marks the centrepiece card. Projects.jsx gives it the gradient rule.
     featured: true,
     description:
-      "My Master's thesis: a reminder and memory service conversational assistants adopt instead of rebuilding. An agent sets reminders from plain chat across Email, WhatsApp, Telegram, and Discord, and a durable engine delivers them reliably. A server-rendered operator console runs the control plane behind it.",
+      "My Master's thesis: a multi-tenant reminder and memory service assistants adopt instead of rebuilding. An agent schedules from plain chat across Email, WhatsApp, Telegram, and Discord; a database-owned engine delivers under failure. A server-rendered console runs plans, quotas and GDPR.",
     highlight:
-      "Live in production on an EU-pinned stack, with the H-FARM Student Assistant as first tenant, adopted as a one-line Mastra capability.",
+      "Live on an EU-pinned stack and published as a one-line Mastra capability, with the H-FARM Student Assistant as first production tenant.",
   },
   {
     title: "TIAGo: Autonomous Mapping, Navigation & Pick-and-Place",
