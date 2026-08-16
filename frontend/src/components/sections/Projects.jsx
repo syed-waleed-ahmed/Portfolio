@@ -7,7 +7,7 @@ const Projects = () => {
       <div className="container">
         <Reveal>
           <div className="section-header">
-            <h2 className="section-title">Projects</h2>
+            <h2 className="section-title">Selected Projects</h2>
             <p className="section-subtitle">
               AI/ML and robotics projects from work and study. Code I&apos;ve
               actually shipped or wrote a thesis around, not pitch-deck mockups.
