@@ -5,7 +5,7 @@ export const roles = [
   {
     icon: "agent",
     title: "AI Engineer",
-    line: "Agents, tool use, and the plumbing that makes them dependable.",
+    line: "Agents, tool use, and the infrastructure that makes them dependable.",
   },
   {
     icon: "model",
@@ -15,20 +15,18 @@ export const roles = [
   {
     icon: "stack",
     title: "Full-Stack AI",
-    line: "End to end: the model, the API, and the interface someone clicks on.",
+    line: "End to end: the model, the API, and the interface it is served through.",
   },
 ];
 
 export const principles = [
   "Clean architecture",
   "Reproducible workflows",
-  "Prototype → production",
+  "Prototype to production",
 ];
 
-export const topics = [
-  { icon: "agents", label: "Multi-agent systems" },
-  { icon: "rag", label: "RAG & retrieval quality" },
-  { icon: "eval", label: "LLM eval & observability" },
-  { icon: "vision", label: "Vision & multimodal" },
-  { icon: "mlops", label: "MLOps & deployment" },
-];
+// A "Currently Exploring" tile row used to sit below the principles, listing
+// multi-agent systems, RAG, LLM eval, vision and MLOps. Every one of those is
+// already claimed in the hero lead or in the Skills groups, so the row was the
+// third statement of the same handful of terms. Removed rather than reworded:
+// nothing was lost that the page does not say elsewhere.

@@ -5,8 +5,12 @@ import {
   FaTag,
   FaCommentDots,
   FaPaperPlane,
+  FaEnvelopeOpenText,
+  FaCheckCircle,
+  FaExclamationCircle,
 } from "react-icons/fa";
 import Reveal from "@/components/ui/Reveal";
+import SectionHeader from "@/components/ui/SectionHeader";
 
 const initialState = {
   name: "",
@@ -100,7 +104,7 @@ const Contact = () => {
         throw new Error(data.error || "Failed to send message.");
       }
 
-      setSubmitSuccess("Thanks for reaching out! I'll get back to you soon.");
+      setSubmitSuccess("Thanks for reaching out. I'll get back to you shortly.");
       setForm(initialState);
       setErrors({});
     } catch (err) {
@@ -115,15 +119,10 @@ const Contact = () => {
 
   return (
     <div className="container">
-      <Reveal>
-        <div className="section-header">
-          <h2 className="section-title">Contact</h2>
-          <p className="section-subtitle">
-            Got a role, a question, or an idea? Drop a note. I read every
-            message.
-          </p>
-        </div>
-      </Reveal>
+      <SectionHeader icon={FaEnvelopeOpenText} title="Contact">
+        Whether it&apos;s a role, a question, or a collaboration, send a
+        message. I read every one.
+      </SectionHeader>
 
       <Reveal delay={0.08}>
         <div className="neo-card contact-card">
@@ -227,11 +226,13 @@ const Contact = () => {
 
             {submitError && (
               <div className="contact-feedback is-error" role="alert">
+                <FaExclamationCircle aria-hidden="true" />
                 {submitError}
               </div>
             )}
             {submitSuccess && !submitError && (
               <div className="contact-feedback is-success" role="status">
+                <FaCheckCircle aria-hidden="true" />
                 {submitSuccess}
               </div>
             )}

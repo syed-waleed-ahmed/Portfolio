@@ -258,6 +258,39 @@ body::before {
   margin-bottom: 3rem;
 }
 
+/* Icon and title on one line. The row is inline-flex inside the h2 so it
+   centres as a unit, while the h2's ::after rule still breaks below it. */
+.section-title-row {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.85rem;
+  max-width: 100%;
+}
+
+.section-title-text {
+  min-width: 0;
+}
+
+/* Sized against the title rather than to a round number: the tile tracks the
+   heading's line box, which is what keeps the pairing from reading as a
+   graphic parked next to some text. Same treatment as .role-icon and
+   .card-heading-icon, so the header and the cards below it stay one system. */
+.section-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 3rem;
+  height: 3rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(34, 211, 238, 0.25);
+  background: rgba(34, 211, 238, 0.08);
+  color: var(--accent-2);
+  font-size: 1.2rem;
+  line-height: 1;
+}
+
 @media (max-width: 768px) {
   .section-title {
     font-size: 1.92rem;
@@ -268,11 +301,24 @@ body::before {
   .section-header {
     margin-bottom: 2.25rem;
   }
+  .section-title-row {
+    gap: 0.7rem;
+  }
+  .section-icon {
+    width: 2.5rem;
+    height: 2.5rem;
+    font-size: 1rem;
+  }
 }
 
 @media (max-width: 480px) {
   .section-title {
     font-size: 1.68rem;
+  }
+  .section-icon {
+    width: 2.25rem;
+    height: 2.25rem;
+    font-size: 0.92rem;
   }
 }
 

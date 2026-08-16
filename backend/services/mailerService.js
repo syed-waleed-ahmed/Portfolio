@@ -122,7 +122,7 @@ function renderContactEmail({ name, email, subject, message }) {
           <table role="presentation" cellpadding="0" cellspacing="0" style="margin-top:24px;">
             <tr>
               <td style="border-radius:8px;background-color:${BRAND.accent};">
-                <a href="mailto:${safeEmail}?subject=${encodeURIComponent("Re: " + subject)}" style="display:inline-block;padding:12px 22px;font:600 14px/1 Arial,sans-serif;color:#ffffff;text-decoration:none;border-radius:8px;">Reply to ${safeName} &rarr;</a>
+                <a href="mailto:${safeEmail}?subject=${encodeURIComponent("Re: " + subject)}" style="display:inline-block;padding:12px 22px;font:600 14px/1 Arial,sans-serif;color:#ffffff;text-decoration:none;border-radius:8px;">Reply to ${safeName}</a>
               </td>
             </tr>
           </table>

@@ -1,19 +1,15 @@
 import Reveal from "@/components/ui/Reveal";
-import { FaGithub, FaBolt } from "react-icons/fa";
+import { FaGithub, FaBolt, FaLaptopCode, FaRegCalendarAlt } from "react-icons/fa";
+import SectionHeader from "@/components/ui/SectionHeader";
 import { projects } from "@/data/projects";
 
 const Projects = () => {
   return (
       <div className="container">
-        <Reveal>
-          <div className="section-header">
-            <h2 className="section-title">Selected Projects</h2>
-            <p className="section-subtitle">
-              AI/ML and robotics projects from work and study. Code I&apos;ve
-              actually shipped or wrote a thesis around, not pitch-deck mockups.
-            </p>
-          </div>
-        </Reveal>
+        <SectionHeader icon={FaLaptopCode} title="Selected Projects">
+          AI/ML and robotics work from industry and research. Every project
+          here was built and shipped, or written up as a thesis.
+        </SectionHeader>
 
         {/* A CSS grid rather than Bootstrap columns, so the cards can share row
             tracks via subgrid. That is what keeps the insight block and the tag
@@ -51,7 +47,10 @@ const Projects = () => {
                   <p className="project-meta">
                     <span className="project-role">{project.role}</span>
                     <span className="project-meta-dot" aria-hidden="true" />
-                    <span className="project-period">{project.period}</span>
+                    <span className="project-period">
+                      <FaRegCalendarAlt aria-hidden="true" />
+                      {project.period}
+                    </span>
                   </p>
 
                   <p className="project-description mb-0">

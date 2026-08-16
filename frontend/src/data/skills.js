@@ -1,5 +1,11 @@
 // icon: a key, not a component - Skills.jsx maps it to an <svg>. Keeps this
 // file free of JSX so it stays pure content.
+//
+// A tag earns its place by being something someone could reasonably interview
+// on. Editors and version control (VS Code, Jupyter, Git) and the assumed
+// baseline behind a framework already listed (HTML/CSS under React) were cut
+// for that reason: they pad the count without adding a claim, which makes the
+// tags that do matter harder to find.
 export const skillGroups = [
   {
     title: "AI / LLM Engineering",
@@ -42,7 +48,7 @@ export const skillGroups = [
   {
     title: "Web & Backend",
     icon: "web",
-    tags: ["React", "Next.js", "Server Components", "Node.js", ".NET ASP Core", "REST APIs", "Serverless", "Multi-Tenancy", "Webhooks", "HTML/CSS"],
+    tags: ["React", "Next.js", "Server Components", "Node.js", ".NET ASP Core", "REST APIs", "Serverless", "Multi-Tenancy", "Webhooks"],
   },
   {
     title: "Databases & Messaging",
@@ -52,6 +58,6 @@ export const skillGroups = [
   {
     title: "Cloud & DevOps",
     icon: "cloud",
-    tags: ["AWS", "Docker", "Kubernetes", "Terraform", "CI/CD", "Git", "Linux", "Vercel", "Upstash QStash", "Twilio", "Jupyter", "VS Code", "Power BI"],
+    tags: ["AWS", "Docker", "Kubernetes", "Terraform", "CI/CD", "Linux", "Vercel", "Upstash QStash", "Twilio", "Power BI"],
   },
 ];

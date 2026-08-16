@@ -5,8 +5,10 @@ import {
   FaServer,
   FaDatabase,
   FaCloud,
+  FaTools,
 } from "react-icons/fa";
 import Reveal from "@/components/ui/Reveal";
+import SectionHeader from "@/components/ui/SectionHeader";
 import { skillGroups } from "@/data/skills";
 
 // Maps the icon key from skills.js to a component, so the data file stays JSX-free.
@@ -22,14 +24,10 @@ const GROUP_ICONS = {
 const Skills = () => {
   return (
     <div className="container">
-      <Reveal>
-        <div className="section-header">
-          <h2 className="section-title">Technical Skills</h2>
-          <p className="section-subtitle">
-            What I actually reach for day-to-day, grouped by where I use it.
-          </p>
-        </div>
-      </Reveal>
+      <SectionHeader icon={FaTools} title="Technical Skills">
+        The tools and frameworks I work with day to day, grouped by where they
+        apply.
+      </SectionHeader>
 
       <div className="row g-4 justify-content-center">
         {skillGroups.map((group, gi) => {

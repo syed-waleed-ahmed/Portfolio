@@ -8,8 +8,12 @@ export const projects = [
     featured: true,
     description:
       "My Master's thesis: a multi-tenant reminder and memory service assistants adopt instead of rebuilding. An agent schedules from plain chat across Email, WhatsApp, Telegram, and Discord; a database-owned engine delivers under failure. A server-rendered console runs plans, quotas and GDPR.",
+    // The MemorAIz entry in experience.js already carries the deployment fact
+    // (EU-pinned, Mastra, H-FARM as first tenant) almost word for word. This
+    // line states the thesis claim instead, so the two sections say different
+    // things about the same work rather than the same thing twice.
     highlight:
-      "Live on an EU-pinned stack and published as a one-line Mastra capability, with the H-FARM Student Assistant as first production tenant.",
+      "Portability is the thesis claim: an assistant adopts the whole reminder and memory layer as a single capability, instead of rebuilding scheduling and delivery for itself.",
   },
   {
     title: "TIAGo: Autonomous Mapping, Navigation & Pick-and-Place",
@@ -40,7 +44,7 @@ export const projects = [
     stack: ["LangChain", "Vector Search", "OpenAI", "Python"],
     github: "https://github.com/syed-waleed-ahmed/Self-Correcting-RAG",
     description:
-      "A RAG pipeline with retrieve → evaluate → correct loops. It grades its own answers and re-retrieves whenever the evaluator flags low confidence, instead of hallucinating its way through, so responses stay grounded in the source documents.",
+      "A RAG pipeline built around retrieve, evaluate, and correct loops. It grades its own answers and re-retrieves whenever the evaluator flags low confidence, so responses stay grounded in the source documents rather than filling the gaps with invention.",
     highlight:
       "Closed the loop between retrieval and answer quality, cutting hallucinated outputs on ambiguous queries.",
   },

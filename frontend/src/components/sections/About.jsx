@@ -1,32 +1,53 @@
-import { FaUserAstronaut, FaGraduationCap } from "react-icons/fa";
+import {
+  FaAddressCard,
+  FaDraftingCompass,
+  FaGraduationCap,
+  FaBullseye,
+  FaRobot,
+  FaEye,
+  FaDatabase,
+} from "react-icons/fa";
 import Reveal from "@/components/ui/Reveal";
+import SectionHeader from "@/components/ui/SectionHeader";
 import { approach, stats, education } from "@/data/about";
+
+// Maps the icon key from about.js to a component, so the data file stays
+// JSX-free (same pattern as Skills.jsx).
+const STAT_ICONS = {
+  accuracy: FaBullseye,
+  automation: FaRobot,
+  vision: FaEye,
+  data: FaDatabase,
+};
 
 const About = () => {
   return (
       <div className="container">
-        <Reveal>
-          <div className="section-header">
-            <h2 className="section-title">About &amp; Education</h2>
-            <p className="section-subtitle">
-              Half full-stack engineer, half AI/ML. Here&apos;s a quick
-              summary of how I got here and what I&apos;m working on now.
-            </p>
-          </div>
-        </Reveal>
+        <SectionHeader icon={FaAddressCard} title="About & Education">
+          Half full-stack engineer, half AI/ML. How I got here, and what
+          I&apos;m working on now.
+        </SectionHeader>
 
         {/* Full width above the two cards: it is the one thing in this section
             a recruiter can read in two seconds, so nothing should share the
             row with it. */}
         <Reveal delay={0.04}>
           <ul className="about-stats">
-            {stats.map((stat) => (
-              <li className="about-stat" key={stat.value + stat.label}>
-                <span className="about-stat-value">{stat.value}</span>
-                <span className="about-stat-label">{stat.label}</span>
-                <span className="about-stat-source">{stat.source}</span>
-              </li>
-            ))}
+            {stats.map((stat) => {
+              const Icon = STAT_ICONS[stat.icon];
+              return (
+                <li className="about-stat" key={stat.value + stat.label}>
+                  {Icon && (
+                    <span className="about-stat-icon" aria-hidden="true">
+                      <Icon />
+                    </span>
+                  )}
+                  <span className="about-stat-value">{stat.value}</span>
+                  <span className="about-stat-label">{stat.label}</span>
+                  <span className="about-stat-source">{stat.source}</span>
+                </li>
+              );
+            })}
           </ul>
         </Reveal>
 
@@ -35,7 +56,7 @@ const About = () => {
             <Reveal delay={0.08} className="w-100">
               <div className="neo-card flex-fill h-100 p-4">
                 <div className="card-heading">
-                  <span className="card-heading-icon"><FaUserAstronaut /></span>
+                  <span className="card-heading-icon"><FaDraftingCompass /></span>
                   Approach
                 </div>
                 {approach.map((para, i) => (

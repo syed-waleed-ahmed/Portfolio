@@ -1,15 +1,7 @@
-import {
-  FaRobot,
-  FaChartLine,
-  FaLayerGroup,
-  FaSitemap,
-  FaSearchPlus,
-  FaChartBar,
-  FaEye,
-  FaInfinity,
-} from "react-icons/fa";
+import { FaRobot, FaChartLine, FaLayerGroup, FaCompass } from "react-icons/fa";
 import Reveal from "@/components/ui/Reveal";
-import { roles, principles, topics } from "@/data/interests";
+import SectionHeader from "@/components/ui/SectionHeader";
+import { roles, principles } from "@/data/interests";
 
 // Maps the icon keys from interests.js to components, so the data file stays
 // JSX-free (same pattern as Skills.jsx).
@@ -19,26 +11,12 @@ const ROLE_ICONS = {
   stack: FaLayerGroup,
 };
 
-const TOPIC_ICONS = {
-  agents: FaSitemap,
-  rag: FaSearchPlus,
-  eval: FaChartBar,
-  vision: FaEye,
-  mlops: FaInfinity,
-};
-
 const Interests = () => {
   return (
     <div className="container">
-      <Reveal>
-        <div className="section-header">
-          <h2 className="section-title">Interests &amp; Career Focus</h2>
-          <p className="section-subtitle">
-            The roles I&apos;m aiming for, how I like to work, and what
-            I&apos;m digging into right now.
-          </p>
-        </div>
-      </Reveal>
+      <SectionHeader icon={FaCompass} title="Interests & Career Focus">
+        The roles I&apos;m targeting, and the principles I work by.
+      </SectionHeader>
 
       <Reveal>
         <p className="interests-eyebrow">Target Roles</p>
@@ -72,28 +50,6 @@ const Interests = () => {
               {principle}
             </li>
           ))}
-        </ul>
-      </Reveal>
-
-      <Reveal delay={0.24}>
-        <p className="interests-eyebrow">Currently Exploring</p>
-      </Reveal>
-
-      <Reveal delay={0.28}>
-        <ul className="topic-grid">
-          {topics.map((topic) => {
-            const Icon = TOPIC_ICONS[topic.icon];
-            return (
-              <li className="topic-tile" key={topic.label}>
-                {Icon && (
-                  <span className="topic-icon" aria-hidden="true">
-                    <Icon />
-                  </span>
-                )}
-                {topic.label}
-              </li>
-            );
-          })}
         </ul>
       </Reveal>
     </div>

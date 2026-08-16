@@ -48,10 +48,10 @@ const Hero = () => {
                 AI Engineer working on{" "}
                 <span className="fw-semibold">multi-agent systems</span>,{" "}
                 <span className="fw-semibold">RAG pipelines</span>, and{" "}
-                <span className="fw-semibold">LLM workflow automation</span>. I
-                care about the parts most demos skip: evaluation, observability,
-                and the engineering between a working prototype and something a
-                real team can use every day.
+                <span className="fw-semibold">LLM workflow automation</span>. My
+                focus is the work most demos leave out: evaluation,
+                observability, and the engineering that turns a working
+                prototype into something a team can rely on every day.
               </p>
 
               <p className="hero-sub-lead mb-5">

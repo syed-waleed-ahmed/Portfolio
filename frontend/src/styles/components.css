@@ -122,8 +122,18 @@
 }
 
 .project-period {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
   color: var(--text-muted);
   letter-spacing: 0.02em;
+}
+
+.project-period svg {
+  flex-shrink: 0;
+  font-size: 0.85rem;
+  color: var(--accent-2);
+  opacity: 0.9;
 }
 
 .project-card .project-description {
@@ -363,8 +373,34 @@
   border-color: var(--border-accent-hover);
 }
 
+/* Top-right corner rather than above the number: the figure is the point of
+   the tile, and a stacked badge would push it down the card on all four at
+   once. The value line is short enough that nothing collides with it. */
+.about-stat-icon {
+  position: absolute;
+  top: 1.15rem;
+  right: 1.15rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-xs);
+  border: 1px solid rgba(34, 211, 238, 0.22);
+  background: rgba(34, 211, 238, 0.07);
+  color: var(--accent-2);
+  font-size: 0.82rem;
+  transition: border-color 0.25s ease, background 0.25s ease;
+}
+
+.about-stat:hover .about-stat-icon {
+  border-color: var(--border-accent-hover);
+  background: rgba(34, 211, 238, 0.12);
+}
+
 .about-stat-value {
   display: block;
+  padding-right: 2.75rem;
   font-size: 2.3rem;
   font-weight: 700;
   line-height: 1.05;
@@ -433,6 +469,71 @@
 .experience-card .timeline-meta {
   font-size: 0.96rem;
   letter-spacing: 0.02em;
+}
+
+/* ========= Experience card head ========= */
+
+/* Icon tile and title side by side. align-items:start rather than center, so
+   the tile stays level with the first line of a title that wraps instead of
+   drifting to the middle of a two-line block. */
+.experience-head {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.8rem;
+}
+
+.experience-head-text {
+  min-width: 0;
+}
+
+.experience-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 42px;
+  height: 42px;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(34, 211, 238, 0.25);
+  background: rgba(34, 211, 238, 0.08);
+  color: var(--accent-2);
+  font-size: 1.05rem;
+}
+
+/* Period and location, each behind its own icon. The rules above give every
+   `ul li` in this card a bullet dot and a bullet indent - this row is metadata,
+   not a bullet, so both are unset here rather than by narrowing the selector
+   above (which would have to name every list the card may grow later). */
+.experience-card .experience-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 1.1rem;
+  list-style: none;
+  padding-left: 0;
+  margin: 0.9rem 0 1.1rem;
+}
+
+.experience-card .experience-meta li {
+  display: flex;
+  align-items: center;
+  gap: 0.42rem;
+  padding-left: 0;
+  margin-bottom: 0;
+  font-size: 0.94rem;
+  line-height: 1.4;
+  letter-spacing: 0.02em;
+  color: var(--text-muted);
+}
+
+.experience-card .experience-meta li::before {
+  content: none;
+}
+
+.experience-card .experience-meta svg {
+  flex-shrink: 0;
+  font-size: 0.86rem;
+  color: var(--accent-2);
+  opacity: 0.9;
 }
 
 /* ========= Skills ========= */
@@ -523,6 +624,8 @@
   color: var(--text-muted);
 }
 
+/* Closes the section, so no bottom margin - the section padding below it is
+   what separates Interests from Contact. */
 .principle-row {
   display: flex;
   flex-wrap: wrap;
@@ -530,7 +633,7 @@
   gap: 0.5rem 1.6rem;
   list-style: none;
   padding: 0;
-  margin: 2.25rem 0 2.75rem;
+  margin: 2.25rem 0 0;
 }
 
 .principle-chip {
@@ -551,55 +654,6 @@
   background: var(--gradient-accent);
 }
 
-/* Tiles size themselves: five across on desktop, three on tablet, one on a
-   phone - no breakpoint list to keep in step with the number of topics. */
-.topic-grid {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 0.85rem;
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.topic-tile {
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
-  flex: 1 1 210px;
-  max-width: 270px;
-  padding: 0.85rem 1rem;
-  border-radius: var(--radius-sm);
-  background: var(--bg-card);
-  border: 1px solid var(--border-subtle);
-  color: var(--text-soft);
-  font-size: 1.04rem;
-  line-height: 1.35;
-  transition: border-color 0.2s ease, background 0.2s ease, transform 0.2s ease;
-}
-
-.topic-tile:hover {
-  border-color: var(--border-accent-hover);
-  background: var(--bg-card-hover);
-  transform: translateY(-2px);
-}
-
-/* Once stacked, a capped tile reads as inset against the full-width cards
-   above it, so let it fill the column instead. */
-@media (max-width: 575.98px) {
-  .topic-tile {
-    flex-basis: 100%;
-    max-width: 100%;
-  }
-}
-
-.topic-icon {
-  display: inline-flex;
-  flex-shrink: 0;
-  color: var(--accent-2);
-  font-size: 1rem;
-}
 
 /* ========= Contact ========= */
 
@@ -661,6 +715,13 @@
   border-radius: var(--radius-sm);
   font-size: 1.06rem;
   line-height: 1.5;
+}
+
+/* The icon states the outcome before the sentence is read; colour alone
+   wouldn't, which is the point of carrying both. */
+.contact-feedback svg {
+  flex-shrink: 0;
+  font-size: 1.02rem;
 }
 
 .contact-feedback.is-error {

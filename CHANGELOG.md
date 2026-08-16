@@ -14,6 +14,14 @@ milestone rather than by individual commit.
 
 ### Added
 
+- Icons across the site, drawn from the `react-icons` Font Awesome set already
+  in the dependency tree. Every section header carries one, rendered through a
+  new `SectionHeader` component so the six sections cannot drift apart; the
+  Experience cards gained a per-role tile plus calendar and location icons on a
+  dedicated meta row; the About stat tiles carry a corner icon each; the
+  Projects period and the Contact form's success and error banners are marked
+  too. All of them reuse the existing `.role-icon` tile treatment, so the icon
+  language is one system rather than several.
 - `docs/` documentation set: architecture, API reference, development, design
   system, deployment, testing and security controls.
 - `CONTRIBUTING.md`, `CODE_OF_CONDUCT.md` (Contributor Covenant 2.1) and this
@@ -26,6 +34,24 @@ milestone rather than by individual commit.
 
 ### Changed
 
+- Site copy rewritten to remove the tells of machine-written prose: the three
+  em dashes and arrow glyphs are gone, and so is the sentence-fragment tic that
+  negates the clause before it ("Not notebooks that only run on my machine",
+  "not pitch-deck mockups"). Casual register was raised throughout, with no
+  figure, date, employer or technology claim altered.
+- Section headers put the icon inline with the title rather than in a block
+  above it. Stacked, the tile read as a loose graphic floating over the
+  heading; the tile is now sized in `rem` against the heading's line box and
+  steps down at both breakpoints where the title does.
+- Repetition cut across sections. The Interests section lost its "Currently
+  Exploring" tile row, whose five entries were each already claimed in the hero
+  lead or the Skills groups. The About "Approach" card no longer restates the
+  section subtitle one line below it. The RemindrAI project highlight now
+  states the thesis claim rather than repeating the deployment sentence that
+  the MemorAIz experience entry already carries almost word for word.
+- Skills trimmed of four tags that padded the count without adding a claim:
+  `VS Code`, `Jupyter`, `Git` and `HTML/CSS`. An editor listed as a skill makes
+  the tags that do matter harder to find.
 - Backend moved from Express 4 to Express 5 (`4.22.2` to `5.2.1`). Express 4 is
   in maintenance, and nothing in this codebase depended on the removed API, so
   the upgrade is a version bump rather than a migration. The full suite passes
@@ -52,6 +78,10 @@ milestone rather than by individual commit.
 
 ### Fixed
 
+- `humans.txt` reported Express 4 and a July build date, both stale since the
+  Express 5 upgrade.
+- The `404.html` style comment pointed at `.hero-cta-primary`, a class that no
+  longer exists anywhere in the codebase; it is `.btn-outlined--accent`.
 - High-severity `ip-address` advisories (SSRF and trust-boundary bypass through
   leading-zero octets, CIDR suffixes and IPv4-mapped addresses), reached
   transitively through `express-rate-limit`. Resolved in the lockfile at
