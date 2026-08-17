@@ -1,5 +1,5 @@
 import Reveal from "@/components/ui/Reveal";
-import { FaGithub, FaBolt, FaLaptopCode, FaRegCalendarAlt } from "react-icons/fa";
+import { FaGithub, FaBolt, FaLaptopCode } from "react-icons/fa";
 import SectionHeader from "@/components/ui/SectionHeader";
 import { projects } from "@/data/projects";
 
@@ -21,42 +21,31 @@ const Projects = () => {
               delay={0.06 * (idx + 1)}
               className="project-cell"
             >
-              <article
-                className={`neo-card project-card${
-                  project.featured ? " project-card--featured" : ""
-                }`}
-              >
-                <div className="project-body">
-                  <div className="project-head">
-                    <h3 className="mb-0">{project.title}</h3>
-                    {project.github && (
-                      <a
-                        href={project.github}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="project-link-icon"
-                        aria-label={`View ${project.title} on GitHub`}
-                      >
-                        <FaGithub />
-                      </a>
-                    )}
-                  </div>
-
-                  {/* Role and period on one line: the accent rule under the role
-                      used to land on the date sitting right beneath it. */}
-                  <p className="project-meta">
-                    <span className="project-role">{project.role}</span>
-                    <span className="project-meta-dot" aria-hidden="true" />
-                    <span className="project-period">
-                      <FaRegCalendarAlt aria-hidden="true" />
-                      {project.period}
-                    </span>
-                  </p>
-
-                  <p className="project-description mb-0">
-                    {project.description}
-                  </p>
+              <article className="neo-card project-card">
+                {/* Title and role are separate bands, not one block. Bundled,
+                    a card with a one-line title sat its role tight underneath
+                    while its two-line neighbours sat theirs lower, so the roles
+                    never lined up across a row. */}
+                <div className="project-head">
+                  <h3 className="mb-0">{project.title}</h3>
+                  {project.github && (
+                    <a
+                      href={project.github}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="project-link-icon"
+                      aria-label={`View ${project.title} on GitHub`}
+                    >
+                      <FaGithub />
+                    </a>
+                  )}
                 </div>
+
+                <p className="project-meta mb-0">{project.role}</p>
+
+                <p className="project-description mb-0">
+                  {project.description}
+                </p>
 
                 {/* The word "Highlight:" repeated down every card was noise;
                     the icon carries it visually, the label stays for SRs. */}

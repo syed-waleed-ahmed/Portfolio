@@ -30,18 +30,6 @@
   color: var(--text-strong);
 }
 
-/* The thesis card carries the same indigo -> cyan edge the role cards in
-   Interests use, so "this is the centrepiece" is a system signal rather than
-   a one-off treatment. */
-.project-card--featured::before {
-  content: "";
-  position: absolute;
-  inset: 0 0 auto 0;
-  height: 2px;
-  background: var(--gradient-accent);
-  opacity: 0.9;
-}
-
 /* ========= Projects grid =========
    Three shared row bands - body, insight, stack - so every card in a row puts
    its insight block and its tag row on the same line, however long the
@@ -68,10 +56,14 @@
   }
 }
 
+/* Five shared row bands: title, role, description, insight, stack. Every one
+   is its own band so all five line up straight across a row, whatever the
+   title above them wraps to. The row-gap doubles as the spacing between the
+   bands, which is why it is the only vertical rhythm value here. */
 .project-cell,
 .project-card {
   display: grid;
-  grid-row: span 3;
+  grid-row: span 5;
   grid-template-rows: subgrid;
 }
 
@@ -98,42 +90,21 @@
   gap: 0.75rem;
 }
 
-.project-meta {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.5rem;
-  margin: 0.55rem 0 1.1rem;
-  font-size: 0.96rem;
-  line-height: 1.4;
-}
-
-.project-role {
+/* The role line, in the same accent as the company name on an Experience card
+   so the two sections label their subject the same way.
+   Scoped to .project-card rather than left bare: `.neo-card p` also matches
+   this element and carries the same specificity as a lone `.project-meta`, so
+   the bare rule lost the colour, size and leading to it and the line rendered
+   as ordinary body text.
+   No margins - it is its own subgrid band, so the grid row-gap is what spaces
+   it from the title above and the description below, on every card at once. */
+.project-card .project-meta {
+  margin: 0;
+  align-self: start;
   color: var(--accent-2);
   font-weight: 500;
-}
-
-.project-meta-dot {
-  width: 4px;
-  height: 4px;
-  flex-shrink: 0;
-  border-radius: 999px;
-  background: var(--gradient-accent);
-}
-
-.project-period {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
-  color: var(--text-muted);
-  letter-spacing: 0.02em;
-}
-
-.project-period svg {
-  flex-shrink: 0;
-  font-size: 0.85rem;
-  color: var(--accent-2);
-  opacity: 0.9;
+  font-size: 0.96rem;
+  line-height: 1.4;
 }
 
 .project-card .project-description {
@@ -356,8 +327,8 @@
     border-color 0.25s ease-out;
 }
 
-/* The same indigo -> cyan edge the featured project card and the role cards
-   carry, so "this is a highlight" stays one system signal. */
+/* The same indigo -> cyan edge the role cards in Interests and the skill cards
+   carry, so the treatment stays one system signal across the page. */
 .about-stat::before {
   content: "";
   position: absolute;
@@ -471,21 +442,74 @@
   letter-spacing: 0.02em;
 }
 
-/* ========= Experience card head ========= */
+/* ========= Experience grid =========
+   Same subgrid arrangement as the projects grid, and for the same reason:
+   three shared row bands - head, meta, bullets - so a two-line job title in
+   one card doesn't push its dates and bullets below its neighbours'. Without
+   subgrid support the cards fall back to ordinary blocks; the content still
+   reads top to bottom, it just stops lining up. */
+.experience-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  column-gap: 1.5rem;
+  row-gap: 1.25rem;
+}
 
-/* Icon tile and title side by side. align-items:start rather than center, so
-   the tile stays level with the first line of a title that wraps instead of
-   drifting to the middle of a two-line block. */
+@media (min-width: 768px) {
+  .experience-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 992px) {
+  .experience-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.experience-cell,
+.experience-card {
+  display: grid;
+  grid-row: span 3;
+  grid-template-rows: subgrid;
+}
+
+/* Padding lives here rather than on a `p-4` utility, for the same reason as
+   the project card: the card is a subgrid, so its box is described in one
+   place alongside the track rules above it. */
+.experience-card {
+  padding: 1.5rem;
+}
+
+/* Icon on the left, title and company stacked beside it. All three sit in one
+   subgrid band: keeping the company in the same band as the title is what
+   holds it tight underneath, since given a band of its own the grid row-gap
+   would push it a full 1.25rem clear of the title it belongs to. The band is
+   sized to the tallest head in the row, so the dates and bullets below still
+   line up across all three cards.
+   align-items:center balances the tile against the two stacked lines rather
+   than pinning it to the top of the taller one. */
 .experience-head {
   display: flex;
-  align-items: flex-start;
-  gap: 0.8rem;
+  align-items: center;
+  gap: 0.9rem;
+  align-self: start;
 }
 
 .experience-head-text {
   min-width: 0;
 }
 
+.experience-title {
+  margin: 0 0 0.35rem;
+}
+
+.experience-company {
+  min-width: 0;
+}
+
+/* Same tile treatment as .role-icon in Interests and .card-heading-icon in
+   About, so every icon on the site reads as one system. */
 .experience-icon {
   display: inline-flex;
   align-items: center;
@@ -500,17 +524,20 @@
   font-size: 1.05rem;
 }
 
-/* Period and location, each behind its own icon. The rules above give every
-   `ul li` in this card a bullet dot and a bullet indent - this row is metadata,
-   not a bullet, so both are unset here rather than by narrowing the selector
-   above (which would have to name every list the card may grow later). */
+/* Period and location, each behind its own icon.
+   The rules further up give every `ul li` in this card a bullet dot and a
+   bullet indent - this row is metadata, not a bullet, so both are unset here
+   rather than by narrowing that selector (which would have to name every list
+   the card may grow later). No margins either: this is its own subgrid band,
+   so the grid row-gap spaces it on all three cards at once. */
 .experience-card .experience-meta {
   display: flex;
   flex-wrap: wrap;
+  align-content: start;
   gap: 0.35rem 1.1rem;
   list-style: none;
   padding-left: 0;
-  margin: 0.9rem 0 1.1rem;
+  margin: 0;
 }
 
 .experience-card .experience-meta li {
@@ -537,6 +564,19 @@
 }
 
 /* ========= Skills ========= */
+
+/* The same indigo -> cyan edge the role cards in Interests and the stat tiles
+   in About carry, as a 2px rule rather than a surface fill so the flat-card
+   rule still holds. `.neo-card` already clips it to the radius. */
+.skill-card::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 2px;
+  background: var(--gradient-accent);
+  opacity: 0.9;
+}
+
 .skill-badge {
   display: inline-flex;
   align-items: center;

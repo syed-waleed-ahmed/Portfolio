@@ -7,7 +7,7 @@
 export const experiences = [
   {
     icon: "ai",
-    title: "AI Engineer · Master's Thesis Internship",
+    title: "AI Engineer · Master's Thesis",
     company: "MemorAIz S.r.l.",
     period: "Feb 2026 - Present",
     location: "Bologna, Italy",
