@@ -55,8 +55,9 @@ const Hero = () => {
               </p>
 
               <p className="hero-sub-lead mb-5">
-                Master&apos;s in Automation Engineering at the University of
-                Bologna, with an Erasmus semester at the University of Twente.
+                Finishing a Master&apos;s in Automation Engineering at the
+                University of Bologna in October 2026, after an Erasmus semester
+                at the University of Twente.
               </p>
 
               <div className="hero-cta-row">

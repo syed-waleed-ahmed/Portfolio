@@ -14,6 +14,12 @@ milestone rather than by individual commit.
 
 ### Added
 
+- A fifth About stat tile: **563 tests** guarding the RemindrAI service and its
+  console. The thesis is the largest piece of work on the page and was the only
+  one with no figure in the band a recruiter actually scans; the number is the
+  two repositories' own documented suites (417 + 146) and is claimed in the
+  MemorAIz Experience bullets, per the rule in `about.js`. `Vitest` joins the
+  Web & Backend skill group for the same reason - testing was claimed nowhere.
 - Icons across the site, drawn from the `react-icons` Font Awesome set already
   in the dependency tree. Every section header carries one, rendered through a
   new `SectionHeader` component so the six sections cannot drift apart; the
@@ -34,6 +40,28 @@ milestone rather than by individual commit.
 
 ### Changed
 
+- Thesis content re-synced against its source repositories (`RemindrAI`,
+  `remindr-dashboard`, `hfarm_new`), which had moved since the copy was written.
+  The thesis is now titled *"An Embeddable, Multi-Tenant Reminder and
+  Multi-Channel Communication Capability for Conversational Applications"*, so
+  the Projects card leads on **embeddability** rather than portability, and both
+  it and the Experience bullets say "communication capability" rather than
+  "memory service". Two facts new since the last pass are folded in: delivery
+  now reconciles the provider's own status callbacks after a send (a send
+  records acceptance, which is no longer the ledger's last word), and H-FARM's
+  Student Assistant is named as the first *production* tenant.
+- Graduation is fixed rather than open-ended: the October 2026 session is
+  confirmed, so the Education entry reads "Sep 2024 - Oct 2026 (expected)"
+  instead of "Present", and the hero sub-lead and the `<noscript>` fallback both
+  give the date. A recruiter reading the page now knows when I am available
+  without having to ask.
+- Dependencies refreshed across both workspaces: `vite` `8.2.2`, `eslint`
+  `10.9.1`, `@vitejs/plugin-react` `6.1.0`, `@types/react-dom` `19.2.5` and
+  `resend` `6.22.1`. All patch or minor, so no migration was involved. Both
+  workspaces report zero advisories, lint is clean, and the backend suite
+  passes 9/9.
+- `sitemap.xml` `lastmod`, the `ProfilePage` `dateModified` and the `humans.txt`
+  date moved to 2026-08-25 alongside the content change.
 - Site copy rewritten to remove the tells of machine-written prose: the three
   em dashes and arrow glyphs are gone, and so is the sentence-fragment tic that
   negates the clause before it ("Not notebooks that only run on my machine",

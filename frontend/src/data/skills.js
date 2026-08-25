@@ -48,7 +48,7 @@ export const skillGroups = [
   {
     title: "Web & Backend",
     icon: "web",
-    tags: ["React", "Next.js", "Server Components", "Node.js", ".NET ASP Core", "REST APIs", "Serverless", "Multi-Tenancy", "Webhooks"],
+    tags: ["React", "Next.js", "Server Components", "Node.js", ".NET ASP Core", "REST APIs", "Serverless", "Multi-Tenancy", "Webhooks", "Vitest"],
   },
   {
     title: "Databases & Messaging",

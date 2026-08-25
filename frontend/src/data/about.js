@@ -52,13 +52,19 @@ export const stats = [
     label: "Records moved through ETL pipelines",
     source: "Jubilee Life Insurance",
   },
+  {
+    icon: "tests",
+    value: "563",
+    label: "Tests guarding the thesis service and its console",
+    source: "RemindrAI",
+  },
 ];
 
 export const education = [
   {
     degree: "Master's in Automation Engineering",
     school: "Alma Mater Studiorum - Università di Bologna, Italy",
-    period: "Sep 2024 - Present",
+    period: "Sep 2024 - Oct 2026",
   },
   {
     degree: "Erasmus+ Mobility",

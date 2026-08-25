@@ -1,16 +1,16 @@
 export const projects = [
   {
-    title: "RemindrAI: Portable Multi-Channel Reminder Service",
+    title: "RemindrAI: Embeddable Multi-Tenant Reminder Capability",
     role: "Master's Thesis · MemorAIz S.r.l.",
     stack: ["Next.js 16", "TypeScript", "Vercel AI SDK", "Mastra", "Turso / libSQL", "Server Components"],
     description:
-      "My Master's thesis: a multi-tenant reminder and memory service assistants adopt instead of rebuilding. An agent schedules from plain chat across Email, WhatsApp, Telegram, and Discord; a database-owned engine delivers under failure. A server-rendered console runs plans, quotas and GDPR.",
+      "My Master's thesis: a multi-tenant reminder and communication capability assistants adopt instead of rebuilding. An agent schedules from plain chat across Email, WhatsApp, Telegram, and Discord; a database-owned engine delivers under failure, then reconciles what the provider reports afterwards. A server-rendered console runs plans, quotas and GDPR.",
     // The MemorAIz entry in experience.js already carries the deployment fact
     // (EU-pinned, Mastra, H-FARM as first tenant) almost word for word. This
     // line states the thesis claim instead, so the two sections say different
     // things about the same work rather than the same thing twice.
     highlight:
-      "Portability is the thesis claim: an assistant adopts the whole reminder and memory layer as a single capability, instead of rebuilding scheduling and delivery for itself.",
+      "Embeddability is the thesis claim: an assistant registers the whole reminder and delivery layer with a base URL and a token, instead of rebuilding scheduling, four channel integrations and retries for itself.",
   },
   {
     title: "TIAGo: Autonomous Mapping, Navigation & Pick-and-Place",

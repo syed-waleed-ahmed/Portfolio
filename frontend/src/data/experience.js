@@ -12,10 +12,10 @@ export const experiences = [
     period: "Feb 2026 - Present",
     location: "Bologna, Italy",
     bullets: [
-      "Thesis: RemindrAI, a reminder and memory service that assistants adopt instead of rebuilding, delivered as one agent over Email, WhatsApp, Telegram, and Discord.",
-      "Made delivery correct under failure without a queue runtime: atomic database claim, per-channel idempotency, database-owned retries, and dead-lettering.",
-      "Built the control plane and operator console: plans, licences and quotas as data, a content-blind audit trail, and GDPR export and erasure.",
-      "Deployed EU-pinned on Vercel and published as a one-line Mastra capability, with H-FARM's Student Assistant as the first tenant.",
+      "Thesis: RemindrAI, an embeddable multi-tenant reminder and communication capability that assistants adopt instead of rebuilding, delivered as one agent over Email, WhatsApp, Telegram, and Discord.",
+      "Made delivery correct under failure without a queue runtime: atomic database claim, per-channel idempotency, database-owned retries, dead-lettering, and reconciliation of the provider's own status callbacks after a send.",
+      "Built the control plane and operator console: plans, licences and quotas as data, a content-blind audit trail, and GDPR export and erasure, under 563 tests across both repositories.",
+      "Deployed EU-pinned on Vercel and published as a one-line Mastra capability, with H-FARM's Student Assistant as the first production tenant.",
     ],
   },
   {

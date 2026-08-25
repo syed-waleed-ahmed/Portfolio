@@ -6,6 +6,7 @@ import {
   FaRobot,
   FaEye,
   FaDatabase,
+  FaVial,
 } from "react-icons/fa";
 import Reveal from "@/components/ui/Reveal";
 import SectionHeader from "@/components/ui/SectionHeader";
@@ -18,6 +19,7 @@ const STAT_ICONS = {
   automation: FaRobot,
   vision: FaEye,
   data: FaDatabase,
+  tests: FaVial,
 };
 
 const About = () => {
