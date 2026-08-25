@@ -74,6 +74,6 @@ export const education = [
   {
     degree: "Bachelor's in Electrical Engineering",
     school: "NED University of Engineering and Technology, Karachi, Pakistan",
-    period: "Oct 2019 - Aug 2023 · CGPA: 3.46",
+    period: "Oct 2019 - Aug 2023",
   },
 ];

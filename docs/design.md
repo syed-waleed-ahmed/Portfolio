@@ -33,9 +33,14 @@ Two rules keep it consistent:
      iOS composites transparent icons onto white
    - `<meta name="theme-color">` in both `index.html` and `404.html`
 
-The same indigo-to-cyan 2px top rule marks the centrepiece in two places - the
-`featured` project card and the Interests role cards - so "this one matters" is
-a system signal rather than a per-section flourish.
+The same indigo-to-cyan 2px top rule runs along the top of three card
+families - the About stat tiles (`.about-stat`), the Skills cards
+(`.skill-card`) and the Interests role cards (`.role-card`) - so "this block is
+a claim, not prose" is a system signal rather than a per-section flourish. It
+is a 2px edge rather than a surface fill so the flat-card rule still holds, and
+`.neo-card` already clips it to the radius. The Interests principle chips carry
+the same gradient as a 6px dot, which is the marker form of the same idea, not
+a fourth variant of the rule.
 
 ---
 
@@ -76,9 +81,15 @@ these numbers across.
 
 **`font-size` on icon containers is not part of that scale.** `react-icons`
 renders SVGs sized in `em`, so `font-size` there controls a glyph, not NTR
-text. `.btn-outlined--icon`, `.card-heading-icon`, `.project-link-icon`,
-`.btn-icon`, `.contact-label-icon` and `.scroll-top-btn` stay at their unscaled
-values.
+text. These eleven stay at their unscaled values and must not be swept up in a
+rescale of the type system:
+
+`.section-icon`, `.card-heading-icon`, `.about-stat-icon`, `.experience-icon`,
+`.role-icon`, `.project-link-icon`, `.project-highlight-icon`,
+`.btn-outlined--icon`, `.btn-icon`, `.contact-label-icon`, `.scroll-top-btn`.
+
+`.btn-outlined` itself is **not** on that list: its `1.08rem` sizes real label
+text and is part of the NTR scale.
 
 ---
 

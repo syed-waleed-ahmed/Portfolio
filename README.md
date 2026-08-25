@@ -178,16 +178,18 @@ export const projects = [
   {
     title: "Project name",
     role: "Your role",
-    period: "2026",
-    stack: ["React", "Node"],
-    github: "https://github.com/…",
     description: "What it does.",
     highlight: "The one thing worth noticing.",
-    featured: false,       // true gives it the centrepiece treatment
+    stack: ["React", "Node"],
+    github: "https://github.com/…",   // optional
   },
   // …
 ];
 ```
+
+Listed in render order. `github` is the only optional field: supplied, it
+draws an icon link in the title row; omitted, nothing renders in its place.
+There is no ordering or emphasis flag - array order is page order.
 
 The same pattern applies to `experience.js`, `skills.js`, `interests.js`,
 `about.js` and `portfolio.js`. See

@@ -35,7 +35,7 @@ submission returns `503` instead of sending, which the test accepts.
 
 ## Testing the live API without cloning
 
-In Postman, choose **Import → Link** and paste each raw URL:
+In Postman, choose **Import -> Link** and paste each raw URL:
 
 - Collection:
   `https://raw.githubusercontent.com/syed-waleed-ahmed/Portfolio/main/postman/Portfolio-API.postman_collection.json`

@@ -85,7 +85,7 @@ sections are added.
 |-------|-----------------|----------|
 | `components/layout/` | Chrome that frames every page | `Navbar`, `Footer` |
 | `components/sections/` | One file per visible section | `Hero`, `About`, `Projects`, `Contact` |
-| `components/ui/` | Reusable primitives, no domain coupling | `Reveal`, `ScrollProgress`, `ScrollToTop`, `SkipLink`, `ErrorBoundary`, `LazyMountSection` |
+| `components/ui/` | Reusable primitives, no domain coupling | `Reveal`, `SectionHeader`, `ScrollProgress`, `ScrollToTop`, `SkipLink`, `ErrorBoundary`, `LazyMountSection` |
 | `hooks/` | Cross-cutting React hooks | `useInView`, used by `Reveal` and `LazyMountSection` |
 | `data/` | Pure content, no JSX | `about.js`, `experience.js`, `projects.js`, `skills.js`, `interests.js`, `portfolio.js` |
 | `styles/` | Global CSS: reset, tokens, layout, components | `reset.css`, `base.css`, `navbar.css`, `hero.css`, `components.css` |
@@ -101,6 +101,16 @@ section maps the key to a `react-icons` component through a lookup at the top
 of the file. That is what keeps JSX out of the data layer; a key with no entry
 in the map renders nothing rather than crashing, so a typo costs a glyph, not
 the section.
+
+The section headings are the exception to "one file per section owns its own
+markup": all six render through `components/ui/SectionHeader`, which takes the
+icon, the title and the subtitle. Sharing one component is what stops the six
+headings drifting apart as sections are edited independently.
+
+Note the asymmetry with the rule above: `SectionHeader` takes an **icon
+component**, not a string key, because a section file is already JSX and owns
+its own `react-icons` import. String keys exist to keep JSX out of `data/`, and
+nowhere else.
 
 ### Import alias
 

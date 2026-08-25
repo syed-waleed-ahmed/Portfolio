@@ -156,8 +156,16 @@ If you change it, recompute the hash and update `_headers` in the same commit:
 
 ```bash
 # from frontend/ - prints the value to paste into _headers
-node -e "const fs=require('fs'),c=require('crypto');const m=fs.readFileSync('index.html','utf8').match(/<script>([\s\S]*?)<\/script>/);console.log('sha256-'+c.createHash('sha256').update(m[1]).digest('base64'))"
+node -e "const fs=require('fs'),c=require('crypto');const m=fs.readFileSync('index.html','utf8').match(/<script>([\s\S]*?)<\/script>/);console.log('sha256-'+c.createHash('sha256').update(m[1].replace(/\r\n/g,'\n')).digest('base64'))"
 ```
+
+> **The `\r\n` to `\n` normalization is load-bearing on Windows.** `.gitattributes`
+> stores this file with LF, so LF is what Netlify checks out and what the
+> browser hashes - but a Windows working copy holds CRLF, and hashing those
+> bytes yields a completely different, wrong value. Pasting it produces exactly
+> the silent failure this section warns about. Verify by recomputing against an
+> unchanged `index.html` first: if the command does not reproduce the hash
+> already in `_headers`, the command is wrong, not the file.
 
 `script-src` also lists `'unsafe-inline'`, but only as a legacy fallback: per
 CSP Level 3, a browser that understands hashes ignores `'unsafe-inline'`

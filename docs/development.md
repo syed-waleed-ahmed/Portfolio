@@ -147,7 +147,7 @@ automatically, so adding a project or a job is a data change:
 | Change | File |
 |--------|------|
 | New job or internship | `experience.js` |
-| New project | `projects.js` - set `featured: true` for the centrepiece card |
+| New project | `projects.js` - array order is page order; `github` is the only optional field |
 | New skill group or tag | `skills.js` |
 | New role, principle or topic | `interests.js` |
 | Approach copy, a stat, a degree | `about.js` |
@@ -158,7 +158,8 @@ Two rules keep the data layer honest:
 1. **Icons are keys, not components.** Add the key to the section's lookup map
    as well as to the data entry, or the icon silently renders as nothing.
 2. **Stats in `about.js` are aggregates, not new claims.** Every figure there
-   is already stated in `experience.js` or `projects.js`. Change one without
+   is already stated in `experience.js` or `projects.js` - the 563-test tile,
+   for instance, restates the MemorAIz experience bullet. Change one without
    the other and the page contradicts itself.
 
 Visual changes are governed by the token system - read

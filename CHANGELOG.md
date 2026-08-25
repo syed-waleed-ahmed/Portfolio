@@ -106,6 +106,35 @@ milestone rather than by individual commit.
 
 ### Fixed
 
+- **The documented CSP hash command produced a wrong hash on Windows**, which
+  is the one failure this repository is loudest about: the analytics snippet is
+  pinned by SHA-256, and a bad hash blocks the script with no console error and
+  no visible symptom. `.gitattributes` stores `index.html` with LF, so LF is
+  what Netlify serves and what the browser hashes, but a Windows working copy
+  holds CRLF and the command hashed those bytes. Following the documentation
+  exactly would therefore have broken analytics silently. The command now
+  normalizes line endings, and the section says to verify it reproduces the
+  hash already in `_headers` before trusting it. The committed hash was correct
+  throughout; only the instructions for regenerating it were wrong.
+- **Three documents described a `featured` project flag that does not exist**
+  and never did: the README data sample set it, `docs/development.md` told you
+  to set it for "the centrepiece card", and `docs/design.md` credited it with
+  the gradient top rule. The README sample also carried a `period` field that
+  `projects.js` has no such key for and `Projects.jsx` never reads. Anyone
+  following the README to add a project was copying two dead fields.
+- `docs/design.md` attributed the indigo-to-cyan 2px rule to two card families;
+  it actually runs across three (About stat tiles, Skills cards, Interests role
+  cards), with the principle chips carrying the same gradient as a dot. Its
+  list of icon containers held outside the NTR type scale was also five short -
+  `.section-icon`, `.about-stat-icon`, `.experience-icon`, `.role-icon` and
+  `.project-highlight-icon` all arrived with the site-wide iconography and were
+  never added, so a future rescale of the type system would have swept up five
+  glyph sizes that are not text.
+- `docs/architecture.md` omitted `SectionHeader` from the `components/ui/`
+  layer, the one component all six section headings render through. It also now
+  records why that component takes an icon *component* while `data/` files pass
+  string keys, since the two rules sit a paragraph apart and read as a
+  contradiction otherwise.
 - `humans.txt` reported Express 4 and a July build date, both stale since the
   Express 5 upgrade.
 - The `404.html` style comment pointed at `.hero-cta-primary`, a class that no
