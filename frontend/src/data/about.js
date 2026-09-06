@@ -54,8 +54,8 @@ export const stats = [
   },
   {
     icon: "tests",
-    value: "563",
-    label: "Tests guarding the thesis service and its console",
+    value: "952",
+    label: "Tests guarding the thesis service, its console and its tenant",
     source: "RemindrAI",
   },
 ];
@@ -64,7 +64,7 @@ export const education = [
   {
     degree: "Master's in Automation Engineering",
     school: "Alma Mater Studiorum - Università di Bologna, Italy",
-    period: "Sep 2024 - Oct 2026",
+    period: "Sep 2024 - Oct 2026 (expected)",
   },
   {
     degree: "Erasmus+ Mobility",

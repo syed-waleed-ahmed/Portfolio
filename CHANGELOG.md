@@ -14,10 +14,11 @@ milestone rather than by individual commit.
 
 ### Added
 
-- A fifth About stat tile: **563 tests** guarding the RemindrAI service and its
-  console. The thesis is the largest piece of work on the page and was the only
-  one with no figure in the band a recruiter actually scans; the number is the
-  two repositories' own documented suites (417 + 146) and is claimed in the
+- A fifth About stat tile: **952 tests** guarding the RemindrAI service, its
+  console and its tenant. The thesis is the largest piece of work on the page
+  and was the only one with no figure in the band a recruiter actually scans;
+  the number is the three repositories' measured suites (663 + 146 + 143), the
+  same evidence base the thesis evaluation rests on, and is claimed in the
   MemorAIz Experience bullets, per the rule in `about.js`. `Vitest` joins the
   Web & Backend skill group for the same reason - testing was claimed nowhere.
 - Icons across the site, drawn from the `react-icons` Font Awesome set already
@@ -37,6 +38,12 @@ milestone rather than by individual commit.
 - `docs/development.md` gained a Dependencies section: the per-workspace update
   commands, how majors are handled given that Dependabot skips them, and why a
   lockfile-only commit is the normal fix for a transitive advisory.
+- `Computer Vision` and `Robotics` join the `Person` schema's `knowsAbout`
+  list. Two of the six projects on the page are exactly those two things, and
+  the structured data named neither, so a crawler read the page as narrower
+  than it is. Both stay out of the Skills section deliberately: the target
+  roles are AI/ML, and the TIAGo and connecting-rod cards already carry their
+  own stacks.
 
 ### Changed
 
@@ -49,19 +56,28 @@ milestone rather than by individual commit.
   "memory service". Two facts new since the last pass are folded in: delivery
   now reconciles the provider's own status callbacks after a send (a send
   records acceptance, which is no longer the ledger's last word), and H-FARM's
-  Student Assistant is named as the first *production* tenant.
+  Student Assistant is named as the first *production* tenant. A second pass,
+  against the finished report rather than the repositories alone, folded in
+  three more: tenancy is enforced at four independent depths, account linking is
+  one tap over Telegram and Discord against single-use tokens rather than a deep
+  link carrying the student's own identity, and the console runs plans, quotas
+  and GDPR while holding no database and no authorization rule of its own.
 - Graduation is fixed rather than open-ended: the October 2026 session is
   confirmed, so the Education entry reads "Sep 2024 - Oct 2026 (expected)"
   instead of "Present", and the hero sub-lead and the `<noscript>` fallback both
   give the date. A recruiter reading the page now knows when I am available
   without having to ask.
-- Dependencies refreshed across both workspaces: `vite` `8.2.2`, `eslint`
-  `10.9.1`, `@vitejs/plugin-react` `6.1.0`, `@types/react-dom` `19.2.5` and
-  `resend` `6.22.1`. All patch or minor, so no migration was involved. Both
-  workspaces report zero advisories, lint is clean, and the backend suite
-  passes 9/9.
+- Dependencies refreshed across both workspaces: `eslint` `10.10.0`,
+  `@vitejs/plugin-react` `6.1.1`, `@types/react-dom` `19.2.7`,
+  `eslint-plugin-react-refresh` `0.5.6`, `globals` `17.12.0`,
+  `express-rate-limit` `8.7.0` and `resend` `6.26.0`. All patch or minor, so no
+  migration was involved. Two transitive advisories were cleared in the
+  lockfiles alone, needing no `package.json` edit: `browserslist` (high, unbounded
+  memory growth) on the frontend and `qs` (moderate, array-limit bypass) on the
+  backend. Both workspaces report zero advisories, lint is clean, and the backend
+  suite passes 9/9.
 - `sitemap.xml` `lastmod`, the `ProfilePage` `dateModified` and the `humans.txt`
-  date moved to 2026-08-25 alongside the content change.
+  date moved to 2026-09-06 alongside the content change.
 - Site copy rewritten to remove the tells of machine-written prose: the three
   em dashes and arrow glyphs are gone, and so is the sentence-fragment tic that
   negates the clause before it ("Not notebooks that only run on my machine",

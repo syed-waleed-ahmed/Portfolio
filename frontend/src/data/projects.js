@@ -4,7 +4,7 @@ export const projects = [
     role: "Master's Thesis · MemorAIz S.r.l.",
     stack: ["Next.js 16", "TypeScript", "Vercel AI SDK", "Mastra", "Turso / libSQL", "Server Components"],
     description:
-      "My Master's thesis: a multi-tenant reminder and communication capability assistants adopt instead of rebuilding. An agent schedules from plain chat across Email, WhatsApp, Telegram, and Discord; a database-owned engine delivers under failure, then reconciles what the provider reports afterwards. A server-rendered console runs plans, quotas and GDPR.",
+      "My Master's thesis: a multi-tenant reminder and communication capability assistants adopt instead of rebuilding. An agent schedules from plain chat across Email, WhatsApp, Telegram, and Discord; a database-owned engine delivers under failure, then reconciles what the provider reports afterwards. A server-rendered console runs plans, quotas and GDPR while holding no database and no authorization rule of its own.",
     // The MemorAIz entry in experience.js already carries the deployment fact
     // (EU-pinned, Mastra, H-FARM as first tenant) almost word for word. This
     // line states the thesis claim instead, so the two sections say different
