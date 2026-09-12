@@ -12,10 +12,10 @@ export const experiences = [
     period: "Feb 2026 - Present",
     location: "Bologna, Italy",
     bullets: [
-      "Thesis: RemindrAI, an embeddable multi-tenant reminder and communication capability that assistants adopt instead of rebuilding, delivered as one agent over Email, WhatsApp, Telegram, and Discord.",
-      "Made delivery correct under failure without a queue runtime: atomic database claim, per-channel idempotency, database-owned retries, dead-lettering, and reconciliation of the provider's own status callbacks after a send.",
-      "Built the control plane and operator console: plans, licences and quotas as data, tenancy enforced at four independent depths, a content-blind audit trail, and GDPR export and erasure, under 952 tests across the three repositories.",
-      "Deployed EU-pinned on Vercel and published as a one-line Mastra capability, with one-tap account linking over Telegram and Discord on single-use tokens, and H-FARM's Student Assistant as the first production tenant.",
+      "Built RemindrAI for my thesis: a multi-tenant reminder backend, its operator console, and the Mastra capability other AI assistants register in one line.",
+      "Made delivery retry-safe with an atomic database claim, per-channel idempotency, and database-owned backoff; median claim latency stayed near-flat from 1K to 100K due reminders.",
+      "Engineered the control plane: per-organization API keys, tenant isolation at four independent depths, plans and quotas as data, and audited GDPR export and erasure.",
+      "Shipped EU-pinned on Vercel under 985 tests across three repositories, with H-FARM's Student Assistant as the first production tenant.",
     ],
   },
   {

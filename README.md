@@ -34,7 +34,7 @@ forking the repository can run it without reading the source.
 
 **Frontend**
 
-- Lean bundle: about 10 KB of gzipped CSS and 70 KB of gzipped JS after
+- Lean bundle: about 10 KB of gzipped CSS and 80 KB of gzipped JS after
   code-splitting, with no animation library, no UI kit and no PWA shell
 - Sections code-split and mounted on `requestIdleCallback` after first paint
 - Scroll reveals from a vanilla `IntersectionObserver` hook plus CSS keyframes

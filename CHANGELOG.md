@@ -47,6 +47,38 @@ milestone rather than by individual commit.
 
 ### Changed
 
+- RemindrAI copy re-synced against the finished report, as of its 10 September
+  revision, and cut to the density of everything around it. Its Experience
+  bullets ran 25 to 35 words against 15 to 22 for the other two roles, and the
+  project card carried a 58-word description, a 32-word highlight and six stack
+  chips against 32 to 53 words, 9 to 26 words and four or five chips on the
+  other cards. The bullets now run 19 to 24 words, and the card 42, 19 and
+  five. The test figure moves from 952 to **985** (670 + 146 + 169, the three
+  suites as the report re-measured them), on the About tile and in the
+  Experience bullet together, per the rule in `about.js`. Two claims are new to
+  the page, both taken from the report: the scheduler benchmark, stated as its
+  shape (median claim latency near-flat from 1K to 100K due reminders) because
+  the report says the absolute figures from a local database do not transfer;
+  and identity pinning, the second of the two design decisions the thesis
+  defends, which keeps a reminder's owner out of the model's reach. Account
+  linking, dead-lettering and delivery-status reconciliation were cut to make
+  room, and all three are still in the report. The card also drops "My
+  Master's thesis:", which restated the role line printed directly above it,
+  and the `Server Components` chip, which describes the console rather than the
+  service and stays listed under Skills.
+- Dependencies refreshed across both workspaces: `react` and `react-dom`
+  `19.3.0`, `@types/react` and `@types/react-dom` `19.3.0`, `vite` `8.3.0` and
+  `resend` `6.28.0`, plus a lockfile-only refresh inside the existing ranges
+  (among them `rolldown` `1.2.8` and `postcss` `8.5.28` on the frontend, `ip-address`
+  `10.7.0` and `negotiator` `1.1.0` on the backend). All minor or patch. Both
+  workspaces report zero advisories, lint is clean, and the backend suite
+  passes 9/9. **React 19.3 costs 8.6 KB of gzipped JS**: the entry chunk went
+  from 72.4 KB to 81.0 KB. Building the previous commit with each bump applied
+  alone puts all of it on `react-dom`, whose client build gained the release's
+  new features (`<ViewTransition>`, Fragment refs, Trusted Types) whether a
+  page uses them or not; Vite 8.3 is size-neutral. The README's bundle figure
+  moves to match. Pinning React back to 19.2 recovers the 8.6 KB if leanness
+  ever outweighs staying current.
 - Thesis content re-synced against its source repositories (`RemindrAI`,
   `remindr-dashboard`, `hfarm_new`), which had moved since the copy was written.
   The thesis is now titled *"An Embeddable, Multi-Tenant Reminder and
@@ -77,7 +109,7 @@ milestone rather than by individual commit.
   backend. Both workspaces report zero advisories, lint is clean, and the backend
   suite passes 9/9.
 - `sitemap.xml` `lastmod`, the `ProfilePage` `dateModified` and the `humans.txt`
-  date moved to 2026-09-06 alongside the content change.
+  date moved to 2026-09-12 alongside the content change.
 - Site copy rewritten to remove the tells of machine-written prose: the three
   em dashes and arrow glyphs are gone, and so is the sentence-fragment tic that
   negates the clause before it ("Not notebooks that only run on my machine",
@@ -122,6 +154,16 @@ milestone rather than by individual commit.
 
 ### Fixed
 
+- **The RemindrAI project card made two claims the system does not support.**
+  It said the console "runs plans, quotas and GDPR", but the console has no
+  data-subject surface: export and erasure are RemindrAI's subject-rights API,
+  and the only mention of them in the console is a note pointing an
+  organization there. It also said the agent "schedules from plain chat across
+  Email, WhatsApp, Telegram, and Discord", but email is delivery-only by design
+  and an inbound email never reaches the agent; of the four, only the other
+  three carry a conversation. The card now names the four channels as delivery
+  targets, and GDPR appears only in the Experience bullet about the control
+  plane, which is where it lives.
 - **The documented CSP hash command produced a wrong hash on Windows**, which
   is the one failure this repository is loudest about: the analytics snippet is
   pinned by SHA-256, and a bad hash blocks the script with no console error and

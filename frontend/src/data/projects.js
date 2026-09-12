@@ -2,15 +2,15 @@ export const projects = [
   {
     title: "RemindrAI: Embeddable Multi-Tenant Reminder Capability",
     role: "Master's Thesis · MemorAIz S.r.l.",
-    stack: ["Next.js 16", "TypeScript", "Vercel AI SDK", "Mastra", "Turso / libSQL", "Server Components"],
+    stack: ["Next.js 16", "TypeScript", "Vercel AI SDK", "Mastra", "Turso / libSQL"],
+    // The MemorAIz entry in experience.js carries the build, delivery, tenancy
+    // and deployment facts. This card says what the system does and where the
+    // model's authority stops, and the highlight states the adoption result,
+    // so the two sections say different things about the same work.
     description:
-      "My Master's thesis: a multi-tenant reminder and communication capability assistants adopt instead of rebuilding. An agent schedules from plain chat across Email, WhatsApp, Telegram, and Discord; a database-owned engine delivers under failure, then reconciles what the provider reports afterwards. A server-rendered console runs plans, quotas and GDPR while holding no database and no authorization rule of its own.",
-    // The MemorAIz entry in experience.js already carries the deployment fact
-    // (EU-pinned, Mastra, H-FARM as first tenant) almost word for word. This
-    // line states the thesis claim instead, so the two sections say different
-    // things about the same work rather than the same thing twice.
+      "A reminder and messaging service that AI assistants embed instead of rebuilding. An agent turns plain chat into reminders delivered over Email, WhatsApp, Telegram, and Discord, and each reminder's owner is pinned outside the model, so a prompt injection cannot retarget it.",
     highlight:
-      "Embeddability is the thesis claim: an assistant registers the whole reminder and delivery layer with a base URL and a token, instead of rebuilding scheduling, four channel integrations and retries for itself.",
+      "Its first tenant adopted it with a base URL and a token, holding no scheduler, queue, or provider secret.",
   },
   {
     title: "TIAGo: Autonomous Mapping, Navigation & Pick-and-Place",

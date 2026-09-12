@@ -54,7 +54,7 @@ export const stats = [
   },
   {
     icon: "tests",
-    value: "952",
+    value: "985",
     label: "Tests guarding the thesis service, its console and its tenant",
     source: "RemindrAI",
   },
