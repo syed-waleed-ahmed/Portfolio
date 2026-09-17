@@ -3,31 +3,26 @@
 export const personalInfo = {
   name: "Syed Waleed Ahmed",
   shortName: "Waleed", // the name the hero greets with
+  location: "Bologna, Italy",
+  email: "syedwaleedahmed9@gmail.com",
   resumeUrl:
-  "https://drive.google.com/file/d/1gPdW6Rf8X2NBD8h9NTKfysr-8Wx_3NoK/view?usp=sharing",
+    "https://drive.google.com/file/d/1gPdW6Rf8X2NBD8h9NTKfysr-8Wx_3NoK/view?usp=sharing",
 };
 
 export const socialLinks = {
   linkedin: "https://www.linkedin.com/in/syed-waleed-ahmed/",
   github: "https://github.com/syed-waleed-ahmed",
+  // This site's own source, linked from the footer.
+  source: "https://github.com/syed-waleed-ahmed/Portfolio",
 };
 
-export const navLinks = [
-  { target: "top", label: "Home" },
-  { target: "about", label: "About" },
-  { target: "experience", label: "Experience" },
-  { target: "projects", label: "Projects" },
-  { target: "skills", label: "Skills" },
-  { target: "interests", label: "Interests" },
-  { target: "contact", label: "Contact" },
-];
-
-export const sectionIds = [
-  "hero",
-  "about",
-  "experience",
-  "projects",
-  "skills",
-  "interests",
-  "contact",
+// Page sections below the hero, in order. The single source for the navbar
+// links, the <section> ids App.jsx renders and the heading each section is
+// labelled by (`${id}-title`).
+export const sections = [
+  { id: "about", label: "About" },
+  { id: "experience", label: "Experience" },
+  { id: "projects", label: "Projects" },
+  { id: "skills", label: "Skills" },
+  { id: "contact", label: "Contact" },
 ];

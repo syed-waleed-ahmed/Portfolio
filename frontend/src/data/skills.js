@@ -1,15 +1,13 @@
-// icon: a key, not a component - Skills.jsx maps it to an <svg>. Keeps this
-// file free of JSX so it stays pure content.
-//
 // A tag earns its place by being something someone could reasonably interview
 // on. Editors and version control (VS Code, Jupyter, Git) and the assumed
 // baseline behind a framework already listed (HTML/CSS under React) were cut
-// for that reason: they pad the count without adding a claim, which makes the
-// tags that do matter harder to find.
+// for that reason: they pad the count without adding a claim.
+//
+// Each tag sits in the group a reader would look for it in: Twilio and
+// Upstash QStash are messaging, and Power BI is analytics, not DevOps.
 export const skillGroups = [
   {
     title: "AI / LLM Engineering",
-    icon: "ai",
     tags: [
       "Multi-Agent Systems",
       "RAG",
@@ -25,12 +23,11 @@ export const skillGroups = [
     ],
   },
   {
-    title: "ML & Data Science",
-    icon: "ml",
+    title: "ML & Data",
     tags: [
       "PyTorch",
       "TensorFlow",
-      "Scikit-learn",
+      "scikit-learn",
       "XGBoost",
       "OpenCV",
       "Pandas",
@@ -38,26 +35,46 @@ export const skillGroups = [
       "Matplotlib",
       "Seaborn",
       "Statistical Analysis",
+      "Power BI",
     ],
   },
   {
     title: "Languages",
-    icon: "code",
-    tags: ["Python", "SQL", "JavaScript", "TypeScript", "C++"],
+    tags: ["Python", "TypeScript", "JavaScript", "SQL", "C++"],
   },
   {
     title: "Web & Backend",
-    icon: "web",
-    tags: ["React", "Next.js", "Server Components", "Node.js", ".NET ASP Core", "REST APIs", "Serverless", "Multi-Tenancy", "Webhooks", "Vitest"],
+    tags: [
+      "React",
+      "Next.js",
+      "Server Components",
+      "Node.js",
+      "ASP.NET Core",
+      "REST APIs",
+      "Serverless",
+      "Multi-Tenancy",
+      "Webhooks",
+      "Vitest",
+    ],
   },
   {
-    title: "Databases & Messaging",
-    icon: "data",
-    tags: ["MySQL", "PostgreSQL", "SQL Server", "MongoDB", "Turso / libSQL", "pgvector", "Drizzle ORM", "Redis", "Kafka"],
+    title: "Data & Messaging",
+    tags: [
+      "PostgreSQL",
+      "MySQL",
+      "SQL Server",
+      "MongoDB",
+      "Turso / libSQL",
+      "pgvector",
+      "Drizzle ORM",
+      "Redis",
+      "Kafka",
+      "Upstash QStash",
+      "Twilio",
+    ],
   },
   {
     title: "Cloud & DevOps",
-    icon: "cloud",
-    tags: ["AWS", "Docker", "Kubernetes", "Terraform", "CI/CD", "Linux", "Vercel", "Upstash QStash", "Twilio", "Power BI"],
+    tags: ["AWS", "Vercel", "Docker", "Kubernetes", "Terraform", "CI/CD", "Linux"],
   },
 ];

@@ -1,0 +1,22 @@
+/* Stylesheet entry point. main.jsx imports this before App, so the layer order
+   below is declared ahead of every other rule in the bundle, including the CSS
+   each component imports next to itself.
+
+   Later layers win regardless of selector specificity, which is what lets a
+   component rule override a base rule without !important or a longer
+   selector. Nothing in the project is unlayered.
+
+   reset       normalise browser defaults
+   tokens      custom properties only, no selectors that style anything
+   base        element defaults: type, links, focus, selection
+   layout      page-level primitives: container, section, section header
+   components  reusable pieces and the per-component files beside the JSX
+   utilities   single-purpose overrides, applied deliberately */
+@layer reset, tokens, base, layout, components, utilities;
+
+@import "./tokens.css";
+@import "./reset.css";
+@import "./base.css";
+@import "./layout.css";
+@import "./components.css";
+@import "./utilities.css";

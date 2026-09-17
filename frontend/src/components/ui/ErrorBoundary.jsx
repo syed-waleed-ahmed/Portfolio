@@ -1,10 +1,10 @@
 import { Component } from "react";
 
+// Wraps each section on its own, so a render error takes down that section
+// rather than the page. The fallback offers a reload: re-rendering the same
+// tree would just throw the same error again.
 export default class ErrorBoundary extends Component {
-  constructor(props) {
-    super(props);
-    this.state = { hasError: false };
-  }
+  state = { hasError: false };
 
   static getDerivedStateFromError() {
     return { hasError: true };
@@ -15,21 +15,15 @@ export default class ErrorBoundary extends Component {
   }
 
   render() {
-    if (this.state.hasError) {
-      return (
-        this.props.fallback ?? (
-          <div className="text-center py-5 text-muted">
-            <p>Something went wrong loading this section.</p>
-            <button
-              className="btn-outlined"
-              onClick={() => this.setState({ hasError: false })}
-            >
-              Try again
-            </button>
-          </div>
-        )
-      );
-    }
-    return this.props.children;
+    if (!this.state.hasError) return this.props.children;
+
+    return (
+      <div className="container error-fallback" role="alert">
+        <p>This section could not be displayed.</p>
+        <button type="button" className="btn btn--secondary btn--sm" onClick={() => window.location.reload()}>
+          Reload page
+        </button>
+      </div>
+    );
   }
 }

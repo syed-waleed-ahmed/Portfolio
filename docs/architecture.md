@@ -8,7 +8,7 @@ Browser
   |
   |  static assets (HTML / CSS / JS / fonts / images)
   v
-Netlify CDN  <--  frontend/  (React 19 + Vite, built to dist/)
+Netlify CDN  <--  frontend/  (React 19 + Vite, prerendered to dist/)
   |
   |  POST /api/contact   (JSON, CORS-restricted)
   v
@@ -43,19 +43,20 @@ portfolio/
 │   └── .env.example
 ├── frontend/
 │   ├── public/                     Static passthrough (see below)
+│   ├── scripts/prerender.mjs       Writes the rendered page into dist/index.html
 │   ├── src/
 │   │   ├── components/
-│   │   │   ├── layout/             Navbar, Footer
-│   │   │   ├── sections/           One file per page section
+│   │   │   ├── layout/             Navbar, Footer (each with its .css)
+│   │   │   ├── sections/           One file per page section, plus its .css
 │   │   │   └── ui/                 Reusable primitives
 │   │   ├── data/                   Portfolio content, no JSX
-│   │   ├── hooks/useInView.js      IntersectionObserver wrapper
-│   │   ├── styles/                 reset, base, navbar, hero, components
+│   │   ├── styles/                 Layer order, tokens, reset, base, layout, shared components
 │   │   ├── App.jsx
-│   │   └── main.jsx
+│   │   ├── entry-server.jsx        Build-time render entry
+│   │   └── main.jsx                Hydrates the prerendered markup
+│   ├── test/data.test.js           Content invariants (node --test)
 │   ├── index.html
 │   ├── vite.config.js
-│   ├── postcss.config.js
 │   ├── eslint.config.js
 │   └── .env.example
 ├── docs/                           This documentation set
@@ -84,11 +85,10 @@ sections are added.
 | Layer | What lives here | Examples |
 |-------|-----------------|----------|
 | `components/layout/` | Chrome that frames every page | `Navbar`, `Footer` |
-| `components/sections/` | One file per visible section | `Hero`, `About`, `Projects`, `Contact` |
-| `components/ui/` | Reusable primitives, no domain coupling | `Reveal`, `SectionHeader`, `ScrollProgress`, `ScrollToTop`, `SkipLink`, `ErrorBoundary`, `LazyMountSection` |
-| `hooks/` | Cross-cutting React hooks | `useInView`, used by `Reveal` and `LazyMountSection` |
-| `data/` | Pure content, no JSX | `about.js`, `experience.js`, `projects.js`, `skills.js`, `interests.js`, `portfolio.js` |
-| `styles/` | Global CSS: reset, tokens, layout, components | `reset.css`, `base.css`, `navbar.css`, `hero.css`, `components.css` |
+| `components/sections/` | One file per visible section, with its stylesheet beside it | `Hero`, `About`, `Experience`, `Projects`, `Skills`, `Contact` |
+| `components/ui/` | Reusable primitives, no domain coupling | `Reveal`, `SectionHeader`, `SectionLink`, `ExternalLink`, `ScrollToTop`, `SkipLink`, `ErrorBoundary` |
+| `data/` | Pure content, no JSX | `about.js`, `experience.js`, `projects.js`, `skills.js`, `portfolio.js` |
+| `styles/` | Global CSS in cascade layers | `index.css` (layer order), `tokens.css`, `reset.css`, `base.css`, `layout.css`, `components.css`, `utilities.css` |
 
 ### Data-driven content
 
@@ -96,21 +96,21 @@ Components are pure UI. All copy, links and figures live in `src/data/`, so
 updating the site is a data edit rather than a JSX edit. See
 [Development](development.md#updating-site-content) for the per-file guide.
 
-Icons are stored as **string keys**, not components (`icon: "rag"`). Each
-section maps the key to a `react-icons` component through a lookup at the top
-of the file. That is what keeps JSX out of the data layer; a key with no entry
-in the map renders nothing rather than crashing, so a typo costs a glyph, not
-the section.
+`data/portfolio.js` exports `sections`, the ordered list of section ids and
+labels. It is the single source for the navbar links and for the `<section>`
+elements `App.jsx` renders, so a section cannot be added to one and forgotten
+in the other. Each section is labelled by its heading, whose id is
+`${sectionId}-title`.
 
 The section headings are the exception to "one file per section owns its own
-markup": all six render through `components/ui/SectionHeader`, which takes the
-icon, the title and the subtitle. Sharing one component is what stops the six
-headings drifting apart as sections are edited independently.
+markup": all of them render through `components/ui/SectionHeader`, which takes
+the heading id, the title and the subtitle. Sharing one component is what stops
+the headings drifting apart as sections are edited independently.
 
-Note the asymmetry with the rule above: `SectionHeader` takes an **icon
-component**, not a string key, because a section file is already JSX and owns
-its own `react-icons` import. String keys exist to keep JSX out of `data/`, and
-nowhere else.
+`frontend/test/data.test.js` turns the data layer's conventions into checks:
+every About figure must appear in the Experience or Projects entry it cites,
+project copy stays within a shared length range, links are absolute `https`,
+and no copy uses a character the font subset cannot draw.
 
 ### Import alias
 
@@ -128,18 +128,36 @@ import Reveal from "../../ui/Reveal";
 
 ### Rendering strategy
 
-The hero renders immediately. Everything below the fold is wrapped in
-`LazyMountSection`, which mounts on `requestIdleCallback` after first paint, and
-in `Reveal`, which animates on an `IntersectionObserver` entry. Both are backed
-by the same `useInView` hook, and both honour `prefers-reduced-motion`.
+The page is **prerendered at build time**. `npm run build` runs three steps:
 
-Section chunks are code-split, so first paint downloads the hero and the shell
-rather than the whole page. An `ErrorBoundary` wraps the below-fold sections,
-so a crash in one degrades that section instead of blanking the site.
+1. `vite build` produces the client bundle in `dist/`.
+2. `vite build --ssr src/entry-server.jsx --outDir dist-server` compiles the
+   app for Node.
+3. `scripts/prerender.mjs` renders `<App />` to HTML once, writes it inside
+   `<div id="root">` in `dist/index.html`, and deletes `dist-server/`.
 
-There is no animation library, no PWA shell and no Bootstrap JS. Bootstrap is
-used for its CSS grid and utilities only, and PurgeCSS trims the unused ones in
-production builds.
+The HTML response therefore already contains every heading, paragraph and
+link. Text paints before any JavaScript runs, crawlers and link previews see
+the full page, and anchors such as `/#projects` resolve against the real
+document height. `main.jsx` then calls `hydrateRoot` to attach React to that
+markup. The dev server has no prerender step and serves an empty root, so
+`main.jsx` falls back to `createRoot` there.
+
+Two consequences shape the components:
+
+- **Render output must be deterministic.** Anything that differs between build
+  time and the visitor's browser would fail hydration. The footer year, for
+  example, is injected by Vite `define` as `__BUILD_YEAR__` rather than computed
+  at render time.
+- **Browser-only work belongs in effects.** `Reveal` hides below-the-fold
+  content only after hydration, so the prerendered HTML is never invisible.
+
+Sections are imported eagerly into a single bundle. With the content already in
+the HTML there is nothing to gain from splitting a few kilobytes of section code
+into separate requests. Each section has its own `ErrorBoundary`, so a render
+error takes down that section rather than the page.
+
+There is no animation library, no UI kit, no CSS framework and no PWA shell.
 
 ---
 
@@ -198,9 +216,9 @@ declare a matching `engines.node`. `.npmrc` sets `engine-strict=true` so a
 mismatched local install fails loudly instead of producing confusing runtime
 errors.
 
-**Production builds are gated on `NODE_ENV`.** `postcss.config.js` only enables
-PurgeCSS when `NODE_ENV=production`, so a build without it ships all of
-Bootstrap. CI sets it explicitly for that reason.
+**The build has no environment-dependent steps.** There is no PostCSS
+configuration and no CSS purging, so `npm run build` produces the same output
+locally, in CI and on Netlify with no variables set.
 
 **Secrets never reach the client.** The Resend key lives only in the backend
 environment. The frontend's only configurable value is the API base URL, and

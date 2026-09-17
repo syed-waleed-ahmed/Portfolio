@@ -1,0 +1,44 @@
+@layer components {
+  .scroll-top {
+    position: fixed;
+    inset-inline-end: var(--space-4);
+    inset-block-end: var(--space-4);
+    z-index: var(--z-floating);
+    display: grid;
+    place-items: center;
+    width: var(--tap-target);
+    height: var(--tap-target);
+    border: 1px solid var(--color-border-strong);
+    border-radius: var(--radius-full);
+    background-color: color-mix(in srgb, var(--color-surface-raised) 88%, transparent);
+    color: var(--color-text);
+    box-shadow: var(--shadow-md);
+    backdrop-filter: blur(8px);
+    opacity: 0;
+    translate: 0 8px;
+    transition:
+      opacity var(--duration-base) ease,
+      translate var(--duration-base) var(--ease-out),
+      color var(--duration-fast) ease,
+      border-color var(--duration-fast) ease;
+
+    & svg {
+      width: 0.95rem;
+      height: 0.95rem;
+    }
+
+    &[data-visible="true"] {
+      opacity: 1;
+      translate: 0 0;
+    }
+
+    &:hover {
+      color: var(--color-accent);
+      border-color: var(--color-accent-border);
+    }
+
+    @media print {
+      display: none;
+    }
+  }
+}

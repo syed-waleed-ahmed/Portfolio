@@ -1,106 +1,110 @@
-import { useEffect, useState } from "react";
-import { navLinks, sectionIds, personalInfo } from "@/data/portfolio";
+import { useEffect, useRef, useState } from "react";
+import { FaBars, FaTimes } from "react-icons/fa";
+import ExternalLink from "@/components/ui/ExternalLink";
+import SectionLink from "@/components/ui/SectionLink";
+import { personalInfo, sections } from "@/data/portfolio";
+import "./Navbar.css";
+
+// Matches the breakpoint in Navbar.css where the inline links collapse.
+const DESKTOP_QUERY = "(min-width: 48rem)";
 
 const Navbar = () => {
-  const [activeSection, setActiveSection] = useState("top");
+  const [activeId, setActiveId] = useState(null);
   const [menuOpen, setMenuOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
+  const headerRef = useRef(null);
 
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 24);
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
-
+  // Highlight the section occupying the upper-middle of the viewport.
   useEffect(() => {
     if (!("IntersectionObserver" in window)) return;
-
-    const observers = [];
-
-    sectionIds.forEach((id) => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) setActiveId(entry.target.id);
+        }
+      },
+      { rootMargin: "-35% 0px -60% 0px" }
+    );
+    for (const { id } of sections) {
       const el = document.getElementById(id);
-      if (!el) return;
-
-      const obs = new IntersectionObserver(
-        ([entry]) => {
-          if (entry.isIntersecting) {
-            setActiveSection(id === "hero" ? "top" : id);
-          }
-        },
-        { rootMargin: "-30% 0px -60% 0px", threshold: 0 }
-      );
-
-      obs.observe(el);
-      observers.push(obs);
-    });
-
-    return () => observers.forEach((obs) => obs.disconnect());
+      if (el) observer.observe(el);
+    }
+    // The hero is not in the nav, so reaching it clears the highlight.
+    const hero = document.getElementById("top");
+    const heroObserver = new IntersectionObserver(
+      ([entry]) => entry.isIntersecting && setActiveId(null),
+      { rootMargin: "-35% 0px -60% 0px" }
+    );
+    if (hero) heroObserver.observe(hero);
+    return () => {
+      observer.disconnect();
+      heroObserver.disconnect();
+    };
   }, []);
 
-  const handleNavClick = (e, target) => {
-    e.preventDefault();
-    setMenuOpen(false);
-
-    if (target === "top") {
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    } else {
-      const el = document.getElementById(target);
-      if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
-    }
-
-    window.history.replaceState({}, "", window.location.pathname);
-  };
+  // While the mobile menu is open: Escape or a click outside the header closes
+  // it, and widening past the breakpoint resets it so it cannot reappear
+  // stale when the window narrows again.
+  useEffect(() => {
+    if (!menuOpen) return;
+    const desktop = window.matchMedia(DESKTOP_QUERY);
+    const close = () => setMenuOpen(false);
+    const onKeyDown = (e) => {
+      if (e.key !== "Escape") return;
+      close();
+      headerRef.current?.querySelector(".site-nav__toggle")?.focus();
+    };
+    const onPointerDown = (e) => {
+      if (!headerRef.current?.contains(e.target)) close();
+    };
+    document.addEventListener("keydown", onKeyDown);
+    document.addEventListener("pointerdown", onPointerDown);
+    desktop.addEventListener("change", close);
+    return () => {
+      document.removeEventListener("keydown", onKeyDown);
+      document.removeEventListener("pointerdown", onPointerDown);
+      desktop.removeEventListener("change", close);
+    };
+  }, [menuOpen]);
 
   return (
-    <nav className={`site-nav${scrolled ? " is-scrolled" : ""}`}>
-      <div className="site-nav-inner container">
-        {/* Name anchors the left, links sit on the right. */}
-        <a
-          href="#hero"
-          className="site-nav-brand"
-          onClick={(e) => handleNavClick(e, "top")}
-          aria-label="Home"
-        >
+    <header ref={headerRef} className="site-header" data-menu-open={menuOpen}>
+      <nav className="site-nav container" aria-label="Primary">
+        <SectionLink to="top" className="site-nav__brand" onClick={() => setMenuOpen(false)}>
           {personalInfo.name}
-        </a>
-
-        <ul
-          id="primary-menu"
-          className={`site-nav-list${menuOpen ? " is-open" : ""}`}
-        >
-          {navLinks.map((link) => {
-            const isActive = activeSection === link.target;
-            const href = link.target === "top" ? "#hero" : `#${link.target}`;
-            return (
-              <li key={link.label}>
-                <a
-                  href={href}
-                  className={`site-nav-link${isActive ? " is-active" : ""}`}
-                  aria-current={isActive ? "page" : undefined}
-                  onClick={(e) => handleNavClick(e, link.target)}
-                >
-                  {link.label}
-                </a>
-              </li>
-            );
-          })}
-        </ul>
+        </SectionLink>
 
         <button
           type="button"
-          className={`site-nav-toggle${menuOpen ? " is-open" : ""}`}
+          className="site-nav__toggle"
           aria-controls="primary-menu"
           aria-expanded={menuOpen}
-          aria-label="Toggle navigation"
-          onClick={() => setMenuOpen((v) => !v)}
+          onClick={() => setMenuOpen((open) => !open)}
         >
-          <span className="site-nav-toggle-line" />
-          <span className="site-nav-toggle-line" />
-          <span className="site-nav-toggle-line" />
+          {menuOpen ? <FaTimes aria-hidden="true" /> : <FaBars aria-hidden="true" />}
+          <span className="visually-hidden">Menu</span>
         </button>
-      </div>
-    </nav>
+
+        <div id="primary-menu" className="site-nav__menu">
+          <ul className="site-nav__links">
+            {sections.map(({ id, label }) => (
+              <li key={id}>
+                <SectionLink
+                  to={id}
+                  className="site-nav__link"
+                  aria-current={activeId === id ? "true" : undefined}
+                  onClick={() => setMenuOpen(false)}
+                >
+                  {label}
+                </SectionLink>
+              </li>
+            ))}
+          </ul>
+          <ExternalLink href={personalInfo.resumeUrl} className="btn btn--secondary btn--sm site-nav__resume">
+            Resume
+          </ExternalLink>
+        </div>
+      </nav>
+    </header>
   );
 };
 

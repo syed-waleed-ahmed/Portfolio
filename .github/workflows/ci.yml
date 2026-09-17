@@ -16,7 +16,7 @@ concurrency:
 
 jobs:
   frontend:
-    name: Frontend (lint + build)
+    name: Frontend (lint + test + build)
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -39,12 +39,13 @@ jobs:
       - name: Lint
         run: npm run lint
 
-      # NODE_ENV=production is load-bearing: postcss.config.js gates PurgeCSS
-      # on it, and without it the CSS ships with all of Bootstrap.
+      - name: Content tests
+        run: npm test
+
+      # Compiles the client and server bundles and prerenders the page, so a
+      # component that throws during render fails here rather than in a deploy.
       - name: Build
         run: npm run build
-        env:
-          NODE_ENV: production
 
       - name: Audit (production deps only, fail on high+)
         run: npm audit --omit=dev --audit-level=high

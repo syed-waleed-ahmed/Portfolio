@@ -57,22 +57,19 @@ no need to change directories.
 | `npm run install:all` | Install dependencies for `frontend/` and `backend/` |
 | `npm run dev:frontend` | Vite dev server with HMR on port 5173 |
 | `npm run dev:backend` | Express with `node --watch` on port 5000 |
-| `npm run build` | Production build of the frontend into `frontend/dist/` |
+| `npm run build` | Production build of the frontend into `frontend/dist/`, prerendered |
 | `npm run lint` | ESLint over the frontend |
 | `npm test` | Backend API test suite (`node --test`) |
 | `npm start` | Backend in production mode |
 
-Inside `frontend/` there is also `npm run preview`, which serves the built
-`dist/` for a final check before deploying.
+Inside `frontend/` there are also `npm test`, which runs the content checks
+in `test/data.test.js`, and `npm run preview`, which serves the built `dist/`
+for a final check before deploying. Preview is the only way to see the
+prerendered page locally: the dev server renders on the client.
 
-Two workspace-level scripts are worth knowing about:
-
-- The frontend build must run with `NODE_ENV=production` for PurgeCSS to
-  engage. Netlify and CI both set it; if you build by hand and the CSS comes
-  out at ~46 KB rather than ~10 KB gzipped, that is the missing variable.
-- `node scripts/gen-og-card.mjs` regenerates the social card. It needs `sharp`
-  and `fontkit`, which are installed on demand rather than kept as
-  dependencies - see [Design](design.md#generated-assets).
+`node scripts/gen-og-card.mjs` regenerates the social card. It needs `sharp`,
+`fontkit` and `wawoff2`, which are installed on demand rather
+than kept as dependencies - see [Design](design.md#generated-assets).
 
 ---
 
@@ -149,18 +146,27 @@ automatically, so adding a project or a job is a data change:
 | New job or internship | `experience.js` |
 | New project | `projects.js` - array order is page order; `github` is the only optional field |
 | New skill group or tag | `skills.js` |
-| New role, principle or topic | `interests.js` |
-| Approach copy, a stat, a degree | `about.js` |
-| Name, resume link, socials, nav items | `portfolio.js` |
+| Approach copy, a stat, a degree, a target role | `about.js` |
+| Name, email, resume link, socials, section order | `portfolio.js` |
 
-Two rules keep the data layer honest:
+Three rules keep the data layer honest, and `npm test` in `frontend/` checks
+all of them:
 
-1. **Icons are keys, not components.** Add the key to the section's lookup map
-   as well as to the data entry, or the icon silently renders as nothing.
-2. **Stats in `about.js` are aggregates, not new claims.** Every figure there
+1. **Stats in `about.js` are aggregates, not new claims.** Every figure there
    is already stated in `experience.js` or `projects.js` - the 985-test tile,
    for instance, restates the MemorAIz experience bullet. Change one without
-   the other and the page contradicts itself.
+   the other and the test fails rather than the page contradicting itself.
+2. **Every claim must be checkable.** Project copy is written from the
+   project's own repository or report. A figure that cannot be traced to one
+   does not go on the page.
+3. **Entries match their neighbours' density.** Project descriptions run 32 to
+   53 words, highlights 9 to 26, with four or five stack chips; experience
+   bullets 12 to 26 words. When a new fact arrives, drop an older one rather
+   than growing the entry.
+
+A new section needs an entry in `sections` in `portfolio.js`, a component in
+`components/sections/`, and a line in the `SECTION_COMPONENTS` map in
+`App.jsx`. Its `SectionHeader` id must be `<section id>-title`.
 
 Visual changes are governed by the token system - read
 [Design](design.md) before touching colours, type sizes or the Projects grid.
@@ -195,9 +201,10 @@ linter; it is small enough that the test suite plus review covers it.
 2. Make the change, keeping documentation in step with behaviour.
 3. Run the checks that apply:
    ```bash
-   npm run lint     # frontend changes
-   npm run build    # frontend changes
-   npm test         # backend changes
+   npm run lint                     # frontend changes
+   npm test --prefix frontend       # content changes
+   npm run build                    # frontend changes
+   npm test                         # backend changes
    ```
 4. Update the Postman collection if you changed the API surface, and
    [`CHANGELOG.md`](../CHANGELOG.md) if the change is user-visible.
@@ -244,9 +251,15 @@ header.
 The limiter allows 5 submissions per IP per 15 minutes. Restart the backend to
 clear the in-memory counter.
 
-**The built CSS is ~46 KB instead of ~10 KB gzipped.**
-The build ran without `NODE_ENV=production`, so PurgeCSS was skipped and all of
-Bootstrap shipped.
+**`prerender: <div id="root"></div> not found in dist/index.html`.**
+The root element in `frontend/index.html` was edited. The prerender script
+finds it by exact string match, so it must stay an empty
+`<div id="root"></div>`.
+
+**A hydration error in the browser console.**
+Something renders differently at build time than in the browser: a date, a
+random value, or a read of `window` during render. Move browser-only values
+into an effect, or fix them at build time as the footer year is.
 
 **Analytics stopped reporting after an edit to `index.html`.**
 The inline analytics snippet is pinned in the CSP by SHA-256 hash. Any change,

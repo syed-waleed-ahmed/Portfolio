@@ -7,9 +7,9 @@ GitHub: https://github.com/syed-waleed-ahmed
 Location: Bologna, Italy
 
 /* SITE */
-Last update: 2026/09/12
-Standards: HTML5, CSS3, ES2022
-Components: React 19, Vite 8, Bootstrap 5 (CSS only), react-icons, NTR (self-hosted)
+Last update: 2026/09/16
+Standards: HTML5, CSS (cascade layers, nesting, container queries), ES2022
+Components: React 19 (prerendered at build time), Vite 8, react-icons, Hanken Grotesk (self-hosted)
 Backend: Node.js 24, Express 5, Resend, Helmet, express-rate-limit
 Hosting: Netlify (frontend), Render (backend)
 Source: https://github.com/syed-waleed-ahmed/Portfolio

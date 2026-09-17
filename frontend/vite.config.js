@@ -12,7 +12,11 @@ export default defineConfig({
       "@": path.resolve(__dirname, "src"),
     },
   },
-  build: {
-    target: "es2018",
+  define: {
+    // Fixed at build time so the prerendered HTML and the hydrating client
+    // always print the same footer year. See Footer.jsx.
+    __BUILD_YEAR__: JSON.stringify(new Date().getFullYear()),
   },
+  // No explicit build.target: Vite's default (Baseline widely available) is
+  // what the CSS already requires - subgrid, :has(), color-mix(), nesting.
 });

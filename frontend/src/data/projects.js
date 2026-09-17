@@ -1,3 +1,12 @@
+// Every claim on a card must be checkable against its repository (or, for
+// RemindrAI, the thesis). In September 2026 three cards were re-synced against
+// their READMEs: the connecting-rod card described production-line defect
+// classification the course project never did, and the multi-agent and RAG
+// stacks listed LangGraph and LangChain, which neither codebase uses.
+//
+// Density matches across cards: two-sentence descriptions of 32-53 words,
+// highlights of 9-26 words, four or five stack chips. test/data.test.js
+// checks the ranges.
 export const projects = [
   {
     title: "RemindrAI: Embeddable Multi-Tenant Reminder Capability",
@@ -14,7 +23,7 @@ export const projects = [
   },
   {
     title: "TIAGo: Autonomous Mapping, Navigation & Pick-and-Place",
-    role: "Robotics Project · Master's",
+    role: "Robotics Project · Master's · Team of 3",
     stack: ["ROS 2 Humble", "Nav2 / SLAM", "ArUco", "Gazebo", "Python"],
     github: "https://github.com/syed-waleed-ahmed/tiago-autonomous-pick-and-place",
     description:
@@ -23,40 +32,40 @@ export const projects = [
       "No map coordinates in the source: every station and cube pose is discovered from markers at runtime, so the mission moves to a new world unchanged.",
   },
   {
-    title: "Multi-Agent AI Workflow System",
-    role: "AI/ML Project",
-    stack: ["Python", "LangGraph", "Groq", "OpenAI"],
+    title: "Campaign Forge: Multi-Agent Marketing Workflow",
+    role: "Independent Project",
+    stack: ["Python", "OpenAI SDK", "Groq", "Pydantic", "pytest"],
     github: "https://github.com/syed-waleed-ahmed/Multi-Agent-Workflow",
     description:
-      "A multi-agent system that automates marketing campaign generation. Specialized agents for research, copy, brief, and QA coordinate through a shared workflow, replacing what used to be a multi-day manual process and keeping quality consistent across runs.",
+      "A multi-agent pipeline that turns a one-line product brief into a campaign ready to hand off. Research, copywriter, art-director and manager agents each own one stage, running on any OpenAI-compatible endpoint with Groq as the default.",
     highlight:
-      "Cut manual effort by 90% through role-based agent orchestration with structured handoffs.",
+      "Retries with backoff, Pydantic-validated output and a self-repairing JSON step, backed by 94% test coverage and an adversarial eval corpus.",
   },
   {
     title: "Self-Correcting RAG Pipeline",
-    role: "AI/ML Project",
-    stack: ["LangChain", "Vector Search", "OpenAI", "Python"],
+    role: "Independent Project",
+    stack: ["Python", "FastAPI", "sentence-transformers", "FAISS", "Groq"],
     github: "https://github.com/syed-waleed-ahmed/Self-Correcting-RAG",
     description:
-      "A RAG pipeline built around retrieve, evaluate, and correct loops. It grades its own answers and re-retrieves whenever the evaluator flags low confidence, so responses stay grounded in the source documents rather than filling the gaps with invention.",
+      "A RAG pipeline that checks its own work. A guardrail agent scores each retrieved chunk and drops off-topic context, then an evaluator grades the answer against its sources and triggers a bounded correction loop when grounding is weak.",
     highlight:
-      "Closed the loop between retrieval and answer quality, cutting hallucinated outputs on ambiguous queries.",
+      "Keeps the best-scoring attempt, so a correction never regresses an answer. Served as a FastAPI service and a CLI, with 31 offline tests.",
   },
   {
-    title: "Visual Inspection of Connecting Rods",
-    role: "Academic Project · Master's",
-    stack: ["Computer Vision", "OpenCV", "Python", "scikit-learn"],
+    title: "Visual Inspection of Motorcycle Connecting Rods",
+    role: "Course Project · Master's",
+    stack: ["Python", "OpenCV", "NumPy", "SciPy"],
     github:
       "https://github.com/syed-waleed-ahmed/Visual-Inspection-of-Motorcycle-Connecting-Rods",
     description:
-      "A computer-vision classification system that inspects motorcycle connecting rods for defects on the production line. It replaced a slow manual step, flagging faulty parts automatically from camera images before they moved downstream.",
+      "A classical computer-vision pipeline that inspects connecting rods from grayscale images. It tells the two rod types apart by hole count, then measures each rod's position, orientation, length and width, and every hole's center and diameter.",
     highlight:
-      "95%+ classification accuracy with ~80% less manual inspection time on the floor.",
+      "Extended to cope with distractor objects and scattered iron powder, using Gaussian and bilateral filtering and area-filtered connected components.",
   },
   {
     title: "Delay Classification for Tele-Robotic Systems",
     role: "Bachelor's Thesis",
-    stack: ["Signal Processing", "TCP/IP", "UDP" ,"Networking", "C++"],
+    stack: ["Signal Processing", "TCP/IP", "UDP", "Networking", "C++"],
     description:
       "A time-series and ML pipeline that classifies network delay across LAN, WAN, and 4G environments. Built from captured latency traces, it flags the conditions that would destabilize a remote tele-robotic control loop before they cause failures.",
     highlight:

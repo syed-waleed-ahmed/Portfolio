@@ -1,0 +1,44 @@
+/* Page-level layout primitives. Components lay out their own insides; these
+   are the few shapes the whole page shares. */
+@layer layout {
+  .container {
+    width: min(100% - 2 * var(--gutter), var(--container-max));
+    margin-inline: auto;
+  }
+
+  .section {
+    padding-block: var(--section-space);
+
+    & + & {
+      border-block-start: 1px solid var(--color-border);
+    }
+  }
+
+  /* Left-aligned, like the content under it. The subtitle is capped to a
+     readable measure rather than the container width. */
+  .section-header {
+    display: grid;
+    gap: var(--space-3);
+    margin-block-end: clamp(var(--space-8), 1.5rem + 2vw, var(--space-12));
+  }
+
+  .section-title {
+    font-size: var(--text-2xl);
+    font-weight: var(--weight-bold);
+    line-height: var(--leading-tight);
+    letter-spacing: var(--tracking-tight);
+  }
+
+  .section-subtitle {
+    max-width: 60ch;
+    font-size: var(--text-lg);
+    color: var(--color-text-muted);
+  }
+
+  @media print {
+    .section {
+      padding-block: 1.5rem;
+      break-inside: avoid-page;
+    }
+  }
+}

@@ -1,0 +1,28 @@
+@layer components {
+  .skills {
+    border-block-start: 1px solid var(--color-border);
+  }
+
+  .skills__row {
+    display: grid;
+    gap: var(--space-3);
+    padding-block: var(--space-5);
+    border-block-end: 1px solid var(--color-border);
+
+    @media (min-width: 48rem) {
+      grid-template-columns: 13rem minmax(0, 1fr);
+      gap: var(--space-8);
+      align-items: baseline;
+    }
+  }
+
+  .skills__group {
+    font-weight: var(--weight-semibold);
+    color: var(--color-text-strong);
+  }
+
+  .skills .tag {
+    font-size: var(--text-sm);
+    padding: 0.25rem 0.65rem;
+  }
+}

@@ -101,7 +101,9 @@ of these, read the linked document first:
 | Area | Why | Read |
 |------|-----|------|
 | The inline script in `frontend/index.html` | Pinned in the CSP by SHA-256 hash; any edit silently kills analytics until the hash is recomputed | [Deployment](docs/deployment.md#the-inline-analytics-hash) |
-| Colours, type scale, the Projects grid | Token system and a `subgrid` layout with three load-bearing rules | [Design](docs/design.md) |
+| Colours, type scale, layout, motion | Cascade layers, a token system and a `subgrid` card layout with load-bearing rules | [Design](docs/design.md) |
+| Copy in `frontend/src/data/` | Figures must stay traceable and entries equally dense; `npm test` in `frontend/` enforces it | [Development](docs/development.md#updating-site-content) |
+| `frontend/index.html` root element and render output | The build prerenders into `<div id="root"></div>` by string match, and the markup must hydrate identically | [Architecture](docs/architecture.md#rendering-strategy) |
 | The contact endpoint | Ordering of the body cap, limiter, honeypot and validation is deliberate | [Architecture](docs/architecture.md#contact-form-request-flow) |
 | `frontend/public/_headers` | Carries both the CSP and every cache rule | [Deployment](docs/deployment.md#caching) |
 

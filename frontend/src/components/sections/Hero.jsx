@@ -1,104 +1,77 @@
-import { FaEnvelope, FaFileAlt, FaLinkedinIn, FaGithub } from "react-icons/fa";
+import { FaArrowRight, FaGithub, FaLinkedinIn } from "react-icons/fa";
+import ExternalLink from "@/components/ui/ExternalLink";
+import SectionLink from "@/components/ui/SectionLink";
 import { personalInfo, socialLinks } from "@/data/portfolio";
+import "./Hero.css";
 
-const Hero = () => {
-  const scrollToContact = (e) => {
-    e.preventDefault();
-    document.getElementById("contact")?.scrollIntoView({ behavior: "smooth", block: "start" });
-  };
+// Keep `sizes` in step with the portrait's rendered width in Hero.css, and the
+// preload in index.html in step with both.
+const PORTRAIT_SIZES = "(min-width: 60rem) 288px, 88px";
 
-  return (
-    <section
-      id="hero"
-      className="hero-gradient d-flex align-items-center hero-entrance"
-    >
-      <div className="container position-relative">
-        <div className="row align-items-center g-5">
-          {/* Photo sits left on desktop, but after the copy once stacked, so the
-              headline still leads on mobile. */}
-          <div className="col-lg-5 order-2 order-lg-1 d-flex justify-content-center justify-content-lg-start">
-            <div className="profile-wrapper hero-photo-wrapper hero-slide-left">
-              <div className="hero-ring">
-                <picture>
-                  <source type="image/avif" srcSet="/images/Profile.avif" />
-                  <source type="image/webp" srcSet="/images/Profile.webp" />
-                  <img
-                    src="/images/Profile.webp"
-                    alt={personalInfo.name}
-                    className="profile-img"
-                    width="680"
-                    height="680"
-                    loading="eager"
-                    fetchPriority="high"
-                    decoding="async"
-                  />
-                </picture>
-              </div>
-            </div>
-          </div>
+const Hero = () => (
+  <section id="top" className="hero" aria-labelledby="hero-title" tabIndex={-1}>
+    <div className="container hero__inner">
+      <picture className="hero__portrait">
+        <source
+          type="image/avif"
+          srcSet="/images/Profile-320.avif 320w, /images/Profile.avif 680w"
+          sizes={PORTRAIT_SIZES}
+        />
+        <source
+          type="image/webp"
+          srcSet="/images/Profile-320.webp 320w, /images/Profile.webp 680w"
+          sizes={PORTRAIT_SIZES}
+        />
+        <img
+          src="/images/Profile.webp"
+          alt={`Portrait of ${personalInfo.name}`}
+          width="680"
+          height="680"
+          fetchPriority="high"
+          decoding="async"
+        />
+      </picture>
 
-          <div className="col-lg-7 order-1 order-lg-2">
-            <div className="hero-slide-right">
-              <h1 className="hero-title mb-4">
-                hi, <span className="gradient-text">{personalInfo.shortName}</span> here.
-                <span className="hero-cursor" aria-hidden="true" />
-              </h1>
+      <div className="hero__content">
+        <h1 id="hero-title" className="hero__title">
+          hi, <span className="hero__name">{personalInfo.shortName}</span> here.
+          <span className="hero__caret" aria-hidden="true" />
+        </h1>
+        <p className="hero__headline">
+          I build multi-agent systems, RAG pipelines, and LLM workflow automation.
+        </p>
+        <p className="hero__lead">
+          My focus is the work most demos leave out: evaluation, observability,
+          and the engineering that turns a working prototype into something a
+          team can rely on every day.
+        </p>
+        <p className="hero__note">
+          Finishing a Master&apos;s in Automation Engineering at the University
+          of Bologna in October 2026, with a thesis built at MemorAIz S.r.l.
+        </p>
 
-              <p className="hero-lead mb-4">
-                AI Engineer working on{" "}
-                <span className="fw-semibold">multi-agent systems</span>,{" "}
-                <span className="fw-semibold">RAG pipelines</span>, and{" "}
-                <span className="fw-semibold">LLM workflow automation</span>. My
-                focus is the work most demos leave out: evaluation,
-                observability, and the engineering that turns a working
-                prototype into something a team can rely on every day.
-              </p>
-
-              <p className="hero-sub-lead mb-5">
-                Finishing a Master&apos;s in Automation Engineering at the
-                University of Bologna in October 2026, after an Erasmus semester
-                at the University of Twente.
-              </p>
-
-              <div className="hero-cta-row">
-                <a href="#contact" className="btn-outlined btn-outlined--accent" onClick={scrollToContact}>
-                  <FaEnvelope />
-                  Let&apos;s connect
-                </a>
-                <a
-                  href={personalInfo.resumeUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="btn-outlined"
-                >
-                  <FaFileAlt />
-                  View Resume
-                </a>
-                <a
-                  href={socialLinks.linkedin}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="btn-outlined btn-outlined--icon"
-                  aria-label="LinkedIn"
-                >
-                  <FaLinkedinIn />
-                </a>
-                <a
-                  href={socialLinks.github}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="btn-outlined btn-outlined--icon"
-                  aria-label="GitHub"
-                >
-                  <FaGithub />
-                </a>
-              </div>
-            </div>
-          </div>
+        <div className="hero__actions">
+          <SectionLink to="projects" className="btn btn--primary">
+            View projects
+            <FaArrowRight aria-hidden="true" />
+          </SectionLink>
+          <ExternalLink href={personalInfo.resumeUrl} className="btn btn--secondary">
+            Resume
+          </ExternalLink>
+          {/* Grouped so the two icons wrap to a new line together rather
+              than leaving one stranded on a narrow phone. */}
+          <span className="hero__social">
+            <ExternalLink href={socialLinks.linkedin} className="btn btn--icon" aria-label="LinkedIn">
+              <FaLinkedinIn aria-hidden="true" />
+            </ExternalLink>
+            <ExternalLink href={socialLinks.github} className="btn btn--icon" aria-label="GitHub">
+              <FaGithub aria-hidden="true" />
+            </ExternalLink>
+          </span>
         </div>
       </div>
-    </section>
-  );
-};
+    </div>
+  </section>
+);
 
 export default Hero;

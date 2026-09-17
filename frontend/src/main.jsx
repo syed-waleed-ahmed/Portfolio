@@ -1,20 +1,21 @@
-import React from "react";
-import ReactDOM from "react-dom/client";
+import { StrictMode } from "react";
+import { createRoot, hydrateRoot } from "react-dom/client";
+// Styles first: this file declares the cascade-layer order, and it has to
+// reach the bundle ahead of the CSS each component imports.
+import "@/styles/index.css";
 import App from "@/App.jsx";
 
-import "bootstrap/dist/css/bootstrap.min.css";
-import "@/styles/reset.css";
-import "@/styles/base.css";
-import "@/styles/navbar.css";
-import "@/styles/hero.css";
-import "@/styles/components.css";
-
-const Root = import.meta.env.DEV ? (
-  <React.StrictMode>
+const container = document.getElementById("root");
+const app = (
+  <StrictMode>
     <App />
-  </React.StrictMode>
-) : (
-  <App />
+  </StrictMode>
 );
 
-ReactDOM.createRoot(document.getElementById("root")).render(Root);
+// Production HTML is prerendered by scripts/prerender.mjs, so React attaches
+// to markup that is already on screen. The dev server serves an empty root.
+if (container.firstElementChild) {
+  hydrateRoot(container, app);
+} else {
+  createRoot(container).render(app);
+}

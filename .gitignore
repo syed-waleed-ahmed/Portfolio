@@ -5,6 +5,8 @@ node_modules/
 dist/
 dist-ssr/
 frontend/dist/
+# SSR bundle used by scripts/prerender.mjs; removed after each build
+frontend/dist-server/
 backend/dist/
 
 # === Vite cache (anywhere, including stray root .vite/) ===

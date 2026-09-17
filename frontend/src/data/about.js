@@ -1,62 +1,45 @@
-// Pure content, no JSX - About.jsx renders it (same pattern as interests.js).
+// Pure content, no JSX - About.jsx renders it.
 
-// The section subtitle above these paragraphs already says "half full-stack
-// engineer, half AI/ML", so the first line does not restate it - it goes
-// straight to what that split changes about the work.
-//
-// This is the one card on the site written with any humour in it, and it is
+// This is the one block on the site written with any humour in it, and it is
 // deliberately the only one: Experience, Projects and Skills are scanned for
-// facts, and a joke in a bullet costs more than it earns. The register here is
-// dry and self-deprecating rather than jokey - it lands as a person talking,
-// which is the point, and it still says something true in every line.
-//
-// Three paragraphs rather than two also squares the card off against the
-// Education timeline beside it, which used to leave a visible hole below this
-// one on desktop.
+// facts. The register is dry rather than jokey, and every line still says
+// something true.
 export const approach = [
   "I build models the way I would build any other production service: real APIs, error handling, observability. The alternative is a notebook that runs beautifully on my laptop and nowhere else, and I have written enough of those to know better.",
   "A year rotating through cybersecurity, web development, and database administration means I can hand over a whole working system, rather than the ML half and a hopeful note about deployment.",
   "Most of the work goes on the unglamorous part: retries, idempotency, and whatever decides to fail at three in the morning. Nobody puts that in the demo. It is usually the reason the demo still works next week.",
 ];
 
-// Every figure here is already claimed in Experience or Projects - this band
-// aggregates them rather than adding new ones, because a recruiter skimming
-// prose bullets never adds them up on their own. `source` is deliberate: an
-// unattributed number reads as marketing, an attributed one is checkable.
-// If a figure changes in experience.js or projects.js, change it here too.
+// Every figure here is already claimed in experience.js or projects.js - this
+// band aggregates them rather than adding new ones. `source` is deliberate: an
+// attributed number is checkable against the section below it.
+// test/data.test.js fails the build if a value stops appearing in its source
+// entry, so change both together.
 //
-// icon: a key, not a component - About.jsx maps it to a component so this file
-// stays JSX-free.
+// Only figures traceable to a record are listed. "90% manual effort removed"
+// and "95%+ defect classification" were dropped in September 2026: neither
+// appears in the Multi-Agent Workflow or connecting-rod repositories, and the
+// connecting-rod project measures dimensions rather than classifying defects.
 export const stats = [
   {
-    icon: "accuracy",
+    value: "985",
+    label: "Automated tests across the thesis service, its console and its first tenant",
+    source: "RemindrAI",
+  },
+  {
     value: "97.5%",
-    label: "Item-match accuracy across six supermarket chains",
+    label: "Item-match accuracy across six supermarket chains, against a 95% target",
     source: "Fruugle",
   },
   {
-    icon: "automation",
-    value: "90%",
-    label: "Manual effort removed by agent orchestration",
-    source: "Multi-agent workflow",
+    value: "99.5%",
+    label: "Product-category accuracy across 16 classes",
+    source: "Fruugle",
   },
   {
-    icon: "vision",
-    value: "95%+",
-    label: "Defect classification accuracy on the line",
-    source: "Vision inspection",
-  },
-  {
-    icon: "data",
     value: "100K+",
     label: "Records moved through ETL pipelines",
     source: "Jubilee Life Insurance",
-  },
-  {
-    icon: "tests",
-    value: "985",
-    label: "Tests guarding the thesis service, its console and its tenant",
-    source: "RemindrAI",
   },
 ];
 
@@ -75,5 +58,23 @@ export const education = [
     degree: "Bachelor's in Electrical Engineering",
     school: "NED University of Engineering and Technology, Karachi, Pakistan",
     period: "Oct 2019 - Aug 2023",
+  },
+];
+
+// The roles this portfolio is aimed at. Moved here from the former Interests
+// section, which also carried three generic principle chips ("Clean
+// architecture" and so on) that said nothing the rest of the page does not.
+export const targetRoles = [
+  {
+    title: "AI Engineer",
+    line: "Agents, tool use, and the infrastructure that makes them dependable.",
+  },
+  {
+    title: "ML Engineer",
+    line: "Models trained, evaluated, and served like any other production service.",
+  },
+  {
+    title: "Full-Stack AI Engineer",
+    line: "End to end: the model, the API, and the interface it is served through.",
   },
 ];

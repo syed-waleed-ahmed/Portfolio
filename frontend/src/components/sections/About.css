@@ -1,0 +1,168 @@
+@layer components {
+  /* ========= Figures ========= */
+  /* The 1px gap over a border-coloured background draws the dividers between
+     tiles. Column counts are explicit (2, then 4) rather than auto-fit, so a
+     row is never left with empty cells showing that background. Two columns on
+     phones rather than one: four full-width tiles were a screen each. */
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1px;
+    list-style: none;
+    margin-block-end: clamp(var(--space-10), 2rem + 3vw, var(--space-16));
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    background-color: var(--color-border);
+    overflow: hidden;
+
+    @media (min-width: 60rem) {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+  }
+
+  .stat {
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    gap: var(--space-2);
+    padding: clamp(var(--space-4), 0.75rem + 1.2vw, var(--space-6));
+    background-color: var(--color-surface);
+  }
+
+  .stat__value {
+    font-size: clamp(1.75rem, 1.35rem + 1.6vw, 2.5rem);
+    font-weight: var(--weight-bold);
+    line-height: 1;
+    letter-spacing: var(--tracking-tight);
+    color: var(--color-text-strong);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .stat__label {
+    font-size: var(--text-sm);
+    line-height: var(--leading-snug);
+    color: var(--color-text-soft);
+  }
+
+  .stat__source {
+    margin-block-start: auto;
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--color-text-muted);
+  }
+
+  /* ========= Story and aside ========= */
+  .about-grid {
+    display: grid;
+    gap: var(--space-8);
+    align-items: start;
+
+    @media (min-width: 60rem) {
+      grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
+      gap: clamp(var(--space-10), 4vw, var(--space-16));
+    }
+  }
+
+  /* Top padding matches the card beside it, so "Approach" and "Education"
+     sit on one line. */
+  .about-story {
+    max-width: var(--measure);
+
+    @media (min-width: 60rem) {
+      padding-block-start: clamp(var(--space-5), 1rem + 1vw, var(--space-8));
+    }
+
+    & p {
+      font-size: var(--text-lg);
+      line-height: var(--leading-relaxed);
+      color: var(--color-text-soft);
+    }
+
+    & p + p {
+      margin-block-start: var(--space-5);
+    }
+  }
+
+  .about-roles {
+    @media (min-width: 60rem) {
+      grid-column: 1 / -1;
+    }
+  }
+
+  /* ========= Education timeline ========= */
+  .timeline {
+    display: grid;
+    gap: var(--space-5);
+    list-style: none;
+  }
+
+  .timeline__item {
+    position: relative;
+    padding-inline-start: var(--space-5);
+    border-inline-start: 1px solid var(--color-border-strong);
+
+    &::before {
+      content: "";
+      position: absolute;
+      inset-inline-start: -4px;
+      inset-block-start: 0.45em;
+      width: 7px;
+      height: 7px;
+      border-radius: var(--radius-full);
+      background-color: var(--color-accent);
+    }
+  }
+
+  .timeline__title {
+    font-weight: var(--weight-semibold);
+    color: var(--color-text-strong);
+    line-height: var(--leading-snug);
+  }
+
+  .timeline__meta {
+    margin-block-start: var(--space-1);
+    font-size: var(--text-sm);
+    color: var(--color-text-soft);
+  }
+
+  .timeline__period {
+    margin-block-start: var(--space-1);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--color-text-muted);
+  }
+
+  /* ========= Target roles ========= */
+  .roles {
+    display: grid;
+    gap: var(--space-4);
+
+    @media (min-width: 48rem) {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: var(--space-8);
+    }
+
+    & dt {
+      font-weight: var(--weight-semibold);
+      color: var(--color-text-strong);
+    }
+
+    & dd {
+      margin-block-start: var(--space-1);
+      font-size: var(--text-sm);
+      color: var(--color-text-soft);
+    }
+  }
+
+  /* Dividers between roles: horizontal when stacked, vertical in a row. */
+  .roles__item + .roles__item {
+    padding-block-start: var(--space-4);
+    border-block-start: 1px solid var(--color-border);
+
+    @media (min-width: 48rem) {
+      padding-block-start: 0;
+      padding-inline-start: var(--space-8);
+      border-block-start: 0;
+      border-inline-start: 1px solid var(--color-border);
+    }
+  }
+}

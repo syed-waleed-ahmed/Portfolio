@@ -1,88 +1,37 @@
-import {
-  FaBriefcase,
-  FaBrain,
-  FaChartLine,
-  FaLayerGroup,
-  FaRegCalendarAlt,
-  FaMapMarkerAlt,
-} from "react-icons/fa";
 import Reveal from "@/components/ui/Reveal";
 import SectionHeader from "@/components/ui/SectionHeader";
 import { experiences } from "@/data/experience";
+import "./Experience.css";
 
-// Maps the icon key from experience.js to a component, so the data file stays
-// JSX-free (same pattern as Skills.jsx).
-const ROLE_ICONS = {
-  ai: FaBrain,
-  ml: FaChartLine,
-  stack: FaLayerGroup,
-};
+// One role per row, dates and place in a narrow column beside the detail -
+// the layout a CV uses, and for the same reason: bullets get a full reading
+// measure instead of three narrow columns side by side.
+const Experience = () => (
+  <div className="container">
+    <SectionHeader id="experience-title" title="Experience">
+      The roles I&apos;ve held and the systems I built in each one.
+    </SectionHeader>
 
-const Experience = () => {
-  return (
-      <div className="container">
-        <SectionHeader icon={FaBriefcase} title="Professional Experience">
-          The roles I&apos;ve held and the systems I built in each one.
-        </SectionHeader>
-
-        {/* A CSS grid rather than Bootstrap columns, for the same reason as
-            Projects: subgrid lets the three cards share row tracks, so the
-            meta row and the bullet list start on the same line across a row
-            however many lines the job title above them runs to. */}
-        <div className="experience-grid">
-          {experiences.map((exp, idx) => {
-            const Icon = ROLE_ICONS[exp.icon];
-            return (
-              <Reveal
-                key={exp.company}
-                delay={0.04 * (idx + 1)}
-                className="experience-cell"
-              >
-                <article className="neo-card experience-card">
-                  {/* Icon on the left with the title and company stacked
-                      beside it, dates and location on their own row below.
-                      Title and company stay in one block so the company sits
-                      tight under the title rather than a full grid gap clear
-                      of it. */}
-                  <div className="experience-head">
-                    {Icon && (
-                      <span className="experience-icon" aria-hidden="true">
-                        <Icon />
-                      </span>
-                    )}
-                    <div className="experience-head-text">
-                      <h3 className="experience-title">{exp.title}</h3>
-                      <div className="experience-company">
-                        <span className="text-accent card-subtitle-accent">
-                          {exp.company}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-
-                  <ul className="experience-meta">
-                    <li>
-                      <FaRegCalendarAlt aria-hidden="true" />
-                      {exp.period}
-                    </li>
-                    <li>
-                      <FaMapMarkerAlt aria-hidden="true" />
-                      {exp.location}
-                    </li>
-                  </ul>
-
-                  <ul className="experience-bullets mb-0">
-                    {exp.bullets.map((bullet, bi) => (
-                      <li key={bi}>{bullet}</li>
-                    ))}
-                  </ul>
-                </article>
-              </Reveal>
-            );
-          })}
-        </div>
-      </div>
-  );
-};
+    <ol className="experience-list">
+      {experiences.map((role) => (
+        <Reveal as="li" key={role.company} className="experience">
+          <div className="experience__meta">
+            <p className="experience__period">{role.period}</p>
+            <p className="experience__location">{role.location}</p>
+          </div>
+          <article className="experience__body">
+            <h3 className="experience__title">{role.title}</h3>
+            <p className="experience__company">{role.company}</p>
+            <ul className="experience__bullets">
+              {role.bullets.map((bullet) => (
+                <li key={bullet.slice(0, 40)}>{bullet}</li>
+              ))}
+            </ul>
+          </article>
+        </Reveal>
+      ))}
+    </ol>
+  </div>
+);
 
 export default Experience;

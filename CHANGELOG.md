@@ -14,6 +14,37 @@ milestone rather than by individual commit.
 
 ### Added
 
+- **Build-time prerendering.** `npm run build` now compiles a server bundle of
+  the app and writes the rendered page into `dist/index.html`
+  (`frontend/scripts/prerender.mjs`); `main.jsx` hydrates it. The full page is
+  in the HTML response, so text paints before JavaScript runs, crawlers and
+  link previews see every section, and deep links such as `/#projects` land on
+  the real document height. The `noscript` fallback became redundant and went.
+- **Frontend content tests** (`frontend/test/data.test.js`, `npm test` in
+  `frontend/`, and a CI step): every About figure must appear in the entry that
+  claims it, project and experience copy stays in a shared length range, links
+  are absolute `https`, keys are unique, and no copy uses a character outside
+  the font subset. The first two were comment-only conventions before.
+- Contact form: native `required`, `autocomplete` and `maxLength` matching the
+  API's limits; focus moves to the first invalid field with its error linked by
+  `aria-describedby`; results announce from a persistent live region; a notice
+  after six seconds explains the backend's cold start; a 60-second timeout; and
+  every failure message offers the email address as a fallback. Focusing the
+  form sends one `no-cors` request to `/health` so the backend is waking before
+  the visitor presses send.
+- A direct-contact column beside the form (email, LinkedIn, GitHub, resume),
+  and email, LinkedIn, GitHub and site-source links in the footer.
+- `ExternalLink` component: every off-site link gets the same `rel` and tells
+  screen-reader users it opens a new tab.
+- Named landmarks: each section is `aria-labelledby` its heading.
+- Mobile menu closes on Escape (returning focus to the toggle), on an outside
+  click, and when the window widens past the breakpoint.
+- 320px portrait variants (`Profile-320.{avif,webp}`, 19 KB and 27 KB) served
+  through `srcset`/`sizes`, with a matching `imagesrcset` preload, so phones no
+  longer download the 67 KB desktop portrait for an 88px avatar.
+- `scripts/gen-og-card.mjs` renders the social card in the new font and palette.
+  fontkit cannot apply weights to a WOFF2, so the script decompresses it to TTF
+  in memory first (`wawoff2`, installed on demand with `sharp` and `fontkit`).
 - A fifth About stat tile: **952 tests** guarding the RemindrAI service, its
   console and its tenant. The thesis is the largest piece of work on the page
   and was the only one with no figure in the band a recruiter actually scans;
@@ -47,6 +78,66 @@ milestone rather than by individual commit.
 
 ### Changed
 
+- **Project copy re-checked against the repositories it describes**, and three
+  cards corrected:
+  - *Visual Inspection of Connecting Rods* described "defect classification on
+    the production line", "95%+ classification accuracy" and "~80% less manual
+    inspection time on the floor", with scikit-learn in the stack. The project
+    is a Computer Vision course assignment: a classical OpenCV pipeline that
+    measures rods from a fixed image set, with no learned model and no
+    deployment. The card now says that, and the stack is Python, OpenCV,
+    NumPy and SciPy.
+  - *Multi-Agent AI Workflow System* is **Campaign Forge** in its repository. The
+    stack listed LangGraph, which it does not use (it is built on the OpenAI SDK
+    with Pydantic), and "research, copy, brief, and QA" agents where the code
+    has research, copywriter, art-director and manager agents. The "cut manual
+    effort by 90%" highlight appears nowhere in the repository and was replaced
+    with its documented engineering (retries, validated output, 94% coverage,
+    an adversarial eval corpus).
+  - *Self-Correcting RAG* listed LangChain, which it does not use; the stack is
+    now FastAPI, sentence-transformers, FAISS and Groq, and the unmeasured
+    "cutting hallucinated outputs" highlight became what the code guarantees.
+  - *TIAGo* now says it was a team of three, as its README credits.
+- The About figures band drops "90%" and "95%+", the two figures above, and
+  adds the 99.5% Fruugle category accuracy already stated in Experience. Four
+  tiles, two columns on phones instead of one.
+- **Visual redesign on the same identity** (dark navy, cyan accent). Hanken
+  Grotesk replaces NTR: NTR ships one weight, so every bold on the site was
+  synthesised by the browser. Section headers are left-aligned with no icon
+  badges or gradient rules; cards lost their hover lift, which implied they
+  were clickable; tags are neutral rather than cyan; gradient text is gone.
+- Hero keeps the "hi, Waleed here." greeting and caret, now followed by what
+  the work is and a single primary action (View projects).
+- The Interests section is folded into About as "Roles I'm targeting". Its
+  three principle chips ("Clean architecture", "Reproducible workflows",
+  "Prototype to production") were removed as generic.
+- Experience is a CV-style list (dates beside each role) rather than three
+  narrow columns; Skills is a definition list rather than six cards. Twilio and
+  Upstash QStash moved to Data & Messaging and Power BI to ML & Data, from
+  Cloud & DevOps. ".NET ASP Core" is now "ASP.NET Core".
+- The navbar has a Resume button and no Home link (the name links home), and
+  is `position: sticky` rather than fixed.
+- In-page links (navbar, name, "View projects", skip link) go through a new
+  `SectionLink` component: they scroll to the section without leaving
+  `#section` in the address bar, as the old navbar did, and move keyboard focus
+  to the section they jump to.
+- The reading-progress bar is a CSS scroll-driven animation instead of a
+  `ScrollProgress` component with a scroll listener.
+- Scroll reveals only affect content below the fold, only after hydration, and
+  move 12px instead of 28px. The observer uses threshold 0; the old 0.18 ratio
+  could never be reached by an element taller than the viewport.
+- `ErrorBoundary` wraps each section separately and offers a page reload; its
+  old "Try again" re-rendered the same failing tree.
+- The social card and 404 page use the new font and palette.
+- `index.html`: shorter meta description, non-standard `language` and redundant
+  `googlebot` tags removed, and the backend `preconnect` (a TLS handshake on
+  every page view for a form most visitors never use) reduced to
+  `dns-prefetch`. The inline analytics snippet is byte-identical, so its CSP
+  hash is unchanged.
+- `vite.config.js` drops `build.target: "es2018"` for Vite's Baseline default,
+  which is what the CSS already requires.
+- Dependencies: `eslint-plugin-react-refresh` 0.5.6 to 0.5.7 and `resend`
+  6.28.0 to 6.28.1.
 - RemindrAI copy re-synced against the finished report, as of its 10 September
   revision, and cut to the density of everything around it. Its Experience
   bullets ran 25 to 35 words against 15 to 22 for the other two roles, and the
@@ -152,8 +243,41 @@ milestone rather than by individual commit.
   environment descriptions brought in line with the current API.
 - PR template covers the changelog, the Postman collection and `docs/`.
 
+### Removed
+
+- **Bootstrap and PurgeCSS.** Bootstrap supplied a grid, a handful of utilities
+  and a form-control style, and PurgeCSS existed only to strip the rest; the
+  pair also made `NODE_ENV=production` a silent requirement of every build.
+  Replaced by about 1,600 lines of commented plain CSS in cascade layers
+  (`styles/index.css` declares `reset, tokens, base, layout, components,
+  utilities`), with design tokens, native nesting, `clamp()` type, logical
+  properties, `color-mix()`, a container query on the contact form, and each
+  component's styles beside its JSX. Gzipped CSS fell from 9.95 KB to 5.8 KB,
+  24 packages left the frontend tree, and `postcss.config.js` is gone.
+- Section code-splitting, `LazyMountSection`, the `requestIdleCallback`
+  mount-all effect, the forced scroll-to-top on load and `useInView`. With the
+  page prerendered they no longer bought anything, and the forced scroll broke
+  shared links to a section. Total JS went from 81 KB plus 9.5 KB of section
+  chunks to one 81 KB bundle.
+- The icon-key lookup maps in Experience, Skills, Interests and About, and the
+  `icon` fields in the data files that fed them.
+- `frontend/public/fonts/ntr-latin-400.woff2`.
+
 ### Fixed
 
+- The hidden back-to-top button was still reachable with Tab. It is `inert`
+  until visible, and moves focus to `<main>` when used.
+- The focus ring set `border-radius` on focus, squaring off circular controls.
+- The navbar name had `aria-label="Home"`, which replaced its visible text as
+  the accessible name (WCAG 2.5.3, label in name).
+- A project highlight box stretched to the height of its row neighbour's,
+  leaving a band of empty background under shorter text.
+- Below 576px the hero's Bootstrap row overflowed the viewport by 12px on each
+  side, masked by `overflow-x: hidden` on `body`; both are gone.
+- The contact form comment cited a 5000-character cap in `validate()` that did
+  not exist. The cap is now enforced with `maxLength`, matching the API.
+- A non-JSON error response (a proxy page during a Render cold start) surfaced
+  as a JSON parse error in the form.
 - **The RemindrAI project card made two claims the system does not support.**
   It said the console "runs plans, quotas and GDPR", but the console has no
   data-subject surface: export and erasure are RemindrAI's subject-rights API,

@@ -1,0 +1,92 @@
+@layer components {
+  .project-grid {
+    display: grid;
+    gap: var(--space-5);
+    list-style: none;
+
+    @media (min-width: 52rem) {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  /* Six shared rows: context, title, description, highlight, stack, links.
+     The card is a grid item of .project-grid and a subgrid of its rows, so a
+     two-line title on one card pushes its neighbour's description down to
+     match. Without subgrid support the card is an ordinary column; content
+     still reads top to bottom, it just stops lining up across the row. */
+  .project-card {
+    display: grid;
+    grid-row: span 6;
+    grid-template-rows: subgrid;
+    row-gap: var(--space-3);
+    align-content: start;
+    padding: clamp(var(--space-5), 1rem + 1vw, var(--space-8));
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    transition: border-color var(--duration-base) ease;
+
+    /* The card holds a link, so hovering it previews that the card leads
+       somewhere - border only, no lift, since the card itself is not the
+       click target. */
+    &:has(a):hover {
+      border-color: var(--color-border-strong);
+    }
+  }
+
+  .project-card__context {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    letter-spacing: 0.02em;
+    color: var(--color-accent);
+  }
+
+  /* pretty rather than the global balance: balancing these long titles broke
+     them early, at the hyphen in "Multi-Tenant". */
+  .project-card__title {
+    font-size: var(--text-xl);
+    line-height: var(--leading-snug);
+    text-wrap: pretty;
+  }
+
+  .project-card__description {
+    color: var(--color-text-soft);
+  }
+
+  /* align-self keeps the box to its own text: the row is sized to the tallest
+     highlight in the grid row, and a stretched box was a band of empty
+     background under the shorter one. */
+  .project-card__highlight {
+    align-self: start;
+    padding: var(--space-3) var(--space-4);
+    border-inline-start: 2px solid var(--color-accent);
+    background-color: rgb(148 163 184 / 0.05);
+    font-size: var(--text-base);
+    color: var(--color-text);
+  }
+
+  .project-card .tag-list {
+    align-self: start;
+  }
+
+  .project-card__links {
+    align-self: end;
+    padding-block-start: var(--space-1);
+    border-block-start: 1px solid var(--color-border);
+
+    & .text-link {
+      min-height: var(--tap-target);
+    }
+  }
+
+  /* Turned to point up-right: the conventional mark for a link that leaves the
+     site. */
+  .project-card__arrow {
+    rotate: -45deg;
+    transition: translate var(--duration-fast) ease;
+  }
+
+  .project-card__links a:hover .project-card__arrow {
+    translate: 2px -2px;
+  }
+}

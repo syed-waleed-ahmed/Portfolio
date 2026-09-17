@@ -1,906 +1,200 @@
-/* =========================
-   components.css - cards, timeline, skills, interests, contact, footer
-   ========================= */
+/* Shared component primitives: buttons, cards, tags, links and the reveal
+   transition. Section-specific styles live next to their JSX
+   in components/**. */
+@layer components {
+  /* ========= Buttons =========
+     .btn is the shape. --primary is the one filled action in a group,
+     --secondary the outlined alternative, --icon a square icon-only control. */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    min-height: var(--tap-target);
+    padding: var(--space-2) var(--space-5);
+    border: 1px solid transparent;
+    border-radius: var(--radius-md);
+    font-size: var(--text-base);
+    font-weight: var(--weight-semibold);
+    line-height: 1.2;
+    white-space: nowrap;
+    cursor: pointer;
+    transition:
+      background-color var(--duration-fast) ease,
+      border-color var(--duration-fast) ease,
+      color var(--duration-fast) ease,
+      transform var(--duration-fast) ease;
 
-/* ========= Cards =========
-   Flat raised blocks: --bg-card against --bg-main is the only thing defining
-   them, with no border, shadow or overlay. No backdrop-filter either - it was
-   a no-op once --bg-card became fully opaque, but still cost a compositing
-   layer per card. */
-.neo-card {
-  position: relative;
-  overflow: hidden;
-  border-radius: var(--radius-lg);
-  background: var(--bg-card);
-  transition: transform 0.25s ease-out, background 0.25s ease-out;
-}
+    & svg {
+      flex-shrink: 0;
+      width: 1em;
+      height: 1em;
+    }
 
-@media (max-width: 768px) {
-  .neo-card {
-    padding: 1.5rem !important;
-  }
-}
+    &:active:not(:disabled) {
+      transform: translateY(1px);
+    }
 
-.neo-card:hover {
-  transform: translateY(-3px);
-  background: var(--bg-card-hover);
-}
-
-.project-card h3 {
-  color: var(--text-strong);
-}
-
-/* ========= Projects grid =========
-   Three shared row bands - body, insight, stack - so every card in a row puts
-   its insight block and its tag row on the same line, however long the
-   description above them runs. The row-gap doubles as the internal spacing
-   between the three bands, which is why it is the only vertical rhythm value
-   here. Without subgrid support the cards fall back to ordinary blocks: the
-   content still reads top to bottom, it just stops lining up. */
-.projects-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  column-gap: 1.5rem;
-  row-gap: 1.25rem;
-}
-
-@media (min-width: 768px) {
-  .projects-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-@media (min-width: 992px) {
-  .projects-grid {
-    grid-template-columns: repeat(3, 1fr);
-  }
-}
-
-/* Five shared row bands: title, role, description, insight, stack. Every one
-   is its own band so all five line up straight across a row, whatever the
-   title above them wraps to. The row-gap doubles as the spacing between the
-   bands, which is why it is the only vertical rhythm value here. */
-.project-cell,
-.project-card {
-  display: grid;
-  grid-row: span 5;
-  grid-template-rows: subgrid;
-}
-
-/* Padding lives here rather than on a `p-4` utility: the card is a subgrid, so
-   its box has to be described in one place with the track rules above it. */
-.project-card {
-  padding: 1.5rem;
-}
-
-/* The stack row sits in the last band; a card whose tags wrap to fewer lines
-   than its neighbour still ends level, because the band is sized to the
-   tallest. */
-.project-stack {
-  display: flex;
-  flex-wrap: wrap;
-  align-content: start;
-  gap: 0.5rem;
-}
-
-.project-head {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 0.75rem;
-}
-
-/* The role line, in the same accent as the company name on an Experience card
-   so the two sections label their subject the same way.
-   Scoped to .project-card rather than left bare: `.neo-card p` also matches
-   this element and carries the same specificity as a lone `.project-meta`, so
-   the bare rule lost the colour, size and leading to it and the line rendered
-   as ordinary body text.
-   No margins - it is its own subgrid band, so the grid row-gap is what spaces
-   it from the title above and the description below, on every card at once. */
-.project-card .project-meta {
-  margin: 0;
-  align-self: start;
-  color: var(--accent-2);
-  font-weight: 500;
-  font-size: 0.96rem;
-  line-height: 1.4;
-}
-
-.project-card .project-description {
-  font-size: 1.06rem;
-}
-
-/* Description and highlight stay together and the tag row is what gets pushed
-   to the bottom, so a short description leaves breathing room above the tags
-   instead of a hole in the middle of the card. */
-.project-card .project-highlight {
-  display: flex;
-  align-items: flex-start;
-  gap: 0.6rem;
-  padding: 0.7rem 0.9rem;
-  background: rgba(var(--light-navy-rgb), 0.5);
-  border-radius: var(--radius-sm);
-  border-left: 2px solid var(--accent-2);
-  font-size: 1.02rem;
-  line-height: 1.55;
-  color: var(--text-soft);
-}
-
-.project-highlight-icon {
-  display: inline-flex;
-  flex-shrink: 0;
-  margin-top: 0.18em;
-  color: var(--accent-2);
-  font-size: 0.9rem;
-}
-
-/* GitHub link icon on project cards */
-.project-link-icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  width: 38px;
-  height: 38px;
-  border-radius: 50%;
-  border: 1px solid var(--border-default);
-  color: var(--text-muted);
-  font-size: 1.05rem;
-  background: rgba(var(--light-navy-rgb), 0.55);
-  transition: color 0.2s ease, border-color 0.2s ease, transform 0.2s ease, background 0.2s ease;
-  position: relative;
-  z-index: 1;
-}
-
-.project-link-icon:hover {
-  color: var(--accent-2);
-  border-color: var(--border-accent-hover);
-  transform: translateY(-2px);
-  background: rgba(34, 211, 238, 0.06);
-}
-
-.card-subtitle-accent {
-  position: relative;
-  display: inline-block;
-  font-weight: 500;
-}
-
-.card-subtitle-accent::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  bottom: -0.25rem;
-  width: 38%;
-  height: 2px;
-  border-radius: 999px;
-  background: var(--gradient-accent);
-  opacity: 0.85;
-}
-
-/* Card heading & text consistency */
-.neo-card h3 {
-  font-size: 1.38rem;
-  font-weight: 600;
-  line-height: 1.3;
-  color: var(--text-strong);
-  letter-spacing: 0.005em;
-}
-
-.neo-card p,
-.neo-card li {
-  font-size: 1.1rem;
-  line-height: 1.7;
-  color: var(--text-soft);
-}
-
-.neo-card .text-accent {
-  font-size: 1.06rem;
-}
-
-@media (max-width: 375px) {
-  .neo-card h3 {
-    font-size: 1.26rem;
+    &:disabled {
+      cursor: progress;
+      opacity: 0.7;
+    }
   }
 
-  .neo-card p,
-  .neo-card li {
-    font-size: 1.03rem;
-  }
-}
-
-/* ========= Overflow safety =========
-   Belt-and-suspenders so no card can break its box, whatever gets edited in
-   later: flex/grid children may shrink, long tokens wrap, badges stay inside. */
-.neo-card,
-.neo-card > *,
-.neo-card h3 {
-  min-width: 0;
-}
-
-.neo-card h3,
-.neo-card p,
-.neo-card li,
-.project-highlight,
-.timeline-meta,
-.card-subtitle-accent {
-  overflow-wrap: break-word;
-}
-
-.skill-badge {
-  max-width: 100%;
-}
-
-/* About / Interests card heading helper */
-.card-heading {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.55rem;
-  margin-bottom: 1rem;
-  color: var(--accent-2);
-  font-size: 1.26rem;
-  font-weight: 600;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-}
-
-.card-heading-icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 28px;
-  height: 28px;
-  border-radius: var(--radius-xs);
-  background: rgba(34, 211, 238, 0.08);
-  border: 1px solid rgba(34, 211, 238, 0.25);
-  font-size: 0.85rem;
-  color: var(--accent-2);
-}
-
-/* ========= Timeline (About.jsx) ========= */
-.timeline {
-  list-style: none;
-  padding-left: 0;
-  margin: 0;
-  position: relative;
-}
-
-.timeline::before {
-  content: "";
-  position: absolute;
-  left: 0.48rem;
-  top: 0.5rem;
-  bottom: 0.5rem;
-  width: 1px;
-  background: linear-gradient(to bottom, var(--accent), var(--accent-2), transparent);
-  opacity: 0.35;
-}
-
-.timeline li {
-  position: relative;
-  padding-left: 1.5rem;
-  margin-bottom: 1.1rem;
-}
-
-/* Fill variant: item spacing is handled by flex distribution, so drop the
-   per-item margin to keep the vertical gaps even across the card height. */
-.timeline-fill li {
-  margin-bottom: 0;
-}
-
-.timeline li::before {
-  content: "";
-  position: absolute;
-  left: 0.15rem;
-  top: 0.45rem;
-  width: 9px;
-  height: 9px;
-  border-radius: 50%;
-  background: var(--accent);
-  border: 1.5px solid var(--accent-2);
-}
-
-/* ========= About ========= */
-
-/* The section used to repeat the Experience section underneath it - the same
-   three employers, the same facts, twice on one page. What it lacked was any
-   place the proof could be read at a glance, so the employer list went and
-   this band took its place. Figures are aggregated from Experience and
-   Projects; see the note in about.js before editing one. */
-.about-stats {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
-  gap: 1rem;
-  list-style: none;
-  padding: 0;
-  margin: 0 0 1.5rem;
-}
-
-.about-stat {
-  position: relative;
-  overflow: hidden;
-  padding: 1.35rem 1.25rem;
-  border-radius: var(--radius-lg);
-  background: var(--bg-card);
-  border: 1px solid var(--border-subtle);
-  transition: transform 0.25s ease-out, background 0.25s ease-out,
-    border-color 0.25s ease-out;
-}
-
-/* The same indigo -> cyan edge the role cards in Interests and the skill cards
-   carry, so the treatment stays one system signal across the page. */
-.about-stat::before {
-  content: "";
-  position: absolute;
-  inset: 0 0 auto 0;
-  height: 2px;
-  background: var(--gradient-accent);
-  opacity: 0.9;
-}
-
-.about-stat:hover {
-  transform: translateY(-3px);
-  background: var(--bg-card-hover);
-  border-color: var(--border-accent-hover);
-}
-
-/* Top-right corner rather than above the number: the figure is the point of
-   the tile, and a stacked badge would push it down the card on all four at
-   once. The value line is short enough that nothing collides with it. */
-.about-stat-icon {
-  position: absolute;
-  top: 1.15rem;
-  right: 1.15rem;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 32px;
-  height: 32px;
-  border-radius: var(--radius-xs);
-  border: 1px solid rgba(34, 211, 238, 0.22);
-  background: rgba(34, 211, 238, 0.07);
-  color: var(--accent-2);
-  font-size: 0.82rem;
-  transition: border-color 0.25s ease, background 0.25s ease;
-}
-
-.about-stat:hover .about-stat-icon {
-  border-color: var(--border-accent-hover);
-  background: rgba(34, 211, 238, 0.12);
-}
-
-.about-stat-value {
-  display: block;
-  padding-right: 2.75rem;
-  font-size: 2.3rem;
-  font-weight: 700;
-  line-height: 1.05;
-  letter-spacing: -0.01em;
-  background: var(--gradient-accent);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-}
-
-.about-stat-label {
-  display: block;
-  margin-top: 0.45rem;
-  font-size: 1.02rem;
-  line-height: 1.45;
-  color: var(--text-soft);
-}
-
-/* An unattributed number reads as marketing; naming where it came from makes
-   it checkable against the section below. */
-.about-stat-source {
-  display: block;
-  margin-top: 0.35rem;
-  font-size: 0.85rem;
-  color: var(--text-muted);
-}
-
-@media (max-width: 375px) {
-  .about-stat-value {
-    font-size: 2rem;
-  }
-}
-
-/* List items inside content cards */
-.experience-card ul,
-.project-card ul {
-  padding-left: 1.1rem;
-  list-style: none;
-}
-
-.experience-card ul li,
-.project-card ul li {
-  position: relative;
-  padding-left: 1rem;
-  margin-bottom: 0.6rem;
-  color: var(--text-main);
-  line-height: 1.7;
-}
-
-.experience-card ul li::before,
-.project-card ul li::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  top: 0.65rem;
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  background: var(--accent-2);
-}
-
-.experience-card h3 {
-  color: var(--text-strong);
-}
-
-.experience-card .timeline-meta {
-  font-size: 0.96rem;
-  letter-spacing: 0.02em;
-}
-
-/* ========= Experience grid =========
-   Same subgrid arrangement as the projects grid, and for the same reason:
-   three shared row bands - head, meta, bullets - so a two-line job title in
-   one card doesn't push its dates and bullets below its neighbours'. Without
-   subgrid support the cards fall back to ordinary blocks; the content still
-   reads top to bottom, it just stops lining up. */
-.experience-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  column-gap: 1.5rem;
-  row-gap: 1.25rem;
-}
-
-@media (min-width: 768px) {
-  .experience-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-@media (min-width: 992px) {
-  .experience-grid {
-    grid-template-columns: repeat(3, 1fr);
-  }
-}
-
-.experience-cell,
-.experience-card {
-  display: grid;
-  grid-row: span 3;
-  grid-template-rows: subgrid;
-}
-
-/* Padding lives here rather than on a `p-4` utility, for the same reason as
-   the project card: the card is a subgrid, so its box is described in one
-   place alongside the track rules above it. */
-.experience-card {
-  padding: 1.5rem;
-}
-
-/* Icon on the left, title and company stacked beside it. All three sit in one
-   subgrid band: keeping the company in the same band as the title is what
-   holds it tight underneath, since given a band of its own the grid row-gap
-   would push it a full 1.25rem clear of the title it belongs to. The band is
-   sized to the tallest head in the row, so the dates and bullets below still
-   line up across all three cards.
-   align-items:center balances the tile against the two stacked lines rather
-   than pinning it to the top of the taller one. */
-.experience-head {
-  display: flex;
-  align-items: center;
-  gap: 0.9rem;
-  align-self: start;
-}
-
-.experience-head-text {
-  min-width: 0;
-}
-
-.experience-title {
-  margin: 0 0 0.35rem;
-}
-
-.experience-company {
-  min-width: 0;
-}
-
-/* Same tile treatment as .role-icon in Interests and .card-heading-icon in
-   About, so every icon on the site reads as one system. */
-.experience-icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  width: 42px;
-  height: 42px;
-  border-radius: var(--radius-sm);
-  border: 1px solid rgba(34, 211, 238, 0.25);
-  background: rgba(34, 211, 238, 0.08);
-  color: var(--accent-2);
-  font-size: 1.05rem;
-}
-
-/* Period and location, each behind its own icon.
-   The rules further up give every `ul li` in this card a bullet dot and a
-   bullet indent - this row is metadata, not a bullet, so both are unset here
-   rather than by narrowing that selector (which would have to name every list
-   the card may grow later). No margins either: this is its own subgrid band,
-   so the grid row-gap spaces it on all three cards at once. */
-.experience-card .experience-meta {
-  display: flex;
-  flex-wrap: wrap;
-  align-content: start;
-  gap: 0.35rem 1.1rem;
-  list-style: none;
-  padding-left: 0;
-  margin: 0;
-}
-
-.experience-card .experience-meta li {
-  display: flex;
-  align-items: center;
-  gap: 0.42rem;
-  padding-left: 0;
-  margin-bottom: 0;
-  font-size: 0.94rem;
-  line-height: 1.4;
-  letter-spacing: 0.02em;
-  color: var(--text-muted);
-}
-
-.experience-card .experience-meta li::before {
-  content: none;
-}
-
-.experience-card .experience-meta svg {
-  flex-shrink: 0;
-  font-size: 0.86rem;
-  color: var(--accent-2);
-  opacity: 0.9;
-}
-
-/* ========= Skills ========= */
-
-/* The same indigo -> cyan edge the role cards in Interests and the stat tiles
-   in About carry, as a 2px rule rather than a surface fill so the flat-card
-   rule still holds. `.neo-card` already clips it to the radius. */
-.skill-card::before {
-  content: "";
-  position: absolute;
-  inset: 0 0 auto 0;
-  height: 2px;
-  background: var(--gradient-accent);
-  opacity: 0.9;
-}
-
-.skill-badge {
-  display: inline-flex;
-  align-items: center;
-  border-radius: 999px;
-  background: rgba(var(--light-navy-rgb), 0.85);
-  border: 1px solid rgba(99, 102, 241, 0.28);
-  font-size: 0.91rem;
-  font-weight: 500;
-  letter-spacing: 0.02em;
-  color: var(--accent-2);
-  padding: 0.32rem 0.78rem;
-  transition: border-color 0.2s ease, background 0.2s ease, color 0.2s ease, transform 0.2s ease;
-}
-
-.skill-badge:hover {
-  border-color: var(--border-accent-hover);
-  background: rgba(34, 211, 238, 0.06);
-  color: var(--text-strong);
-  transform: translateY(-1px);
-}
-
-.skill-card h3 {
-  display: flex;
-  align-items: center;
-  gap: 0.55rem;
-  font-size: 1.2rem;
-  letter-spacing: 0.04em;
-  color: var(--text-strong);
-  text-transform: uppercase;
-  padding-bottom: 0.6rem;
-  border-bottom: 1px solid var(--border-subtle);
-}
-
-/* The icon tile shouldn't be squeezed by a long group title. */
-.skill-card h3 .card-heading-icon {
-  flex-shrink: 0;
-}
-
-/* ========= Interests =========
-   Three blocks with deliberately different weights - role cards, a thin
-   principle strip, then topic tiles - so the section reads as structure
-   rather than as two columns of prose. */
-
-/* Small centred label above each block. Lowercase content, uppercased here,
-   so the data file stays readable. */
-.interests-eyebrow {
-  margin: 0 0 1.1rem;
-  text-align: center;
-  font-size: 1rem;
-  font-weight: 600;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--text-muted);
-}
-
-/* The gradient rule is the section's signature - the same indigo -> cyan the
-   headings and progress bar use, as a 2px edge rather than a surface fill, so
-   the flat-card rule still holds. `.neo-card` already clips to its radius. */
-.role-card::before {
-  content: "";
-  position: absolute;
-  inset: 0 0 auto 0;
-  height: 2px;
-  background: var(--gradient-accent);
-  opacity: 0.9;
-}
-
-.role-icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 46px;
-  height: 46px;
-  margin-bottom: 1rem;
-  border-radius: var(--radius-sm);
-  border: 1px solid rgba(34, 211, 238, 0.25);
-  background: rgba(34, 211, 238, 0.08);
-  color: var(--accent-2);
-  font-size: 1.15rem;
-}
-
-.role-card .role-line {
-  font-size: 1.06rem;
-  line-height: 1.6;
-  color: var(--text-muted);
-}
-
-/* Closes the section, so no bottom margin - the section padding below it is
-   what separates Interests from Contact. */
-.principle-row {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 0.5rem 1.6rem;
-  list-style: none;
-  padding: 0;
-  margin: 2.25rem 0 0;
-}
-
-.principle-chip {
-  position: relative;
-  padding-left: 1.05rem;
-  font-size: 1.06rem;
-  color: var(--text-muted);
-}
-
-.principle-chip::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  top: 0.62em;
-  width: 6px;
-  height: 6px;
-  border-radius: 999px;
-  background: var(--gradient-accent);
-}
-
-
-/* ========= Contact ========= */
-
-/* Honeypot. Deliberately NOT display:none or visibility:hidden - bots skip
-   fields the browser reports as hidden, which is exactly the ones we want
-   them to fill. This keeps it rendered and hit-testable but off-screen. */
-.honeypot {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  border: 0;
-  overflow: hidden;
-  clip-path: inset(50%);
-  white-space: nowrap;
-  pointer-events: none;
-}
-
-.contact-card {
-  padding: 2.5rem !important;
-}
-
-@media (max-width: 768px) {
-  .contact-card {
-    padding: 1.5rem !important;
-  }
-}
-
-.contact-label {
-  display: flex;
-  align-items: center;
-  gap: 0.45rem;
-  font-size: 0.94rem;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--text-soft);
-}
-
-.contact-label .contact-label-icon {
-  font-size: 0.82rem;
-  color: var(--accent-2);
-  opacity: 0.95;
-}
-
-/* The submit button itself is .btn-outlined (base.css); this only sizes its
-   icon, which is an SVG and so stays off the type scale. */
-.btn-icon {
-  font-size: 1rem;
-}
-
-.contact-feedback {
-  margin-top: 1rem;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.7rem 1rem;
-  border-radius: var(--radius-sm);
-  font-size: 1.06rem;
-  line-height: 1.5;
-}
-
-/* The icon states the outcome before the sentence is read; colour alone
-   wouldn't, which is the point of carrying both. */
-.contact-feedback svg {
-  flex-shrink: 0;
-  font-size: 1.02rem;
-}
-
-.contact-feedback.is-error {
-  background: rgba(248, 113, 113, 0.08);
-  border: 1px solid rgba(248, 113, 113, 0.32);
-  color: #fca5a5;
-}
-
-.contact-feedback.is-success {
-  background: rgba(34, 197, 94, 0.08);
-  border: 1px solid rgba(34, 197, 94, 0.30);
-  color: #86efac;
-}
-
-.glass-input {
-  background: rgba(var(--light-navy-rgb), 0.7) !important;
-  border-radius: var(--radius-sm);
-  border: 1px solid var(--border-default);
-  color: var(--text-strong) !important;
-  caret-color: var(--text-strong);
-  -webkit-text-fill-color: var(--text-strong) !important;
-  padding: 0.8rem 1rem;
-  font-size: 1.1rem;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
-}
-
-.glass-input:hover {
-  border-color: rgba(148, 163, 184, 0.42);
-}
-
-.glass-input::placeholder,
-.glass-input::-moz-placeholder {
-  color: var(--text-muted);
-  opacity: 0.55;
-}
-
-input.form-control.glass-input::placeholder,
-textarea.form-control.glass-input::placeholder {
-  opacity: 0.55 !important;
-  color: var(--text-muted) !important;
-}
-
-input.form-control.glass-input::-moz-placeholder,
-textarea.form-control.glass-input::-moz-placeholder {
-  opacity: 0.55 !important;
-  color: var(--text-muted) !important;
-}
-
-.glass-input:focus {
-  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.22);
-  border-color: var(--accent);
-  outline: none;
-  background: rgba(var(--light-navy-rgb), 0.85) !important;
-}
-
-.glass-input.is-invalid {
-  border-color: #f97373;
-  box-shadow: 0 0 0 1px rgba(248, 113, 113, 0.55);
-}
-
-.glass-input:-webkit-autofill,
-.glass-input:-webkit-autofill:hover,
-.glass-input:-webkit-autofill:focus {
-  -webkit-text-fill-color: var(--text-strong);
-  -webkit-box-shadow: 0 0 0 1000px rgba(var(--light-navy-rgb), 0.96) inset;
-  box-shadow: 0 0 0 1000px rgba(var(--light-navy-rgb), 0.96) inset;
-}
-
-/* Height is driven from Contact.jsx to fit the content: no grip, no scrollbar,
-   the box just grows. The 5000-char cap in validate() bounds how far. */
-.contact-message {
-  min-height: 150px;
-  resize: none;
-  overflow: hidden;
-}
-
-/* ========= Footer ========= */
-/* No background or border-top: the footer sits directly on the page background
-   rather than reading as a separate panel. */
-.footer {
-  color: var(--text-muted);
-  padding-block: 2.5rem !important;
-}
-
-.footer-meta {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.5rem;
-  color: var(--text-muted);
-  font-size: 1.08rem;
-}
-
-/* ========= Print styles ========= */
-@media print {
-  body {
-    background: #fff !important;
-    color: #111 !important;
+  .btn--primary {
+    background-color: var(--color-accent);
+    color: var(--color-accent-ink);
+
+    &:hover:not(:disabled) {
+      background-color: var(--color-accent-hover);
+    }
   }
 
-  body::before,
-  body::after {
-    display: none !important;
+  .btn--secondary {
+    border-color: var(--color-border-strong);
+    color: var(--color-text-strong);
+
+    &:hover:not(:disabled) {
+      border-color: var(--color-accent-border);
+      background-color: var(--color-accent-subtle);
+    }
   }
 
-  .site-nav,
-  .scroll-progress,
-  .scroll-top-btn,
+  .btn--icon {
+    width: var(--tap-target);
+    padding: 0;
+    border-color: var(--color-border-strong);
+    color: var(--color-text-soft);
+
+    & svg {
+      width: 1.125rem;
+      height: 1.125rem;
+    }
+
+    &:hover {
+      border-color: var(--color-accent-border);
+      color: var(--color-accent);
+    }
+  }
+
+  .btn--sm {
+    min-height: 2.25rem;
+    padding-inline: var(--space-4);
+    font-size: var(--text-sm);
+
+    @media (pointer: coarse) {
+      min-height: var(--tap-target);
+    }
+  }
+
+  /* ========= Card ========= */
+  .card {
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: clamp(var(--space-5), 1rem + 1vw, var(--space-8));
+  }
+
+  .card-title {
+    font-size: var(--text-lg);
+    margin-block-end: var(--space-4);
+  }
+
+  /* ========= Tags =========
+     Neutral on purpose: a technology name is information, not an action, so it
+     does not borrow the accent colour that marks links and buttons. */
+  .tag-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    list-style: none;
+  }
+
+  .tag {
+    display: inline-flex;
+    align-items: center;
+    max-width: 100%;
+    padding: 0.2rem 0.6rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    background-color: rgb(148 163 184 / 0.06);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    line-height: 1.5;
+    color: var(--color-text-soft);
+  }
+
+  /* ========= Inline link ========= */
+  .text-link {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    color: var(--color-accent);
+    font-weight: var(--weight-medium);
+    text-decoration: underline;
+    text-decoration-color: transparent;
+    text-underline-offset: 0.25em;
+    transition: text-decoration-color var(--duration-fast) ease, color var(--duration-fast) ease;
+
+    & svg {
+      flex-shrink: 0;
+      width: 0.9em;
+      height: 0.9em;
+    }
+
+    &:hover {
+      color: var(--color-accent-hover);
+      text-decoration-color: currentColor;
+    }
+  }
+
+  /* ========= Reveal =========
+     Reveal.jsx sets data-reveal only on content that starts below the fold,
+     after hydration, so prerendered HTML is always fully visible and nothing
+     above the fold ever animates. */
+  [data-reveal] {
+    transition:
+      opacity var(--duration-slow) var(--ease-out) var(--reveal-delay, 0ms),
+      translate var(--duration-slow) var(--ease-out) var(--reveal-delay, 0ms);
+  }
+
+  [data-reveal="pending"] {
+    opacity: 0;
+    translate: 0 12px;
+  }
+
+  /* ========= Error boundary fallback ========= */
+  .error-fallback {
+    display: grid;
+    justify-items: start;
+    gap: var(--space-3);
+    color: var(--color-text-muted);
+  }
+
+  /* ========= Skip link ========= */
   .skip-link {
-    display: none !important;
+    position: fixed;
+    inset-block-start: var(--space-3);
+    inset-inline-start: var(--space-3);
+    z-index: var(--z-skip-link);
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--tap-target);
+    padding: var(--space-2) var(--space-4);
+    border-radius: var(--radius-md);
+    background-color: var(--color-accent);
+    color: var(--color-accent-ink);
+    font-weight: var(--weight-semibold);
+    translate: 0 calc(-100% - var(--space-6));
+
+    &:focus-visible {
+      translate: 0 0;
+    }
   }
 
-  .neo-card {
-    break-inside: avoid;
-    box-shadow: none !important;
-    border: 1px solid #ccc !important;
-    background: #fff !important;
-  }
-
-  .section-wrapper {
-    page-break-inside: avoid;
-    padding: 1rem 0 !important;
-  }
-
-  .hero-gradient {
-    min-height: auto !important;
-    padding: 1rem 0 !important;
-  }
-
-  a[href]::after {
-    content: " (" attr(href) ")";
-    font-size: 0.8em;
-    color: #555;
-  }
-
-  .gradient-text {
-    background: none !important;
-    -webkit-background-clip: unset !important;
-    background-clip: unset !important;
-    color: #111 !important;
+  @media print {
+    .skip-link {
+      display: none;
+    }
   }
 }

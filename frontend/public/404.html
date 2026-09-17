@@ -3,114 +3,107 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#0a192f" />
+    <meta name="color-scheme" content="dark" />
+    <meta name="theme-color" content="#0b1221" />
     <meta name="robots" content="noindex" />
-    <title>404 · Page Not Found · Syed Waleed Ahmed</title>
+    <title>Page not found · Syed Waleed Ahmed</title>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="canonical" href="https://syedwaleedahmed.me/" />
     <style>
-      :root {
-        color-scheme: dark;
-      }
-      /* Standalone page, so the faces are redeclared here rather than reusing
-         the bundled CSS. Same file, same metric-matched fallback - see the
-         Design section of the README. */
+      /* Standalone page with no bundled CSS, so the palette and type are
+         inlined by hand. Keep them in step with src/styles/tokens.css and the
+         @font-face in src/styles/base.css - see docs/design.md. */
       @font-face {
-        font-family: "NTR";
+        font-family: "Hanken Grotesk";
         font-style: normal;
-        font-weight: 400;
+        font-weight: 100 900;
         font-display: swap;
-        src: url("/fonts/ntr-latin-400.woff2") format("woff2");
+        src: url("/fonts/hanken-grotesk-latin-wght.woff2") format("woff2");
       }
       @font-face {
-        font-family: "NTR Fallback";
-        font-style: normal;
-        font-weight: 400;
-        src: local("Segoe UI"), local("SF Pro Text"), local("Roboto"),
-          local("Helvetica Neue"), local("Arial");
-        size-adjust: 79.8%;
+        font-family: "Hanken Grotesk Fallback";
+        src: local("Arial"), local("Helvetica Neue"), local("Helvetica"), local("Roboto");
+        size-adjust: 100%;
+        ascent-override: 100%;
+        descent-override: 30.3%;
+        line-gap-override: 0%;
       }
-      *, *::before, *::after { box-sizing: border-box; }
-      html, body {
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+      html,
+      body {
         margin: 0;
-        height: 100%;
-        font-family: "NTR", "NTR Fallback", system-ui, -apple-system, "Segoe UI", sans-serif;
-        /* Flat navy, matching --bg-main on the main site. This file is
-           standalone (no bundled CSS), so the palette is inlined by hand -
-           keep it in step with :root in src/styles/base.css. */
-        background: #0a192f;
-        color: #e2e8f0;
+        min-height: 100%;
+        background: #0b1221;
+        color: #dce3ec;
+        font-family: "Hanken Grotesk", "Hanken Grotesk Fallback", system-ui, sans-serif;
         -webkit-font-smoothing: antialiased;
       }
-      .wrap {
-        min-height: 100%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
+      main {
+        min-height: 100vh;
+        min-height: 100dvh;
+        display: grid;
+        place-items: center;
         padding: 2rem 1rem;
       }
       .card {
-        max-width: 480px;
-        text-align: center;
+        max-width: 30rem;
       }
       .code {
-        font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
-        font-size: 0.78rem;
-        letter-spacing: 0.22em;
+        margin: 0 0 1rem;
+        font-family: ui-monospace, "SF Mono", "Cascadia Mono", Menlo, Consolas, monospace;
+        font-size: 0.8125rem;
+        letter-spacing: 0.08em;
         text-transform: uppercase;
         color: #22d3ee;
-        margin-bottom: 1rem;
       }
       h1 {
-        font-size: clamp(2rem, 6vw, 3rem);
-        font-weight: 700;
-        letter-spacing: 0.005em;
-        line-height: 1.15;
         margin: 0 0 0.75rem;
-        color: #f8fafc;
-      }
-      h1 span {
-        background: linear-gradient(135deg, #6366f1 0%, #22d3ee 100%);
-        -webkit-background-clip: text;
-        background-clip: text;
-        color: transparent;
+        font-size: clamp(2rem, 6vw, 2.75rem);
+        font-weight: 700;
+        line-height: 1.1;
+        letter-spacing: -0.025em;
+        color: #f5f7fb;
       }
       p {
-        color: #94a3b8;
-        line-height: 1.65;
-        margin: 0 0 1.75rem;
+        margin: 0 0 2rem;
+        line-height: 1.6;
+        color: #b7c2d0;
       }
-      /* Outlined, matching .btn-outlined--accent on the main site. */
-      a.cta {
+      /* Matches .btn.btn--primary on the main site. */
+      a {
         display: inline-flex;
         align-items: center;
-        gap: 0.5rem;
-        padding: 0.78rem 1.5rem;
-        border-radius: 8px;
-        border: 1px solid #22d3ee;
-        background: transparent;
-        color: #22d3ee;
+        min-height: 44px;
+        padding: 0.5rem 1.25rem;
+        border-radius: 10px;
+        background: #22d3ee;
+        color: #04161c;
         font-weight: 600;
-        font-size: 0.9rem;
         text-decoration: none;
-        transition: transform 0.2s ease, background 0.2s ease;
+        transition: background-color 150ms ease;
       }
-      a.cta:hover {
-        transform: translateY(-2px);
-        background: rgba(34, 211, 238, 0.09);
+      a:hover {
+        background: #67e8f9;
+      }
+      a:focus-visible {
+        outline: 2px solid #22d3ee;
+        outline-offset: 3px;
       }
     </style>
   </head>
   <body>
-    <main class="wrap">
+    <main>
       <div class="card">
-        <div class="code">Error · 404</div>
-        <h1>Page <span>Not Found</span></h1>
+        <p class="code">Error 404</p>
+        <h1>Page not found</h1>
         <p>
-          That page doesn't exist on this site, or it has since moved. Head
-          back to the homepage to continue.
+          That page doesn't exist on this site, or it has since moved. The
+          homepage has everything: projects, experience and contact details.
         </p>
-        <a class="cta" href="/">Back to home</a>
+        <a href="/">Back to the homepage</a>
       </div>
     </main>
   </body>

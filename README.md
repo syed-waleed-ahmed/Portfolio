@@ -18,7 +18,7 @@ email through Resend.
 A portfolio is usually the first engineering artifact anyone sees, and most are
 either a template with the names swapped out or a heavyweight build that takes
 several seconds to paint on a phone. This one is written to be read as a work
-sample: a lean bundle with no animation library and no UI kit, a small hardened
+sample: a prerendered page with no CSS framework, animation library or UI kit, a small hardened
 API rather than a third-party form widget, accessibility and caching handled
 deliberately, and documentation that explains the decisions rather than
 restating the code.
@@ -34,18 +34,24 @@ forking the repository can run it without reading the source.
 
 **Frontend**
 
-- Lean bundle: about 10 KB of gzipped CSS and 80 KB of gzipped JS after
-  code-splitting, with no animation library, no UI kit and no PWA shell
-- Sections code-split and mounted on `requestIdleCallback` after first paint
-- Scroll reveals from a vanilla `IntersectionObserver` hook plus CSS keyframes
-- Data-driven content: all copy lives in `src/data/`, components are pure UI
-- Accessibility: skip link, focus-visible rings, semantic landmarks,
-  `prefers-reduced-motion` honoured, 48x48 tap targets on coarse pointers
-- Responsive from a 375px baseline, with a branded standalone 404 page
-- Error boundary around below-fold sections
+- Prerendered at build time and hydrated on load, so the full page is in the
+  HTML response and text paints before any JavaScript runs
+- Lean output: about 6 KB of gzipped CSS and 81 KB of gzipped JS, with no CSS
+  framework, animation library, UI kit or PWA shell
+- Modern CSS architecture: cascade layers, design tokens, native nesting,
+  fluid `clamp()` type, container queries, `subgrid` and a scroll-driven
+  reading-progress line, with styles co-located beside each component
+- Data-driven content: all copy lives in `src/data/`, with content tests that
+  keep figures traceable and entries consistent
+- Accessibility: skip link, named landmarks, one focus style, an accessible
+  mobile menu and form, reduced motion honoured, 44-48px tap targets; the built
+  page passes an axe-core WCAG 2.2 AA scan
+- Responsive from 320px up with no horizontal scroll, and a branded 404 page
+- An error boundary per section
 - SEO: canonical URL, `Person` + `WebSite` + `ProfilePage` JSON-LD, OG and
-  Twitter cards, `noscript` fallback, sitemap, `robots.txt`, `humans.txt`
-- Self-hosted font subset, so no third-party request on the critical path
+  Twitter cards, sitemap, `robots.txt`, `humans.txt`
+- One self-hosted variable font with a metric-matched fallback, so no
+  third-party request on the critical path and no layout shift on swap
 
 **Backend**
 
@@ -58,7 +64,8 @@ forking the repository can run it without reading the source.
 
 **Engineering**
 
-- 9 backend API tests on Node's built-in runner, no test dependencies
+- 9 backend API tests and 7 frontend content tests on Node's built-in runner,
+  no test dependencies
 - Postman collection covering every endpoint and every error path
 - CI runs lint, build, tests, `npm audit` and a gitleaks scan on every push
 - Dependabot opens grouped weekly dependency PRs
@@ -91,7 +98,7 @@ Full detail in [`docs/architecture.md`](docs/architecture.md).
 
 | Layer | Choices |
 |-------|---------|
-| Frontend | React 19, Vite 8, Bootstrap 5 (CSS only), `react-icons`, CSS Grid with `subgrid`, PurgeCSS |
+| Frontend | React 19 (prerendered, hydrated), Vite 8, plain CSS in cascade layers, `react-icons` |
 | Backend | Node.js 24, Express 5 (ESM), Helmet, `express-rate-limit`, Resend |
 | Testing | `node --test`, Postman |
 | CI/CD | GitHub Actions, Dependabot, gitleaks |
@@ -188,13 +195,13 @@ export const projects = [
 ```
 
 Listed in render order. `github` is the only optional field: supplied, it
-draws an icon link in the title row; omitted, nothing renders in its place.
-There is no ordering or emphasis flag - array order is page order.
+draws a "View source" link at the foot of the card; omitted, nothing renders in
+its place. There is no ordering or emphasis flag - array order is page order.
 
-The same pattern applies to `experience.js`, `skills.js`, `interests.js`,
-`about.js` and `portfolio.js`. See
+The same pattern applies to `experience.js`, `skills.js`, `about.js` and
+`portfolio.js`. See
 [`docs/development.md`](docs/development.md#updating-site-content) for the
-per-file guide and the two rules that keep the data layer honest.
+per-file guide and the rules that keep the data layer honest.
 
 ### Calling the API
 
@@ -235,9 +242,10 @@ Branch from `main`, keep the change focused, update the docs alongside the
 behaviour, and run the checks that apply:
 
 ```bash
-npm run lint     # frontend changes
-npm run build    # frontend changes
-npm test         # backend changes
+npm run lint                   # frontend changes
+npm test --prefix frontend     # content changes
+npm run build                  # frontend changes
+npm test                       # backend changes
 ```
 
 CI runs the same commands plus `npm audit` and a gitleaks scan on every push
@@ -249,13 +257,18 @@ and pull request. Conventions, commit format and review expectations are in
 ## Testing
 
 ```bash
-npm test    # 9 backend API tests via node --test
+npm test                     # 9 backend API tests via node --test
+npm test --prefix frontend   # 7 content tests over frontend/src/data
 ```
 
 The suite binds an ephemeral port, covers both health probes, all three
 validation paths, the 16 KB cap, both honeypot branches and the 404 catch-all,
 and never sends real email - so it passes with or without Resend configured.
 Importing the app is itself a check that every module loads.
+
+The frontend content tests keep every About figure traceable to the entry that
+claims it, hold project and experience copy to a shared length range, and fail
+on any character the self-hosted font subset cannot draw.
 
 Live and manual testing uses the Postman collection in [`postman/`](postman/),
 which additionally covers the rate limiter, the CORS preflight and the wrong
@@ -273,9 +286,9 @@ Both sides deploy automatically from `main`:
 | Frontend | Netlify | `npm run build` in `frontend/`, publish `frontend/dist` |
 | Backend | Render | `npm ci` then `npm start` in `backend/` |
 
-`NODE_ENV=production` is load-bearing on the frontend build: PurgeCSS is gated
-on it, and without it the CSS ships all of Bootstrap. Platform settings,
-security headers, the CSP hash procedure and cache rules are in
+The frontend build prerenders the page, so a build that fails to render fails
+the deploy rather than publishing an empty page. Platform settings, security
+headers, the CSP hash procedure and cache rules are in
 [`docs/deployment.md`](docs/deployment.md).
 
 ---
@@ -287,7 +300,7 @@ security headers, the CSP hash procedure and cache rules are in
 | [Architecture](docs/architecture.md) | System shape, repository layout, frontend layers, backend modules, request flow |
 | [API reference](docs/api.md) | Endpoints, payloads, status codes, rate limiting, CORS |
 | [Development](docs/development.md) | Setup, scripts, configuration, conventions, troubleshooting |
-| [Design system](docs/design.md) | Colour tokens, typography, buttons, the Projects grid, generated assets |
+| [Design system](docs/design.md) | CSS architecture, tokens, typography, layout, motion, accessibility, generated assets |
 | [Deployment](docs/deployment.md) | Netlify and Render, CI, headers, CSP, caching, releases |
 | [Testing](docs/testing.md) | Automated suite, Postman collection, coverage gaps |
 | [Security controls](docs/security.md) | What is implemented and why |
@@ -309,7 +322,7 @@ security headers, the CSP hash procedure and cache rules are in
 | CORS error in the browser | Your origin is not on the allow-list. Add it to `ALLOWED_ORIGINS` |
 | Works in Postman, not the browser | Same cause: Postman sends no `Origin` header |
 | `429 Too many requests` | 5 per IP per 15 minutes. Restart the backend to clear the counter |
-| Built CSS is ~46 KB gzipped | The build ran without `NODE_ENV=production`, so PurgeCSS was skipped |
+| Hydration error in the console | Something renders differently at build time than in the browser. Move it into an effect |
 | Analytics stopped after editing `index.html` | The inline snippet is CSP hash-pinned. Recompute the hash |
 
 Longer explanations for each in
@@ -323,7 +336,8 @@ Not a committed plan, just what is queued:
 
 - Delete `frontend/public/sw.js` once analytics show no service-worker traffic
   for about 30 days
-- Frontend component tests, if the UI grows stateful logic
+- Frontend component tests, if the UI grows more stateful logic than the
+  contact form
 - An uptime pinger against `/health` to remove Render free-tier cold starts
 
 Known testing gaps are listed in [`docs/testing.md`](docs/testing.md#gaps), and

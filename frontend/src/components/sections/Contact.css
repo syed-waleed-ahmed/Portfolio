@@ -1,0 +1,214 @@
+@layer components {
+  .contact-grid {
+    display: grid;
+    gap: var(--space-8);
+    align-items: start;
+
+    @media (min-width: 60rem) {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1.75fr);
+      gap: clamp(var(--space-10), 4vw, var(--space-16));
+    }
+  }
+
+  /* ========= Direct channels ========= */
+  .contact-aside__intro {
+    font-size: var(--text-lg);
+    color: var(--color-text-soft);
+  }
+
+  .contact-channels {
+    display: grid;
+    gap: var(--space-1);
+    margin-block-start: var(--space-5);
+    list-style: none;
+  }
+
+  .contact-channel {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-3);
+    min-height: var(--tap-target);
+    max-width: 100%;
+    color: var(--color-text);
+    font-weight: var(--weight-medium);
+    transition: color var(--duration-fast) ease;
+
+    & svg {
+      flex-shrink: 0;
+      width: 1rem;
+      height: 1rem;
+      color: var(--color-text-muted);
+      transition: color var(--duration-fast) ease;
+    }
+
+    & span {
+      overflow-wrap: anywhere;
+    }
+
+    &:hover,
+    &:hover svg {
+      color: var(--color-accent);
+    }
+  }
+
+  /* ========= Form ========= */
+  /* A size container, so the field layout responds to the width the form
+     actually has - it sits in a column beside the aside on desktop, full width
+     on tablets - rather than to the viewport. */
+  .contact-form {
+    container-type: inline-size;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-5);
+  }
+
+  .contact-form__note {
+    grid-column: 1 / -1;
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+  }
+
+  .field {
+    display: grid;
+    gap: var(--space-2);
+    grid-column: 1 / -1;
+    align-content: start;
+  }
+
+  /* Name and email share a row once the form is wide enough for both. */
+  @container (min-width: 30rem) {
+    .field--half {
+      grid-column: span 1;
+    }
+  }
+
+  .field__label {
+    font-size: var(--text-sm);
+    font-weight: var(--weight-semibold);
+    color: var(--color-text-strong);
+  }
+
+  .field__control {
+    width: 100%;
+    min-height: var(--tap-target);
+    padding: var(--space-3) var(--space-4);
+    border: 1px solid var(--color-border-strong);
+    border-radius: var(--radius-md);
+    background-color: var(--color-bg);
+    color: var(--color-text-strong);
+    caret-color: var(--color-accent);
+    font-size: var(--text-base);
+    line-height: var(--leading-normal);
+    transition:
+      border-color var(--duration-fast) ease,
+      box-shadow var(--duration-fast) ease;
+
+    &::placeholder {
+      color: var(--color-text-muted);
+    }
+
+    &:hover {
+      border-color: color-mix(in srgb, var(--color-text-muted) 70%, transparent);
+    }
+
+    /* The control's own ring replaces the global outline here: a border
+       colour change plus a soft halo reads as a field in use. */
+    &:focus-visible,
+    &:focus {
+      outline: none;
+      border-color: var(--color-accent);
+      box-shadow: 0 0 0 3px var(--color-accent-subtle);
+    }
+
+    &[aria-invalid="true"] {
+      border-color: var(--color-danger-border);
+
+      &:focus {
+        box-shadow: 0 0 0 3px var(--color-danger-subtle);
+      }
+    }
+
+    &:-webkit-autofill {
+      -webkit-text-fill-color: var(--color-text-strong);
+      box-shadow: 0 0 0 1000px var(--color-surface-raised) inset;
+    }
+  }
+
+  /* The message box grows with its content where field-sizing is supported,
+     and falls back to six rows with a manual resize handle elsewhere. */
+  textarea.field__control {
+    min-block-size: 9.5rem;
+    max-block-size: 28rem;
+    resize: vertical;
+    field-sizing: content;
+  }
+
+  .field__error {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: var(--text-sm);
+    color: var(--color-danger);
+
+    & svg {
+      flex-shrink: 0;
+      width: 0.875rem;
+      height: 0.875rem;
+    }
+  }
+
+  .contact-form__footer {
+    grid-column: 1 / -1;
+    display: grid;
+    gap: var(--space-4);
+    justify-items: start;
+  }
+
+  .contact-form__status:empty {
+    display: none;
+  }
+
+  .form-feedback {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-3);
+    padding: var(--space-3) var(--space-4);
+    border: 1px solid var(--color-border-strong);
+    border-radius: var(--radius-md);
+    font-size: var(--text-base);
+    color: var(--color-text-soft);
+
+    & svg {
+      flex-shrink: 0;
+      width: 1rem;
+      height: 1rem;
+      margin-block-start: 0.3em;
+    }
+  }
+
+  .form-feedback--success {
+    border-color: var(--color-success-border);
+    background-color: var(--color-success-subtle);
+    color: var(--color-success);
+  }
+
+  .form-feedback--error {
+    border-color: var(--color-danger-border);
+    background-color: var(--color-danger-subtle);
+    color: var(--color-danger);
+  }
+
+  /* Honeypot. Deliberately not display:none or visibility:hidden - bots skip
+     fields the browser reports as hidden, which are exactly the ones we want
+     them to fill. Rendered and hit-testable, but off-screen. */
+  .honeypot {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+    pointer-events: none;
+  }
+}

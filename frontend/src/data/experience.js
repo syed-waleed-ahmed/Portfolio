@@ -1,12 +1,8 @@
-// icon: a key, not a component - Experience.jsx maps it to a component, so this
-// file stays pure content (same pattern as skills.js and interests.js).
-//
 // period and location are separate fields rather than one pre-joined string:
-// the card renders each behind its own icon, so it needs them apart.
+// the Experience list renders each in its own slot, so it needs them apart.
 
 export const experiences = [
   {
-    icon: "ai",
     title: "AI Engineer · Master's Thesis",
     company: "MemorAIz S.r.l.",
     period: "Feb 2026 - Present",
@@ -19,7 +15,6 @@ export const experiences = [
     ],
   },
   {
-    icon: "ml",
     title: "Data Clustering & AI Model Intern",
     company: "Fruugle SIA",
     period: "Jan 2026 - Apr 2026",
@@ -32,13 +27,12 @@ export const experiences = [
     ],
   },
   {
-    icon: "stack",
     title: "Tech Trainee",
     company: "Jubilee Life Insurance Co. Ltd.",
     period: "Jan 2024 - Oct 2024",
     location: "Karachi, Pakistan",
     bullets: [
-      "Rotated through web development, databases, networking, and cybersecurity, building full-stack applications with React, .NET ASP Core, PHP, and MySQL.",
+      "Rotated through web development, databases, networking, and cybersecurity, building full-stack applications with React, ASP.NET Core, PHP, and MySQL.",
       "Built ETL pipelines over 100K+ records and tuned queries and stored procedures, cutting database response times by ~40%.",
       "Automated SharePoint and CRM workflows for internal teams, reducing manual effort by ~60% and speeding up client response.",
       "Monitored threats on IBM QRadar (SIEM/SOAR/PAM) and delivered 15+ SSRS reports and Power BI dashboards for business analytics.",

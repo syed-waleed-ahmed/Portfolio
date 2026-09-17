@@ -1,14 +1,16 @@
 # Testing
 
-Two layers, with no overlap between them:
+Three layers, with no overlap between them:
 
 | Layer | Tool | Scope | Where it runs |
 |-------|------|-------|---------------|
 | Automated | `node --test` | Backend routing, validation, limits | Locally and in CI on every push and PR |
-| Manual / live | Postman | The same surface against a running server, local or production | On demand |
+| Automated | `node --test` | Frontend content invariants in `src/data/` | Locally and in CI on every push and PR |
+| Manual / live | Postman | The API against a running server, local or production | On demand |
 
-The frontend has no test suite. Its gate is ESLint plus a production build in
-CI, and the build failing is what catches a broken import or a bad JSX change.
+The frontend has no component tests. Its gates are ESLint, the content tests
+and a production build: the build compiles and prerenders the whole app in
+Node, so a broken import or a component that throws during render fails it.
 See [Gaps](#gaps) below.
 
 ---
@@ -46,6 +48,28 @@ Two properties of this suite are deliberate:
 
 The rate limiter is not covered automatically: exhausting a 15-minute window
 would make the suite slow and order-dependent. It is covered in Postman instead.
+
+---
+
+## Frontend content tests
+
+```bash
+npm test --prefix frontend
+```
+
+Seven checks in `frontend/test/data.test.js`, on the same built-in runner with
+no dependencies. The data files are plain modules, so they import without a
+bundler.
+
+| Test | Asserts |
+|------|---------|
+| About figures | Every stat in `about.js` appears in an Experience or Projects entry that names its source |
+| Project density | Descriptions 32-53 words, highlights 9-26, four or five stack chips |
+| Experience density | Every bullet 12-26 words |
+| Uniqueness | Project titles, companies, section ids, stats and skill tags (several are React keys) |
+| Section ids | Valid fragment identifiers, and none collides with the hero's `top` |
+| Links | Absolute `https` URLs; project repositories on GitHub; a valid email |
+| Font coverage | No copy uses a character outside the self-hosted font's unicode-range |
 
 ---
 
@@ -92,7 +116,7 @@ The backend is on Render's free tier, so the first request after idle may take
 
 | Job | Command |
 |-----|---------|
-| Frontend | `npm run lint`, then `npm run build` with `NODE_ENV=production` |
+| Frontend | `npm run lint`, `npm test`, then `npm run build` (which prerenders) |
 | Frontend | `npm audit --omit=dev --audit-level=high` |
 | Backend | `npm test` |
 | Backend | `npm audit --omit=dev --audit-level=high` |
@@ -107,9 +131,10 @@ build.
 ## Before opening a pull request
 
 ```bash
-npm run lint     # frontend changes
-npm run build    # frontend changes
-npm test         # backend changes
+npm run lint                   # frontend changes
+npm test --prefix frontend     # content changes
+npm run build                  # frontend changes
+npm test                       # backend changes
 ```
 
 If the change touches the API surface, update the Postman collection in the
@@ -122,12 +147,15 @@ covering this.
 
 Known and accepted, listed here so nobody has to rediscover them:
 
-- **No frontend unit or component tests.** The site is presentational and
-  data-driven; lint plus a production build catch the failure modes that
-  actually occur. A component test suite would be the first thing to add if the
-  frontend grew stateful logic.
-- **No end-to-end browser test.** The contact form is verified by hand and
-  through Postman against the deployed API.
+- **No frontend component tests.** The site is presentational and
+  data-driven; lint, the content tests and a prerendering build catch the
+  failure modes that actually occur. The contact form is the one stateful
+  component, and a component test suite would be the first thing to add if
+  more logic like it appeared.
+- **No end-to-end browser test in CI.** The contact form's validation, error
+  and success states, keyboard navigation and an axe-core accessibility scan
+  were checked with a headless browser against the built site, but that is not
+  wired into CI.
 - **The mailer is never exercised automatically.** Sending real email from CI
   would need a live Resend key in the environment. Delivery is verified by
   running the Postman happy path against a configured backend.

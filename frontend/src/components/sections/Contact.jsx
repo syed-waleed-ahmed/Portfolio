@@ -1,135 +1,186 @@
-import { useState, useEffect, useRef } from "react";
-import {
-  FaUser,
-  FaEnvelope,
-  FaTag,
-  FaCommentDots,
-  FaPaperPlane,
-  FaEnvelopeOpenText,
-  FaCheckCircle,
-  FaExclamationCircle,
-} from "react-icons/fa";
+import { useEffect, useRef, useState } from "react";
+import { FaCheckCircle, FaExclamationCircle, FaFileAlt, FaEnvelope, FaGithub, FaLinkedinIn } from "react-icons/fa";
+import ExternalLink from "@/components/ui/ExternalLink";
 import Reveal from "@/components/ui/Reveal";
 import SectionHeader from "@/components/ui/SectionHeader";
-
-const initialState = {
-  name: "",
-  email: "",
-  subject: "",
-  message: "",
-  // Honeypot - hidden from people, bots fill it. See contactRoutes.js.
-  website: "",
-};
+import { personalInfo, socialLinks } from "@/data/portfolio";
+import "./Contact.css";
 
 const API_BASE_URL =
   import.meta.env.VITE_API_BASE_URL || "https://portfolio-backend-kmum.onrender.com";
 
-const Contact = () => {
-  const [form, setForm] = useState(initialState);
-  const [errors, setErrors] = useState({});
-  const [submitError, setSubmitError] = useState("");
-  const [submitSuccess, setSubmitSuccess] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const messageRef = useRef(null);
+// Field rules mirror FIELDS in backend/routes/contactRoutes.js, so the browser
+// stops input at the same length the API would reject.
+const FIELDS = [
+  { name: "name", label: "Name", type: "text", autoComplete: "name", maxLength: 100, half: true },
+  { name: "email", label: "Email", type: "email", autoComplete: "email", maxLength: 100, half: true },
+  { name: "subject", label: "Subject", type: "text", autoComplete: "off", maxLength: 200 },
+  { name: "message", label: "Message", multiline: true, maxLength: 5000 },
+];
 
-  // Grow the message box to fit what's typed. Keyed off the value rather than
-  // the change handler so it also shrinks back when the form resets on send.
-  //
-  // scrollHeight covers content + padding but not the border, and box-sizing is
-  // border-box globally - so assigning it straight to height leaves the content
-  // area a border short and the box scrolls by exactly that much. Add it back.
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+// The backend runs on a plan that sleeps when idle, and a cold start can take
+// most of a minute. Past SLOW_NOTICE_MS the form says so; past the timeout it
+// gives up and points at email instead.
+const SLOW_NOTICE_MS = 6000;
+const REQUEST_TIMEOUT_MS = 60000;
+
+const initialValues = {
+  name: "",
+  email: "",
+  subject: "",
+  message: "",
+  // Honeypot - hidden from people, filled by bots. See contactRoutes.js.
+  website: "",
+};
+
+function validate(values) {
+  const errors = {};
+  for (const { name, label } of FIELDS) {
+    if (!values[name].trim()) errors[name] = `${label} is required.`;
+  }
+  if (!errors.email && !EMAIL_RE.test(values.email.trim())) {
+    errors.email = "Enter a valid email address, like name@example.com.";
+  }
+  return errors;
+}
+
+function failureMessage(status, serverError) {
+  if (status === 429) return "Too many messages from this network. Please try again in 15 minutes.";
+  if (status === 400 && serverError) return serverError;
+  return "The message could not be sent right now.";
+}
+
+const Contact = () => {
+  const [values, setValues] = useState(initialValues);
+  const [errors, setErrors] = useState({});
+  // idle | submitting | success | error
+  const [status, setStatus] = useState("idle");
+  const [feedback, setFeedback] = useState("");
+  const [slow, setSlow] = useState(false);
+  const formRef = useRef(null);
+  const warmedUp = useRef(false);
+
   useEffect(() => {
-    const el = messageRef.current;
-    if (!el) return;
-    const cs = window.getComputedStyle(el);
-    const borders =
-      parseFloat(cs.borderTopWidth) + parseFloat(cs.borderBottomWidth);
-    el.style.height = "auto";
-    el.style.height = `${el.scrollHeight + borders}px`;
-  }, [form.message]);
+    if (status !== "submitting") return;
+    const timer = setTimeout(() => setSlow(true), SLOW_NOTICE_MS);
+    return () => {
+      clearTimeout(timer);
+      setSlow(false);
+    };
+  }, [status]);
+
+  // Wake the backend as soon as someone starts on the form, so the cold start
+  // is mostly over by the time they press send. The response is not needed,
+  // hence no-cors.
+  const warmUp = () => {
+    if (warmedUp.current) return;
+    warmedUp.current = true;
+    fetch(`${API_BASE_URL}/health`, { mode: "no-cors" }).catch(() => {});
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setForm((prev) => ({ ...prev, [name]: value }));
-    setErrors((prev) => ({ ...prev, [name]: "" }));
-    setSubmitError("");
-    setSubmitSuccess("");
-  };
-
-  const validate = () => {
-    const newErrors = {};
-
-    if (!form.name.trim()) newErrors.name = "Name is required.";
-
-    if (!form.email.trim()) {
-      newErrors.email = "Email is required.";
-    } else {
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!emailRegex.test(form.email)) {
-        newErrors.email = "Please enter a valid email address.";
-      }
-    }
-
-    if (!form.subject.trim()) newErrors.subject = "Subject is required.";
-    if (!form.message.trim()) newErrors.message = "Message is required.";
-
-    return newErrors;
+    setValues((prev) => ({ ...prev, [name]: value }));
+    if (errors[name]) setErrors((prev) => ({ ...prev, [name]: undefined }));
+    if (status === "success" || status === "error") setStatus("idle");
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    setSubmitError("");
-    setSubmitSuccess("");
-
-    const newErrors = validate();
-    if (Object.keys(newErrors).length > 0) {
-      setErrors(newErrors);
-      setSubmitError("Please fix the highlighted fields.");
+    const nextErrors = validate(values);
+    setErrors(nextErrors);
+    const firstInvalid = FIELDS.find(({ name }) => nextErrors[name]);
+    if (firstInvalid) {
+      // Focus lands on the field, and its error is announced as its
+      // description - no separate summary to read twice.
+      formRef.current?.elements.namedItem(firstInvalid.name)?.focus();
       return;
     }
 
-    try {
-      setIsSubmitting(true);
+    setStatus("submitting");
+    setFeedback("");
 
+    try {
       const res = await fetch(`${API_BASE_URL}/api/contact`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
+        body: JSON.stringify(values),
+        signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
       });
+      // A proxy error page is HTML, not JSON; treat it as a plain failure.
+      const data = await res.json().catch(() => null);
 
-      const data = await res.json();
-
-      if (!res.ok || !data.success) {
-        throw new Error(data.error || "Failed to send message.");
+      if (!res.ok || !data?.success) {
+        setStatus("error");
+        setFeedback(failureMessage(res.status, data?.error));
+        return;
       }
 
-      setSubmitSuccess("Thanks for reaching out. I'll get back to you shortly.");
-      setForm(initialState);
-      setErrors({});
+      setValues(initialValues);
+      setStatus("success");
+      setFeedback("Thanks for reaching out. Your message is on its way, and I will reply by email.");
     } catch (err) {
-      console.error(err);
-      setSubmitError(
-        err.message || "Something went wrong. Please try again later."
+      setStatus("error");
+      setFeedback(
+        err?.name === "TimeoutError"
+          ? "The server took too long to respond."
+          : "The server could not be reached. Check your connection and try again."
       );
-    } finally {
-      setIsSubmitting(false);
     }
   };
 
+  const submitting = status === "submitting";
+
   return (
     <div className="container">
-      <SectionHeader icon={FaEnvelopeOpenText} title="Contact">
+      <SectionHeader id="contact-title" title="Contact">
         Whether it&apos;s a role, a question, or a collaboration, send a
         message. I read every one.
       </SectionHeader>
 
-      <Reveal delay={0.08}>
-        <div className="neo-card contact-card">
-          <form noValidate onSubmit={handleSubmit}>
-            {/* Honeypot. Hidden from sight, from screen readers and from the
-                tab order, so no real person can fill it in - but it's a plain
-                input in the DOM, which is all a bot looks at. */}
+      <div className="contact-grid">
+        <Reveal as="aside" className="contact-aside" aria-label="Other ways to reach me">
+          <p className="contact-aside__intro">
+            Open to AI and ML engineering roles. Based in {personalInfo.location}.
+          </p>
+          <ul className="contact-channels">
+            <li>
+              <a href={`mailto:${personalInfo.email}`} className="contact-channel">
+                <FaEnvelope aria-hidden="true" />
+                <span>{personalInfo.email}</span>
+              </a>
+            </li>
+            <li>
+              <ExternalLink href={socialLinks.linkedin} className="contact-channel">
+                <FaLinkedinIn aria-hidden="true" />
+                <span>LinkedIn</span>
+              </ExternalLink>
+            </li>
+            <li>
+              <ExternalLink href={socialLinks.github} className="contact-channel">
+                <FaGithub aria-hidden="true" />
+                <span>GitHub</span>
+              </ExternalLink>
+            </li>
+            <li>
+              <ExternalLink href={personalInfo.resumeUrl} className="contact-channel">
+                <FaFileAlt aria-hidden="true" />
+                <span>Resume</span>
+              </ExternalLink>
+            </li>
+          </ul>
+        </Reveal>
+
+        <Reveal className="card contact-form-card" delay={60}>
+          <form ref={formRef} className="contact-form" noValidate onSubmit={handleSubmit} onFocus={warmUp}>
+            <p className="contact-form__note">All fields are required.</p>
+
+            {/* Honeypot. Off-screen, out of the tab order and hidden from
+                assistive tech, so no person fills it - but still a plain input
+                in the DOM, which is all a bot looks at. */}
             <div className="honeypot" aria-hidden="true">
               <label htmlFor="website">Website</label>
               <input
@@ -138,107 +189,78 @@ const Contact = () => {
                 type="text"
                 tabIndex={-1}
                 autoComplete="off"
-                value={form.website}
+                value={values.website}
                 onChange={handleChange}
               />
             </div>
 
-            <div className="row g-4">
-              <div className="col-md-6">
-                <label className="contact-label mb-2" htmlFor="name">
-                  <FaUser className="contact-label-icon" />
-                  Name *
-                </label>
-                <input
-                  id="name"
-                  name="name"
-                  type="text"
-                  className={`form-control glass-input ${errors.name ? "is-invalid" : ""}`}
-                  placeholder="e.g. Jane Doe"
-                  value={form.name}
-                  onChange={handleChange}
-                  spellCheck="false"
-                />
-                {errors.name && <div className="small text-danger mt-1">{errors.name}</div>}
-              </div>
+            {FIELDS.map(({ name, label, multiline, half, ...inputProps }) => {
+              const error = errors[name];
+              const Control = multiline ? "textarea" : "input";
+              return (
+                <div key={name} className={`field${half ? " field--half" : ""}`}>
+                  <label className="field__label" htmlFor={name}>
+                    {label}
+                  </label>
+                  <Control
+                    id={name}
+                    name={name}
+                    className="field__control"
+                    value={values[name]}
+                    onChange={handleChange}
+                    required
+                    aria-invalid={error ? "true" : undefined}
+                    aria-describedby={error ? `${name}-error` : undefined}
+                    rows={multiline ? 6 : undefined}
+                    {...inputProps}
+                  />
+                  {error && (
+                    <p id={`${name}-error`} className="field__error">
+                      <FaExclamationCircle aria-hidden="true" />
+                      {error}
+                    </p>
+                  )}
+                </div>
+              );
+            })}
 
-              <div className="col-md-6">
-                <label className="contact-label mb-2" htmlFor="email">
-                  <FaEnvelope className="contact-label-icon" />
-                  Email *
-                </label>
-                <input
-                  id="email"
-                  name="email"
-                  type="email"
-                  className={`form-control glass-input ${errors.email ? "is-invalid" : ""}`}
-                  placeholder="e.g. jane.doe@company.com"
-                  value={form.email}
-                  onChange={handleChange}
-                  spellCheck="false"
-                />
-                {errors.email && <div className="small text-danger mt-1">{errors.email}</div>}
-              </div>
-
-              <div className="col-12">
-                <label className="contact-label mb-2" htmlFor="subject">
-                  <FaTag className="contact-label-icon" />
-                  Subject *
-                </label>
-                <input
-                  id="subject"
-                  name="subject"
-                  type="text"
-                  className={`form-control glass-input ${errors.subject ? "is-invalid" : ""}`}
-                  placeholder="e.g. AI Engineer role at Acme"
-                  value={form.subject}
-                  onChange={handleChange}
-                  spellCheck="false"
-                />
-                {errors.subject && <div className="small text-danger mt-1">{errors.subject}</div>}
-              </div>
-
-              <div className="col-12">
-                <label className="contact-label mb-2" htmlFor="message">
-                  <FaCommentDots className="contact-label-icon" />
-                  Message *
-                </label>
-                <textarea
-                  id="message"
-                  name="message"
-                  ref={messageRef}
-                  rows={1}
-                  className={`form-control glass-input contact-message ${errors.message ? "is-invalid" : ""}`}
-                  placeholder="Hi Waleed, I came across your portfolio and would like to discuss..."
-                  value={form.message}
-                  onChange={handleChange}
-                />
-                {errors.message && <div className="small text-danger mt-1">{errors.message}</div>}
-              </div>
-            </div>
-
-            <div className="d-flex flex-wrap align-items-center gap-3 mt-4">
-              <button type="submit" className="btn-outlined btn-outlined--accent" disabled={isSubmitting}>
-                <FaPaperPlane className="btn-icon" />
-                {isSubmitting ? "Sending..." : "Send Message"}
+            <div className="contact-form__footer">
+              <button type="submit" className="btn btn--primary" disabled={submitting}>
+                {submitting ? "Sending..." : "Send message"}
               </button>
-            </div>
 
-            {submitError && (
-              <div className="contact-feedback is-error" role="alert">
-                <FaExclamationCircle aria-hidden="true" />
-                {submitError}
+              {/* Always in the DOM so screen readers are already listening
+                  when the text inside it changes. */}
+              <div className="contact-form__status" aria-live="polite">
+                {submitting && slow && (
+                  <p className="form-feedback">
+                    Still sending. The server sleeps when idle and can take up
+                    to a minute to wake.
+                  </p>
+                )}
+                {status === "success" && (
+                  <p className="form-feedback form-feedback--success">
+                    <FaCheckCircle aria-hidden="true" />
+                    {feedback}
+                  </p>
+                )}
+                {status === "error" && (
+                  <p className="form-feedback form-feedback--error">
+                    <FaExclamationCircle aria-hidden="true" />
+                    <span>
+                      {feedback} You can also email me at{" "}
+                      <a className="text-link" href={`mailto:${personalInfo.email}`}>
+                        {personalInfo.email}
+                      </a>
+                      .
+                    </span>
+                  </p>
+                )}
               </div>
-            )}
-            {submitSuccess && !submitError && (
-              <div className="contact-feedback is-success" role="status">
-                <FaCheckCircle aria-hidden="true" />
-                {submitSuccess}
-              </div>
-            )}
+            </div>
           </form>
-        </div>
-      </Reveal>
+        </Reveal>
+      </div>
     </div>
   );
 };

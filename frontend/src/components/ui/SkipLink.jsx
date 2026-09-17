@@ -1,9 +1,11 @@
+import SectionLink from "@/components/ui/SectionLink";
+
 // Hidden until focused. Lets keyboard / screen-reader users
 // jump straight past the navbar to the main content.
 const SkipLink = () => (
-  <a className="skip-link" href="#main">
+  <SectionLink to="main" className="skip-link">
     Skip to content
-  </a>
+  </SectionLink>
 );
 
 export default SkipLink;

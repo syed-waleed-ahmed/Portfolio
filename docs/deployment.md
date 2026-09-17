@@ -26,9 +26,11 @@ Netlify UI. `netlify.toml` deliberately carries **only** the Node version, so
 there is exactly one place where each setting lives and no chance of the file
 and the UI disagreeing.
 
-`NODE_ENV=production` must be set for the build. PurgeCSS is gated on it in
-`postcss.config.js`; without it the build succeeds but ships all of Bootstrap,
-turning about 10 KB of gzipped CSS into about 46 KB.
+The build needs no environment variables. `npm run build` compiles the client
+bundle, compiles a server bundle, and prerenders the page into
+`dist/index.html` - see [Architecture](architecture.md#rendering-strategy). If
+the prerender step fails the whole build fails, so a deploy can never publish
+an empty page.
 
 A custom domain with HTTPS is configured for `syedwaleedahmed.me`, with
 `www.syedwaleedahmed.me` and the `syedwaleedahmed.netlify.app` default domain
@@ -95,7 +97,7 @@ with `permissions: contents: read` and in-progress runs cancelled per ref.
 
 | Job | Steps |
 |-----|-------|
-| Frontend | `npm ci`, `eslint`, `vite build` with `NODE_ENV=production`, `npm audit --omit=dev --audit-level=high` |
+| Frontend | `npm ci`, `eslint`, content tests (`npm test`), prerendered build, `npm audit --omit=dev --audit-level=high` |
 | Backend | `npm ci`, `npm test`, `npm audit --omit=dev --audit-level=high` |
 | Secret scan | `gitleaks` over the full git history (`fetch-depth: 0`) |
 

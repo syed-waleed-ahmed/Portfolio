@@ -1,103 +1,67 @@
-import {
-  FaAddressCard,
-  FaDraftingCompass,
-  FaGraduationCap,
-  FaBullseye,
-  FaRobot,
-  FaEye,
-  FaDatabase,
-  FaVial,
-} from "react-icons/fa";
 import Reveal from "@/components/ui/Reveal";
 import SectionHeader from "@/components/ui/SectionHeader";
-import { approach, stats, education } from "@/data/about";
+import { approach, education, stats, targetRoles } from "@/data/about";
+import "./About.css";
 
-// Maps the icon key from about.js to a component, so the data file stays
-// JSX-free (same pattern as Skills.jsx).
-const STAT_ICONS = {
-  accuracy: FaBullseye,
-  automation: FaRobot,
-  vision: FaEye,
-  data: FaDatabase,
-  tests: FaVial,
-};
+const About = () => (
+  <div className="container">
+    <SectionHeader id="about-title" title="About">
+      Half full-stack engineer, half AI/ML. How I got here, and what I&apos;m
+      working on now.
+    </SectionHeader>
 
-const About = () => {
-  return (
-      <div className="container">
-        <SectionHeader icon={FaAddressCard} title="About & Education">
-          Half full-stack engineer, half AI/ML. How I got here, and what
-          I&apos;m working on now.
-        </SectionHeader>
+    {/* Figures first: they are the part of this section a reader can take in
+        at a glance, and each one names the entry below that backs it. */}
+    <Reveal as="ul" className="stats" aria-label="Selected results">
+      {stats.map((stat) => (
+        <li className="stat" key={stat.value + stat.source}>
+          <span className="stat__value">{stat.value}</span>
+          <span className="stat__label">{stat.label}</span>
+          <span className="stat__source">{stat.source}</span>
+        </li>
+      ))}
+    </Reveal>
 
-        {/* Full width above the two cards: it is the one thing in this section
-            a recruiter can read in two seconds, so nothing should share the
-            row with it. */}
-        <Reveal delay={0.04}>
-          <ul className="about-stats">
-            {stats.map((stat) => {
-              const Icon = STAT_ICONS[stat.icon];
-              return (
-                <li className="about-stat" key={stat.value + stat.label}>
-                  {Icon && (
-                    <span className="about-stat-icon" aria-hidden="true">
-                      <Icon />
-                    </span>
-                  )}
-                  <span className="about-stat-value">{stat.value}</span>
-                  <span className="about-stat-label">{stat.label}</span>
-                  <span className="about-stat-source">{stat.source}</span>
-                </li>
-              );
-            })}
-          </ul>
-        </Reveal>
+    {/* Story and education side by side, as they run to about the same
+        height; the target roles span the full width underneath. */}
+    <div className="about-grid">
+      <Reveal className="about-story">
+        <h3 className="card-title">Approach</h3>
+        {approach.map((paragraph) => (
+          <p key={paragraph.slice(0, 32)}>{paragraph}</p>
+        ))}
+      </Reveal>
 
-        <div className="row g-4 align-items-stretch justify-content-center">
-          <div className="col-md-6 d-flex">
-            <Reveal delay={0.08} className="w-100">
-              <div className="neo-card flex-fill h-100 p-4">
-                <div className="card-heading">
-                  <span className="card-heading-icon"><FaDraftingCompass /></span>
-                  Approach
-                </div>
-                {approach.map((para, i) => (
-                  <p
-                    key={para.slice(0, 24)}
-                    className={i === approach.length - 1 ? "mb-0" : "mb-3"}
-                  >
-                    {para}
-                  </p>
-                ))}
-              </div>
-            </Reveal>
-          </div>
+      <Reveal as="section" className="card" aria-labelledby="education-title" delay={60}>
+        <h3 id="education-title" className="card-title">
+          Education
+        </h3>
+        <ol className="timeline">
+          {education.map((entry) => (
+            <li key={entry.degree} className="timeline__item">
+              <p className="timeline__title">{entry.degree}</p>
+              <p className="timeline__meta">{entry.school}</p>
+              <p className="timeline__period">{entry.period}</p>
+            </li>
+          ))}
+        </ol>
+      </Reveal>
 
-          <div className="col-md-6 d-flex">
-            <Reveal delay={0.12} className="w-100">
-              <div className="neo-card flex-fill h-100 p-4 d-flex flex-column">
-                <div className="card-heading">
-                  <span className="card-heading-icon"><FaGraduationCap /></span>
-                  Education
-                </div>
-                <ul className="timeline timeline-fill flex-grow-1 d-flex flex-column justify-content-between mb-0">
-                  {education.map((entry) => (
-                    <li key={entry.degree}>
-                      <div className="fw-semibold">{entry.degree}</div>
-                      <div className="timeline-meta">
-                        {entry.school}
-                        <br />
-                        {entry.period}
-                      </div>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </Reveal>
-          </div>
-        </div>
-      </div>
-  );
-};
+      <Reveal as="section" className="card about-roles" aria-labelledby="roles-title">
+        <h3 id="roles-title" className="card-title">
+          Roles I&apos;m targeting
+        </h3>
+        <dl className="roles">
+          {targetRoles.map((role) => (
+            <div key={role.title} className="roles__item">
+              <dt>{role.title}</dt>
+              <dd>{role.line}</dd>
+            </div>
+          ))}
+        </dl>
+      </Reveal>
+    </div>
+  </div>
+);
 
 export default About;
