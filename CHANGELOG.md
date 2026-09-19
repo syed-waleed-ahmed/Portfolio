@@ -78,6 +78,9 @@ milestone rather than by individual commit.
 
 ### Changed
 
+- The resume link points at a new Google Drive file. `resumeUrl` in
+  `portfolio.js` is the single source for it, so the navbar button, the hero
+  action and the contact column all follow from one edit.
 - **Project copy re-checked against the repositories it describes**, and three
   cards corrected:
   - *Visual Inspection of Connecting Rods* described "defect classification on
@@ -199,8 +202,18 @@ milestone rather than by individual commit.
   memory growth) on the frontend and `qs` (moderate, array-limit bypass) on the
   backend. Both workspaces report zero advisories, lint is clean, and the backend
   suite passes 9/9.
+- Dependencies: `eslint` `10.10.0` to `10.11.0`, and **`dotenv` `17.4.2` to
+  `18.0.1`**. Dependabot ignores npm majors by design, so this one got the
+  manual changelog read that policy asks for: v18 moves the package internals
+  from `lib/` to `dist/` and drops the `./lib/env-options` and
+  `./lib/cli-options` subpath exports, neither of which this repo imports.
+  `config/env.js` uses only `dotenv.config({ quiet: true })`, which v18 still
+  documents and which still suppresses the boot banner. Both workspaces report
+  zero advisories, lint is clean, and the suites pass 7/7 on the frontend and
+  9/9 on the backend.
 - `sitemap.xml` `lastmod`, the `ProfilePage` `dateModified` and the `humans.txt`
-  date moved to 2026-09-12 alongside the content change.
+  date moved to 2026-09-19. All three had stayed at 2026-09-16, a date older
+  than the site they describe.
 - Site copy rewritten to remove the tells of machine-written prose: the three
   em dashes and arrow glyphs are gone, and so is the sentence-fragment tic that
   negates the clause before it ("Not notebooks that only run on my machine",
@@ -233,8 +246,8 @@ milestone rather than by individual commit.
   setting `ALLOWED_ORIGINS` replaces them rather than adding to them.
 - Local development standardized on port 5000, which is what the README, `docs/`
   and the Postman local environment already documented.
-- `dotenv.config()` runs with `{ quiet: true }`, so the banner dotenv v17 prints
-  by default no longer opens the Render deploy log ahead of the app's own lines.
+- `dotenv.config()` runs with `{ quiet: true }`, so the banner dotenv prints by
+  default no longer opens the Render deploy log ahead of the app's own lines.
 - `README.md` restructured as an entry point and documentation index, with the
   detailed reference material moved into `docs/`.
 - `SECURITY.md` scoped to disclosure policy, with implemented controls moved to
