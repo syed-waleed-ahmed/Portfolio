@@ -39,6 +39,21 @@ test("project cards keep a matching density", () => {
   }
 });
 
+// The project cards share their last subgrid row. A card holding neither a
+// link nor a note left that row empty, showing a band of blank surface its
+// neighbour in the same row did not have; holding both would put two things
+// in one row track. See docs/design.md.
+test("every project card fills its last row, with a link or a note", () => {
+  for (const p of projects) {
+    assert.ok(
+      Boolean(p.github) !== Boolean(p.sourceNote),
+      `${p.title}: expected exactly one of github / sourceNote, got ${
+        p.github ? "github" : "no github"
+      } and ${p.sourceNote ? "sourceNote" : "no sourceNote"}`
+    );
+  }
+});
+
 test("experience bullets stay within the shared length range", () => {
   for (const role of experiences) {
     for (const bullet of role.bullets) {

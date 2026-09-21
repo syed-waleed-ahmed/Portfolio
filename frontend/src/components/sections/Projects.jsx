@@ -32,14 +32,22 @@ const Projects = () => (
               </li>
             ))}
           </ul>
-          {project.github && (
+          {/* The last subgrid row. A card with no public repository fills it
+              with `sourceNote` instead of a link: the row is shared across the
+              pair, so leaving it empty left the card with a band of blank
+              surface its neighbour did not have. */}
+          {(project.github || project.sourceNote) && (
             <div className="project-card__links">
-              <ExternalLink href={project.github} className="text-link">
-                <FaGithub aria-hidden="true" />
-                View source
-                <span className="visually-hidden"> for {project.title}</span>
-                <FaArrowRight aria-hidden="true" className="project-card__arrow" />
-              </ExternalLink>
+              {project.github ? (
+                <ExternalLink href={project.github} className="text-link">
+                  <FaGithub aria-hidden="true" />
+                  View source
+                  <span className="visually-hidden"> for {project.title}</span>
+                  <FaArrowRight aria-hidden="true" className="project-card__arrow" />
+                </ExternalLink>
+              ) : (
+                <p className="project-card__source-note">{project.sourceNote}</p>
+              )}
             </div>
           )}
         </Reveal>

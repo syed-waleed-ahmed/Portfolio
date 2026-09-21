@@ -7,6 +7,12 @@
 // Density matches across cards: two-sentence descriptions of 32-53 words,
 // highlights of 9-26 words, four or five stack chips. test/data.test.js
 // checks the ranges.
+//
+// A card carries either `github` or `sourceNote`, never both: they share the
+// last row of the card grid, and a card holding neither left a band of blank
+// surface its neighbour in the same row did not have. `sourceNote` states why
+// there is no link and nothing more - it is not a place for a further claim
+// about the work.
 export const projects = [
   {
     title: "RemindrAI: Embeddable Multi-Tenant Reminder Capability",
@@ -20,6 +26,7 @@ export const projects = [
       "A reminder and messaging service that AI assistants embed instead of rebuilding. An agent turns plain chat into reminders delivered over Email, WhatsApp, Telegram, and Discord, and each reminder's owner is pinned outside the model, so a prompt injection cannot retarget it.",
     highlight:
       "Its first tenant adopted it with a base URL and a token, holding no scheduler, queue, or provider secret.",
+    sourceNote: "Private repository · MemorAIz",
   },
   {
     title: "TIAGo: Autonomous Mapping, Navigation & Pick-and-Place",
@@ -70,5 +77,6 @@ export const projects = [
       "A time-series and ML pipeline that classifies network delay across LAN, WAN, and 4G environments. Built from captured latency traces, it flags the conditions that would destabilize a remote tele-robotic control loop before they cause failures.",
     highlight:
       "~25% improvement in control-loop stability under variable network conditions.",
+    sourceNote: "No public repository",
   },
 ];

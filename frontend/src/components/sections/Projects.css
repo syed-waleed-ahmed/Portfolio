@@ -79,6 +79,18 @@
     }
   }
 
+  /* Stands in for the link on a card with no public repository. Muted and in
+     the mono face, so it reads as metadata rather than something to click,
+     and matched to the link's height to keep the shared row aligned. */
+  .project-card__source-note {
+    display: flex;
+    align-items: center;
+    min-height: var(--tap-target);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--color-text-muted);
+  }
+
   /* Turned to point up-right: the conventional mark for a link that leaves the
      site. */
   .project-card__arrow {

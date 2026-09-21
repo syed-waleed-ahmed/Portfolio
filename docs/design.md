@@ -194,7 +194,7 @@ row tracks with `grid-template-rows: subgrid`: context, title, description,
 highlight, stack and links. A two-line title on one card therefore pushes its
 neighbour's description down to match, and every band lines up across the row.
 
-Two details are load-bearing:
+Three details are load-bearing:
 
 1. **`Reveal` renders the card itself** (`<Reveal as="li" className="project-card">`),
    so the card is a direct child of the grid. Subgrid only inherits tracks from
@@ -202,6 +202,11 @@ Two details are load-bearing:
 2. **The highlight box and tag list use `align-self: start`.** The row is sized
    to the tallest highlight in the grid row, and a stretched box showed a band
    of empty background under the shorter one.
+3. **Every card fills the last row.** It holds `github` as a "View source" link
+   or, where there is no public repository, `sourceNote` as a muted monospace
+   line. The row is shared across the pair, so a card holding neither ended with
+   61px of blank surface its neighbour did not have (measured at 1280px before
+   the fix). A card carries one field or the other, never both.
 
 Without subgrid support the cards fall back to ordinary columns: content still
 reads top to bottom, it just stops lining up. That fallback is why the layout
