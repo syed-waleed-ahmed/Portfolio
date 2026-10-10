@@ -7,7 +7,7 @@ const About = () => (
   <div className="container">
     <SectionHeader id="about-title" title="About">
       Half full-stack engineer, half AI/ML. How I got here, and what I&apos;m
-      working on now.
+      looking for next.
     </SectionHeader>
 
     {/* Figures first: they are the part of this section a reader can take in

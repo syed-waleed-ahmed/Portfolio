@@ -47,7 +47,7 @@ export const education = [
   {
     degree: "Master's in Automation Engineering",
     school: "Alma Mater Studiorum - Università di Bologna, Italy",
-    period: "Sep 2024 - Oct 2026 (expected)",
+    period: "Oct 2024 - Oct 2026",
   },
   {
     degree: "Erasmus+ Mobility",

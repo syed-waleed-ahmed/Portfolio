@@ -78,6 +78,34 @@ milestone rather than by individual commit.
 
 ### Changed
 
+- **Graduated.** The Master's in Automation Engineering was awarded on
+  5 October 2026, so the copy no longer describes it as in progress:
+  - Education reads "Oct 2024 - Oct 2026" without "(expected)". The start
+    month moves from September to October to match the matriculation date on
+    the degree certificate (6 October 2024), which also removes a one-month
+    overlap with the Jubilee role that ended in October 2024.
+  - The MemorAIz role closes at "Feb 2026 - Oct 2026": the internship ended
+    with the thesis. Its bullets were already in the past tense.
+  - The hero note says the degree is complete and that I am open to AI and ML
+    engineering roles, the two families listed under "Roles I'm targeting".
+    The About subtitle ends on "what I'm looking for next" rather than "what
+    I'm working on now", since that section closes on the target roles.
+  - The `Person` structured data drops `worksFor: MemorAIz S.r.l.`, which
+    would otherwise tell crawlers I still work there. `alumniOf` already lists
+    the University of Bologna, which is now accurate rather than early.
+  - `sitemap.xml` `lastmod`, the `ProfilePage` `dateModified` and the
+    `humans.txt` date moved to 2026-10-10.
+  - The RemindrAI figures were re-checked against the final verification run
+    the thesis rests on (30 September 2026): 670 + 146 + 169 = **985** tests,
+    unchanged, so the About tile and the Experience bullet stand.
+- Dependencies refreshed to the latest in-range release across both
+  workspaces: `express` `5.3.0`, `resend` `6.32.1`, `dotenv` `18.0.7` and
+  `express-rate-limit` `8.7.1` on the backend; `vite` `8.3.4`,
+  `@vitejs/plugin-react` `6.1.2`, `eslint` `10.12.0` and `globals` `17.13.0`
+  on the frontend. All minor or patch. This supersedes Dependabot PRs #31 and
+  #32. Both workspaces report zero advisories and nothing outdated, lint is
+  clean, the suites pass 8/8 on the frontend and 9/9 on the backend, and the
+  bundle is unchanged at 81 KB of gzipped JS.
 - The resume link points at a new Google Drive file. `resumeUrl` in
   `portfolio.js` is the single source for it, so the navbar button, the hero
   action and the contact column all follow from one edit.
@@ -350,6 +378,17 @@ milestone rather than by individual commit.
 - Documented CORS behaviour corrected: a disallowed origin receives a response
   with no `Access-Control-Allow-Origin` rather than a `403`. The inaccurate
   comment in `server.js` was corrected too.
+- **Critical `proxy-addr` advisory** (GHSA-jqcg-44mw-7w3h, IP spoofing through
+  an IPv4-mapped IPv6 trust subnet), cleared by moving `express` to `5.3.0`,
+  which depends on `proxy-addr` `2.0.8`. It applies directly here:
+  `server.js` sets `trust proxy`, and the contact limiter keys on the
+  `req.ip` that `proxy-addr` resolves. It is also a production dependency, so
+  it would have failed the CI audit gate on the next run.
+- Moderate `ip-address` advisories (GHSA-j6r3-76f7-8jcv, GHSA-h3mg-xc3c-68pw)
+  under `express-rate-limit`, resolved in the lockfile (`10.7.3`).
+- High-severity `brace-expansion` and `source-map-js` advisories in the
+  frontend's dev tree, resolved in the lockfile. Dev-only, so they were not
+  failing CI.
 
 ## 1.0.0 - 2026-07-15
 

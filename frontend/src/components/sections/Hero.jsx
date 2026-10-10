@@ -46,8 +46,9 @@ const Hero = () => (
           team can rely on every day.
         </p>
         <p className="hero__note">
-          Finishing a Master&apos;s in Automation Engineering at the University
-          of Bologna in October 2026, with a thesis built at MemorAIz S.r.l.
+          Graduated from the University of Bologna in October 2026 with a
+          Master&apos;s in Automation Engineering and a thesis built at MemorAIz
+          S.r.l. Now open to AI and ML engineering roles.
         </p>
 
         <div className="hero__actions">

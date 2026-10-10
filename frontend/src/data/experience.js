@@ -5,7 +5,7 @@ export const experiences = [
   {
     title: "AI Engineer · Master's Thesis",
     company: "MemorAIz S.r.l.",
-    period: "Feb 2026 - Present",
+    period: "Feb 2026 - Oct 2026",
     location: "Bologna, Italy",
     bullets: [
       "Built RemindrAI for my thesis: a multi-tenant reminder backend, its operator console, and the Mastra capability other AI assistants register in one line.",
