@@ -1,15 +1,26 @@
 # Syed Waleed Ahmed - Portfolio
 
+[![Syed Waleed Ahmed, AI Engineer: multi-agent systems, RAG pipelines and LLM workflow automation](frontend/public/images/og-card.png)](https://syedwaleedahmed.me/)
+
 [![CI](https://github.com/syed-waleed-ahmed/Portfolio/actions/workflows/ci.yml/badge.svg)](https://github.com/syed-waleed-ahmed/Portfolio/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Node](https://img.shields.io/badge/node-%3E%3D22.13-brightgreen.svg)](.nvmrc)
 [![Live](https://img.shields.io/badge/live-syedwaleedahmed.me-0a7cff.svg)](https://syedwaleedahmed.me/)
 
-A personal portfolio site built with **React 19 + Vite** on the frontend and
-**Node.js + Express** on the backend, with a working contact form that delivers
-email through Resend.
+The source of my personal site: an AI engineer's portfolio covering experience,
+projects and skills, with a working contact form. It is built with
+**React 19 + Vite** on the frontend and **Node.js + Express** on the backend,
+and the form delivers email through Resend.
 
 **Live:** https://syedwaleedahmed.me/
+
+**Contents:** [Why this exists](#why-this-exists) ·
+[Features](#features) · [Architecture](#architecture) ·
+[Tech stack](#tech-stack) · [Quick start](#quick-start) ·
+[Configuration](#configuration) · [Usage](#usage) · [API](#api-overview) ·
+[Testing](#testing) · [Deployment](#deployment) ·
+[Documentation](#documentation) · [Troubleshooting](#troubleshooting) ·
+[Contact](#contact)
 
 ---
 
@@ -64,11 +75,12 @@ forking the repository can run it without reading the source.
 
 **Engineering**
 
-- 9 backend API tests and 7 frontend content tests on Node's built-in runner,
+- 9 backend API tests and 8 frontend content tests on Node's built-in runner,
   no test dependencies
 - Postman collection covering every endpoint and every error path
 - CI runs lint, build, tests, `npm audit` and a gitleaks scan on every push
-- Dependabot opens grouped weekly dependency PRs
+- Dependabot opens grouped weekly PRs for minor and patch releases and for
+  GitHub Actions; npm majors are upgraded by hand after reading the changelog
 - One pinned Node version shared by local, CI and Netlify
 
 ---
@@ -100,7 +112,7 @@ Full detail in [`docs/architecture.md`](docs/architecture.md).
 |-------|---------|
 | Frontend | React 19 (prerendered, hydrated), Vite 8, plain CSS in cascade layers, `react-icons` |
 | Backend | Node.js 24, Express 5 (ESM), Helmet, `express-rate-limit`, Resend |
-| Testing | `node --test`, Postman |
+| Quality | ESLint 10, `node --test`, Postman |
 | CI/CD | GitHub Actions, Dependabot, gitleaks |
 | Hosting | Netlify (frontend), Render (backend) |
 
@@ -187,16 +199,19 @@ export const projects = [
     role: "Your role",
     description: "What it does.",
     highlight: "The one thing worth noticing.",
-    stack: ["React", "Node"],
-    github: "https://github.com/…",   // optional
+    stack: ["React", "Node", "Express", "Resend"],
+    github: "https://github.com/…",   // or sourceNote, never both
   },
   // …
 ];
 ```
 
-Listed in render order. `github` is the only optional field: supplied, it
-draws a "View source" link at the foot of the card; omitted, nothing renders in
-its place. There is no ordering or emphasis flag - array order is page order.
+Listed in render order. Each card carries exactly one of `github`, which draws
+a "View source" link at the foot of the card, or `sourceNote`, a short line
+saying why there is no public repository (for example "Private repository").
+The content tests fail on a card with neither or both, and hold descriptions,
+highlights and stacks to the same density as the other cards. There is no
+ordering or emphasis flag - array order is page order.
 
 The same pattern applies to `experience.js`, `skills.js`, `about.js` and
 `portfolio.js`. See
@@ -258,7 +273,7 @@ and pull request. Conventions, commit format and review expectations are in
 
 ```bash
 npm test                     # 9 backend API tests via node --test
-npm test --prefix frontend   # 7 content tests over frontend/src/data
+npm test --prefix frontend   # 8 content tests over frontend/src/data
 ```
 
 The suite binds an ephemeral port, covers both health probes, all three
@@ -267,8 +282,9 @@ and never sends real email - so it passes with or without Resend configured.
 Importing the app is itself a check that every module loads.
 
 The frontend content tests keep every About figure traceable to the entry that
-claims it, hold project and experience copy to a shared length range, and fail
-on any character the self-hosted font subset cannot draw.
+claims it, hold project and experience copy to a shared length range, require
+every external link to be absolute `https` and every key and section id to be
+unique, and fail on any character the self-hosted font subset cannot draw.
 
 Live and manual testing uses the Postman collection in [`postman/`](postman/),
 which additionally covers the rate limiter, the CORS preflight and the wrong
@@ -359,6 +375,14 @@ Please report vulnerabilities privately rather than in a public issue. The
 policy, scope and safe-harbour terms are in [`SECURITY.md`](SECURITY.md); the
 controls already in place are inventoried in
 [`docs/security.md`](docs/security.md).
+
+## Contact
+
+The quickest route is the [contact form](https://syedwaleedahmed.me/#contact)
+on the site. You can also email
+[syedwaleedahmed9@gmail.com](mailto:syedwaleedahmed9@gmail.com) or reach me on
+[LinkedIn](https://www.linkedin.com/in/syed-waleed-ahmed/). The resume is
+linked from the site's navbar.
 
 ## License
 

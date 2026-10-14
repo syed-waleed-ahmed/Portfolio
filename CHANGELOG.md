@@ -108,7 +108,22 @@ milestone rather than by individual commit.
   bundle is unchanged at 81 KB of gzipped JS.
 - The resume link points at a new Google Drive file. `resumeUrl` in
   `portfolio.js` is the single source for it, so the navbar button, the hero
-  action and the contact column all follow from one edit.
+  action and the contact column all follow from one edit. It has since moved to
+  a second new file, through the same single edit.
+- A second in-range dependency refresh: `dotenv` `18.0.8` and `resend`
+  `6.33.0` on the backend, and a lockfile refresh of the frontend's transitive
+  dependencies (`rolldown` `1.2.14`, `postcss` `8.5.30`, `browserslist`
+  `4.29.3`, Babel patch releases). The frontend's direct dependencies were
+  already current, as were the GitHub Actions. Zero advisories in both
+  workspaces, lint clean, suites 8/8 and 9/9, bundle unchanged at 81 KB of
+  gzipped JS. `backend/package.json` is now marked `private`, like the other
+  two manifests, so it cannot be published by accident.
+- README: leads with the social card and a contents line, adds a Contact
+  section and spells out the Dependabot policy (npm majors by hand, Action
+  majors included). It also corrects two stale statements: the frontend suite
+  is 8 tests, not 7, and a project card takes exactly one of `github` or
+  `sourceNote` rather than an optional `github`. `docs/development.md` carried
+  the same `github` claim and is fixed.
 - **Project copy re-checked against the repositories it describes**, and three
   cards corrected:
   - *Visual Inspection of Connecting Rods* described "defect classification on

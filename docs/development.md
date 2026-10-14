@@ -144,7 +144,7 @@ automatically, so adding a project or a job is a data change:
 | Change | File |
 |--------|------|
 | New job or internship | `experience.js` |
-| New project | `projects.js` - array order is page order; `github` is the only optional field |
+| New project | `projects.js` - array order is page order; each card carries exactly one of `github` or `sourceNote` |
 | New skill group or tag | `skills.js` |
 | Approach copy, a stat, a degree, a target role | `about.js` |
 | Name, email, resume link, socials, section order | `portfolio.js` |

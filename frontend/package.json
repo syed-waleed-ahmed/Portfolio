@@ -2,6 +2,7 @@
   "name": "frontend",
   "private": true,
   "version": "0.0.0",
+  "description": "Portfolio frontend (React 19 + Vite, prerendered at build time)",
   "type": "module",
   "engines": {
     "node": ">=22.13.0"
