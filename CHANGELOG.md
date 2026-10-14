@@ -109,7 +109,7 @@ milestone rather than by individual commit.
 - The resume link points at a new Google Drive file. `resumeUrl` in
   `portfolio.js` is the single source for it, so the navbar button, the hero
   action and the contact column all follow from one edit. It has since moved to
-  a second new file, through the same single edit.
+  a second and then a third new file, each through the same single edit.
 - A second in-range dependency refresh: `dotenv` `18.0.8` and `resend`
   `6.33.0` on the backend, and a lockfile refresh of the frontend's transitive
   dependencies (`rolldown` `1.2.14`, `postcss` `8.5.30`, `browserslist`

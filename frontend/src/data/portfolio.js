@@ -6,7 +6,7 @@ export const personalInfo = {
   location: "Bologna, Italy",
   email: "syedwaleedahmed9@gmail.com",
   resumeUrl:
-    "https://drive.google.com/file/d/1b-GO0VcfvYKG047ceIhGMfK_YNx6b7Kr/view?usp=sharing",
+    "https://drive.google.com/file/d/1aYYWTcgosEV3QP3r3O2Hlf3WqqRkBe_x/view?usp=sharing",
 };
 
 export const socialLinks = {
