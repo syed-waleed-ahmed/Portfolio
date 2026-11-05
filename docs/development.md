@@ -148,6 +148,8 @@ automatically, so adding a project or a job is a data change:
 | New skill group or tag | `skills.js` |
 | Approach copy, a stat, a degree, a target role | `about.js` |
 | Name, email, resume link, socials, section order | `portfolio.js` |
+| A place on the globe | `about.js`: `locations` and its caption |
+| GitHub contribution graph | Generated, do not edit: `github-activity.json`, see below |
 
 Three rules keep the data layer honest, and `npm test` in `frontend/` checks
 all of them:
@@ -163,6 +165,16 @@ all of them:
    53 words, highlights 9 to 26, with four or five stack chips; experience
    bullets 12 to 26 words. When a new fact arrives, drop an older one rather
    than growing the entry.
+
+The command palette builds its entries from these files, so new content reaches
+it without being listed again; only its fixed links live in `commands.js`.
+
+The contribution graph reads a committed snapshot. The
+`refresh-activity.yml` workflow refreshes it every Monday and commits the result,
+which also triggers a deploy, so a local `main` will need a `git pull`. To refresh
+it by hand, run `node frontend/scripts/fetch-github-activity.mjs`. A failed run
+leaves the last good snapshot in place. Deleting the workflow stops the commits,
+and the graph then shows its age in its label.
 
 A new section needs an entry in `sections` in `portfolio.js`, a component in
 `components/sections/`, and a line in the `SECTION_COMPONENTS` map in

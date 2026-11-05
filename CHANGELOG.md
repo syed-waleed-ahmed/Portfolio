@@ -14,6 +14,26 @@ milestone rather than by individual commit.
 
 ### Added
 
+- **Command palette** ([cmdk](https://github.com/pacocoursey/cmdk)): Ctrl/Cmd+K, or
+  the new Search item in the dock, jumps to a section, opens a project's repository
+  or copies the email address. Searching a technology finds the project built with
+  it. The entries are built from the existing data files. It is an 18 KB chunk
+  fetched only on intent.
+- **GitHub contribution graph**
+  ([react-activity-calendar](https://github.com/grubersjoe/react-activity-calendar))
+  under the project grid, loaded as it nears the viewport. It reads a committed
+  snapshot rather than a live API, which was measured answering with 504s and
+  taking 11 seconds, so it adds no third-party request and no CSP change.
+  `scripts/fetch-github-activity.mjs` refreshes the snapshot, and the new
+  `refresh-activity.yml` workflow commits the result every Monday.
+- **Globe** ([cobe](https://github.com/shuding/cobe)) in the contact panel, marking
+  Karachi, Bologna and Enschede. Screens of 80rem and up only; smaller screens never
+  download it. Reduced motion gets a still frame.
+- Together these add about 2 KB of gzipped JS to the first load. Largest Contentful
+  Paint and layout shift were unchanged in before-and-after runs on throttled 4G.
+  `beasties` (critical CSS) was tried and left out: First Contentful Paint improved
+  by about 350 ms, but it inlined 91% of the stylesheet into the prerendered page
+  and Largest Contentful Paint got about 750 ms worse.
 - **Build-time prerendering.** `npm run build` now compiles a server bundle of
   the app and writes the rendered page into `dist/index.html`
   (`frontend/scripts/prerender.mjs`); `main.jsx` hydrates it. The full page is
@@ -78,6 +98,33 @@ milestone rather than by individual commit.
 
 ### Changed
 
+- **Redesign**, adapting the interaction patterns of
+  [magicuidesign/portfolio](https://github.com/magicuidesign/portfolio)
+  (MIT, Dillion Verma) in plain CSS. No dependency was added, and no copy, palette
+  or typeface changed. See [Design lineage](docs/design.md#design-lineage).
+  - The page fills a desktop screen. The container widens from 72rem to 92rem with
+    a gutter that grows with the viewport, and past 1920px the whole page scales
+    with it. No rules separate the sections.
+  - Sections use that width: four figures across, story beside education, two
+    columns of Experience bullets and of Skills, channels beside the contact form,
+    and three columns of project cards.
+  - A floating dock replaces the sticky top bar, the mobile menu and the
+    back-to-top button. It magnifies on hover, carries the current section, and
+    on a phone puts every section within a thumb's reach. The full name moves to a
+    masthead that scrolls away.
+  - Experience becomes expandable `<details>` rows with the latest role open.
+    About's education uses the same row shape, and neither has a card around it.
+  - The hero portrait is 320px on desktop rather than 288px, and 148px on tablets.
+    A 1x screen up to 1920px now downloads the 320w image rather than the 680w one.
+  - Entrance and scroll reveal blur and fade rather than rise. Projects gets a
+    pill-on-a-rule header and Contact becomes one panel with its title as a pill.
+    A CSS-only dot band replaces the hero's colour wash.
+  - Metadata and tags move from the system monospace to Hanken Grotesk, so the
+    page has one typeface. The footer drops to one line, since the links it
+    carried are in the contact panel above it and the dock below it.
+- Printing is now one token override in `tokens.css`. Stat figures, degree names
+  and role titles printed as pale grey before, and keeping each section whole left
+  half of page one blank.
 - **Graduated.** The Master's in Automation Engineering was awarded on
   5 October 2026, so the copy no longer describes it as in progress:
   - Education reads "Oct 2024 - Oct 2026" without "(expected)". The start

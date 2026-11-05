@@ -8,11 +8,13 @@
 // neighbours, and a character the self-hosted font subset cannot draw.
 import test from "node:test";
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
 import { stats, education, targetRoles } from "../src/data/about.js";
 import { experiences } from "../src/data/experience.js";
 import { projects } from "../src/data/projects.js";
 import { skillGroups } from "../src/data/skills.js";
 import { personalInfo, socialLinks, sections } from "../src/data/portfolio.js";
+import { commandGroups, scoreCommand } from "../src/data/commands.js";
 
 const words = (text) => text.trim().split(/\s+/).length;
 
@@ -107,8 +109,54 @@ const FONT_RANGES = [
   [0x2215, 0x2215], [0xfeff, 0xfeff], [0xfffd, 0xfffd],
 ];
 
+const commands = commandGroups.flatMap((group) => group.items);
+
+// Ranked as the palette ranks them: the best-scoring entry is selected first,
+// and that is what Enter runs.
+const bestMatch = (search) =>
+  commands
+    .map((item) => ({ item, score: scoreCommand(item.label, search, item.keywords) }))
+    .filter(({ score }) => score > 0)
+    .sort((a, b) => b.score - a.score)[0]?.item;
+
+test("command palette entries point somewhere real", () => {
+  const ids = new Set(["top", ...sections.map((section) => section.id)]);
+  for (const { action, label, target } of commands) {
+    if (action === "scroll") assert.ok(ids.has(target), `${label}: no section "${target}"`);
+    if (action === "open") assert.match(target, /^https:\/\//, label);
+  }
+});
+
+test("command palette ids and labels are unique", () => {
+  for (const key of ["id", "label"]) {
+    const values = commands.map((item) => item[key]);
+    assert.equal(new Set(values).size, values.length, `duplicate ${key}`);
+  }
+});
+
+// Each of these went to the wrong place, or matched at all, under cmdk's default
+// fuzzy score: the Skills entry's long keyword list matched nearly anything.
+test("command palette search finds what was asked for", () => {
+  assert.equal(bestMatch("copy email").id, "copy-email");
+  assert.equal(bestMatch("skills").id, "go-skills");
+  assert.equal(bestMatch("kafka").id, "go-skills");
+  assert.equal(bestMatch("zzzzqq"), undefined);
+  assert.match(bestMatch("faiss").label, /RAG/);
+});
+
+test("the GitHub activity snapshot is a usable year of days", () => {
+  const days = JSON.parse(readFileSync(new URL("../src/data/github-activity.json", import.meta.url), "utf8"));
+  assert.ok(days.length >= 300, `only ${days.length} days`);
+  for (const [index, { date, count, level }] of days.entries()) {
+    assert.match(date, /^\d{4}-\d{2}-\d{2}$/);
+    assert.ok(Number.isInteger(count) && count >= 0, date);
+    assert.ok(Number.isInteger(level) && level >= 0 && level <= 4, date);
+    if (index > 0) assert.ok(date > days[index - 1].date, `${date} is out of order`);
+  }
+});
+
 test("all copy is drawable by the self-hosted font subset", () => {
-  const copy = [stats, education, targetRoles, experiences, projects, skillGroups, personalInfo]
+  const copy = [stats, education, targetRoles, experiences, projects, skillGroups, personalInfo, commandGroups]
     .flatMap((data) => JSON.stringify(data));
   for (const text of copy) {
     for (const ch of text) {

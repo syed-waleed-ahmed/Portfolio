@@ -61,6 +61,15 @@ export const education = [
   },
 ];
 
+// The places in `education`, for the globe, in the order first reached. An arc
+// joins each to the next. Coordinates are [latitude, longitude].
+export const locationsCaption = "Studied in Karachi, Bologna and Enschede.";
+export const locations = [
+  { name: "Karachi", coordinates: [24.8607, 67.0011] },
+  { name: "Bologna", coordinates: [44.4949, 11.3426] },
+  { name: "Enschede", coordinates: [52.2215, 6.8937] },
+];
+
 // The roles this portfolio is aimed at. Moved here from the former Interests
 // section, which also carried three generic principle chips ("Clean
 // architecture" and so on) that said nothing the rest of the page does not.

@@ -1,0 +1,223 @@
+@layer components {
+  /* ========= Reading progress =========
+     A hairline along the very top of the viewport, driven by the scroll
+     position in CSS alone. Browsers without scroll-driven animations simply do
+     not draw it. */
+  .reading-progress {
+    display: none;
+
+    @supports (animation-timeline: scroll()) {
+      position: fixed;
+      inset: 0 0 auto;
+      z-index: var(--z-floating);
+      display: block;
+      height: 2px;
+      background: linear-gradient(90deg, var(--color-indigo), var(--color-accent));
+      transform-origin: 0 50%;
+      scale: 0 1;
+      animation: reading-progress linear both;
+      animation-timeline: scroll(root block);
+      pointer-events: none;
+    }
+
+    @media print {
+      display: none;
+    }
+  }
+
+  @keyframes reading-progress {
+    to {
+      scale: 1 1;
+    }
+  }
+
+  /* ========= Dock ========= */
+  /* The shell spans the viewport so the dock can centre itself, and lets clicks
+     through everywhere the dock is not. */
+  .dock-shell {
+    position: fixed;
+    inset-inline: 0;
+    inset-block-end: max(var(--dock-offset), env(safe-area-inset-bottom));
+    z-index: var(--z-floating);
+    display: flex;
+    justify-content: center;
+    padding-inline: var(--space-2);
+    pointer-events: none;
+    transition:
+      translate var(--duration-base) var(--ease-out),
+      opacity var(--duration-base) ease,
+      visibility 0s linear var(--duration-base);
+
+    @media print {
+      display: none;
+    }
+  }
+
+  .dock {
+    min-width: 0;
+    height: var(--dock-bar);
+    padding: var(--dock-pad);
+    border: 1px solid var(--color-border-strong);
+    border-radius: var(--radius-full);
+    background-color: color-mix(in srgb, var(--color-surface) 88%, transparent);
+    box-shadow: var(--shadow-md);
+    backdrop-filter: blur(16px) saturate(140%);
+    pointer-events: auto;
+  }
+
+  /* Bottom-aligned: a magnified item grows upward, out of the bar, and the bar
+     itself keeps its height. */
+  .dock__list {
+    display: flex;
+    align-items: flex-end;
+    gap: var(--space-2);
+    height: 100%;
+    list-style: none;
+
+    @media (pointer: coarse) {
+      gap: 2px;
+    }
+  }
+
+  /* The items share the width when a very narrow phone cannot fit seven at full
+     size: they stay tap-target tall and give up width first. */
+  .dock__item {
+    flex: 0 1 auto;
+    min-width: 0;
+  }
+
+  .dock__divider {
+    flex: none;
+    align-self: center;
+    width: 1px;
+    height: 66%;
+    margin-inline: 2px;
+    background-color: var(--color-border-strong);
+  }
+
+  .dock__link {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: var(--dock-size, var(--dock-item));
+    max-width: 100%;
+    height: var(--dock-size, var(--dock-item));
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-full);
+    background-color: var(--color-bg);
+    color: var(--color-text-muted);
+    transition:
+      color var(--duration-fast) ease,
+      border-color var(--duration-fast) ease,
+      background-color var(--duration-fast) ease;
+
+    & > svg {
+      width: 50%;
+      height: 50%;
+      max-width: 1.75rem;
+      max-height: 1.75rem;
+    }
+
+    &:hover {
+      color: var(--color-text-strong);
+      background-color: var(--color-surface-raised);
+    }
+
+    &[aria-current="true"] {
+      border-color: var(--color-accent-border);
+      background-color: var(--color-accent-subtle);
+      color: var(--color-accent);
+    }
+  }
+
+  /* ========= Magnification =========
+     The hovered item grows and its neighbours half as much, reaching across the
+     divider too. The width change is what makes the row part around the
+     pointer. Pointer devices only, and not under reduced motion. */
+  @media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+    .dock__link {
+      transition:
+        width var(--duration-base) var(--ease-out),
+        height var(--duration-base) var(--ease-out),
+        color var(--duration-fast) ease,
+        border-color var(--duration-fast) ease,
+        background-color var(--duration-fast) ease;
+    }
+
+    .dock__item:hover {
+      --dock-size: 3.5rem;
+    }
+
+    .dock__item:hover + .dock__item,
+    .dock__item:hover + .dock__divider + .dock__item,
+    .dock__item:has(+ .dock__item:hover),
+    .dock__item:has(+ .dock__divider + .dock__item:hover) {
+      --dock-size: 3rem;
+    }
+  }
+
+  /* ========= Tooltip =========
+     Repeats the accessible name for sighted pointer and keyboard users. Touch
+     has no hover to show it with. */
+  .dock__tooltip {
+    position: absolute;
+    inset-block-end: calc(100% + var(--space-2));
+    inset-inline-start: 50%;
+    padding: var(--space-1) var(--space-3);
+    border-radius: var(--radius-md);
+    background-color: var(--color-text-strong);
+    color: var(--color-bg);
+    font-size: var(--text-sm);
+    font-weight: var(--weight-medium);
+    line-height: var(--leading-normal);
+    white-space: nowrap;
+    box-shadow: var(--shadow-md);
+    opacity: 0;
+    translate: -50% 4px;
+    pointer-events: none;
+    transition:
+      opacity var(--duration-fast) ease,
+      translate var(--duration-fast) var(--ease-out);
+
+    &::after {
+      content: "";
+      position: absolute;
+      inset-block-start: 100%;
+      inset-inline-start: 50%;
+      width: 8px;
+      height: 8px;
+      margin-block-start: -4px;
+      background-color: inherit;
+      rotate: 45deg;
+      translate: -50% 0;
+    }
+
+    @media (hover: none) {
+      display: none;
+    }
+  }
+
+  .dock__link:hover .dock__tooltip,
+  .dock__link:focus-visible .dock__tooltip {
+    opacity: 1;
+    translate: -50% 0;
+  }
+
+  /* ========= Narrow screens ========= */
+  @media (max-width: 36rem) {
+    .dock__item--wide-only {
+      display: none;
+    }
+  }
+
+  /* ========= On-screen keyboard =========
+     While someone types into the contact form on a phone, the dock leaves
+     rather than sitting over the field they are typing in. */
+  @media (pointer: coarse) {
+    :root:has(.field__control:focus) .dock-shell {
+      visibility: hidden;
+      opacity: 0;
+      translate: 0 100%;
+    }
+  }
+}

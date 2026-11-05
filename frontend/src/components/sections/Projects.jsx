@@ -1,4 +1,5 @@
 import { FaArrowRight, FaGithub } from "react-icons/fa";
+import GitHubActivity from "@/components/sections/GitHubActivity";
 import ExternalLink from "@/components/ui/ExternalLink";
 import Reveal from "@/components/ui/Reveal";
 import SectionHeader from "@/components/ui/SectionHeader";
@@ -7,7 +8,7 @@ import "./Projects.css";
 
 const Projects = () => (
   <div className="container">
-    <SectionHeader id="projects-title" title="Selected projects">
+    <SectionHeader id="projects-title" title="Selected projects" label="Projects" variant="feature">
       Thesis, independent and university work across applied AI and robotics.
       Source code is linked wherever the repository is public.
     </SectionHeader>
@@ -17,7 +18,7 @@ const Projects = () => (
         whatever length each card's text runs to. */}
     <ul className="project-grid">
       {projects.map((project, index) => (
-        <Reveal as="li" key={project.title} className="project-card" delay={(index % 2) * 60}>
+        <Reveal as="li" key={project.title} className="project-card" delay={(index % 3) * 50}>
           <p className="project-card__context">{project.role}</p>
           <h3 className="project-card__title">{project.title}</h3>
           <p className="project-card__description">{project.description}</p>
@@ -53,6 +54,8 @@ const Projects = () => (
         </Reveal>
       ))}
     </ul>
+
+    <GitHubActivity />
   </div>
 );
 

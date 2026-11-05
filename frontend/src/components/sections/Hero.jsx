@@ -6,7 +6,8 @@ import "./Hero.css";
 
 // Keep `sizes` in step with the portrait's rendered width in Hero.css, and the
 // preload in index.html in step with both.
-const PORTRAIT_SIZES = "(min-width: 60rem) 288px, 88px";
+const PORTRAIT_SIZES =
+  "(min-width: 120rem) 16.6vw, (min-width: 64rem) 320px, (min-width: 40rem) 148px, 96px";
 
 const Hero = () => (
   <section id="top" className="hero" aria-labelledby="hero-title" tabIndex={-1}>
@@ -32,7 +33,7 @@ const Hero = () => (
         />
       </picture>
 
-      <div className="hero__content">
+      <div className="hero__intro">
         <h1 id="hero-title" className="hero__title">
           hi, <span className="hero__name">{personalInfo.shortName}</span> here.
           <span className="hero__caret" aria-hidden="true" />
@@ -40,6 +41,9 @@ const Hero = () => (
         <p className="hero__headline">
           I build multi-agent systems, RAG pipelines, and LLM workflow automation.
         </p>
+      </div>
+
+      <div className="hero__body">
         <p className="hero__lead">
           My focus is the work most demos leave out: evaluation, observability,
           and the engineering that turns a working prototype into something a

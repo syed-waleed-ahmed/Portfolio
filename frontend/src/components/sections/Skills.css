@@ -1,28 +1,41 @@
 @layer components {
   .skills {
-    border-block-start: 1px solid var(--color-border);
+    display: grid;
+    gap: var(--space-5);
+
+    @media (min-width: 64rem) {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      column-gap: var(--space-16);
+    }
   }
 
   .skills__row {
     display: grid;
-    gap: var(--space-3);
-    padding-block: var(--space-5);
-    border-block-end: 1px solid var(--color-border);
+    gap: var(--space-2);
 
-    @media (min-width: 48rem) {
-      grid-template-columns: 13rem minmax(0, 1fr);
-      gap: var(--space-8);
+    @media (min-width: 40rem) {
+      grid-template-columns: 10rem minmax(0, 1fr);
+      gap: var(--space-5);
       align-items: baseline;
     }
   }
 
   .skills__group {
+    font-size: var(--text-base);
     font-weight: var(--weight-semibold);
     color: var(--color-text-strong);
   }
 
+  .skills .tag-list {
+    gap: var(--space-2);
+  }
+
   .skills .tag {
-    font-size: var(--text-sm);
-    padding: 0.25rem 0.65rem;
+    padding: 0.2rem 0.6rem;
+    border-radius: var(--radius-md);
+    background-color: var(--color-bg);
+    box-shadow: 0 0 0 2px rgb(148 163 184 / 0.05);
+    font-size: var(--text-xs);
+    color: var(--color-text);
   }
 }

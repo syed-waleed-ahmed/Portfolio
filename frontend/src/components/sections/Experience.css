@@ -1,83 +1,177 @@
 @layer components {
   .experience-list {
     display: grid;
+    gap: var(--space-6);
     list-style: none;
   }
 
+  /* interpolate-size and ::details-content together animate the row open. A
+     browser with neither simply opens it at once, which is still correct. */
   .experience {
-    display: grid;
-    gap: var(--space-3);
-    padding-block: var(--space-8);
+    interpolate-size: allow-keywords;
 
-    &:first-child {
-      padding-block-start: 0;
+    &::details-content {
+      block-size: 0;
+      overflow: clip;
+      transition:
+        block-size var(--duration-base) var(--ease-out),
+        content-visibility var(--duration-base) allow-discrete;
     }
 
-    & + & {
-      border-block-start: 1px solid var(--color-border);
-    }
-
-    @media (min-width: 48rem) {
-      grid-template-columns: 12rem minmax(0, 1fr);
-      gap: var(--space-8);
+    &[open]::details-content {
+      block-size: auto;
     }
   }
 
-  .experience__meta {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-1) var(--space-4);
-    font-family: var(--font-mono);
+  /* Phone: monogram, then title, company, dates and place stacked beside it,
+     chevron at the far edge. Wider: dates and place take their own column so
+     they line up down the page. */
+  .experience__summary {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    grid-template-areas:
+      "logo title chevron"
+      "logo company chevron"
+      "logo period chevron"
+      "logo location chevron";
+    column-gap: var(--space-3);
+    align-items: center;
+    min-height: var(--tap-target);
+    list-style: none;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+
+    &::-webkit-details-marker {
+      display: none;
+    }
+
+    @media (min-width: 40rem) {
+      grid-template-columns: auto minmax(0, 1fr) auto auto;
+      grid-template-areas:
+        "logo title period chevron"
+        "logo company location chevron";
+    }
+
+    & .monogram {
+      grid-area: logo;
+    }
+  }
+
+  /* text-wrap and the default heading margins are inherited from base; only the
+     size differs from a section's own h3s. */
+  .experience__title {
+    grid-area: title;
+    font-size: var(--text-md);
+    line-height: var(--leading-snug);
+    letter-spacing: var(--tracking-snug);
+    text-wrap: pretty;
+  }
+
+  .experience__company {
+    grid-area: company;
+    margin-block-start: 2px;
+    font-size: var(--text-sm);
+    line-height: var(--leading-snug);
+    color: var(--color-text-soft);
+  }
+
+  .experience__period,
+  .experience__location {
     font-size: var(--text-xs);
-    line-height: var(--leading-normal);
+    line-height: var(--leading-snug);
     color: var(--color-text-muted);
 
-    @media (min-width: 48rem) {
-      flex-direction: column;
-      padding-block-start: 0.3rem;
+    @media (min-width: 40rem) {
+      justify-self: end;
+      text-align: end;
     }
   }
 
   .experience__period {
-    color: var(--color-text-soft);
-  }
-
-  .experience__body {
-    max-width: var(--measure);
-  }
-
-  .experience__title {
-    font-size: var(--text-xl);
-    letter-spacing: var(--tracking-snug);
-  }
-
-  .experience__company {
+    grid-area: period;
     margin-block-start: var(--space-1);
-    font-weight: var(--weight-medium);
-    color: var(--color-text);
+    font-variant-numeric: tabular-nums;
+
+    @media (min-width: 40rem) {
+      margin-block-start: 0;
+    }
   }
 
+  .experience__location {
+    grid-area: location;
+    margin-block-start: 2px;
+  }
+
+  .experience__chevron {
+    grid-area: chevron;
+    width: 1.125rem;
+    height: 1.125rem;
+    color: var(--color-text-muted);
+    transition:
+      rotate var(--duration-base) var(--ease-out),
+      color var(--duration-fast) ease,
+      translate var(--duration-fast) ease;
+  }
+
+  .experience__summary:hover .experience__chevron {
+    color: var(--color-text-strong);
+    translate: 0 2px;
+  }
+
+  .experience[open] .experience__chevron {
+    rotate: 180deg;
+  }
+
+  .experience[open] .experience__summary:hover .experience__chevron {
+    translate: 0 -2px;
+  }
+
+  /* Indented to the title's left edge from tablet up, so the bullets read as
+     belonging to the row above. The monogram is 2.5rem wide. */
   .experience__bullets {
     display: grid;
-    gap: var(--space-3);
-    margin-block-start: var(--space-4);
+    gap: var(--space-2);
+    padding-block-start: var(--space-3);
     list-style: none;
+
+    @media (min-width: 40rem) {
+      padding-inline-start: calc(2.5rem + var(--space-3));
+    }
+
+    /* Two columns on a desktop: one would run a bullet past 150 characters. */
+    @media (min-width: 64rem) {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: var(--space-3) var(--space-10);
+    }
 
     & li {
       position: relative;
-      padding-inline-start: var(--space-5);
+      padding-inline-start: var(--space-4);
+      font-size: var(--text-base);
       color: var(--color-text-soft);
       line-height: var(--leading-normal);
 
       &::before {
         content: "";
         position: absolute;
-        inset-inline-start: 0.2rem;
-        inset-block-start: 0.7em;
+        inset-inline-start: 0.1rem;
+        inset-block-start: 0.75em;
         width: 6px;
         height: 1px;
         background-color: var(--color-text-muted);
       }
+    }
+  }
+
+  /* A closed row would otherwise drop its bullets from a printed page. */
+  @media print {
+    .experience::details-content {
+      block-size: auto;
+      content-visibility: visible;
+    }
+
+    .experience__chevron {
+      display: none;
     }
   }
 }

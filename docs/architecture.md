@@ -32,6 +32,7 @@ complexity lives.
 portfolio/
 ├── .github/
 │   ├── workflows/ci.yml            Lint, build, test, audit, secret scan
+│   ├── workflows/refresh-activity.yml  Weekly commit of the contribution snapshot
 │   ├── dependabot.yml              Grouped weekly dependency PRs
 │   └── PULL_REQUEST_TEMPLATE.md
 ├── backend/
@@ -44,9 +45,10 @@ portfolio/
 ├── frontend/
 │   ├── public/                     Static passthrough (see below)
 │   ├── scripts/prerender.mjs       Writes the rendered page into dist/index.html
+│   ├── scripts/fetch-github-activity.mjs  Refreshes the contribution snapshot
 │   ├── src/
 │   │   ├── components/
-│   │   │   ├── layout/             Navbar, Footer (each with its .css)
+│   │   │   ├── layout/             Masthead, Dock, Footer (each with its .css)
 │   │   │   ├── sections/           One file per page section, plus its .css
 │   │   │   └── ui/                 Reusable primitives
 │   │   ├── data/                   Portfolio content, no JSX
@@ -84,10 +86,10 @@ sections are added.
 
 | Layer | What lives here | Examples |
 |-------|-----------------|----------|
-| `components/layout/` | Chrome that frames every page | `Navbar`, `Footer` |
-| `components/sections/` | One file per visible section, with its stylesheet beside it | `Hero`, `About`, `Experience`, `Projects`, `Skills`, `Contact` |
-| `components/ui/` | Reusable primitives, no domain coupling | `Reveal`, `SectionHeader`, `SectionLink`, `ExternalLink`, `ScrollToTop`, `SkipLink`, `ErrorBoundary` |
-| `data/` | Pure content, no JSX | `about.js`, `experience.js`, `projects.js`, `skills.js`, `portfolio.js` |
+| `components/layout/` | Chrome that frames every page | `Masthead`, `Dock`, `CommandMenu`, `Footer` |
+| `components/sections/` | One file per visible section, with its stylesheet beside it | `Hero`, `About`, `Experience`, `Projects`, `Skills`, `Contact`, and the parts they mount: `GitHubActivity`, `LocationGlobe` |
+| `components/ui/` | Reusable primitives, no domain coupling | `Reveal`, `SectionHeader`, `SectionLink`, `ExternalLink`, `Monogram`, `SkipLink`, `ErrorBoundary`, `CommandPalette` |
+| `data/` | Pure content, no JSX | `about.js`, `experience.js`, `projects.js`, `skills.js`, `portfolio.js`, `commands.js` (built from the others), `github-activity.json` (generated) |
 | `styles/` | Global CSS in cascade layers | `index.css` (layer order), `tokens.css`, `reset.css`, `base.css`, `layout.css`, `components.css`, `utilities.css` |
 
 ### Data-driven content
@@ -97,7 +99,7 @@ updating the site is a data edit rather than a JSX edit. See
 [Development](development.md#updating-site-content) for the per-file guide.
 
 `data/portfolio.js` exports `sections`, the ordered list of section ids and
-labels. It is the single source for the navbar links and for the `<section>`
+labels. It is the single source for the dock's links and for the `<section>`
 elements `App.jsx` renders, so a section cannot be added to one and forgotten
 in the other. Each section is labelled by its heading, whose id is
 `${sectionId}-title`.
@@ -156,6 +158,22 @@ Sections are imported eagerly into a single bundle. With the content already in
 the HTML there is nothing to gain from splitting a few kilobytes of section code
 into separate requests. Each section has its own `ErrorBoundary`, so a render
 error takes down that section rather than the page.
+
+Three extras are the exception, because they carry real weight and many visitors
+never reach them. Each is a separate chunk, fetched only when wanted:
+
+| Extra | Library | Gzipped | Fetched when |
+|-------|---------|---------|--------------|
+| Command palette | `cmdk` | 18 KB | The trigger is hovered or focused, or Ctrl/Cmd+K is pressed |
+| Contribution graph | `react-activity-calendar` | 25 KB, with its tooltips and data | The block comes within 600px of the viewport |
+| Globe | `cobe` | 6 KB | The block comes within 200px of the viewport, on screens of 80rem and up |
+
+The small components that load them add about 2 KB to the first load. A failed
+chunk cannot take the page down: the palette's loader catches it, because the
+dock sits outside every `ErrorBoundary`, and the graph has a boundary of its own.
+`cmdk` also bundles Radix Dialog, which the palette does not use, since a native
+`<dialog>` gives synchronous focus restoration. It cannot be tree-shaken out, and
+is accepted because the chunk only loads on intent.
 
 There is no animation library, no UI kit, no CSS framework and no PWA shell.
 
@@ -218,7 +236,9 @@ errors.
 
 **The build has no environment-dependent steps.** There is no PostCSS
 configuration and no CSS purging, so `npm run build` produces the same output
-locally, in CI and on Netlify with no variables set.
+locally, in CI and on Netlify with no variables set. It does not touch the
+network either: the contribution graph reads a committed snapshot, and a weekly
+workflow refreshes that as an ordinary commit.
 
 **Secrets never reach the client.** The Resend key lives only in the backend
 environment. The frontend's only configurable value is the API base URL, and

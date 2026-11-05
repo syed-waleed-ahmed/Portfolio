@@ -57,7 +57,7 @@ would make the suite slow and order-dependent. It is covered in Postman instead.
 npm test --prefix frontend
 ```
 
-Seven checks in `frontend/test/data.test.js`, on the same built-in runner with
+Twelve checks in `frontend/test/data.test.js`, on the same built-in runner with
 no dependencies. The data files are plain modules, so they import without a
 bundler.
 
@@ -65,10 +65,15 @@ bundler.
 |------|---------|
 | About figures | Every stat in `about.js` appears in an Experience or Projects entry that names its source |
 | Project density | Descriptions 32-53 words, highlights 9-26, four or five stack chips |
+| Project last row | Every card carries a `github` link or a `sourceNote` |
 | Experience density | Every bullet 12-26 words |
 | Uniqueness | Project titles, companies, section ids, stats and skill tags (several are React keys) |
 | Section ids | Valid fragment identifiers, and none collides with the hero's `top` |
 | Links | Absolute `https` URLs; project repositories on GitHub; a valid email |
+| Palette targets | Every command palette entry jumps to a real section or opens an `https` URL |
+| Palette uniqueness | Entry ids and labels are unique |
+| Palette search | Searches land on the right entry, and nonsense matches nothing |
+| Activity snapshot | At least 300 valid days, in date order |
 | Font coverage | No copy uses a character outside the self-hosted font's unicode-range |
 
 ---

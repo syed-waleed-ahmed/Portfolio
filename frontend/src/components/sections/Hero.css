@@ -1,49 +1,46 @@
 @layer components {
   .hero {
-    position: relative;
-    isolation: isolate;
-    /* The bottom is shorter than the top: the About section brings its own
-       top padding, and the two added together left a hole under the hero. */
-    padding-block: clamp(3rem, 1.5rem + 7vw, 7.5rem) clamp(1rem, 3vw, 2.5rem);
-    overflow: clip;
-
-    /* A low, static wash of the two brand hues behind the headline. It gives
-       the first screen some depth without moving or competing with the text. */
-    &::before {
-      content: "";
-      position: absolute;
-      inset: -20% -10% auto;
-      z-index: -1;
-      height: 120%;
-      background:
-        radial-gradient(40% 50% at 20% 30%, rgb(99 102 241 / 0.16), transparent 70%),
-        radial-gradient(35% 45% at 85% 20%, rgb(34 211 238 / 0.08), transparent 70%);
-      pointer-events: none;
-    }
+    /* The bottom is short: the About section brings its own top padding. */
+    padding-block: clamp(var(--space-6), -1rem + 5vw, 5rem) 0;
   }
 
-  /* Phone and tablet: a small portrait above the copy, so the name and
-     headline stay inside the first screen. Laptop and up: copy left, portrait
-     right. */
+  /* Phone: a small portrait above the copy, so the name and headline stay
+     inside the first screen. Tablet: greeting and portrait share the first row,
+     and the longer copy runs the full width under them. Desktop: all the copy on
+     the left, and a large portrait centred in the right-hand column, so the two
+     columns balance across a wide screen. */
   .hero__inner {
     display: grid;
-    gap: var(--space-6);
-    align-items: center;
+    gap: var(--space-5);
 
-    @media (min-width: 60rem) {
+    @media (min-width: 40rem) {
       grid-template-columns: minmax(0, 1fr) auto;
-      gap: clamp(var(--space-10), 6vw, 6rem);
+      column-gap: var(--space-8);
+      row-gap: var(--space-6);
+    }
+
+    @media (min-width: 64rem) {
+      grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
+      grid-template-rows: auto auto;
+      column-gap: var(--space-10);
     }
   }
 
+  /* Keep `PORTRAIT_SIZES` in Hero.jsx and the preload in index.html in step with
+     these widths. 20rem is 320px until the root font scales past 1920px, where
+     it works out just above 16.6vw. That figure is rounded down on purpose: at
+     16.7vw a 1920px screen asks for 320.6px and downloads the 68 KB file rather
+     than the 19 KB one. */
   .hero__portrait {
     display: block;
-    width: 88px;
+    width: 96px;
     aspect-ratio: 1;
     border-radius: var(--radius-full);
     overflow: hidden;
-    box-shadow: 0 0 0 1px var(--color-border-strong), 0 0 0 5px var(--color-bg),
-      0 0 0 6px var(--color-accent-border);
+    box-shadow:
+      0 0 0 1px var(--color-border-strong),
+      0 0 0 4px var(--color-surface-raised),
+      var(--shadow-lg);
 
     & img {
       width: 100%;
@@ -51,20 +48,45 @@
       object-fit: cover;
     }
 
-    @media (min-width: 60rem) {
+    @media (min-width: 40rem) {
       grid-column: 2;
       grid-row: 1;
-      width: 288px;
+      width: 148px;
+    }
+
+    @media (min-width: 64rem) {
+      grid-row: 1 / span 2;
+      justify-self: center;
+      align-self: center;
+      width: 20rem;
     }
   }
 
-  .hero__content {
+  .hero__intro {
+    align-self: center;
+
+    @media (min-width: 40rem) {
+      grid-column: 1;
+      grid-row: 1;
+    }
+
+    @media (min-width: 64rem) {
+      align-self: end;
+    }
+  }
+
+  .hero__body {
     display: grid;
     justify-items: start;
 
-    @media (min-width: 60rem) {
+    @media (min-width: 40rem) {
+      grid-column: 1 / -1;
+    }
+
+    @media (min-width: 64rem) {
       grid-column: 1;
-      grid-row: 1;
+      grid-row: 2;
+      align-self: start;
     }
   }
 
@@ -74,7 +96,7 @@
     font-size: var(--text-display);
     font-weight: var(--weight-regular);
     line-height: 1.05;
-    letter-spacing: -0.03em;
+    letter-spacing: var(--tracking-tighter);
   }
 
   .hero__name {
@@ -108,28 +130,26 @@
   }
 
   .hero__headline {
-    margin-block-start: var(--space-4);
+    margin-block-start: var(--space-3);
     max-width: 34ch;
-    font-size: var(--text-xl);
-    font-weight: var(--weight-medium);
+    font-size: var(--text-title);
     line-height: var(--leading-snug);
     letter-spacing: var(--tracking-snug);
-    color: var(--color-text-strong);
-  }
-
-  .hero__lead {
-    margin-block-start: var(--space-4);
-    max-width: 58ch;
-    font-size: var(--text-lg);
-    line-height: var(--leading-relaxed);
     color: var(--color-text-soft);
   }
 
+  .hero__lead {
+    max-width: 72ch;
+    font-size: var(--text-lg);
+    color: var(--color-text-soft);
+    line-height: var(--leading-relaxed);
+  }
+
   .hero__note {
+    max-width: 80ch;
     margin-block-start: var(--space-3);
-    max-width: 58ch;
-    font-size: var(--text-base);
     color: var(--color-text-muted);
+    line-height: var(--leading-relaxed);
   }
 
   .hero__actions {
@@ -137,7 +157,7 @@
     flex-wrap: wrap;
     align-items: center;
     gap: var(--space-3);
-    margin-block-start: var(--space-8);
+    margin-block-start: var(--space-6);
   }
 
   .hero__social {
@@ -145,27 +165,28 @@
     gap: var(--space-3);
   }
 
-  /* A short, one-time entrance for the copy on first load. Transform and
-     opacity only, and the portrait is left alone so the LCP image paints as
-     soon as it decodes. */
+  /* A short, one-time entrance on first load, 40ms apart. The portrait is left
+     alone so the LCP image paints as soon as it decodes. */
   @media (prefers-reduced-motion: no-preference) {
-    .hero__content > * {
-      animation: hero-rise var(--duration-slow) var(--ease-out) both;
+    .hero__intro > *,
+    .hero__body > * {
+      animation: blur-fade var(--duration-slow) ease-out both;
     }
 
-    .hero__content > :nth-child(2) {
+    .hero__intro > :nth-child(2) {
       animation-delay: 40ms;
     }
 
-    .hero__content > :nth-child(n + 3) {
+    .hero__body > :nth-child(1) {
       animation-delay: 80ms;
     }
-  }
 
-  @keyframes hero-rise {
-    from {
-      opacity: 0;
-      translate: 0 10px;
+    .hero__body > :nth-child(2) {
+      animation-delay: 120ms;
+    }
+
+    .hero__body > :nth-child(3) {
+      animation-delay: 160ms;
     }
   }
 
@@ -181,10 +202,6 @@
 
     .hero {
       padding-block: 1rem;
-
-      &::before {
-        display: none;
-      }
     }
   }
 }

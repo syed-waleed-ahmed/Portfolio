@@ -1,5 +1,6 @@
-import Navbar from "@/components/layout/Navbar";
+import Dock from "@/components/layout/Dock";
 import Footer from "@/components/layout/Footer";
+import Masthead from "@/components/layout/Masthead";
 import Hero from "@/components/sections/Hero";
 import About from "@/components/sections/About";
 import Experience from "@/components/sections/Experience";
@@ -7,11 +8,10 @@ import Projects from "@/components/sections/Projects";
 import Skills from "@/components/sections/Skills";
 import Contact from "@/components/sections/Contact";
 import ErrorBoundary from "@/components/ui/ErrorBoundary";
-import ScrollToTop from "@/components/ui/ScrollToTop";
 import SkipLink from "@/components/ui/SkipLink";
 import { sections } from "@/data/portfolio";
 
-// Section ids and order come from data/portfolio.js, which the navbar reads
+// Section ids and order come from data/portfolio.js, which the dock reads
 // too, so a section cannot be added to one and forgotten in the other.
 // Sections are imported eagerly: the page is prerendered at build time, so
 // all of its content is in the HTML before any JavaScript loads, and splitting
@@ -28,7 +28,8 @@ function App() {
   return (
     <>
       <SkipLink />
-      <Navbar />
+      <Masthead />
+      <Dock />
       <main id="main" tabIndex={-1}>
         <Hero />
         {sections.map(({ id }) => {
@@ -44,7 +45,6 @@ function App() {
         })}
       </main>
       <Footer />
-      <ScrollToTop />
     </>
   );
 }

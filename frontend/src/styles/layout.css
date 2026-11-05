@@ -8,37 +8,129 @@
 
   .section {
     padding-block: var(--section-space);
-
-    & + & {
-      border-block-start: 1px solid var(--color-border);
-    }
   }
 
-  /* Left-aligned, like the content under it. The subtitle is capped to a
-     readable measure rather than the container width. */
+  /* The quiet default: a small left-aligned title, so the content under it
+     carries the section rather than the heading. */
   .section-header {
     display: grid;
-    gap: var(--space-3);
-    margin-block-end: clamp(var(--space-8), 1.5rem + 2vw, var(--space-12));
+    gap: var(--space-2);
+    margin-block-end: var(--space-6);
   }
 
   .section-title {
-    font-size: var(--text-2xl);
+    font-size: var(--text-title);
     font-weight: var(--weight-bold);
-    line-height: var(--leading-tight);
-    letter-spacing: var(--tracking-tight);
+    line-height: var(--leading-snug);
+    letter-spacing: var(--tracking-snug);
   }
 
   .section-subtitle {
-    max-width: 60ch;
-    font-size: var(--text-lg);
+    font-size: var(--text-base);
     color: var(--color-text-muted);
   }
 
+  /* The feature header: a pill on a rule that fades out at both ends, then a
+     larger centred title. It marks where the page changes pace, so it is used
+     sparingly - Projects only; Contact has its own form of it below. */
+  .section-header--feature {
+    justify-items: center;
+    gap: var(--space-3);
+    margin-block-end: var(--space-8);
+    text-align: center;
+
+    & .section-title {
+      font-size: var(--text-2xl);
+      line-height: var(--leading-tight);
+      letter-spacing: var(--tracking-tight);
+    }
+
+    & .section-subtitle {
+      max-width: 54ch;
+    }
+  }
+
+  .section-pill-row {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    margin-block-end: var(--space-1);
+
+    &::before,
+    &::after {
+      content: "";
+      flex: 1;
+      height: 1px;
+    }
+
+    &::before {
+      background: linear-gradient(to right, transparent 5%, var(--color-border-strong) 95%);
+    }
+
+    &::after {
+      background: linear-gradient(to left, transparent 5%, var(--color-border-strong) 95%);
+    }
+  }
+
+  .section-pill,
+  .section-header--panel .section-title {
+    padding: var(--space-1) var(--space-4);
+    border-radius: var(--radius-md);
+    background-color: var(--color-text-strong);
+    color: var(--color-bg);
+    font-size: var(--text-sm);
+    font-weight: var(--weight-medium);
+    line-height: var(--leading-normal);
+    letter-spacing: 0;
+    white-space: nowrap;
+  }
+
+  /* The header of a section that is one bordered panel: the title itself is
+     the pill, sitting astride the panel's top border. It stays in normal flow
+     (a negative margin, not absolute positioning), because a Reveal around the
+     header makes it the containing block mid-transition and an absolutely
+     positioned pill would jump. The panel sets --panel-pad. */
+  .section-header--panel {
+    justify-items: center;
+    gap: var(--space-4);
+    margin-block-end: var(--space-5);
+    text-align: center;
+
+    /* align-self: left to stretch, a grid item with a negative margin grows by
+       that margin and the pill came out 10px too tall. */
+    & .section-title {
+      align-self: start;
+      margin-block-start: calc(-1 * var(--panel-pad));
+      translate: 0 -50%;
+    }
+
+    & .section-subtitle {
+      max-width: 50ch;
+      margin-block-start: calc(-1 * var(--space-2));
+      font-size: var(--text-md);
+      color: var(--color-text-soft);
+    }
+  }
+
+  /* Sections flow across pages, since keeping one whole left half of page one
+     blank. Only the small units stay together: see the rule below. */
   @media print {
     .section {
       padding-block: 1.5rem;
-      break-inside: avoid-page;
+    }
+
+    .section-pill-row {
+      display: none;
+    }
+
+    .stats,
+    .school,
+    .roles,
+    .skills__row,
+    .project-card,
+    .experience,
+    .section-header {
+      break-inside: avoid;
     }
   }
 }

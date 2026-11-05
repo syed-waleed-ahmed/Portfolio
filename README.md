@@ -47,16 +47,25 @@ forking the repository can run it without reading the source.
 
 - Prerendered at build time and hydrated on load, so the full page is in the
   HTML response and text paints before any JavaScript runs
-- Lean output: about 6 KB of gzipped CSS and 81 KB of gzipped JS, with no CSS
-  framework, animation library, UI kit or PWA shell
+- Lean output: about 7 KB of gzipped CSS and 84 KB of gzipped JS on load, with
+  no CSS framework, animation library, UI kit or PWA shell
+- A Ctrl/Cmd+K command palette ([cmdk](https://github.com/pacocoursey/cmdk)), a
+  GitHub contribution graph
+  ([react-activity-calendar](https://github.com/grubersjoe/react-activity-calendar))
+  and a globe ([cobe](https://github.com/shuding/cobe)), each a separate chunk
+  fetched only when it is wanted
 - Modern CSS architecture: cascade layers, design tokens, native nesting,
-  fluid `clamp()` type, container queries, `subgrid` and a scroll-driven
-  reading-progress line, with styles co-located beside each component
+  fluid `clamp()` type, container queries, `subgrid`, `:has()`, animated
+  `<details>` and a scroll-driven reading-progress line, with styles co-located
+  beside each component
+- A floating dock, expandable work rows and a blur-fade entrance, adapted from
+  [magicuidesign/portfolio](https://github.com/magicuidesign/portfolio) (MIT) and
+  rewritten in plain CSS with no new dependencies
 - Data-driven content: all copy lives in `src/data/`, with content tests that
   keep figures traceable and entries consistent
 - Accessibility: skip link, named landmarks, one focus style, an accessible
-  mobile menu and form, reduced motion honoured, 44-48px tap targets; the built
-  page passes an axe-core WCAG 2.2 AA scan
+  dock and form, reduced motion honoured, 40-48px tap targets; the built page
+  passes an axe-core WCAG 2.2 AA scan
 - Responsive from 320px up with no horizontal scroll, and a branded 404 page
 - An error boundary per section
 - SEO: canonical URL, `Person` + `WebSite` + `ProfilePage` JSON-LD, OG and
@@ -110,7 +119,7 @@ Full detail in [`docs/architecture.md`](docs/architecture.md).
 
 | Layer | Choices |
 |-------|---------|
-| Frontend | React 19 (prerendered, hydrated), Vite 8, plain CSS in cascade layers, `react-icons` |
+| Frontend | React 19 (prerendered, hydrated), Vite 8, plain CSS in cascade layers, `react-icons`, and lazily loaded `cmdk`, `react-activity-calendar`, `cobe` |
 | Backend | Node.js 24, Express 5 (ESM), Helmet, `express-rate-limit`, Resend |
 | Quality | ESLint 10, `node --test`, Postman |
 | CI/CD | GitHub Actions, Dependabot, gitleaks |
@@ -382,7 +391,7 @@ The quickest route is the [contact form](https://syedwaleedahmed.me/#contact)
 on the site. You can also email
 [syedwaleedahmed9@gmail.com](mailto:syedwaleedahmed9@gmail.com) or reach me on
 [LinkedIn](https://www.linkedin.com/in/syed-waleed-ahmed/). The resume is
-linked from the site's navbar.
+linked from the site's dock.
 
 ## License
 

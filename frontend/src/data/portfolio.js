@@ -9,6 +9,9 @@ export const personalInfo = {
     "https://drive.google.com/file/d/1aYYWTcgosEV3QP3r3O2Hlf3WqqRkBe_x/view?usp=sharing",
 };
 
+// The account scripts/fetch-github-activity.mjs reads. Matches socialLinks.github.
+export const githubUsername = "syed-waleed-ahmed";
+
 export const socialLinks = {
   linkedin: "https://www.linkedin.com/in/syed-waleed-ahmed/",
   github: "https://github.com/syed-waleed-ahmed",

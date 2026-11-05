@@ -1,0 +1,14 @@
+@layer components {
+  .masthead {
+    position: relative;
+    isolation: isolate;
+    padding-block-start: clamp(var(--space-8), 1.5rem + 2vw, var(--space-12));
+  }
+
+  .masthead__name {
+    font-size: var(--text-base);
+    font-weight: var(--weight-semibold);
+    letter-spacing: var(--tracking-snug);
+    color: var(--color-text-strong);
+  }
+}

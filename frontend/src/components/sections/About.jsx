@@ -1,3 +1,4 @@
+import Monogram from "@/components/ui/Monogram";
 import Reveal from "@/components/ui/Reveal";
 import SectionHeader from "@/components/ui/SectionHeader";
 import { approach, education, stats, targetRoles } from "@/data/about";
@@ -22,33 +23,34 @@ const About = () => (
       ))}
     </Reveal>
 
-    {/* Story and education side by side, as they run to about the same
-        height; the target roles span the full width underneath. */}
-    <div className="about-grid">
+    <div className="about-flow">
       <Reveal className="about-story">
-        <h3 className="card-title">Approach</h3>
+        <h3 className="subhead">Approach</h3>
         {approach.map((paragraph) => (
           <p key={paragraph.slice(0, 32)}>{paragraph}</p>
         ))}
       </Reveal>
 
-      <Reveal as="section" className="card" aria-labelledby="education-title" delay={60}>
-        <h3 id="education-title" className="card-title">
+      <Reveal as="section" aria-labelledby="education-title">
+        <h3 id="education-title" className="subhead">
           Education
         </h3>
-        <ol className="timeline">
+        <ol className="schools">
           {education.map((entry) => (
-            <li key={entry.degree} className="timeline__item">
-              <p className="timeline__title">{entry.degree}</p>
-              <p className="timeline__meta">{entry.school}</p>
-              <p className="timeline__period">{entry.period}</p>
+            <li key={entry.degree} className="school">
+              <Monogram name={entry.school} />
+              <div>
+                <p className="school__degree">{entry.degree}</p>
+                <p className="school__name">{entry.school}</p>
+              </div>
+              <p className="school__period">{entry.period}</p>
             </li>
           ))}
         </ol>
       </Reveal>
 
-      <Reveal as="section" className="card about-roles" aria-labelledby="roles-title">
-        <h3 id="roles-title" className="card-title">
+      <Reveal as="section" className="about-roles" aria-labelledby="roles-title">
+        <h3 id="roles-title" className="subhead">
           Roles I&apos;m targeting
         </h3>
         <dl className="roles">

@@ -1,8 +1,10 @@
 import { Component } from "react";
 
 // Wraps each section on its own, so a render error takes down that section
-// rather than the page. The fallback offers a reload: re-rendering the same
-// tree would just throw the same error again.
+// rather than the page. The default fallback offers a reload: re-rendering the
+// same tree would just throw the same error again.
+//
+// An optional piece of a section can pass its own `fallback` instead.
 export default class ErrorBoundary extends Component {
   state = { hasError: false };
 
@@ -16,6 +18,7 @@ export default class ErrorBoundary extends Component {
 
   render() {
     if (!this.state.hasError) return this.props.children;
+    if (this.props.fallback) return this.props.fallback;
 
     return (
       <div className="container error-fallback" role="alert">

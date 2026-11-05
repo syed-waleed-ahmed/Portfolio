@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { FaCheckCircle, FaExclamationCircle, FaFileAlt, FaEnvelope, FaGithub, FaLinkedinIn } from "react-icons/fa";
 import ExternalLink from "@/components/ui/ExternalLink";
 import Reveal from "@/components/ui/Reveal";
+import LocationGlobe from "@/components/sections/LocationGlobe";
 import SectionHeader from "@/components/ui/SectionHeader";
 import { personalInfo, socialLinks } from "@/data/portfolio";
 import "./Contact.css";
@@ -136,13 +137,15 @@ const Contact = () => {
 
   return (
     <div className="container">
-      <SectionHeader id="contact-title" title="Contact">
-        Whether it&apos;s a role, a question, or a collaboration, send a
-        message. I read every one.
-      </SectionHeader>
+      <Reveal className="contact-panel">
+        <div className="dot-band" aria-hidden="true" />
 
-      <div className="contact-grid">
-        <Reveal as="aside" className="contact-aside" aria-label="Other ways to reach me">
+        <SectionHeader id="contact-title" title="Contact" variant="panel">
+          Whether it&apos;s a role, a question, or a collaboration, send a
+          message. I read every one.
+        </SectionHeader>
+
+        <aside className="contact-aside" aria-label="Other ways to reach me">
           <p className="contact-aside__intro">
             Open to AI and ML engineering roles. Based in {personalInfo.location}.
           </p>
@@ -172,9 +175,11 @@ const Contact = () => {
               </ExternalLink>
             </li>
           </ul>
-        </Reveal>
 
-        <Reveal className="card contact-form-card" delay={60}>
+          <LocationGlobe />
+        </aside>
+
+        <div className="contact-panel__form">
           <form ref={formRef} className="contact-form" noValidate onSubmit={handleSubmit} onFocus={warmUp}>
             <p className="contact-form__note">All fields are required.</p>
 
@@ -259,8 +264,8 @@ const Contact = () => {
               </div>
             </div>
           </form>
-        </Reveal>
-      </div>
+        </div>
+      </Reveal>
     </div>
   );
 };

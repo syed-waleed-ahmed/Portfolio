@@ -29,12 +29,21 @@
 }
 
 @layer base {
-  /* scroll-padding is the one place the sticky header is offset for anchor
-     jumps - nav links, the skip link and deep links alike. */
+  /* scroll-padding is the one place in-page jumps are offset: nav links, the
+     skip link and deep links alike. The end value is what keeps a control
+     reached with Tab from stopping underneath the floating dock. */
   html {
     scroll-behavior: smooth;
-    scroll-padding-block-start: var(--header-height);
+    scroll-padding-block: var(--space-8) var(--dock-clearance);
     background-color: var(--color-bg);
+
+    /* Past 1920px the type and the container grow together: sizes are all in
+       rem, so scaling the root keeps the page the same shape on a large monitor
+       instead of leaving small text in a narrowing strip. A viewport query, so
+       browser zoom still works: zooming in shrinks the viewport below it. */
+    @media (min-width: 120rem) {
+      font-size: clamp(100%, 0.834vw, 150%);
+    }
 
     @media (prefers-reduced-motion: reduce) {
       scroll-behavior: auto;
@@ -110,22 +119,6 @@
       animation-duration: 0.01ms !important;
       animation-iteration-count: 1 !important;
       transition-duration: 0.01ms !important;
-    }
-  }
-
-  @media print {
-    html,
-    body {
-      background: #fff;
-      color: #111;
-    }
-
-    h1,
-    h2,
-    h3,
-    h4,
-    strong {
-      color: #111;
     }
   }
 }

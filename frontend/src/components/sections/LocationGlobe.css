@@ -1,0 +1,55 @@
+@layer components {
+  /* The globe's offset parent. */
+  .contact-aside {
+    position: relative;
+  }
+
+  /* Wide screens only, where the panel's left column has room for it. It rises
+     from the panel's bottom edge beside the channels, and sits under them. At
+     display: none the observer in LocationGlobe.jsx never fires, so a phone does
+     not download cobe at all, and loses nothing: the education list names the
+     same three places. */
+  .location-globe {
+    display: none;
+
+    @media (min-width: 80rem) {
+      position: absolute;
+      inset-block-end: calc(-1 * var(--panel-pad));
+      inset-inline-end: 0;
+      z-index: -1;
+      display: block;
+      width: 19rem;
+      height: 15rem;
+      overflow: hidden;
+      pointer-events: none;
+    }
+
+    @media print {
+      display: none;
+    }
+  }
+
+  .location-globe__canvas {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1;
+    opacity: 0;
+    transition: opacity var(--duration-slow) ease;
+    /* Fades out before the caption, so the text never competes with the dots. */
+    mask-image: linear-gradient(to bottom, #000 45%, transparent 72%);
+
+    &[data-ready="true"] {
+      opacity: 1;
+    }
+  }
+
+  .location-globe__caption {
+    position: absolute;
+    inset-block-end: var(--space-3);
+    inset-inline: 0;
+    font-size: var(--text-xs);
+    color: var(--color-text-muted);
+    text-align: center;
+  }
+}

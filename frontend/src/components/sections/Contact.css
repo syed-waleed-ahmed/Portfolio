@@ -1,42 +1,102 @@
 @layer components {
-  .contact-grid {
-    display: grid;
-    gap: var(--space-8);
-    align-items: start;
+  /* The whole section is one panel, with the title as a pill on its top border
+     (see .section-header--panel) and the dot band fading down from behind it.
+     An isolated stacking context so the band can sit under the content without
+     going under the page. The extra top padding on .section gives the pill
+     room above the border. */
+  .contact-panel {
+    --panel-pad: clamp(var(--space-5), 0.75rem + 3vw, var(--space-10));
+    position: relative;
+    isolation: isolate;
+    margin-block-start: var(--space-5);
+    padding: var(--panel-pad);
+    border: 1px solid var(--color-border-strong);
+    border-radius: var(--radius-lg);
 
-    @media (min-width: 60rem) {
-      grid-template-columns: minmax(0, 1fr) minmax(0, 1.75fr);
-      gap: clamp(var(--space-10), 4vw, var(--space-16));
+    /* Desktop: the invitation and the direct channels stacked on the left, the
+       form on the right. Both are about the same height, where a header across
+       the top left a tall empty area under the channels. */
+    @media (min-width: 64rem) {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1.5fr);
+      grid-template-rows: auto 1fr;
+      column-gap: var(--space-16);
+
+      & > .section-header {
+        grid-column: 1;
+        grid-row: 1;
+        justify-items: start;
+        text-align: start;
+      }
+
+      & > .section-header .section-subtitle {
+        font-size: var(--text-title);
+        line-height: var(--leading-snug);
+        letter-spacing: var(--tracking-snug);
+      }
     }
   }
 
   /* ========= Direct channels ========= */
+  .contact-aside {
+    display: grid;
+    justify-items: center;
+    align-content: start;
+    gap: var(--space-4);
+    text-align: center;
+
+    @media (min-width: 64rem) {
+      grid-column: 1;
+      grid-row: 2;
+      justify-items: start;
+      text-align: start;
+    }
+  }
+
   .contact-aside__intro {
-    font-size: var(--text-lg);
-    color: var(--color-text-soft);
+    font-size: var(--text-base);
+    color: var(--color-text-muted);
   }
 
   .contact-channels {
-    display: grid;
-    gap: var(--space-1);
-    margin-block-start: var(--space-5);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--space-2);
+    max-width: 100%;
     list-style: none;
+
+    @media (min-width: 64rem) {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  }
+
+  .contact-channels li {
+    max-width: 100%;
   }
 
   .contact-channel {
     display: inline-flex;
     align-items: center;
-    gap: var(--space-3);
+    gap: var(--space-2);
     min-height: var(--tap-target);
     max-width: 100%;
+    padding-inline: var(--space-4);
+    border: 1px solid var(--color-border-strong);
+    border-radius: var(--radius-full);
+    background-color: var(--color-bg);
     color: var(--color-text);
+    font-size: var(--text-sm);
     font-weight: var(--weight-medium);
-    transition: color var(--duration-fast) ease;
+    transition:
+      color var(--duration-fast) ease,
+      border-color var(--duration-fast) ease;
 
     & svg {
       flex-shrink: 0;
-      width: 1rem;
-      height: 1rem;
+      width: 0.875rem;
+      height: 0.875rem;
       color: var(--color-text-muted);
       transition: color var(--duration-fast) ease;
     }
@@ -45,16 +105,35 @@
       overflow-wrap: anywhere;
     }
 
+    &:hover {
+      border-color: var(--color-accent-border);
+    }
+
     &:hover,
     &:hover svg {
       color: var(--color-accent);
     }
   }
 
+  .contact-panel__form {
+    margin-block-start: var(--space-8);
+    padding-block-start: var(--space-8);
+    border-block-start: 1px solid var(--color-border);
+
+    @media (min-width: 64rem) {
+      grid-column: 2;
+      grid-row: 1 / span 2;
+      margin-block-start: 0;
+      padding-block-start: 0;
+      padding-inline-start: var(--space-16);
+      border-block-start: 0;
+      border-inline-start: 1px solid var(--color-border);
+    }
+  }
+
   /* ========= Form ========= */
   /* A size container, so the field layout responds to the width the form
-     actually has - it sits in a column beside the aside on desktop, full width
-     on tablets - rather than to the viewport. */
+     actually has inside the panel, rather than to the viewport. */
   .contact-form {
     container-type: inline-size;
     display: grid;

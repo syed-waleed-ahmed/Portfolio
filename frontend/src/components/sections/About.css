@@ -9,13 +9,13 @@
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 1px;
     list-style: none;
-    margin-block-end: clamp(var(--space-10), 2rem + 3vw, var(--space-16));
+    margin-block-end: var(--space-10);
     border: 1px solid var(--color-border);
     border-radius: var(--radius-lg);
     background-color: var(--color-border);
     overflow: hidden;
 
-    @media (min-width: 60rem) {
+    @media (min-width: 48rem) {
       grid-template-columns: repeat(4, minmax(0, 1fr));
     }
   }
@@ -24,12 +24,12 @@
     display: grid;
     grid-template-rows: auto 1fr auto;
     gap: var(--space-2);
-    padding: clamp(var(--space-4), 0.75rem + 1.2vw, var(--space-6));
+    padding: clamp(var(--space-4), 0.75rem + 1vw, var(--space-6));
     background-color: var(--color-surface);
   }
 
   .stat__value {
-    font-size: clamp(1.75rem, 1.35rem + 1.6vw, 2.5rem);
+    font-size: clamp(1.625rem, 1.25rem + 1.5vw, 2.75rem);
     font-weight: var(--weight-bold);
     line-height: 1;
     letter-spacing: var(--tracking-tight);
@@ -45,90 +45,84 @@
 
   .stat__source {
     margin-block-start: auto;
-    font-family: var(--font-mono);
     font-size: var(--text-xs);
     color: var(--color-text-muted);
   }
 
-  /* ========= Story and aside ========= */
-  .about-grid {
+  /* ========= Story, education, roles ========= */
+  /* Story and education side by side on a desktop, as they run to about the
+     same height; the target roles span the full width underneath. */
+  .about-flow {
     display: grid;
-    gap: var(--space-8);
-    align-items: start;
+    gap: var(--space-10);
 
-    @media (min-width: 60rem) {
-      grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
-      gap: clamp(var(--space-10), 4vw, var(--space-16));
+    @media (min-width: 64rem) {
+      grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+      column-gap: var(--space-16);
     }
   }
 
-  /* Top padding matches the card beside it, so "Approach" and "Education"
-     sit on one line. */
-  .about-story {
-    max-width: var(--measure);
-
-    @media (min-width: 60rem) {
-      padding-block-start: clamp(var(--space-5), 1rem + 1vw, var(--space-8));
+  .about-roles {
+    @media (min-width: 64rem) {
+      grid-column: 1 / -1;
     }
+  }
 
+  .about-story {
     & p {
-      font-size: var(--text-lg);
       line-height: var(--leading-relaxed);
       color: var(--color-text-soft);
     }
 
     & p + p {
-      margin-block-start: var(--space-5);
+      margin-block-start: var(--space-4);
     }
   }
 
-  .about-roles {
-    @media (min-width: 60rem) {
-      grid-column: 1 / -1;
-    }
-  }
-
-  /* ========= Education timeline ========= */
-  .timeline {
+  /* ========= Education ========= */
+  .schools {
     display: grid;
     gap: var(--space-5);
     list-style: none;
   }
 
-  .timeline__item {
-    position: relative;
-    padding-inline-start: var(--space-5);
-    border-inline-start: 1px solid var(--color-border-strong);
+  /* Monogram, degree and school, then the dates in their own column on the
+     right. On a phone the dates drop under the school instead. */
+  .school {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    column-gap: var(--space-3);
+    align-items: center;
 
-    &::before {
-      content: "";
-      position: absolute;
-      inset-inline-start: -4px;
-      inset-block-start: 0.45em;
-      width: 7px;
-      height: 7px;
-      border-radius: var(--radius-full);
-      background-color: var(--color-accent);
+    @media (min-width: 40rem) {
+      grid-template-columns: auto minmax(0, 1fr) auto;
     }
   }
 
-  .timeline__title {
+  .school__degree {
     font-weight: var(--weight-semibold);
-    color: var(--color-text-strong);
     line-height: var(--leading-snug);
+    color: var(--color-text-strong);
   }
 
-  .timeline__meta {
-    margin-block-start: var(--space-1);
+  .school__name {
+    margin-block-start: 2px;
     font-size: var(--text-sm);
+    line-height: var(--leading-snug);
     color: var(--color-text-soft);
   }
 
-  .timeline__period {
+  .school__period {
+    grid-column: 2;
     margin-block-start: var(--space-1);
-    font-family: var(--font-mono);
     font-size: var(--text-xs);
+    font-variant-numeric: tabular-nums;
     color: var(--color-text-muted);
+
+    @media (min-width: 40rem) {
+      grid-column: 3;
+      margin-block-start: 0;
+    }
   }
 
   /* ========= Target roles ========= */
@@ -136,9 +130,9 @@
     display: grid;
     gap: var(--space-4);
 
-    @media (min-width: 48rem) {
+    @media (min-width: 40rem) {
       grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: var(--space-8);
+      gap: var(--space-6);
     }
 
     & dt {
@@ -158,9 +152,9 @@
     padding-block-start: var(--space-4);
     border-block-start: 1px solid var(--color-border);
 
-    @media (min-width: 48rem) {
+    @media (min-width: 40rem) {
       padding-block-start: 0;
-      padding-inline-start: var(--space-8);
+      padding-inline-start: var(--space-6);
       border-block-start: 0;
       border-inline-start: 1px solid var(--color-border);
     }

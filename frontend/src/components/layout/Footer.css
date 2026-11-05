@@ -1,22 +1,13 @@
 @layer components {
+  /* The bottom padding keeps the last line clear of the floating dock. */
   .site-footer {
-    padding-block: var(--space-8);
-    border-block-start: 1px solid var(--color-border);
+    padding-block: var(--space-4) var(--dock-clearance);
     font-size: var(--text-sm);
+    text-align: center;
     color: var(--color-text-muted);
-  }
 
-  .site-footer__inner {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: space-between;
-    gap: var(--space-4);
-  }
-
-  .site-footer__links {
-    display: flex;
-    gap: var(--space-2);
-    list-style: none;
+    @media print {
+      padding-block-end: var(--space-4);
+    }
   }
 }
