@@ -104,7 +104,9 @@ Two rules are worth stating explicitly:
   `npm ci`, which fails outright if the two disagree.
 - **A transitive advisory is still your advisory.** `npm audit fix` resolves
   most of them by tightening a nested version in the lockfile alone, which is a
-  lockfile-only commit and needs no `package.json` edit.
+  lockfile-only commit and needs no `package.json` edit. The weekly Dependabot
+  PRs will not clear one for you, because they only bump what `package.json`
+  names directly.
 
 The audit gate covers production dependencies at high severity and above. A
 dev-dependency finding does not fail CI, but it is still worth clearing while

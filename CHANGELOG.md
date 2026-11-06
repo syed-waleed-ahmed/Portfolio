@@ -165,6 +165,11 @@ milestone rather than by individual commit.
   workspaces, lint clean, suites 8/8 and 9/9, bundle unchanged at 81 KB of
   gzipped JS. `backend/package.json` is now marked `private`, like the other
   two manifests, so it cannot be published by accident.
+- A third in-range dependency refresh: `express-rate-limit` `8.7.3` and `resend`
+  `6.37.0` on the backend, `vite` `8.3.6` on the frontend, and a lockfile refresh
+  of the transitive dependencies (`rolldown` `1.2.16`, `postcss` `8.5.32`, Babel
+  patch releases). Nothing is outdated in either workspace, lint is clean, the
+  suites pass 12/12 and 9/9, and the bundle stays at 84 KB of gzipped JS.
 - README: leads with the social card and a contents line, adds a Contact
   section and spells out the Dependabot policy (npm majors by hand, Action
   majors included). It also corrects two stale statements: the frontend suite
@@ -368,6 +373,13 @@ milestone rather than by individual commit.
 
 ### Fixed
 
+- High-severity `body-parser` advisory (GHSA-27r3-jxmh-p828, denial of service
+  through trailing bytes after a compressed request body), reached transitively
+  through `express`, and the moderate `qs` advisory (GHSA-6pq8-jhm2-2vcw). Resolved
+  in the lockfile at `2.4.0` and `6.17.1`. The `body-parser` advisory is a
+  production dependency, so it had failed the CI audit gate on every run since
+  26 October, `main` included. The weekly Dependabot PRs could not clear it because
+  they only bump what `package.json` names directly.
 - Documentation brought back in step with the code: the frontend test count (12,
   not 8), a `hooks/` folder that no longer exists, `preconnect` hints the site
   dropped, the claim that no email address is published in the UI, and the claim
