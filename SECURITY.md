@@ -47,8 +47,9 @@ In scope:
 
 Out of scope:
 
-- Third-party services I depend on (Resend, Netlify, Render, GitHub) - please
-  report those directly to the relevant vendor
+- Third-party services I depend on (Resend, Netlify, Render, GitHub, Google
+  Analytics, and the community API behind the contribution graph) - please report
+  those directly to the relevant vendor
 - Findings that require physical access to a developer machine
 - Reports based on outdated dependency advisories that are already fixed
   on `main`

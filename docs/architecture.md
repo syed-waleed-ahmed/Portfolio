@@ -88,7 +88,7 @@ sections are added.
 |-------|-----------------|----------|
 | `components/layout/` | Chrome that frames every page | `Masthead`, `Dock`, `CommandMenu`, `Footer` |
 | `components/sections/` | One file per visible section, with its stylesheet beside it | `Hero`, `About`, `Experience`, `Projects`, `Skills`, `Contact`, and the parts they mount: `GitHubActivity`, `LocationGlobe` |
-| `components/ui/` | Reusable primitives, no domain coupling | `Reveal`, `SectionHeader`, `SectionLink`, `ExternalLink`, `Monogram`, `SkipLink`, `ErrorBoundary`, `CommandPalette` |
+| `components/ui/` | Reusable primitives, no domain coupling | `Reveal`, `SectionHeader`, `SectionLink`, `ExternalLink`, `Monogram`, `SkipLink`, `ErrorBoundary`, `CommandPalette`, and `scrollToSection`, the helper `SectionLink` and the palette share |
 | `data/` | Pure content, no JSX | `about.js`, `experience.js`, `projects.js`, `skills.js`, `portfolio.js`, `commands.js` (built from the others), `github-activity.json` (generated) |
 | `styles/` | Global CSS in cascade layers | `index.css` (layer order), `tokens.css`, `reset.css`, `base.css`, `layout.css`, `components.css`, `utilities.css` |
 
@@ -106,13 +106,15 @@ in the other. Each section is labelled by its heading, whose id is
 
 The section headings are the exception to "one file per section owns its own
 markup": all of them render through `components/ui/SectionHeader`, which takes
-the heading id, the title and the subtitle. Sharing one component is what stops
+the heading id, the title and the subtitle, plus a variant and label for the
+heavier forms that Projects and Contact use. Sharing one component is what stops
 the headings drifting apart as sections are edited independently.
 
 `frontend/test/data.test.js` turns the data layer's conventions into checks:
 every About figure must appear in the Experience or Projects entry it cites,
 project copy stays within a shared length range, links are absolute `https`,
-and no copy uses a character the font subset cannot draw.
+no copy uses a character the font subset cannot draw, every command palette entry
+points somewhere real, and the activity snapshot is a usable year of days.
 
 ### Import alias
 

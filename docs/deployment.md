@@ -82,11 +82,12 @@ Two details matter on this platform specifically:
 ### Free-tier cold starts
 
 The service runs on Render's free tier and sleeps after inactivity. The first
-request after idle can take 30 to 60 seconds. Two mitigations are already in
-place: `index.html` carries `dns-prefetch` and `preconnect` hints for the
-backend origin, and the contact form surfaces a sending state rather than
-appearing frozen. An uptime pinger against `/health` would remove the delay
-entirely at the cost of keeping a free instance awake.
+request after idle can take 30 to 60 seconds. Three mitigations are already in
+place: `index.html` carries a `dns-prefetch` hint for the backend origin, focusing
+the contact form sends one `no-cors` request to `/health` so the backend is already
+waking by the time someone presses send, and after six seconds the form explains
+the delay rather than appearing frozen. An uptime pinger against `/health` would
+remove the delay entirely at the cost of keeping a free instance awake.
 
 ---
 
@@ -104,7 +105,25 @@ with `permissions: contents: read` and in-progress runs cancelled per ref.
 Node comes from `node-version-file: .nvmrc` in every job, never a hardcoded
 number, so CI cannot drift from local or from Netlify.
 
-CI does not deploy. Netlify and Render each watch `main` themselves.
+CI does not deploy, and it does not hold a deploy back either. Netlify builds every
+push to `main` whatever CI reports, and Render's auto-deploy is configured
+separately in its own dashboard. A red CI run on `main` therefore means the commit
+may already be live.
+
+### Weekly snapshot commit
+
+`.github/workflows/refresh-activity.yml` keeps the contribution graph current. It
+runs at 04:17 UTC every Monday, and on demand from the Actions tab.
+
+- It runs `frontend/scripts/fetch-github-activity.mjs`, and commits
+  `src/data/github-activity.json` to `main` only if the file changed. Every such
+  commit starts a Netlify deploy.
+- It is the one workflow here that writes, so it asks for `contents: write` itself
+  rather than widening the default. If `main` is ever given a rule requiring pull
+  requests, its push will start failing.
+- A failed run changes nothing: the script writes only a validated response, so the
+  site keeps the last good snapshot and the graph's label shows its age.
+- Deleting the file stops the commits. The graph keeps working.
 
 ### Dependency updates
 
@@ -138,7 +157,9 @@ The CSP is `default-src 'self'` with narrow additions:
 `object-src 'none'`, `base-uri 'self'`, `form-action 'self'`,
 `frame-ancestors 'none'`, `upgrade-insecure-requests`, `font-src 'self' data:`,
 the backend origin in `connect-src`, and the Google Analytics hosts allow-listed
-per directive rather than globally.
+per directive rather than globally. The command palette, contribution graph and
+globe need no additions: their chunks are same-origin, and the graph reads a
+committed snapshot rather than calling an API from the browser.
 
 ### The inline analytics hash
 

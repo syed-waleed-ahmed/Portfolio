@@ -84,12 +84,13 @@ forking the repository can run it without reading the source.
 
 **Engineering**
 
-- 9 backend API tests and 8 frontend content tests on Node's built-in runner,
+- 9 backend API tests and 12 frontend content tests on Node's built-in runner,
   no test dependencies
 - Postman collection covering every endpoint and every error path
 - CI runs lint, build, tests, `npm audit` and a gitleaks scan on every push
 - Dependabot opens grouped weekly PRs for minor and patch releases and for
   GitHub Actions; npm majors are upgraded by hand after reading the changelog
+- A scheduled workflow refreshes the contribution graph's snapshot every Monday
 - One pinned Node version shared by local, CI and Netlify
 
 ---
@@ -131,9 +132,9 @@ Full detail in [`docs/architecture.md`](docs/architecture.md).
 
 ```text
 portfolio/
-├── .github/          CI workflow, Dependabot config, PR template
+├── .github/          CI and snapshot workflows, Dependabot config, PR template
 ├── backend/          Express API (config, routes, services, tests)
-├── frontend/         React app (components, data, hooks, styles, public)
+├── frontend/         React app (components, data, styles, scripts, public)
 ├── docs/             Documentation set - see the index below
 ├── postman/          API collection and environments
 ├── scripts/          One-off generators (social card)
@@ -223,7 +224,8 @@ highlights and stacks to the same density as the other cards. There is no
 ordering or emphasis flag - array order is page order.
 
 The same pattern applies to `experience.js`, `skills.js`, `about.js` and
-`portfolio.js`. See
+`portfolio.js`, and the command palette builds its entries from these files, so
+new content reaches it without being listed again. See
 [`docs/development.md`](docs/development.md#updating-site-content) for the
 per-file guide and the rules that keep the data layer honest.
 
@@ -282,7 +284,7 @@ and pull request. Conventions, commit format and review expectations are in
 
 ```bash
 npm test                     # 9 backend API tests via node --test
-npm test --prefix frontend   # 8 content tests over frontend/src/data
+npm test --prefix frontend   # 12 content tests over frontend/src/data
 ```
 
 The suite binds an ephemeral port, covers both health probes, all three
@@ -293,7 +295,10 @@ Importing the app is itself a check that every module loads.
 The frontend content tests keep every About figure traceable to the entry that
 claims it, hold project and experience copy to a shared length range, require
 every external link to be absolute `https` and every key and section id to be
-unique, and fail on any character the self-hosted font subset cannot draw.
+unique, and fail on any character the self-hosted font subset cannot draw. They
+also check that every command palette entry points somewhere real, that its
+search finds the right entry, and that the activity snapshot is a usable year of
+days.
 
 Live and manual testing uses the Postman collection in [`postman/`](postman/),
 which additionally covers the rate limiter, the CORS preflight and the wrong
@@ -325,8 +330,8 @@ headers, the CSP hash procedure and cache rules are in
 | [Architecture](docs/architecture.md) | System shape, repository layout, frontend layers, backend modules, request flow |
 | [API reference](docs/api.md) | Endpoints, payloads, status codes, rate limiting, CORS |
 | [Development](docs/development.md) | Setup, scripts, configuration, conventions, troubleshooting |
-| [Design system](docs/design.md) | CSS architecture, tokens, typography, layout, motion, accessibility, generated assets |
-| [Deployment](docs/deployment.md) | Netlify and Render, CI, headers, CSP, caching, releases |
+| [Design system](docs/design.md) | CSS architecture, tokens, typography, layout, the dock, command palette, activity graph and globe, motion, accessibility, print, generated assets |
+| [Deployment](docs/deployment.md) | Netlify and Render, CI, the weekly snapshot commit, headers, CSP, caching, releases |
 | [Testing](docs/testing.md) | Automated suite, Postman collection, coverage gaps |
 | [Security controls](docs/security.md) | What is implemented and why |
 | [Postman](postman/README.md) | Importing and running the API collection |
@@ -362,7 +367,7 @@ Not a committed plan, just what is queued:
 - Delete `frontend/public/sw.js` once analytics show no service-worker traffic
   for about 30 days
 - Frontend component tests, if the UI grows more stateful logic than the
-  contact form
+  contact form and the command palette
 - An uptime pinger against `/health` to remove Render free-tier cold starts
 
 Known testing gaps are listed in [`docs/testing.md`](docs/testing.md#gaps), and
@@ -397,4 +402,6 @@ linked from the site's dock.
 
 MIT - see [LICENSE](LICENSE). You are welcome to fork this for your own
 portfolio; replace the content in `frontend/src/data/` and the images in
-`frontend/public/`.
+`frontend/public/`, set `githubUsername` in `portfolio.js`, and run
+`node frontend/scripts/fetch-github-activity.mjs` to replace the contribution
+snapshot.

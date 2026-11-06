@@ -71,6 +71,9 @@ prerendered page locally: the dev server renders on the client.
 `fontkit` and `wawoff2`, which are installed on demand rather
 than kept as dependencies - see [Design](design.md#generated-assets).
 
+`node frontend/scripts/fetch-github-activity.mjs` refreshes the contribution
+snapshot and needs no install - see [below](#updating-site-content).
+
 ---
 
 ## Dependencies
@@ -88,8 +91,12 @@ Dependabot opens grouped weekly PRs for minor and patch bumps and is the normal
 path for keeping current, so a manual `npm update` is usually only needed
 between runs. Majors are deliberately excluded from those PRs and are done by
 hand: read the upgrade guide, bump the range in `package.json`, then run the
-full local gate (`npm test` for the backend, `npm run lint` and `npm run build`
-for the frontend) before pushing.
+full local gate (`npm test` for the backend; `npm run lint`, `npm test` and
+`npm run build` for the frontend) before pushing.
+
+Run `npm run install:all` after pulling a Dependabot merge. Otherwise
+`node_modules` stays behind the lockfile, and local builds run on older versions
+than CI and Netlify do.
 
 Two rules are worth stating explicitly:
 
@@ -147,12 +154,12 @@ automatically, so adding a project or a job is a data change:
 | New project | `projects.js` - array order is page order; each card carries exactly one of `github` or `sourceNote` |
 | New skill group or tag | `skills.js` |
 | Approach copy, a stat, a degree, a target role | `about.js` |
-| Name, email, resume link, socials, section order | `portfolio.js` |
+| Name, email, resume link, socials, GitHub username, section order | `portfolio.js` |
 | A place on the globe | `about.js`: `locations` and its caption |
 | GitHub contribution graph | Generated, do not edit: `github-activity.json`, see below |
 
-Three rules keep the data layer honest, and `npm test` in `frontend/` checks
-all of them:
+Three rules keep the data layer honest. `npm test` in `frontend/` checks the
+first and the third; the second rests on whoever writes the copy:
 
 1. **Stats in `about.js` are aggregates, not new claims.** Every figure there
    is already stated in `experience.js` or `projects.js` - the 985-test tile,
@@ -209,7 +216,8 @@ linter; it is small enough that the test suite plus review covers it.
 
 ## Development workflow
 
-1. Branch from `main`. `main` is protected by CI and is what deploys.
+1. Branch from `main`, which is what deploys. Nothing enforces CI on it: Netlify
+   builds every push whatever CI reports, so run the checks before merging.
 2. Make the change, keeping documentation in step with behaviour.
 3. Run the checks that apply:
    ```bash
@@ -267,6 +275,10 @@ clear the in-memory counter.
 The root element in `frontend/index.html` was edited. The prerender script
 finds it by exact string match, so it must stay an empty
 `<div id="root"></div>`.
+
+**`git push` is rejected as non-fast-forward on `main`.**
+The weekly workflow may have committed a new contribution snapshot since your last
+pull. Run `git pull --rebase` and push again.
 
 **A hydration error in the browser console.**
 Something renders differently at build time than in the browser: a date, a

@@ -154,13 +154,18 @@ Known and accepted, listed here so nobody has to rediscover them:
 
 - **No frontend component tests.** The site is presentational and
   data-driven; lint, the content tests and a prerendering build catch the
-  failure modes that actually occur. The contact form is the one stateful
-  component, and a component test suite would be the first thing to add if
-  more logic like it appeared.
+  failure modes that actually occur. The contact form and the command palette
+  are the stateful components, and a component test suite would be the first
+  thing to add if more logic like theirs appeared. The palette's search scoring
+  is covered by the content tests, since it lives in `data/commands.js`.
 - **No end-to-end browser test in CI.** The contact form's validation, error
-  and success states, keyboard navigation and an axe-core accessibility scan
-  were checked with a headless browser against the built site, but that is not
-  wired into CI.
+  and success states, the dock, the Experience rows, the command palette, keyboard
+  navigation, reduced motion, printing, the page without JavaScript and an
+  axe-core accessibility scan were checked with a headless browser against the
+  built site, but that is not wired into CI.
+- **The weekly snapshot commit does not run CI.** A push made with `GITHUB_TOKEN`
+  starts no workflows, so the fetch script's own validation is the only check on
+  that commit. The content test on the snapshot runs on the next ordinary push.
 - **The mailer is never exercised automatically.** Sending real email from CI
   would need a live Resend key in the environment. Delivery is verified by
   running the Postman happy path against a configured backend.

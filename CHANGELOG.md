@@ -368,6 +368,11 @@ milestone rather than by individual commit.
 
 ### Fixed
 
+- Documentation brought back in step with the code: the frontend test count (12,
+  not 8), a `hooks/` folder that no longer exists, `preconnect` hints the site
+  dropped, the claim that no email address is published in the UI, and the claim
+  that CI protects `main`, which nothing enforces. The weekly snapshot commit is
+  now documented under deployment and security.
 - The hidden back-to-top button was still reachable with Tab. It is `inert`
   until visible, and moves focus to `<main>` when used.
 - The focus ring set `border-radius` on focus, squaring off circular controls.

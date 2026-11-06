@@ -24,7 +24,7 @@ project lives inside one of these layers:
 | `tokens` | `styles/tokens.css` | Custom properties only |
 | `base` | `styles/base.css` | Element defaults: body type, headings, links, focus, selection |
 | `layout` | `styles/layout.css` | `.container`, `.section`, the section header |
-| `components` | `styles/components.css` and the `.css` beside each component | Buttons, cards, tags, links, reveal, and each section's own styles |
+| `components` | `styles/components.css` and the `.css` beside each component | Buttons, tags, the monogram, the dot band, links, reveal, and each section's own styles |
 | `utilities` | `styles/utilities.css` | `.visually-hidden` |
 
 A later layer beats an earlier one whatever the selector specificity, so a
@@ -75,7 +75,7 @@ dark-only by design.
 | Token | Value | Use |
 |-------|-------|-----|
 | `--color-bg` | `#0b1221` | Page background |
-| `--color-surface` | `#111a2d` | Cards, the stats band, form panel |
+| `--color-surface` | `#111a2d` | Project cards, the stats band, the activity panel, the command palette, the dock, monograms |
 | `--color-surface-raised` | `#17223a` | Dock item hover, the portrait's ring |
 | `--color-border` / `--color-border-strong` | slate at 14% / 28% | Hairlines, control outlines |
 | `--color-text-strong` | `#f5f7fb` | Headings, emphasis |
@@ -133,9 +133,11 @@ changes, recompute them rather than copying these.
 
 ### Scale
 
-Sizes are tokens (`--text-xs` to `--text-display`). The larger steps are
-`clamp()` expressions that scale between a phone and a laptop, so there are no
-per-breakpoint font-size overrides anywhere in the component files.
+Sizes are tokens (`--text-2xs` to `--text-display`). The larger steps are
+`clamp()` expressions that scale between a phone and a laptop, so the component
+files have almost no per-breakpoint font-size overrides. The one exception is the
+contact panel's invitation, which takes `--text-title` once it has a column of its
+own.
 
 The font subset covers Latin-1 plus general punctuation. A character outside
 it (an arrow, for example) renders in a fallback face, so `test/data.test.js`
@@ -169,9 +171,10 @@ Off-site links render through `components/ui/ExternalLink.jsx`, which sets
 link opens a new tab.
 
 Links to a part of the page (the dock, "View projects", the skip link) render
-through `components/ui/SectionLink.jsx`. It scrolls to the target
-without writing `#section` into the address bar, clears any hash already
-there, and moves focus to the target so the next Tab continues inside it.
+through `components/ui/SectionLink.jsx`, which calls `scrollToSection.js`, the
+helper the command palette also uses. It scrolls to the target without writing
+`#section` into the address bar, clears any hash already there, and moves focus
+to the target so the next Tab continues inside it.
 Targets are `<main>` and the page sections, which carry `tabIndex={-1}` for
 that reason; `[tabindex="-1"]:focus` draws no outline around them. It is still
 a real `href="#id"` link, so it works before hydration and with modifier-key
@@ -192,7 +195,8 @@ underneath the dock.
   hero puts the copy beside a large portrait, About puts the story beside education,
   Experience bullets and Skills groups run in two columns, and Contact puts the
   invitation and channels beside the form. Project cards go to three columns at
-  72rem. Lines stay readable because the columns, not a max-width, limit them.
+  72rem. Lines stay readable because the columns limit them; only the hero's copy
+  and the centred subtitles also carry a max-width.
 - Past 1920px the root font size scales with the viewport, up to 150%. Everything
   is in rem, so the page keeps its shape on a large monitor instead of leaving small
   text in a narrowing strip. Zooming still works, since it shrinks the viewport
@@ -203,8 +207,8 @@ underneath the dock.
   Projects uses the feature form, a pill on a rule that fades out at both ends,
   over a larger centred title. Contact is one bordered panel whose title is itself
   the pill, astride the top border, centred up to 64rem and at the panel's left edge
-  above it. The heavier two mark where the page changes
-  pace, so adding more of them would cost them that.
+  above it. The heavier two mark where the page changes pace, so adding more of them
+  would cost them that.
 - The dot band is a CSS-only field of 2px squares behind the top of the page and
   the contact panel. It fades out downward and shimmers slowly, animating opacity
   only.
@@ -217,7 +221,8 @@ underneath the dock.
 - The About figures are two tiles across on phones and four from 48rem, with
   explicit column counts, so a row is never left with an empty cell showing the
   band's background.
-- Skills is a definition list, one group per row.
+- Skills is a definition list, one group per row, with two groups across from
+  64rem.
 
 ### The dock
 
@@ -282,10 +287,11 @@ never fires and `cobe` is never downloaded.
 
 ### Project cards line up on shared rows
 
-`.project-grid` is two columns on tablets and three on desktops, and each card spans six
-row tracks with `grid-template-rows: subgrid`: context, title, description,
-highlight, stack and links. A two-line title on one card therefore pushes its
-neighbour's description down to match, and every band lines up across the row.
+`.project-grid` is two columns on tablets and three on desktops, and each card
+spans six row tracks with `grid-template-rows: subgrid`: context, title,
+description, highlight, stack and links. A two-line title on one card therefore
+pushes its neighbour's description down to match, and every band lines up across
+the row.
 
 Three details are load-bearing:
 
@@ -364,7 +370,7 @@ the dock does not magnify and the globe draws one still frame.
 - Tap targets and reduced motion as described above
 
 The built page passes an axe-core scan (WCAG 2.2 A/AA plus best practices) at
-desktop and phone widths with no violations.
+desktop and phone widths, and with the command palette open, with no violations.
 
 ---
 
@@ -374,7 +380,8 @@ Every component reads the colour tokens, so printing is one block in `tokens.css
 that swaps them for ink on white, rather than a colour override per component.
 Sections flow across pages, with only small units (a stat band, a project card, a
 role) kept whole. The dock, the dot band, the reading-progress line, the
-contribution graph and the globe are not printed, and a closed Experience row prints its bullets anyway.
+contribution graph and the globe are not printed, and a closed Experience row
+prints its bullets anyway.
 
 ---
 
@@ -407,11 +414,15 @@ The three packages are installed on demand and deliberately kept out of
 reason to pull that in to lint and build a static site. Install them in one
 command; a second `npm i --no-save` prunes what the first added.
 
+`src/data/github-activity.json` is generated as well, by a script and a weekly
+workflow rather than by hand: see
+[Development](development.md#updating-site-content).
+
 ---
 
 ## Design lineage
 
-The layout and interaction patterns are adapted from
+The interaction patterns are adapted from
 [magicuidesign/portfolio](https://github.com/magicuidesign/portfolio) by Dillion
 Verma, MIT licensed, Copyright (c) 2024 Dillion Verma: the floating dock, the
 expandable work rows, the blur-fade entrance, the pill-on-a-rule header and the dot

@@ -36,8 +36,8 @@ A trip is **logged with the submitter's name and email**, truncated to 100
 characters and formatted with `%j` so a crafted value containing newlines
 cannot forge extra log lines. That logging is deliberate: a false positive - a
 password manager or browser autofill filling the trap - would otherwise lose a
-real message silently, and with no email address published in the UI the form
-is the only way to reach the site owner.
+real message silently, and the sender, having seen a success message, would have
+no reason to try the published email address instead.
 
 ---
 
@@ -116,7 +116,8 @@ and the honeypot are the controls that actually bound abuse.
 | Secret scanning | `gitleaks` runs in CI on every push and PR, over the full git history rather than the tip commit |
 | Dependency audit | `npm audit --omit=dev --audit-level=high` on both workspaces; CI fails on a high or critical production advisory |
 | Dependency updates | Dependabot opens grouped weekly PRs (npm minor and patch; GitHub Actions including majors) |
-| Least-privilege CI | `permissions: contents: read` at workflow level |
+| Least-privilege CI | `permissions: contents: read` at workflow level in CI. `refresh-activity.yml` alone asks for `contents: write`, to commit its snapshot |
+| Third-party data | The weekly snapshot job reads a community API for contribution counts, validates every day in the response before writing it, and commits the result as data. Visitors' browsers never call that API |
 | Secret hygiene | `.env` files are gitignored while `.env.example` templates are tracked; keys, certificates and keystores are ignored by extension |
 | Runtime pinning | One Node version across local, CI and Netlify, with `engine-strict=true` refusing a mismatched install |
 

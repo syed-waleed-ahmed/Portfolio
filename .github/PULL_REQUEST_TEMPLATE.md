@@ -16,6 +16,7 @@
 ## Checklist
 
 - [ ] `npm run lint` passes (frontend)
+- [ ] `npm test --prefix frontend` passes (if `frontend/src/data/` changed)
 - [ ] `npm run build` succeeds (frontend)
 - [ ] `npm test` passes (backend, if backend changed)
 - [ ] `npm audit` reviewed if dependencies changed
