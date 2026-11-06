@@ -201,8 +201,8 @@ Visual changes are governed by the token system - read
 - **Editor settings come from `.editorconfig`**: UTF-8, LF, two-space indent,
   final newline, trimmed trailing whitespace (except in Markdown, where
   trailing spaces are a line break).
-- **Line endings are normalized to LF** by `.gitattributes`, so a Windows
-  checkout can keep CRLF locally without producing whole-file diffs.
+- **Line endings are normalized to LF** by `.gitattributes`: checkouts get LF on
+  every OS, and a file an editor saves with CRLF produces no whole-file diff.
 - **Comments explain why, not what.** The existing code comments are the
   reference for tone and density; match them rather than annotating obvious
   lines.

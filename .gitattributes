@@ -1,5 +1,6 @@
-# Normalize line endings to LF in the repository.
-# Windows users get CRLF in their working tree, but the repo stays clean.
+# Store text with LF and check it out with LF on every OS. `eol=lf` overrides
+# core.autocrlf, so a Windows checkout gets LF too. A file an editor saves with
+# CRLF is normalized on commit, so it produces no whole-file diff.
 * text=auto eol=lf
 
 # Explicit text files
@@ -37,9 +38,10 @@
 *.eot    binary
 *.pdf    binary
 
-# GitHub linguist hints - exclude generated/vendored content from language stats
+# GitHub linguist hints - generated files stay out of language stats, and their
+# diffs start collapsed in pull requests
 package-lock.json linguist-generated=true
-**/dist/**        linguist-generated=true
+frontend/src/data/github-activity.json linguist-generated=true
 
 # Docs count as documentation, not as part of the project's language mix.
 # (Postman JSON is deliberately not marked generated - collection diffs need

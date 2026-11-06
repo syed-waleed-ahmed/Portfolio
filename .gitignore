@@ -1,33 +1,31 @@
 # === Dependencies ===
+# frontend/ and backend/ each keep their own. The root can get one too, from the
+# `npm i --no-save` that scripts/gen-og-card.mjs needs.
 node_modules/
+# The root package.json only holds delegating scripts and has no dependencies,
+# so a lockfile here can only come from a stray `npm install`.
+/package-lock.json
 
 # === Build output ===
 dist/
-dist-ssr/
-frontend/dist/
-# SSR bundle used by scripts/prerender.mjs; removed after each build
-frontend/dist-server/
-backend/dist/
+# SSR bundle used by frontend/scripts/prerender.mjs; removed after each build,
+# so it only survives one that failed
+dist-server/
 
-# === Vite cache (anywhere, including stray root .vite/) ===
+# === Tool caches ===
 .vite/
-**/.vite/
+.eslintcache
+.cache/
 
 # === Env / secrets ===
+# No slash, so these match at any depth, including backend/ and frontend/.
 .env
 .env.*
-backend/.env
-frontend/.env
 # But DO track .env.example templates - they're checked-in placeholders
 !.env.example
-!**/.env.example
 
 # === Logs ===
 npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-pnpm-debug.log*
-lerna-debug.log*
 logs/
 *.log
 
@@ -40,14 +38,15 @@ logs/
 *.sw?
 *.local
 
-# === Local AI / agent caches ===
+# === Local AI / agent files ===
+# CLAUDE.md is shared project guidance and stays trackable; these are per-machine.
 .claude/
+CLAUDE.local.md
 
 # === graphify knowledge graph ===
 # Fully ignored: everything here is regenerable output, not project source.
 graphify-out/
 .graphify_*
-.graphify_python
 
 # === Secrets / keys / certificates (live app - never commit these) ===
 *.pem
@@ -65,13 +64,10 @@ secrets.json
 # === Deployment / platform artifacts ===
 .netlify/
 .render/
-.vercel/
-.cache/
 
 # === Test / coverage output ===
 coverage/
 *.lcov
-.nyc_output/
 # newman writes HTML/JSON run reports here when reporters are enabled
 newman/
 
