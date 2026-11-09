@@ -41,7 +41,10 @@
     line-height: var(--leading-snug);
   }
 
+  /* A standalone control, so it gets the full tap target like the other
+     links that are not inside a sentence. */
   .activity__link {
+    min-height: var(--tap-target);
     font-size: var(--text-sm);
   }
 

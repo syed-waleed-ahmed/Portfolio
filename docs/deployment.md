@@ -1,14 +1,15 @@
 # Deployment
 
-The two workspaces deploy independently.
+The two projects deploy independently.
 
 | Part | Platform | URL | Trigger |
 |------|----------|-----|---------|
-| Frontend | Netlify | https://syedwaleedahmed.me | Push to `main` |
+| Frontend | Netlify | https://syedwaleedahmed.me | Push to `main`, published if the build and its gate pass |
 | Backend | Render | https://portfolio-backend-kmum.onrender.com | Push to `main` |
 
-Both build from the same repository and the same Node version, pinned by
-`.nvmrc`.
+Both build from the same repository. CI reads the Node version from `.nvmrc`
+and Netlify from `NODE_VERSION` in `netlify.toml`, and the repository
+invariants fail if the two name different majors.
 
 ---
 
@@ -24,13 +25,35 @@ Both build from the same repository and the same Node version, pinned by
 Base directory, build command and publish directory are configured in the
 Netlify UI. `netlify.toml` deliberately carries **only** the Node version, so
 there is exactly one place where each setting lives and no chance of the file
-and the UI disagreeing.
+and the UI disagreeing. Netlify reads it from the repository root even with the
+base directory set to `frontend`; a `.nvmrc` placed in `frontend/` would
+override it.
 
 The build needs no environment variables. `npm run build` compiles the client
 bundle, compiles a server bundle, and prerenders the page into
 `dist/index.html` - see [Architecture](architecture.md#rendering-strategy). If
 the prerender step fails the whole build fails, so a deploy can never publish
 an empty page.
+
+### The Netlify build gate
+
+`frontend/package.json` has a `prebuild` script, which npm runs before every
+`npm run build`, Netlify's included:
+
+```text
+eslint . && node --test && node --test ../test/invariants.test.js
+```
+
+That is frontend lint, the content tests and the repository invariants. A commit
+that fails any of them fails the Netlify build before Vite starts, and Netlify
+keeps serving the previous deploy. It is the one check that stands between a
+push to `main` and the live site, since CI runs alongside the deploy rather than
+before it. It does not run the browser suite or the size budgets, and nothing
+gates Render.
+
+`npm run build --ignore-scripts`, run in `frontend/`, skips the gate. CI builds
+that way because it runs the same three checks as separate steps; locally it is
+the deliberate way round a known failure while working on the build itself.
 
 A custom domain with HTTPS is configured for `syedwaleedahmed.me`, with
 `www.syedwaleedahmed.me` and the `syedwaleedahmed.netlify.app` default domain
@@ -44,6 +67,15 @@ Set `VITE_API_BASE_URL` in the Netlify UI only if the backend moves. Left
 unset, the bundle falls back to the deployed Render URL baked into
 `Contact.jsx`. Remember that `VITE_`-prefixed variables are compiled into the
 client bundle and are therefore public.
+
+A new backend origin also has to be added to `connect-src` in
+`frontend/public/_headers`, or the CSP blocks the form, and should replace the
+`dns-prefetch` hint in `index.html`. `vite preview` does not apply `_headers`,
+and CI builds without the variable, so a missed `connect-src` shows only on the
+live site, where the form reports that the server could not be reached.
+The invariants test checks both against the default origin in `Contact.jsx`,
+not against the variable, so moving the backend means changing that default
+too.
 
 ---
 
@@ -69,6 +101,9 @@ ALLOWED_ORIGINS=…   # optional; omit to use the built-in defaults
 `PORT` is injected by Render and must not be hardcoded. The app reads it from
 the environment and falls back to 5000 locally.
 
+With `NODE_ENV=production` set, `npm ci` skips devDependencies, so ESLint never
+reaches the server. Nothing Render runs needs it: the backend is linted in CI.
+
 Two details matter on this platform specifically:
 
 - **`trust proxy` is set to `1`.** Render terminates TLS at its own proxy and
@@ -93,20 +128,31 @@ remove the delay entirely at the cost of keeping a free instance awake.
 
 ## Continuous integration
 
-`.github/workflows/ci.yml` runs on every push and pull request against `main`,
-with `permissions: contents: read` and in-progress runs cancelled per ref.
+`.github/workflows/ci.yml` runs on every push to `main` and every pull request
+against it, with `permissions: contents: read` and in-progress runs cancelled
+per ref.
 
 | Job | Steps |
 |-----|-------|
-| Frontend | `npm ci`, `eslint`, content tests (`npm test`), prerendered build, `npm audit --omit=dev --audit-level=high` |
-| Backend | `npm ci`, `npm test`, `npm audit --omit=dev --audit-level=high` |
-| Secret scan | `gitleaks` over the full git history (`fetch-depth: 0`) |
+| `frontend` | `npm ci`, lint, content tests, repository invariants, prerendered build with `--ignore-scripts`, size budgets, `npm audit --omit=dev --audit-level=high` |
+| `e2e` | `npm ci`, `npx playwright install --with-deps chromium`, build with `--ignore-scripts`, the Playwright suite; the report is uploaded as an artifact if it fails, kept 14 days |
+| `backend` | `npm ci`, lint, `npm test`, `npm audit --omit=dev --audit-level=high` |
+| `secret-scan` | `gitleaks` over the full git history (`fetch-depth: 0`) |
 
 Node comes from `node-version-file: .nvmrc` in every job, never a hardcoded
-number, so CI cannot drift from local or from Netlify.
+number, so CI cannot drift from local or from Netlify. What each suite covers is
+in [Testing](testing.md).
+
+Every action in every workflow is pinned to a full commit SHA, with its version
+in a comment (`actions/checkout@3d3c42e… # v7.0.1`). A tag can be moved to other
+code after it was reviewed; a SHA cannot. Dependabot's `github-actions` updater
+bumps the SHA and the comment together. Every checkout that does not push sets
+`persist-credentials: false`, so the token is not left in `.git/config` for
+later steps to read. `refresh-activity.yml` pushes, so it keeps it.
 
 CI does not deploy, and it does not hold a deploy back either. Netlify builds every
-push to `main` whatever CI reports, and Render's auto-deploy is configured
+push to `main` whatever CI reports, stopped only by its own
+[build gate](#the-netlify-build-gate), and Render's auto-deploy is configured
 separately in its own dashboard. A red CI run on `main` therefore means the commit
 may already be live.
 
@@ -117,13 +163,23 @@ runs at 04:17 UTC every Monday, and on demand from the Actions tab.
 
 - It runs `frontend/scripts/fetch-github-activity.mjs`, and commits
   `src/data/github-activity.json` to `main` only if the file changed. Every such
-  commit starts a Netlify deploy.
+  commit starts a Netlify deploy, whose build gate runs the content test on the
+  new snapshot. The push uses `GITHUB_TOKEN`, so it starts no CI run.
 - It is the one workflow here that writes, so it asks for `contents: write` itself
   rather than widening the default. If `main` is ever given a rule requiring pull
   requests, its push will start failing.
 - A failed run changes nothing: the script writes only a validated response, so the
   site keeps the last good snapshot and the graph's label shows its age.
 - Deleting the file stops the commits. The graph keeps working.
+
+### Weekly link check
+
+`.github/workflows/links.yml` runs lychee over the links in the data modules,
+`index.html`, `humans.txt` and the docs every Monday at 05:47 UTC, after the
+snapshot run, and on demand. It asks only for `contents: read`. A dead link
+fails the run and GitHub emails the owner; it never blocks a deploy. The
+configuration and how to run it locally are in
+[Testing](testing.md#link-check).
 
 ### Dependency updates
 
@@ -136,6 +192,11 @@ and the GitHub Actions used in CI.
   is how it ships a new runner or drops a deprecated input, which makes it the
   update you most need. Ignoring them is what previously left
   `checkout`/`setup-node` three majors behind and `gitleaks-action` two.
+- **A seven-day cooldown on all three.** A release is not proposed until it is
+  a week old, since a compromised or broken version is usually caught and pulled
+  within days. The cooldown would not delay Dependabot security updates, but
+  those are not enabled on this repository: see
+  [Security](security.md#repository-and-supply-chain).
 
 ---
 
@@ -155,11 +216,27 @@ API sets for itself (see [API reference](api.md#security-headers)).
 
 The CSP is `default-src 'self'` with narrow additions:
 `object-src 'none'`, `base-uri 'self'`, `form-action 'self'`,
-`frame-ancestors 'none'`, `upgrade-insecure-requests`, `font-src 'self' data:`,
+`frame-ancestors 'none'`, `upgrade-insecure-requests`, `font-src 'self'`,
 the backend origin in `connect-src`, and the Google Analytics hosts allow-listed
 per directive rather than globally. The command palette, contribution graph and
-globe need no additions: their chunks are same-origin, and the graph reads a
+globe add no origins: their chunks are same-origin, and the graph reads a
 committed snapshot rather than calling an API from the browser.
+
+Three sources look looser than the rest, and each is load-bearing:
+
+| Source | Why it is there |
+|--------|-----------------|
+| `style-src 'unsafe-inline'` | `cobe` and `react-activity-calendar` each add a `<style>` element at runtime, and `Reveal` writes a `style` attribute (`--reveal-delay`) into the prerendered HTML for the staggered Experience rows. Without it the browser blocks all three and reports a violation for each |
+| `img-src data:` | `cobe` ships its map texture as a `data:` PNG, which this allows it to load |
+| `script-src 'unsafe-inline'` | A fallback for CSP Level 2 browsers only. A browser that understands hashes ignores it whenever a hash is present, so the hash below is what is enforced |
+
+`font-src` is `'self'` alone: the site's one font is a file in `public/fonts/`,
+and nothing loads a `data:` font.
+
+A new third-party origin, or a new backend origin, needs its directive here in
+the same commit. `vite preview` does not apply `_headers`, so a CSP break does
+not show there; the browser suite serves the build under this exact policy and
+fails on any violation (see [Testing](testing.md#browser-tests)).
 
 ### The inline analytics hash
 
@@ -190,9 +267,10 @@ node -e "const fs=require('fs'),c=require('crypto');const m=fs.readFileSync('ind
 > unchanged `index.html` first: if the command does not reproduce the hash
 > already in `_headers`, the command is wrong, not the file.
 
-`script-src` also lists `'unsafe-inline'`, but only as a legacy fallback: per
-CSP Level 3, a browser that understands hashes ignores `'unsafe-inline'`
-entirely, so the hash is what is actually enforced.
+The repository invariants recompute the hash the same way and fail when
+`_headers` does not match, in CI and in Netlify's build gate, so a stale hash
+no longer reaches the live site unnoticed. The browser suite checks the other
+end: the snippet runs under the real CSP and adds its tag.
 
 The snippet itself is deferred to `requestIdleCallback` (falling back to
 `setTimeout`), so the tag only starts fetching once the main thread is idle and
@@ -237,9 +315,12 @@ be deleted.
 The project is deployed continuously from `main` rather than from tags, so a
 release is a documentation event rather than a build event:
 
-1. Merge the change to `main`. Netlify and Render deploy automatically.
+1. Merge the change to `main`. Render deploys automatically, and Netlify does
+   once its [build gate](#the-netlify-build-gate) passes.
 2. Verify the deploy: load the site, then run the Postman collection against
    the production environment (see [Testing](testing.md#running-against-production)).
+   If the site has not changed, check the Netlify deploy log: a failed gate
+   keeps the previous deploy live.
 3. Move the entries under `Unreleased` in [`CHANGELOG.md`](../CHANGELOG.md)
    into a new dated version heading.
 
@@ -253,4 +334,4 @@ enough to reference by number.
 - [Architecture](architecture.md) - how the parts fit together
 - [API reference](api.md) - the endpoints Render serves
 - [Security](security.md) - the full control inventory
-- [Testing](testing.md) - post-deploy verification
+- [Testing](testing.md) - what each suite covers, and post-deploy verification

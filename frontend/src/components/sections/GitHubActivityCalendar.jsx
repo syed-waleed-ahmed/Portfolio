@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { ActivityCalendar } from "react-activity-calendar";
 import days from "@/data/github-activity.json";
 
@@ -39,6 +40,32 @@ const totalLabel = (weeks) => {
   return `{{count}} contributions in the ${span} to ${formatDate(days.at(-1).date)}`;
 };
 
+// The library lays out columns from Sunday, so a slice must start on one. A
+// slice of weeks * 7 days ending on the snapshot's last day (a Monday, since the
+// refresh runs on Mondays) starts mid-week, and the library pads that first
+// week into one more column than the width was measured for, which spills
+// into its own sideways scroller. Ending on the last day and starting on the
+// Sunday `weeks - 1` weeks before it gives exactly `weeks` columns; a snapshot
+// shorter than that only ever gives fewer.
+const LAST_WEEKDAY = new Date(days.at(-1).date).getUTCDay();
+const lastWeeks = (weeks) => days.slice(-((weeks - 1) * 7 + LAST_WEEKDAY + 1));
+
+// Memoised on the week count and size, which change only at whole steps,
+// so measuring the width on every resize does not re-render a year of days.
+const Calendar = memo(function Calendar({ weeks, size }) {
+  return (
+    <ActivityCalendar
+      data={lastWeeks(weeks)}
+      colorScheme="dark"
+      theme={THEME}
+      fontSize={12}
+      labels={{ totalCount: totalLabel(weeks) }}
+      tooltips={TOOLTIPS}
+      {...size}
+    />
+  );
+});
+
 // Shows the most recent weeks that fit the width it is given, rather than a year
 // in a sideways scroller nested inside the page. Only ever rendered in the
 // browser, after the block nears the viewport, so it can read the media query.
@@ -49,17 +76,7 @@ const GitHubActivityCalendar = ({ width }) => {
     Math.floor((width + size.blockMargin) / (size.blockSize + size.blockMargin))
   );
 
-  return (
-    <ActivityCalendar
-      data={days.slice(-weeks * 7)}
-      colorScheme="dark"
-      theme={THEME}
-      fontSize={12}
-      labels={{ totalCount: totalLabel(weeks) }}
-      tooltips={TOOLTIPS}
-      {...size}
-    />
-  );
+  return <Calendar weeks={weeks} size={size} />;
 };
 
 export default GitHubActivityCalendar;

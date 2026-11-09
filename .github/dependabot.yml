@@ -7,6 +7,11 @@ updates:
       day: "monday"
       time: "09:00"
     open-pull-requests-limit: 5
+    # A just-published release is the riskiest one to pull in: a compromised or
+    # broken version is usually caught and pulled within days. Security updates
+    # are not delayed by this.
+    cooldown:
+      default-days: 7
     # Group minor + patch into a single PR. Skip majors - a major bump can
     # break the app and deserves a manual read of the changelog, not an
     # auto-PR. (Contrast the github-actions block below.)
@@ -28,6 +33,11 @@ updates:
       day: "monday"
       time: "09:00"
     open-pull-requests-limit: 5
+    # A just-published release is the riskiest one to pull in: a compromised or
+    # broken version is usually caught and pulled within days. Security updates
+    # are not delayed by this.
+    cooldown:
+      default-days: 7
     groups:
       minor-and-patch:
         update-types: ["minor", "patch"]
@@ -46,6 +56,11 @@ updates:
       day: "monday"
       time: "09:00"
     open-pull-requests-limit: 5
+    # A just-published release is the riskiest one to pull in: a compromised or
+    # broken version is usually caught and pulled within days. Security updates
+    # are not delayed by this.
+    cooldown:
+      default-days: 7
     # Majors are NOT ignored here, unlike the npm blocks above. An Action's
     # major is how it ships a new runner (node20 -> node24) or drops a
     # deprecated input - it's the update you most need, and skipping them is

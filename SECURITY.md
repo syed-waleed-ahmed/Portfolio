@@ -59,16 +59,20 @@ Out of scope:
 
 ## Automated hygiene
 
-Some classes of issue are already gated in CI on every push and PR, so a
-report in these areas may already be covered:
+Some classes of issue are already gated in CI on every push to `main` and every
+pull request against it, so a report in these areas may already be covered:
 
 - **Secret scanning** - `gitleaks` runs over the full git history
 - **Dependency audit** - `npm audit --omit=dev --audit-level=high` on both
-  workspaces. Note this gates *production* dependencies at high severity and
+  projects. Note this gates *production* dependencies at high severity and
   above; dev-dependency and low-severity findings are reviewed manually rather
   than blocking a build
 - **Dependency updates** - Dependabot opens grouped weekly PRs (npm minor +
-  patch; GitHub Actions including majors)
+  patch; GitHub Actions including majors), after a seven-day cooldown
+- **Pinned actions** - every GitHub Action is pinned to a full commit SHA
+- **Content Security Policy** - the browser tests load the built site under the
+  production CSP and fail on any violation, and the repository invariants fail
+  if the hash of the inline script drifts from the one the CSP pins
 
 ## Safe-harbor
 

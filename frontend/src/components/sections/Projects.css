@@ -28,9 +28,21 @@
     background-color: var(--color-surface);
     border: 1px solid var(--color-border);
     border-radius: var(--radius-lg);
+    /* The card is also Reveal's element, and this declaration replaces the
+       [data-reveal] transition in components.css rather than adding to it, so
+       the reveal's three properties are listed here as well. Without them the
+       cards popped in, and the stagger below never ran. Print turns it all
+       off, as components.css does for every other revealed element. */
     transition:
       border-color var(--duration-base) ease,
-      box-shadow var(--duration-base) ease;
+      box-shadow var(--duration-base) ease,
+      opacity var(--duration-slow) var(--ease-out) var(--reveal-delay, 0ms),
+      translate var(--duration-slow) var(--ease-out) var(--reveal-delay, 0ms),
+      filter var(--duration-slow) var(--ease-out) var(--reveal-delay, 0ms);
+
+    @media print {
+      transition: none;
+    }
 
     /* The card holds a link, so hovering it previews that the card leads
        somewhere: a soft ring, no lift, since the card itself is not the click
@@ -38,6 +50,25 @@
     &:has(a):hover {
       border-color: var(--color-border-strong);
       box-shadow: 0 0 0 2px var(--color-border);
+    }
+
+    /* The reveal runs left to right along each row, so its stagger follows
+       the column count. Set here rather than through Reveal's delay prop,
+       because the JSX cannot know how many cards a row holds. */
+    @media (44rem <= width < 72rem) {
+      &:nth-child(2n) {
+        --reveal-delay: 50ms;
+      }
+    }
+
+    @media (min-width: 72rem) {
+      &:nth-child(3n + 2) {
+        --reveal-delay: 50ms;
+      }
+
+      &:nth-child(3n) {
+        --reveal-delay: 100ms;
+      }
     }
   }
 

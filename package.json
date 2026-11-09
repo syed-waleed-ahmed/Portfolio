@@ -5,6 +5,7 @@
   "description": "Personal portfolio - React 19 + Vite frontend, Node + Express backend.",
   "author": "Syed Waleed Ahmed",
   "license": "MIT",
+  "type": "module",
   "homepage": "https://syedwaleedahmed.me/",
   "repository": {
     "type": "git",
@@ -18,8 +19,9 @@
     "dev:frontend": "npm --prefix frontend run dev",
     "dev:backend": "npm --prefix backend run dev",
     "build": "npm --prefix frontend run build",
-    "lint": "npm --prefix frontend run lint",
+    "lint": "npm --prefix frontend run lint && npm --prefix backend run lint",
     "test": "npm --prefix backend test",
+    "test:invariants": "node --test test/invariants.test.js",
     "start": "npm --prefix backend start"
   }
 }

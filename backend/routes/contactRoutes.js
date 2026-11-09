@@ -50,11 +50,21 @@ function validateContact(body = {}) {
   return { values };
 }
 
+// The one body every accepted submission gets, real or trapped. It carries no
+// provider message id: an id only a real send could return would tell a bot
+// which of its submissions the honeypot caught.
+const SENT = Object.freeze({ success: true, message: "Message sent successfully." });
+
 router.post("/", contactLimiter, async (req, res, next) => {
-  // Checked before validation, and answered with the same 200 a real send
-  // gets: a bot that could tell rejection from success would just retry
-  // without the field. Nothing is sent and nothing is logged as an error.
-  if (typeof req.body?.[HONEYPOT_FIELD] === "string" && req.body[HONEYPOT_FIELD].trim()) {
+  const { values, error } = validateContact(req.body);
+  if (error) return res.status(400).json({ success: false, error });
+
+  // Checked after validation, so the trap changes nothing in the response: an
+  // invalid submission gets the same 400 with or without the field, and a
+  // valid one gets the same 200 a real send does. A bot that could tell the
+  // two apart would just retry without the field. Nothing is sent. (Only the
+  // timing differs, since a real send waits for Resend; see docs/api.md.)
+  if (typeof req.body[HONEYPOT_FIELD] === "string" && req.body[HONEYPOT_FIELD].trim()) {
     // Logged with the sender attached on purpose. A false positive - an
     // autofill or password manager filling the trap - would otherwise lose a
     // real message silently, and the form is the only way to reach us. This
@@ -63,18 +73,18 @@ router.post("/", contactLimiter, async (req, res, next) => {
     // extra log lines.
     console.warn(
       "[contact] honeypot tripped - dropping submission. name=%j email=%j",
-      typeof req.body.name === "string" ? req.body.name.slice(0, 100) : "",
-      typeof req.body.email === "string" ? req.body.email.slice(0, 100) : ""
+      values.name,
+      values.email
     );
-    return res.json({ success: true, message: "Message sent successfully." });
+    return res.json(SENT);
   }
-
-  const { values, error } = validateContact(req.body);
-  if (error) return res.status(400).json({ success: false, error });
 
   try {
     const { id } = await sendContactEmail(values);
-    return res.json({ success: true, message: "Message sent successfully.", id });
+    // The provider's id stays in the log, where it is useful for tracing a
+    // delivery, and out of the response.
+    console.log("[contact] sent id=%s", id);
+    return res.json(SENT);
   } catch (err) {
     if (err instanceof MailerNotConfiguredError) {
       console.error("[contact] mailer not configured");

@@ -1,10 +1,16 @@
 /* Design tokens. Every colour, size, radius, duration and z-index in the
    project resolves to one of these, so a visual change is a token change.
-   The site is dark-only by design; the palette is also inlined in
-   public/404.html and the theme-color meta tags, so keep those in step
-   (see docs/design.md). */
+   The site is dark-only by design. Six places cannot read these and copy
+   the palette by hand, among them public/404.html, the theme-color metas and
+   the contact email; docs/design.md lists them all, and
+   test/invariants.test.js at the repository root fails when one drifts. */
 @layer tokens {
-  :root {
+  /* ::backdrop as well as :root: a dialog's backdrop only inherits from :root
+     since Chrome 122, Firefox 120 and Safari 17.4, older than the build's
+     browser target, so the command palette's dimmed backdrop needs the tokens
+     defined on it directly. */
+  :root,
+  ::backdrop {
     color-scheme: dark;
 
     /* ----- Colour: surfaces ----- */
@@ -31,9 +37,13 @@
     --color-accent-border: color-mix(in srgb, var(--color-accent) 40%, transparent);
     --color-indigo: #6366f1;
 
-    /* Decorative only: the squares of the dot band, never behind text that
-       has to be read at this contrast. */
+    /* Decorative only: the squares of the dot band and the faint halo round a
+       skill tag, never behind text that has to be read at this contrast. */
     --color-dot: rgb(148 163 184 / 0.13);
+    --color-halo: rgb(148 163 184 / 0.05);
+
+    /* Dims the page behind the command palette. */
+    --color-scrim: rgb(2 6 23 / 0.6);
 
     --color-danger: #fca5a5;
     --color-danger-border: rgb(248 113 113 / 0.4);
@@ -54,7 +64,6 @@
     --text-base: 1rem;
     --text-md: 1.0625rem;
     --text-lg: clamp(1.0625rem, 1rem + 0.3vw, 1.25rem);
-    --text-xl: clamp(1.25rem, 1.12rem + 0.55vw, 1.5rem);
     --text-2xl: clamp(1.75rem, 1.45rem + 1.3vw, 2.5rem);
     --text-title: clamp(1.25rem, 1rem + 1vw, 1.875rem);
     --text-display: clamp(2.5rem, 1.75rem + 3vw, 5rem);
@@ -160,7 +169,8 @@
   }
 
   @media (prefers-reduced-motion: reduce) {
-    :root {
+    :root,
+    ::backdrop {
       --duration-fast: 0ms;
       --duration-base: 0ms;
       --duration-slow: 0ms;

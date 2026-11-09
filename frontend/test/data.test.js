@@ -9,12 +9,19 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
-import { stats, education, targetRoles } from "../src/data/about.js";
-import { experiences } from "../src/data/experience.js";
-import { projects } from "../src/data/projects.js";
-import { skillGroups } from "../src/data/skills.js";
-import { personalInfo, socialLinks, sections } from "../src/data/portfolio.js";
-import { commandGroups, scoreCommand } from "../src/data/commands.js";
+import * as about from "../src/data/about.js";
+import * as experienceModule from "../src/data/experience.js";
+import * as projectsModule from "../src/data/projects.js";
+import * as skillsModule from "../src/data/skills.js";
+import * as portfolio from "../src/data/portfolio.js";
+import * as commandsModule from "../src/data/commands.js";
+
+const { stats } = about;
+const { experiences } = experienceModule;
+const { projects } = projectsModule;
+const { skillGroups } = skillsModule;
+const { personalInfo, socialLinks, sections } = portfolio;
+const { commandGroups, scoreCommand } = commandsModule;
 
 const words = (text) => text.trim().split(/\s+/).length;
 
@@ -155,9 +162,12 @@ test("the GitHub activity snapshot is a usable year of days", () => {
   }
 });
 
+// Every export of every data module, so a new one is covered the day it is
+// added. A list of named exports here once left the About "Approach"
+// paragraphs and the globe caption unchecked. Functions serialise to nothing.
 test("all copy is drawable by the self-hosted font subset", () => {
-  const copy = [stats, education, targetRoles, experiences, projects, skillGroups, personalInfo, commandGroups]
-    .flatMap((data) => JSON.stringify(data));
+  const modules = [about, experienceModule, projectsModule, skillsModule, portfolio, commandsModule];
+  const copy = modules.flatMap((module) => Object.values(module).map((value) => JSON.stringify(value) ?? ""));
   for (const text of copy) {
     for (const ch of text) {
       const cp = ch.codePointAt(0);

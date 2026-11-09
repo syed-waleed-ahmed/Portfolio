@@ -23,8 +23,11 @@ const Reveal = ({ as: Tag = "div", delay = 0, style, children, ...rest }) => {
 
     node.dataset.reveal = "pending";
     const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (!entry.isIntersecting) return;
+      // Every entry, not just the first: on a busy main thread one callback
+      // can carry several for this node, oldest first, so a fast scroll past
+      // it could leave a "not intersecting" first and the content hidden.
+      (entries) => {
+        if (!entries.some((entry) => entry.isIntersecting)) return;
         node.dataset.reveal = "shown";
         observer.disconnect();
       },

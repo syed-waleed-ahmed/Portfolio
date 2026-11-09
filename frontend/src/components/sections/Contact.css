@@ -239,12 +239,15 @@
   .contact-form__footer {
     grid-column: 1 / -1;
     display: grid;
-    gap: var(--space-4);
     justify-items: start;
   }
 
-  .contact-form__status:empty {
-    display: none;
+  /* The live region stays rendered while empty: one hidden with display: none
+     leaves the accessibility tree, and a region that reappears together with
+     its text is often not announced. So the space above a message belongs to
+     the message, and an empty region takes up none. */
+  .contact-form__status > * {
+    margin-block-start: var(--space-4);
   }
 
   .form-feedback {

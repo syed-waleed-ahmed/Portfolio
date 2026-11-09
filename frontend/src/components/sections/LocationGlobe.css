@@ -6,9 +6,10 @@
 
   /* Wide screens only, where the panel's left column has room for it. It rises
      from the panel's bottom edge beside the channels, and sits under them. At
-     display: none the observer in LocationGlobe.jsx never fires, so a phone does
-     not download cobe at all, and loses nothing: the education list names the
-     same three places. */
+     display: none the observer in LocationGlobe.jsx only ever reports the
+     canvas as off screen, so a phone neither creates a WebGL context nor
+     downloads cobe, and loses nothing: the education list names the same
+     three places. */
   .location-globe {
     display: none;
 

@@ -84,7 +84,8 @@ dark-only by design.
 | `--color-text-muted` | `#8c99ad` | Metadata, secondary labels |
 | `--color-accent` | `#22d3ee` | Links, primary buttons, focus rings, the current section in the dock |
 | `--color-indigo` | `#6366f1` | The hero name's gradient and the reading-progress line |
-| `--color-dot` | slate at 13% | The squares of the dot band; decorative only |
+| `--color-dot` / `--color-halo` | slate at 13% / 5% | The squares of the dot band, and the faint ring round a skill tag; decorative only |
+| `--color-scrim` | near-black at 60% | Dims the page behind the command palette |
 
 Three rules keep it consistent:
 
@@ -94,14 +95,25 @@ Three rules keep it consistent:
 2. **Every text colour passes WCAG AA** on `--color-surface`, including
    `--color-text-muted` at about 6:1. Check contrast before adding a new text
    token.
-3. **Five places inline the palette by hand** and cannot read the tokens, so
+3. **Six places inline the palette by hand** and cannot read the tokens, so
    they need updating in step:
    - `GitHubActivityCalendar.jsx`, whose library takes literal colours: the
-     accent mixed into `--color-surface` at 25, 50, 75 and 100%
+     accent mixed into `--color-surface` at 25, 50, 75 and 100%, over
+     `--color-surface-raised` for an empty day
    - `LocationGlobe.jsx`, whose WebGL colours are RGB fractions of the accent
    - `frontend/public/404.html`, a standalone page with no bundled CSS
    - `<meta name="theme-color">` in both `index.html` and `404.html`
    - `scripts/gen-og-card.mjs`, which bakes the palette into the social card
+   - `BRAND` in `backend/services/mailerService.js`, which colours the
+     notification email: its indigo, cyan and ink are `--color-indigo`,
+     `--color-accent` and `--color-bg`, and the rest are neutrals of its own,
+     since the email is light
+
+   `test/invariants.test.js` at the repository root checks every one of these
+   against `tokens.css` and names the file that drifted, so a palette change
+   fails CI and Netlify's build until they all follow. A new copy belongs in
+   this list and in that test. One raster also bakes in a colour, the
+   Apple touch icon's background: see [Generated assets](#generated-assets).
 
 ---
 
@@ -141,8 +153,11 @@ own.
 
 The font subset covers Latin-1 plus general punctuation. A character outside
 it (an arrow, for example) renders in a fallback face, so `test/data.test.js`
-fails if any copy in `src/data/` uses one. Icons come from `react-icons`
-instead.
+fails if any export of any module in `src/data/` uses one. Copy written in JSX
+(the hero, the section subtitles, the contact panel) is not checked and follows
+the same rule by hand. Icons come from `react-icons` instead: the Search
+tooltip, for one, draws the Mac Command key as the `LuCommand` icon, because
+U+2318 is outside the subset.
 
 ---
 
@@ -159,12 +174,21 @@ instead.
 
 `.text-link` is the inline link style: accent colour, underline on hover.
 
+A busy button is `aria-disabled="true"` rather than `disabled`: disabling the
+send button while it has focus would drop focus to the page just as the result
+arrives. `.btn` styles both states the same way, and the form ignores a second
+submit while one is in flight.
+
 Every interactive control is at least `--tap-target` tall: 44px, rising to 48px
 under `@media (pointer: coarse)`. The token is keyed to the input device
 rather than a width breakpoint. Two exceptions, both above the 24px WCAG 2.2
 minimum: `.btn--sm`, which is 36px on fine pointers and 48px on touch, and the
 dock's items, which are 40px on fine pointers and 48px tall on touch. On a 320px
 phone a dock item gives up width first, down to 39px wide, so all seven still fit.
+Links inside a sentence, such as the footer's source link or the email link in
+the form's rate-limit message, take the height of their line, which WCAG
+exempts; a link that stands alone, like the activity panel's "View profile",
+gets the full target.
 
 Off-site links render through `components/ui/ExternalLink.jsx`, which sets
 `target="_blank" rel="noopener noreferrer"` and tells screen-reader users the
@@ -228,19 +252,24 @@ underneath the dock.
 
 `components/layout/Dock.jsx` is the page's navigation at every width. It replaced
 a sticky top bar, the mobile menu and a floating back-to-top button, whose job the
-Home item now does.
+Home item now does: it scrolls to the very top of the page, masthead and dot band
+included, not just to the hero.
 
-- Items are real links with accessible names, in the prerendered HTML, so they
-  work before hydration. LinkedIn and GitHub drop out below 36rem: the hero and
-  contact panel both carry them, and seven items is what fits a phone.
+- The navigation items are real links with accessible names, in the prerendered
+  HTML, so they work before hydration; only the Search button needs JavaScript.
+  LinkedIn and GitHub drop out below 36rem: the hero and contact panel both
+  carry them, and seven items is what fits a phone.
 - Hover magnifies with `--dock-size`: the hovered item grows to 56px and its
   neighbours to 48px, reaching across the divider. Items are bottom-aligned, so
   they grow out of the top of the bar, which keeps its height. This is pointer-only
   and off under reduced motion.
-- On touch, focusing a contact field hides the dock so it cannot sit over the
-  field being typed in.
+- On touch, focusing a contact field slides the dock out of view so it cannot
+  sit over the field being typed in, and it slides back once the field loses
+  focus.
 - The Search item after the divider opens the command palette. It drops out below
   36rem with LinkedIn and GitHub, but stays mounted, so Ctrl/Cmd+K still works.
+  Its tooltip reads "Search (Ctrl K)" in the prerendered HTML and switches to
+  the Command key on Apple platforms after hydration.
 - The masthead above the hero exists because the greeting uses the first name
   only, and the full name still has to be on the first screen.
 
@@ -272,8 +301,13 @@ Its label names the date the data runs to, so a stale graph says so.
 
 The calendar is 53 weeks of 14px blocks from 80rem up, beside the heading. Below
 that it uses 11px blocks and shows the most recent weeks that fit, rather than
-nesting a sideways scroller in the page. `GitHubActivity.css` reserves the exact
-height of each size so nothing below moves when the chunk arrives.
+nesting a sideways scroller in the page. It slices whole weeks ending on the
+snapshot's last day, because the library pads a week that starts mid-week into
+one more column than was measured for, which spilled into its own scroller. Once
+loaded it measures its slot again on every resize, so a rotated phone or a
+window dragged across 80rem gets a graph that fits. `GitHubActivity.css`
+reserves the exact height of each size so nothing below moves when the chunk
+arrives.
 
 ### The globe
 
@@ -283,7 +317,9 @@ rather than spins, because a full turn would hide all three for half of every
 rotation, and it draws only while on screen. It is decorative, so the canvas is
 hidden from assistive technology and its caption says the same thing in words.
 Without WebGL it stays hidden. Below 80rem it is `display: none`, so its observer
-never fires and `cobe` is never downloaded.
+only ever reports it off screen: a phone never downloads `cobe`, and never
+creates a WebGL context either, since the support check runs only when the
+globe is about to load and releases its context straight away.
 
 ### Project cards line up on shared rows
 
@@ -323,21 +359,24 @@ library.
 |--------|--------|
 | Hero entrance | The copy blurs and fades in once, settling 6px downward, 40ms apart. The portrait does not animate, so the LCP image paints as soon as it decodes |
 | Greeting caret | The cursor after "hi, Waleed here." blinks; it is solid under reduced motion |
-| Scroll reveal | Content that starts below the fold gets the same blur, fade and 6px settle when it enters. See below |
+| Scroll reveal | Content that starts below the fold gets the same blur, fade and 6px settle when it enters, over 400ms. Experience rows follow each other 40ms apart, and project cards stagger 50ms along each row, by the column count `Projects.css` knows. See below |
 | Reading progress | A 2px line along the top of the viewport, driven by `animation-timeline: scroll()` |
-| Dock | Items magnify on hover over 220ms, with a tooltip above. See [The dock](#the-dock) |
+| Dock | Items magnify on hover over 220ms, with a tooltip above. On touch the dock slides away while a contact field has focus. See [The dock](#the-dock) |
 | Experience rows | The row's height animates open and the chevron turns, 220ms |
 | Dot band | Two layers of squares shimmer on 5s and 7s cycles, opacity only |
 | Command palette | Fades in and settles 6px, 220ms, over a fading backdrop |
 | Globe | Sways slowly about its centre on `requestAnimationFrame`, in WebGL, only while on screen |
-| Hover and focus | Colour and border changes, 150ms. Project cards gain a soft ring and do not lift, because they are not click targets |
+| Hover and focus | Colour and border changes, 150ms. Project cards that hold a link gain a soft ring over 220ms and do not lift, because they are not click targets |
 
 `Reveal` only ever hides content that is below the viewport **after**
 hydration, by writing `data-reveal="pending"` to the node. The prerendered HTML
 is therefore always fully visible, nothing above the fold flickers, and a
 visitor without JavaScript sees everything. It uses an `IntersectionObserver`
 with threshold 0, because a ratio threshold can never be reached by an element
-taller than the viewport.
+taller than the viewport, and reveals on any intersecting entry in a callback,
+since a busy main thread can deliver an older "not intersecting" entry first.
+Printing never waits for it: a print rule shows pending content at full
+opacity (see [Print](#print)).
 
 Under `prefers-reduced-motion: reduce` the duration tokens drop to 0, a global
 rule shortens any remaining animation to effectively nothing, smooth scrolling
@@ -363,14 +402,19 @@ the dock does not magnify and the globe draws one still frame.
   announce their state without any ARIA
 - Contact form: native `required`, `autocomplete`, `maxLength` matching the API;
   on a failed submit focus moves to the first invalid field, whose error is
-  linked with `aria-describedby` and flagged with `aria-invalid`; the result is
-  announced from an always-present `aria-live` region
+  linked with `aria-describedby` and flagged with `aria-invalid`; while sending,
+  the fields are read-only and the button stays focusable (`aria-disabled`, not
+  `disabled`); the result is announced from an `aria-live` region that is
+  rendered, and so in the accessibility tree, even while it is empty
 - The honeypot input is off-screen rather than `display: none`, out of the tab
   order and hidden from assistive technology
 - Tap targets and reduced motion as described above
 
-The built page passes an axe-core scan (WCAG 2.2 A/AA plus best practices) at
-desktop and phone widths, and with the command palette open, with no violations.
+The browser suite runs an axe-core scan (the WCAG 2.0, 2.1 and 2.2 A and AA
+rules) on the built page at desktop and phone widths, and with the command
+palette open, and fails CI on any violation. It also drives the keyboard paths
+above: the palette's shortcut, search and focus return, and the form's focus on
+an invalid field. See [Testing](testing.md#browser-tests).
 
 ---
 
@@ -382,6 +426,11 @@ Sections flow across pages, with only small units (a stat band, a project card, 
 role) kept whole. The dock, the dot band, the reading-progress line, the
 contribution graph and the globe are not printed, and a closed Experience row
 prints its bullets anyway.
+
+Printing lays the page out without scrolling it, so content `Reveal` was still
+holding back would print blank. A print rule in `components.css` shows every
+`[data-reveal="pending"]` element at full opacity with no blur or offset, and
+turns the reveal transitions off.
 
 ---
 

@@ -70,6 +70,9 @@ coverage/
 *.lcov
 # newman writes HTML/JSON run reports here when reporters are enabled
 newman/
+# Playwright's report and per-test traces, from npm run test:e2e
+playwright-report/
+test-results/
 
 # === OS ===
 .DS_Store

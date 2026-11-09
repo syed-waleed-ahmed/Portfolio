@@ -21,7 +21,7 @@
     }
 
     &::backdrop {
-      background-color: rgb(2 6 23 / 0.6);
+      background-color: var(--color-scrim);
       backdrop-filter: blur(4px);
       animation: palette-fade var(--duration-base) ease;
     }

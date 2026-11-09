@@ -5,7 +5,7 @@ import reactRefresh from 'eslint-plugin-react-refresh'
 import { defineConfig, globalIgnores } from 'eslint/config'
 
 export default defineConfig([
-  globalIgnores(['dist', 'dist-server']),
+  globalIgnores(['dist', 'dist-server', 'playwright-report', 'test-results']),
   {
     files: ['**/*.{js,jsx}'],
     extends: [
@@ -29,9 +29,11 @@ export default defineConfig([
       'no-unused-vars': ['error', { varsIgnorePattern: '^[A-Z_]' }],
     },
   },
-  // Build configs, build scripts and tests run in Node, not the browser
+  // Build configs, build scripts and tests run in Node, not the browser. The
+  // e2e specs do too, apart from the callbacks they hand to the page, which
+  // keep the browser globals from the block above.
   {
-    files: ['*.config.js', 'scripts/**/*.{js,mjs}', 'test/**/*.{js,mjs}'],
+    files: ['*.config.js', 'scripts/**/*.{js,mjs}', 'test/**/*.{js,mjs}', 'e2e/**/*.{js,mjs}'],
     languageOptions: {
       ecmaVersion: 'latest',
       sourceType: 'module',

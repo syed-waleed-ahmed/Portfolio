@@ -7,7 +7,10 @@ import { config, isMailerConfigured } from "../config/env.js";
 const resend = isMailerConfigured ? new Resend(config.resendApiKey) : null;
 
 // ===== Email template branding =====
-// Tweak these to restyle every contact email. Colors match the portfolio.
+// Tweak these to restyle every contact email. The hues are copied by hand from
+// frontend/src/styles/tokens.css (--color-indigo, --color-accent, --color-bg),
+// one of the places docs/design.md lists that must follow a palette change.
+// The email itself is light, so the rest are neutrals of its own.
 const BRAND = {
   name: "Syed Waleed Ahmed",
   accent: "#6366f1", // indigo - header + button
@@ -43,7 +46,8 @@ export class MailerNotConfiguredError extends Error {
   }
 }
 
-// Provider rejected the send -> route turns this into a 502.
+// The send failed: Resend rejected it, or could not be reached at all (the SDK
+// reports network failures the same way) -> route turns this into a 502.
 export class EmailDeliveryError extends Error {
   constructor(cause) {
     super("Email delivery failed.");
@@ -91,12 +95,20 @@ function detailRow(label, valueHtml) {
 // Mail, which strip <style> blocks and most modern CSS. Edit BRAND above to
 // recolor, or tweak the markup here to change layout.
 function renderContactEmail({ name, email, subject, message }) {
+  // In UTC and labelled so, since the server's own zone is whatever the host
+  // runs in and the reader is somewhere else.
   const when = new Date().toLocaleString("en-GB", {
     dateStyle: "medium",
     timeStyle: "short",
-  });
+    timeZone: "UTC",
+  }) + " UTC";
   const safeName = escapeHtml(name);
   const safeEmail = escapeHtml(email);
+  // The address also goes into mailto: links, a URL context where HTML
+  // escaping is not enough: EMAIL_RE admits "?", "&" and "=", which would
+  // let a sender add a bcc or replace the subject in the reply draft.
+  // Encoded first, with "@" left readable, then escaped for the attribute.
+  const mailtoAddress = escapeHtml(encodeURIComponent(email).replace(/%40/g, "@"));
 
   return `
   <div style="margin:0;padding:24px 12px;background:#eef0f6;font-family:Arial,Helvetica,sans-serif;">
@@ -111,7 +123,7 @@ function renderContactEmail({ name, email, subject, message }) {
         <td style="background:#ffffff;padding:28px;border:1px solid ${BRAND.border};border-top:none;">
           <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
             ${detailRow("From", `<strong>${safeName}</strong>`)}
-            ${detailRow("Email", `<a href="mailto:${safeEmail}" style="color:${BRAND.accent};text-decoration:none;">${safeEmail}</a>`)}
+            ${detailRow("Email", `<a href="mailto:${mailtoAddress}" style="color:${BRAND.accent};text-decoration:none;">${safeEmail}</a>`)}
             ${detailRow("Subject", escapeHtml(subject))}
             ${detailRow("Received", escapeHtml(when))}
           </table>
@@ -122,7 +134,7 @@ function renderContactEmail({ name, email, subject, message }) {
           <table role="presentation" cellpadding="0" cellspacing="0" style="margin-top:24px;">
             <tr>
               <td style="border-radius:8px;background-color:${BRAND.accent};">
-                <a href="mailto:${safeEmail}?subject=${encodeURIComponent("Re: " + subject)}" style="display:inline-block;padding:12px 22px;font:600 14px/1 Arial,sans-serif;color:#ffffff;text-decoration:none;border-radius:8px;">Reply to ${safeName}</a>
+                <a href="mailto:${mailtoAddress}?subject=${escapeHtml(encodeURIComponent("Re: " + subject))}" style="display:inline-block;padding:12px 22px;font:600 14px/1 Arial,sans-serif;color:#ffffff;text-decoration:none;border-radius:8px;">Reply to ${safeName}</a>
               </td>
             </tr>
           </table>
@@ -138,14 +150,16 @@ function renderContactEmail({ name, email, subject, message }) {
 }
 
 // Plain-text fallback. Improves deliverability (spam filters like a text part)
-// and renders in clients with HTML disabled.
+// and renders in clients with HTML disabled. The one-line fields are flattened
+// like the headers are: a newline in a name or subject would otherwise let a
+// sender forge extra "Email:" or "Subject:" lines. The message keeps its own.
 function renderContactText({ name, email, subject, message }) {
   return [
     "NEW CONTACT MESSAGE",
     "",
-    `From:    ${name}`,
-    `Email:   ${email}`,
-    `Subject: ${subject}`,
+    `From:    ${sanitizeHeader(name)}`,
+    `Email:   ${sanitizeHeader(email)}`,
+    `Subject: ${sanitizeHeader(subject)}`,
     "",
     "Message:",
     message,

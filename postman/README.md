@@ -46,9 +46,9 @@ Then select **Portfolio API - Production**. `baseUrl` is the only value that
 differs between environments, so nothing else needs changing.
 
 > **Only `POST /api/contact - Valid submission` sends a real email.** Every
-> other request stops before the mailer: validation, the body cap, the
-> honeypot, the rate limiter, the CORS preflights and the 404s are all safe to
-> run against production.
+> other request stops before the mailer: validation, the body cap, malformed
+> JSON, the honeypot, the rate limiter, the CORS preflights and the 404s are
+> all safe to run against production.
 
 The backend is on Render's free tier and sleeps after inactivity, so the first
 request can take 30 to 60 seconds to cold-start. Re-run if it times out.
@@ -63,10 +63,10 @@ request can take 30 to 60 seconds to cold-start. Re-run if it times out.
 | Contact | Missing required field | `400` naming the field |
 | Contact | Invalid email | `400` |
 | Contact | Field over its length cap | `400` from route validation |
-| Contact | Empty body | `400` |
 | Contact | Body over the 16 KB cap | `413` from the body parser, no quota consumed |
-| Contact | Honeypot tripped | `200` with no `id`, nothing sent |
-| Contact | Rate limit (run 6+ times) | `429` once the window is exhausted |
+| Contact | Malformed JSON | `400` from the body parser, no quota consumed |
+| Contact | Honeypot tripped | `200` identical to a real send, nothing sent |
+| Contact | Rate limit (run 6+ times) | `400` while quota remains, then `429`; never sends |
 | CORS | Preflight from an allowed origin | `204` echoing the origin |
 | CORS | Preflight from a disallowed origin | No `Access-Control-Allow-Origin`, no `5xx` |
 | Negative | `GET /api/unknown` | `404` catch-all |
@@ -77,15 +77,21 @@ visible in Postman without sending anything.
 
 ## Notes
 
-**Running the whole collection exhausts the rate limit, on purpose.** The
-endpoint allows 5 requests per IP per 15 minutes and six Contact requests
-consume quota, so the last ones receive a `429`. Their tests report that as
-**skipped** rather than failed, since the limiter has its own dedicated request.
-Restart the backend to clear the in-memory counter and get a full pass again.
+**A full run spends the rate-limit window exactly, on purpose.** The endpoint
+allows 5 requests per IP per 15 minutes and six Contact requests consume quota.
+They are ordered so that, against a freshly started backend, the first five fit
+and the sixth, *Rate limit (run 6+ times)*, is the one that receives the `429`.
+The 16 KB and malformed-JSON requests are rejected by the body parser ahead of
+the limiter and cost nothing. A second run inside the window finds it already
+spent; the other quota-consuming requests then report the `429` as **skipped**
+rather than failed, since the limiter has its own dedicated request. Restart the
+backend to clear the in-memory counter and get a full pass again.
 
 **Verifying the limiter deliberately.** Open the Runner, select
-*Rate limit (run 6+ times)*, set Iterations to 6 or more, and run. The sixth
-call returns `429` with `RateLimit-*` headers.
+*Rate limit (run 6+ times)*, set Iterations to 6 or more, and run. Its body
+omits `name`, so it fails validation and can never send mail, even against
+production. The limiter counts those `400`s all the same: iterations one to
+five return `400`, and the sixth returns `429` with `RateLimit-*` headers.
 
 **"Field over its length cap" and "Body over the 16 KB cap" are different
 paths.** The first sends a 101-character name against the 100-character cap and
@@ -95,10 +101,18 @@ which is registered before the router and therefore rejects ahead of the rate
 limiter. Its test asserts exactly that by checking no `RateLimit-Remaining`
 header came back.
 
-**The honeypot returns a `200` that looks like a real send.** That is
-deliberate, so a bot cannot detect the trap and retry without the field. The
-only tell is the missing `id`. Unlike the `413`, this check lives inside the
-router, so it *does* consume rate-limit quota.
+**"Malformed JSON" is rejected in the same place.** It sends a body cut off
+mid-object and gets `400` with `Malformed JSON body.` from the body parser,
+also ahead of the limiter, and its test checks for the same missing header.
+
+**The honeypot answers exactly like a real send.** A valid payload with the
+hidden `website` field filled gets a `200` whose body is byte-identical to a
+delivered message's, and nothing is sent. That is deliberate, so a bot cannot
+detect the trap and retry without the field. The check runs after validation,
+so an invalid payload with the field filled gets the same `400` it would get
+without it. The test asserts the exact body and that no `id` is present.
+Unlike the `413`, this check lives inside the router, so it *does* consume
+rate-limit quota.
 
 **The CORS requests set an `Origin` header explicitly**, which Postman
 otherwise omits. That is also why the rest of the collection is unaffected by

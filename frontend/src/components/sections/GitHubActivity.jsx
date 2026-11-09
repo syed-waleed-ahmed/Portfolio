@@ -25,16 +25,30 @@ const GitHubActivity = () => {
   useEffect(() => {
     const slot = slotRef.current;
     if (!slot || !("IntersectionObserver" in window)) return;
+    let resizeObserver = null;
+    const measure = () => setWidth(slot.clientWidth);
+
+    // Measured again on every resize once loaded, so a rotated phone or a
+    // window dragged across the breakpoint gets a graph that fits, rather
+    // than the one laid out for the width it had first.
     const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (!entry.isIntersecting) return;
-        setWidth(slot.clientWidth);
+      // Any entry, as in Reveal: a batch can hold more than one for the slot.
+      (entries) => {
+        if (!entries.some((entry) => entry.isIntersecting)) return;
         observer.disconnect();
+        measure();
+        if ("ResizeObserver" in window) {
+          resizeObserver = new ResizeObserver(measure);
+          resizeObserver.observe(slot);
+        }
       },
       { rootMargin: "600px 0px" }
     );
     observer.observe(slot);
-    return () => observer.disconnect();
+    return () => {
+      observer.disconnect();
+      resizeObserver?.disconnect();
+    };
   }, []);
 
   return (

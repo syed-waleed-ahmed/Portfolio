@@ -57,16 +57,32 @@ app.use((_req, res) => {
 });
 
 // ===== Centralized error handler =====
-// eslint-disable-next-line no-unused-vars
-app.use((err, _req, res, _next) => {
-  // Log full error server-side, but never leak stack/message to clients
-  console.error("[server] unhandled error:", err);
-
-  if (err?.type === "entity.too.large") {
-    return res.status(413).json({ success: false, error: "Payload too large." });
+app.use((err, _req, res, next) => {
+  // Too late for a JSON error: hand it to Express's own handler, which closes
+  // the connection, rather than leaving a half-sent response open.
+  if (res.headersSent) {
+    console.error("[server] error after the response started:", err);
+    return next(err);
   }
 
-  if (res.headersSent) return;
+  // A body the parser refused is the client's fault, not the server's:
+  // malformed JSON (400), an unsupported charset or encoding (415), or the
+  // 16kb cap (413). Logged by type only, never as the whole error, because
+  // body-parser attaches the raw request text, which holds the sender's name,
+  // address and message.
+  if (err?.expose && err.status >= 400 && err.status < 500) {
+    console.warn("[server] rejected body: %s (%d)", err.type, err.status);
+    const error =
+      err.type === "entity.too.large"
+        ? "Payload too large."
+        : err.type === "entity.parse.failed"
+          ? "Malformed JSON body."
+          : "Unsupported request body.";
+    return res.status(err.status).json({ success: false, error });
+  }
+
+  // Log full error server-side, but never leak stack/message to clients
+  console.error("[server] unhandled error:", err);
   res.status(500).json({
     success: false,
     error: config.isProduction

@@ -1,6 +1,6 @@
 import { lazy, Suspense, useEffect, useState, useSyncExternalStore } from "react";
 import { createPortal } from "react-dom";
-import { LuSearch } from "react-icons/lu";
+import { LuCommand, LuSearch } from "react-icons/lu";
 import { isCommandShortcut } from "@/components/ui/commandShortcut";
 
 // The failure is caught here rather than left to throw: the dock sits outside
@@ -11,10 +11,12 @@ const loadPalette = () =>
 const CommandPalette = lazy(loadPalette);
 
 // The prerendered HTML has to say one thing for everyone, so it says "Ctrl K",
-// and a Mac switches to its own key straight after hydration.
+// and Apple platforms switch to their own key straight after hydration. The
+// Command key is an icon rather than the U+2318 character, which the
+// self-hosted font subset cannot draw.
 const subscribeToNothing = () => () => {};
-const clientShortcut = () => (/Mac|iPhone|iPad/.test(navigator.platform) ? "⌘K" : "Ctrl K");
-const serverShortcut = () => "Ctrl K";
+const clientIsApple = () => /Mac|iPhone|iPad/.test(navigator.platform);
+const serverIsApple = () => false;
 
 // The palette's dock item and its keyboard shortcut. The item hides on phones
 // with dock__item--wide-only, but stays mounted, so the shortcut still works in
@@ -23,7 +25,7 @@ const serverShortcut = () => "Ctrl K";
 // on the server, where `open` is always false.
 const CommandMenu = () => {
   const [open, setOpen] = useState(false);
-  const shortcut = useSyncExternalStore(subscribeToNothing, clientShortcut, serverShortcut);
+  const apple = useSyncExternalStore(subscribeToNothing, clientIsApple, serverIsApple);
 
   useEffect(() => {
     const onKeyDown = (event) => {
@@ -53,7 +55,15 @@ const CommandMenu = () => {
       >
         <LuSearch aria-hidden="true" />
         <span className="dock__tooltip" aria-hidden="true">
-          Search ({shortcut})
+          Search (
+          {apple ? (
+            <>
+              <LuCommand aria-hidden="true" />K
+            </>
+          ) : (
+            "Ctrl K"
+          )}
+          )
         </span>
       </button>
 

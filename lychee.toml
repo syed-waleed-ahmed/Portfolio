@@ -1,0 +1,42 @@
+# Link checker configuration for .github/workflows/links.yml (lychee).
+#
+# A portfolio's links are part of what it shows: a dead resume link or project
+# repository costs more here than almost anywhere. The resume URL alone has
+# changed nine times, and an old Drive file answers 404. The weekly run checks
+# the links visitors and readers follow; run it locally with
+#   lychee --config lychee.toml <files>
+# using the file list in links.yml.
+
+# Plain-text extraction for the data modules, alongside the usual formats.
+extensions = ["md", "html", "txt", "js"]
+
+# A few sites answer a burst of checks with 429; that is "slow down", not
+# "gone".
+accept = ["200..=299", "429"]
+max_retries = 3
+retry_wait_time = 5
+timeout = 30
+
+# The web, and local files: relative links between the docs, and the
+# root-relative favicon and font paths in index.html, resolved against
+# frontend/public by --root-dir in links.yml. mailto: addresses are not checked.
+scheme = ["https", "http", "file"]
+include_mail = false
+
+# localhost and 127.0.0.1 appear in the setup docs, never on the page.
+exclude_loopback = true
+
+exclude = [
+  # Both answer automated clients with an error (LinkedIn with HTTP 999,
+  # LeetCode with a bot challenge), so a check would fail on a live profile.
+  '^https://(www\.)?linkedin\.com',
+  '^https://(www\.)?leetcode\.com',
+  # The API, not a page: it sleeps on the free tier and has no page at its
+  # paths. Postman and the e2e suite cover it.
+  '^https://portfolio-backend-kmum\.onrender\.com',
+  # The analytics loader, named in the CSP and the inline snippet.
+  '^https://www\.googletagmanager\.com',
+  # Wildcard hosts quoted from the CSP in the docs, and placeholder domains.
+  '^https://\*\.',
+  '^https?://([a-z0-9-]+\.)*example\.(com|org)',
+]

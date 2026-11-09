@@ -19,9 +19,9 @@ export const socialLinks = {
   source: "https://github.com/syed-waleed-ahmed/Portfolio",
 };
 
-// Page sections below the hero, in order. The single source for the navbar
-// links, the <section> ids App.jsx renders and the heading each section is
-// labelled by (`${id}-title`).
+// Page sections below the hero, in order. The single source for the dock's
+// links, the command palette's "Go to" entries, the <section> ids App.jsx
+// renders and the heading each section is labelled by (`${id}-title`).
 export const sections = [
   { id: "about", label: "About" },
   { id: "experience", label: "Experience" },

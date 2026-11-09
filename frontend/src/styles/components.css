@@ -31,11 +31,14 @@
       height: 1em;
     }
 
-    &:active:not(:disabled) {
+    &:active:not(:disabled, [aria-disabled="true"]) {
       transform: translateY(1px);
     }
 
-    &:disabled {
+    /* aria-disabled as well as disabled: a busy submit button stays focusable
+       (see Contact.jsx), so a keyboard user keeps their place while it works. */
+    &:disabled,
+    &[aria-disabled="true"] {
       cursor: progress;
       opacity: 0.7;
     }
@@ -45,7 +48,7 @@
     background-color: var(--color-accent);
     color: var(--color-accent-ink);
 
-    &:hover:not(:disabled) {
+    &:hover:not(:disabled, [aria-disabled="true"]) {
       background-color: var(--color-accent-hover);
     }
   }
@@ -54,7 +57,7 @@
     border-color: var(--color-border-strong);
     color: var(--color-text-strong);
 
-    &:hover:not(:disabled) {
+    &:hover:not(:disabled, [aria-disabled="true"]) {
       border-color: var(--color-accent-border);
       background-color: var(--color-accent-subtle);
     }
@@ -236,6 +239,20 @@
     opacity: 0;
     translate: 0 var(--reveal-shift);
     filter: blur(var(--reveal-blur));
+  }
+
+  /* Printing lays the page out without scrolling it, so anything the visitor
+     had not scrolled to yet would print blank. Paper gets it all, at once. */
+  @media print {
+    [data-reveal] {
+      transition: none;
+    }
+
+    [data-reveal="pending"] {
+      opacity: 1;
+      translate: none;
+      filter: none;
+    }
   }
 
   /* The same entrance as a one-shot keyframe, for the hero's first paint. */

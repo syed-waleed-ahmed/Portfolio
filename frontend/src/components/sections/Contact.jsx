@@ -90,6 +90,9 @@ const Contact = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    // The button is aria-disabled rather than disabled while a send is in
+    // flight, so Enter in a field could still submit a second time.
+    if (status === "submitting") return;
 
     const nextErrors = validate(values);
     setErrors(nextErrors);
@@ -180,7 +183,17 @@ const Contact = () => {
         </aside>
 
         <div className="contact-panel__form">
-          <form ref={formRef} className="contact-form" noValidate onSubmit={handleSubmit} onFocus={warmUp}>
+          {/* method="post" for the moment before hydration: a submit then is
+              the browser's own, and the default GET would put the message in
+              the address bar, the server logs and analytics. */}
+          <form
+            ref={formRef}
+            className="contact-form"
+            method="post"
+            noValidate
+            onSubmit={handleSubmit}
+            onFocus={warmUp}
+          >
             <p className="contact-form__note">All fields are required.</p>
 
             {/* Honeypot. Off-screen, out of the tab order and hidden from
@@ -213,6 +226,9 @@ const Contact = () => {
                     className="field__control"
                     value={values[name]}
                     onChange={handleChange}
+                    // Read-only while sending: an edit made during a slow
+                    // send would never be sent, then vanish on success.
+                    readOnly={submitting}
                     required
                     aria-invalid={error ? "true" : undefined}
                     aria-describedby={error ? `${name}-error` : undefined}
@@ -230,7 +246,11 @@ const Contact = () => {
             })}
 
             <div className="contact-form__footer">
-              <button type="submit" className="btn btn--primary" disabled={submitting}>
+              {/* aria-disabled, not disabled: disabling the button that has
+                  focus drops focus to the page, so a keyboard or screen
+                  reader user would lose their place just as the result
+                  arrives. handleSubmit ignores it while busy. */}
+              <button type="submit" className="btn btn--primary" aria-disabled={submitting || undefined}>
                 {submitting ? "Sending..." : "Send message"}
               </button>
 

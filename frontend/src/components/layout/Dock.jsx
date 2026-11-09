@@ -35,9 +35,9 @@ const PAGE_LINKS = [
 // and the mobile menu, which also puts every section within a thumb's reach on a
 // phone, and the Home item replaces the separate back-to-top button.
 //
-// Every item is a real link with an accessible name, in the prerendered HTML, so
-// it works before hydration. The hover magnification and tooltips are CSS: see
-// Dock.css.
+// Every navigation item is a real link with an accessible name, in the
+// prerendered HTML, so it works before hydration; only the Search button needs
+// JavaScript. The hover magnification and tooltips are CSS: see Dock.css.
 const Dock = () => {
   const [activeId, setActiveId] = useState(HOME.id);
 

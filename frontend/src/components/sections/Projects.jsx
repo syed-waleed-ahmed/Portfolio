@@ -17,8 +17,10 @@ const Projects = () => (
         title, description, highlight, stack and link line up across a row
         whatever length each card's text runs to. */}
     <ul className="project-grid">
-      {projects.map((project, index) => (
-        <Reveal as="li" key={project.title} className="project-card" delay={(index % 3) * 50}>
+      {/* No delay prop: the stagger depends on how many cards share a row,
+          which only the CSS knows. See Projects.css. */}
+      {projects.map((project) => (
+        <Reveal as="li" key={project.title} className="project-card">
           <p className="project-card__context">{project.role}</p>
           <h3 className="project-card__title">{project.title}</h3>
           <p className="project-card__description">{project.description}</p>
@@ -34,9 +36,9 @@ const Projects = () => (
             ))}
           </ul>
           {/* The last subgrid row. A card with no public repository fills it
-              with `sourceNote` instead of a link: the row is shared across the
-              pair, so leaving it empty left the card with a band of blank
-              surface its neighbour did not have. */}
+              with `sourceNote` instead of a link: the row is shared by every
+              card in the grid row, so leaving it empty left the card with a
+              band of blank surface its neighbours did not have. */}
           {(project.github || project.sourceNote) && (
             <div className="project-card__links">
               {project.github ? (

@@ -1,0 +1,44 @@
+name: Link check
+
+# Checks every link visitors and readers follow: the resume, the project
+# repositories and profiles in frontend/src/data, index.html, and the docs.
+# Weekly rather than per push, because a third-party site having a bad hour
+# should not turn a commit red. A failed run emails the repository owner.
+# Exclusions and retries are in lychee.toml.
+on:
+  schedule:
+    - cron: "47 5 * * 1" # Mondays, after refresh-activity.yml's 04:17 run
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  links:
+    name: Check links
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      # The token raises GitHub's rate limit for the repository links. Root-
+      # relative paths in index.html (/favicon.svg) resolve against public/.
+      - name: Check links
+        uses: lycheeverse/lychee-action@e7477775783ea5526144ba13e8db5eec57747ce8 # v2.9.0
+        with:
+          args: >-
+            --config lychee.toml
+            --no-progress
+            --root-dir ${{ github.workspace }}/frontend/public
+            'frontend/src/data/*.js'
+            frontend/index.html
+            frontend/public/humans.txt
+            README.md
+            CONTRIBUTING.md
+            SECURITY.md
+            CODE_OF_CONDUCT.md
+            'docs/*.md'
+            postman/README.md
+          fail: true
+          token: ${{ secrets.GITHUB_TOKEN }}

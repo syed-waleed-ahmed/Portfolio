@@ -7,8 +7,9 @@ import dotenv from "dotenv";
 // log stays limited to lines this app wrote.
 dotenv.config({ quiet: true });
 
-// Browser origins allowed to hit the API. Override with ALLOWED_ORIGINS
-// (comma-separated) to add a domain without editing code.
+// Browser origins allowed to hit the API. ALLOWED_ORIGINS (comma-separated)
+// REPLACES this list rather than adding to it, so repeat every default that
+// should keep working; setting only a new domain locks out the live site.
 const DEFAULT_ORIGINS = [
   "http://localhost:5173",
   "https://syedwaleedahmed.netlify.app",

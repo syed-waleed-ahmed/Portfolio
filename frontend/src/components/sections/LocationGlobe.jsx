@@ -2,7 +2,10 @@ import { useEffect, useRef } from "react";
 import { locations, locationsCaption } from "@/data/about";
 import "./LocationGlobe.css";
 
-const CANVAS_SIZE = 720; // Twice the largest displayed width, for sharp dots.
+// The drawing buffer, in pixels. About 2.4 times the 19rem (304px) the globe
+// is shown at, so its dots stay sharp on a 2x screen; past 1920px, where the
+// root font scales the globe up to 456px, it is a little soft.
+const CANVAS_SIZE = 720;
 
 // Turns a latitude and longitude into the rotation that faces it, per cobe's docs.
 const DEGREES = Math.PI / 180;
@@ -34,11 +37,6 @@ const LocationGlobe = () => {
     const canvas = canvasRef.current;
     if (!canvas || !("IntersectionObserver" in window)) return;
 
-    // Probed on a spare canvas: cobe does not fail on a missing context, and a
-    // context requested here on the real canvas would fix its settings first.
-    const probe = document.createElement("canvas");
-    if (!probe.getContext("webgl2") && !probe.getContext("webgl")) return;
-
     const still = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     let globe = null;
     let frame = 0;
@@ -58,6 +56,15 @@ const LocationGlobe = () => {
 
     const load = async () => {
       loading = true;
+      // Probed only now, so a screen where the globe is hidden never creates
+      // a WebGL context at all. On a spare canvas: cobe does not fail on a
+      // missing context, and one requested on the real canvas would fix its
+      // settings first. The probe's context is released straight away.
+      const probe = document.createElement("canvas");
+      const gl = probe.getContext("webgl2") || probe.getContext("webgl");
+      if (!gl) return;
+      gl.getExtension("WEBGL_lose_context")?.loseContext();
+
       try {
         const { default: createGlobe } = await import("cobe");
         if (disposed) return;
@@ -89,8 +96,9 @@ const LocationGlobe = () => {
     };
 
     const observer = new IntersectionObserver(
-      ([entry]) => {
-        onScreen = entry.isIntersecting;
+      // The newest entry is the current state; a batch can hold older ones.
+      (entries) => {
+        onScreen = entries.at(-1).isIntersecting;
         if (onScreen && !loading) load();
         if (onScreen && globe) start();
       },

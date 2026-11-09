@@ -4,7 +4,7 @@
 
 [![CI](https://github.com/syed-waleed-ahmed/Portfolio/actions/workflows/ci.yml/badge.svg)](https://github.com/syed-waleed-ahmed/Portfolio/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Node](https://img.shields.io/badge/node-%3E%3D22.13-brightgreen.svg)](.nvmrc)
+[![Node](https://img.shields.io/badge/node-%5E22.19%20%7C%7C%20%3E%3D24.5-brightgreen.svg)](.nvmrc)
 [![Live](https://img.shields.io/badge/live-syedwaleedahmed.me-0a7cff.svg)](https://syedwaleedahmed.me/)
 
 The source of my personal site: an AI engineer's portfolio covering experience,
@@ -47,8 +47,9 @@ forking the repository can run it without reading the source.
 
 - Prerendered at build time and hydrated on load, so the full page is in the
   HTML response and text paints before any JavaScript runs
-- Lean output: about 7 KB of gzipped CSS and 84 KB of gzipped JS on load, with
-  no CSS framework, animation library, UI kit or PWA shell
+- Lean output: about 7 KB of gzipped CSS and 83 KB of gzipped JS on load, held
+  there by size budgets in CI, with no CSS framework, animation library, UI kit
+  or PWA shell
 - A Ctrl/Cmd+K command palette ([cmdk](https://github.com/pacocoursey/cmdk)), a
   GitHub contribution graph
   ([react-activity-calendar](https://github.com/grubersjoe/react-activity-calendar))
@@ -61,11 +62,11 @@ forking the repository can run it without reading the source.
 - A floating dock, expandable work rows and a blur-fade entrance, adapted from
   [magicuidesign/portfolio](https://github.com/magicuidesign/portfolio) (MIT) and
   rewritten in plain CSS with no new dependencies
-- Data-driven content: all copy lives in `src/data/`, with content tests that
-  keep figures traceable and entries consistent
+- Data-driven content: entries, figures and links live in `src/data/`, with
+  content tests that keep figures traceable and entries consistent
 - Accessibility: skip link, named landmarks, one focus style, an accessible
-  dock and form, reduced motion honoured, 40-48px tap targets; the built page
-  passes an axe-core WCAG 2.2 AA scan
+  dock and form, reduced motion honoured, 48px tap targets on touch screens;
+  an axe-core WCAG 2.2 A/AA scan of the built page runs in CI
 - Responsive from 320px up with no horizontal scroll, and a branded 404 page
 - An error boundary per section
 - SEO: canonical URL, `Person` + `WebSite` + `ProfilePage` JSON-LD, OG and
@@ -77,20 +78,33 @@ forking the repository can run it without reading the source.
 
 - Layered Express service: `config/` to `routes/` to `services/`
 - Helmet security headers, rate limiting, a 16 KB body cap, trust-proxy, a
-  centralized error handler and graceful shutdown
+  centralized error handler that answers malformed bodies with a `400` rather
+  than a `500`, and graceful shutdown
 - Honeypot spam trap that answers indistinguishably from a real send
-- HTML escaping and mail-header sanitization on every user-supplied value
+- HTML escaping and mail-header sanitization on every user-supplied value, and
+  a URL-encoded address in the email's `mailto:` links
 - Branded HTML and plain-text email templates
 
 **Engineering**
 
-- 9 backend API tests and 12 frontend content tests on Node's built-in runner,
-  no test dependencies
+- 18 backend API tests, 12 frontend content tests and 15 repository invariants
+  on Node's built-in runner, with no test dependencies; the invariants pin the
+  couplings between files that would otherwise fail silently, such as the CSP
+  hash and the hand-copied palette
+- 20 browser tests in Playwright, with axe-core, against the built site under
+  its production CSP
+- Size Limit budgets on the entry bundle and each lazy chunk
 - Postman collection covering every endpoint and every error path
-- CI runs lint, build, tests, `npm audit` and a gitleaks scan on every push
-- Dependabot opens grouped weekly PRs for minor and patch releases and for
-  GitHub Actions; npm majors are upgraded by hand after reading the changelog
-- A scheduled workflow refreshes the contribution graph's snapshot every Monday
+- CI runs lint, the content tests, the invariants, a build, the size budgets,
+  the browser suite, the backend tests, `npm audit` and a gitleaks scan on
+  every push to `main` and every pull request against it
+- Netlify's build runs lint, the content tests and the invariants first, so a
+  commit that fails them never replaces the live site
+- Every GitHub Action pinned to a commit SHA; Dependabot opens grouped weekly
+  PRs for minor and patch releases and for GitHub Actions, after a seven-day
+  cooldown, and npm majors are upgraded by hand after reading the changelog
+- A scheduled workflow refreshes the contribution graph's snapshot every Monday,
+  and another checks every link in the site's data and the docs
 - One pinned Node version shared by local, CI and Netlify
 
 ---
@@ -122,8 +136,8 @@ Full detail in [`docs/architecture.md`](docs/architecture.md).
 |-------|---------|
 | Frontend | React 19 (prerendered, hydrated), Vite 8, plain CSS in cascade layers, `react-icons`, and lazily loaded `cmdk`, `react-activity-calendar`, `cobe` |
 | Backend | Node.js 24, Express 5 (ESM), Helmet, `express-rate-limit`, Resend |
-| Quality | ESLint 10, `node --test`, Postman |
-| CI/CD | GitHub Actions, Dependabot, gitleaks |
+| Quality | ESLint 10, `node --test`, Playwright + axe-core, Size Limit, Postman |
+| CI/CD | GitHub Actions, Dependabot, gitleaks, lychee |
 | Hosting | Netlify (frontend), Render (backend) |
 
 ---
@@ -132,12 +146,14 @@ Full detail in [`docs/architecture.md`](docs/architecture.md).
 
 ```text
 portfolio/
-├── .github/          CI and snapshot workflows, Dependabot config, PR template
+├── .github/          CI, link-check and snapshot workflows, Dependabot config, PR template
 ├── backend/          Express API (config, routes, services, tests)
-├── frontend/         React app (components, data, styles, scripts, public)
+├── frontend/         React app (components, data, styles, scripts, public, tests)
 ├── docs/             Documentation set - see the index below
 ├── postman/          API collection and environments
 ├── scripts/          One-off generators (social card)
+├── test/             Repository invariants, across both projects
+├── lychee.toml       Link-check configuration
 └── netlify.toml      Node version pin for Netlify builds
 ```
 
@@ -148,7 +164,7 @@ Annotated version in
 
 ## Quick start
 
-Requires Node 22.13 or newer (`.nvmrc` pins 24; run `nvm use`).
+Requires Node `^22.19.0 || >=24.5.0` (`.nvmrc` pins 24; run `nvm use`).
 
 ```bash
 git clone https://github.com/syed-waleed-ahmed/Portfolio.git
@@ -170,13 +186,17 @@ Without Resend credentials everything still runs; the contact endpoint returns
 
 | Script | What it does |
 |--------|--------------|
-| `npm run install:all` | Install both workspaces |
+| `npm run install:all` | Install both projects |
 | `npm run dev:frontend` | Vite dev server on port 5173 |
 | `npm run dev:backend` | Express with `node --watch` on port 5000 |
-| `npm run build` | Production build into `frontend/dist/` |
-| `npm run lint` | ESLint over the frontend |
+| `npm run build` | Lint, content tests and invariants, then the production build into `frontend/dist/` |
+| `npm run lint` | ESLint over the frontend and the backend |
 | `npm test` | Backend API test suite |
+| `npm run test:invariants` | Repository invariants |
 | `npm start` | Backend in production mode |
+
+`frontend/` adds `npm test` (content tests), `npm run size` (bundle budgets) and
+`npm run test:e2e` (browser tests), the last two against an existing build.
 
 ---
 
@@ -198,8 +218,9 @@ Every variable is described in
 
 ### Updating site content
 
-All copy lives in `frontend/src/data/`. Adding a project is a data edit, not a
-component edit:
+Entries, figures and links live in `frontend/src/data/`; only the hero text,
+section subtitles and contact panel text are written in their components.
+Adding a project is a data edit, not a component edit:
 
 ```js
 // frontend/src/data/projects.js
@@ -238,7 +259,7 @@ curl -X POST http://localhost:5000/api/contact \
 ```
 
 ```json
-{ "success": true, "message": "Message sent successfully.", "id": "8f1b…" }
+{ "success": true, "message": "Message sent successfully." }
 ```
 
 ---
@@ -253,8 +274,9 @@ curl -X POST http://localhost:5000/api/contact \
 
 `POST /api/contact` takes `name`, `email`, `subject` and `message`, is limited
 to 5 requests per IP per 15 minutes, caps the body at 16 KB, and returns `400`
-on validation failure, `413` on an oversized body, `429` when limited, `502` on
-a rejected send and `503` when the mailer is unconfigured.
+on validation failure or malformed JSON, `413` on an oversized body, `429` when
+limited, `502` when Resend rejects the send or cannot be reached, and `503`
+when the mailer is unconfigured.
 
 Full contract, including the honeypot and CORS behaviour, in
 [`docs/api.md`](docs/api.md). Runnable requests in
@@ -268,41 +290,59 @@ Branch from `main`, keep the change focused, update the docs alongside the
 behaviour, and run the checks that apply:
 
 ```bash
-npm run lint                   # frontend changes
-npm test --prefix frontend     # content changes
-npm run build                  # frontend changes
-npm test                       # backend changes
+npm run lint                         # frontend and backend
+npm test --prefix frontend           # content changes
+npm run test:invariants              # any change
+npm run build                        # frontend changes; runs the three above first
+npm run size --prefix frontend       # frontend changes, after the build
+npm run test:e2e --prefix frontend   # UI changes, after a build with VITE_API_BASE_URL empty
+npm test                             # backend changes
 ```
 
-CI runs the same commands plus `npm audit` and a gitleaks scan on every push
-and pull request. Conventions, commit format and review expectations are in
-[`CONTRIBUTING.md`](CONTRIBUTING.md).
+CI runs the same checks plus `npm audit` and a gitleaks scan on every push to
+`main` and every pull request against it. Conventions, commit format and review
+expectations are in [`CONTRIBUTING.md`](CONTRIBUTING.md).
 
 ---
 
 ## Testing
 
 ```bash
-npm test                     # 9 backend API tests via node --test
-npm test --prefix frontend   # 12 content tests over frontend/src/data
+npm test                             # 18 backend API tests via node --test
+npm test --prefix frontend           # 12 content tests over frontend/src/data
+npm run test:invariants              # 15 checks that files which must agree still do
+npm run size --prefix frontend       # bundle budgets, after a build
+npm run test:e2e --prefix frontend   # 20 browser tests, after a build
 ```
 
-The suite binds an ephemeral port, covers both health probes, all three
-validation paths, the 16 KB cap, both honeypot branches and the 404 catch-all,
-and never sends real email - so it passes with or without Resend configured.
-Importing the app is itself a check that every module loads.
+The API suite binds an ephemeral port and covers both health probes, all three
+validation paths, the 16 KB cap, malformed JSON, the honeypot answering exactly
+as a real send, CORS, the rate limiter and the 404 catch-all. It blanks the mail
+settings before importing the app, so it can never send real email, whatever
+`backend/.env` holds. Importing the app is itself a check that every module
+loads.
 
 The frontend content tests keep every About figure traceable to the entry that
 claims it, hold project and experience copy to a shared length range, require
 every external link to be absolute `https` and every key and section id to be
-unique, and fail on any character the self-hosted font subset cannot draw. They
-also check that every command palette entry points somewhere real, that its
-search finds the right entry, and that the activity snapshot is a usable year of
-days.
+unique, and fail on any character in the data modules that the self-hosted font
+subset cannot draw. They also check that every command palette entry points
+somewhere real, that its search finds the right entry, and that the activity
+snapshot is a usable year of days.
+
+The repository invariants pin what used to fail silently: the CSP hash of the
+inline analytics script, the six hand-copied palettes, the form rules mirrored
+between frontend and backend, the hand-kept dates, the Node version and the
+no-em-dash house style. The browser suite runs the built page in Chromium under
+its production CSP, with the backend and analytics answered inside the test: no
+console or CSP errors, every section revealed, no horizontal scroll from 320px
+to 1920px, no axe violations, and the palette, the dock's Home link, the
+contact form, the graph's fit on a phone and printing each checked in turn.
 
 Live and manual testing uses the Postman collection in [`postman/`](postman/),
-which additionally covers the rate limiter, the CORS preflight and the wrong
-method. It can be imported straight from GitHub without cloning. Details in
+which runs the same paths against a real server, including the CORS preflights
+and the wrong method. It can be imported straight from GitHub without cloning.
+A weekly workflow checks every link in the site's data and the docs. Details in
 [`docs/testing.md`](docs/testing.md).
 
 ---
@@ -317,8 +357,10 @@ Both sides deploy automatically from `main`:
 | Backend | Render | `npm ci` then `npm start` in `backend/` |
 
 The frontend build prerenders the page, so a build that fails to render fails
-the deploy rather than publishing an empty page. Platform settings, security
-headers, the CSP hash procedure and cache rules are in
+the deploy rather than publishing an empty page, and it runs lint, the content
+tests and the invariants first, so a commit that fails them leaves the previous
+deploy live. Render has no such gate. Platform settings, security headers, the
+CSP hash procedure and cache rules are in
 [`docs/deployment.md`](docs/deployment.md).
 
 ---
@@ -331,8 +373,8 @@ headers, the CSP hash procedure and cache rules are in
 | [API reference](docs/api.md) | Endpoints, payloads, status codes, rate limiting, CORS |
 | [Development](docs/development.md) | Setup, scripts, configuration, conventions, troubleshooting |
 | [Design system](docs/design.md) | CSS architecture, tokens, typography, layout, the dock, command palette, activity graph and globe, motion, accessibility, print, generated assets |
-| [Deployment](docs/deployment.md) | Netlify and Render, CI, the weekly snapshot commit, headers, CSP, caching, releases |
-| [Testing](docs/testing.md) | Automated suite, Postman collection, coverage gaps |
+| [Deployment](docs/deployment.md) | Netlify and its build gate, Render, CI, the weekly snapshot commit and link check, headers, CSP, caching, releases |
+| [Testing](docs/testing.md) | API, content, invariant and browser suites, size budgets, link check, Postman collection, coverage gaps |
 | [Security controls](docs/security.md) | What is implemented and why |
 | [Postman](postman/README.md) | Importing and running the API collection |
 | [Contributing](CONTRIBUTING.md) | What is welcome, workflow, commit format |
@@ -346,14 +388,16 @@ headers, the CSP hash procedure and cache rules are in
 
 | Symptom | Cause |
 |---------|-------|
-| `EBADENGINE` on install | Node below 22.13. Run `nvm use` |
+| `EBADENGINE` on install | Node outside `^22.19.0 \|\| >=24.5.0`. Run `nvm use` |
+| `npm run build` stops before Vite | The prebuild gate: lint, a content test or an invariant failed, and the output names it |
+| `npm run test:e2e` refuses the build | It was built with `VITE_API_BASE_URL` set. Rebuild with the variable empty |
 | Contact form returns `503` | `RESEND_API_KEY`, `EMAIL_FROM` or `EMAIL_TO` missing. The boot log names them |
-| Contact form returns `502` | Resend rejected the send, usually an unverified `EMAIL_FROM` |
-| CORS error in the browser | Your origin is not on the allow-list. Add it to `ALLOWED_ORIGINS` |
+| Contact form returns `502` | Resend rejected the send or could not be reached, usually an unverified `EMAIL_FROM` |
+| CORS error in the browser | Your origin is not on the allow-list. Set `ALLOWED_ORIGINS` to include it, along with every default you still need |
 | Works in Postman, not the browser | Same cause: Postman sends no `Origin` header |
 | `429 Too many requests` | 5 per IP per 15 minutes. Restart the backend to clear the counter |
 | Hydration error in the console | Something renders differently at build time than in the browser. Move it into an effect |
-| Analytics stopped after editing `index.html` | The inline snippet is CSP hash-pinned. Recompute the hash |
+| Analytics stopped after editing `index.html` | The inline snippet is CSP hash-pinned. Recompute the hash; `npm run test:invariants` prints it |
 
 Longer explanations for each in
 [`docs/development.md`](docs/development.md#troubleshooting).

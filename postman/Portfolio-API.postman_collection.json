@@ -2,7 +2,7 @@
 	"info": {
 		"_postman_id": "a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d",
 		"name": "Portfolio API",
-		"description": "API tests for the backend of the Syed Waleed Ahmed portfolio (https://syedwaleedahmed.me).\n\nThe service accepts contact-form submissions and relays them as email through Resend. There is no database and no authentication.\n\n## Endpoints\n\n| Method | Path | Purpose |\n| --- | --- | --- |\n| `GET` | `/` | Root probe |\n| `GET` | `/health` | Health check with server time |\n| `POST` | `/api/contact` | Submit the contact form |\n\n## Setup\n\n1. Import this collection and one of the two environment files.\n2. Select **Portfolio API - Local** (`http://localhost:5000`) or **Portfolio API - Production** (the live Render backend) from the environment dropdown.\n3. Run requests individually, or use the Collection Runner for the whole suite.\n\n`{{baseUrl}}` is the only variable. The collection carries a local default, so it still runs if no environment is selected.\n\n## Before running against production\n\nOnly **POST /api/contact - Valid submission** sends a real email. Every other request stops before the mailer.\n\nThe backend is on Render's free tier and sleeps after inactivity, so the first request can take 30 to 60 seconds to cold-start.\n\n## Notes\n\n- `POST /api/contact` is rate-limited to 5 requests per IP per 15 minutes. Running the full collection uses several of those.\n- Every request asserts status code and response shape with `pm.test()`, so the Runner reports real failures.\n- Full API reference: `docs/api.md` in the repository.",
+		"description": "API tests for the backend of the Syed Waleed Ahmed portfolio (https://syedwaleedahmed.me).\n\nThe service accepts contact-form submissions and relays them as email through Resend. There is no database and no authentication.\n\n## Endpoints\n\n| Method | Path | Purpose |\n| --- | --- | --- |\n| `GET` | `/` | Root probe |\n| `GET` | `/health` | Health check with server time |\n| `POST` | `/api/contact` | Submit the contact form |\n\n## Setup\n\n1. Import this collection and one of the two environment files.\n2. Select **Portfolio API - Local** (`http://localhost:5000`) or **Portfolio API - Production** (the live Render backend) from the environment dropdown.\n3. Run requests individually, or use the Collection Runner for the whole suite.\n\n`{{baseUrl}}` is the only variable. The collection carries a local default, so it still runs if no environment is selected.\n\n## Before running against production\n\nOnly **POST /api/contact - Valid submission** sends a real email. Every other request stops before the mailer.\n\nThe backend is on Render's free tier and sleeps after inactivity, so the first request can take 30 to 60 seconds to cold-start.\n\n## Notes\n\n- `POST /api/contact` is rate-limited to 5 requests per IP per 15 minutes. Six requests in the Contact folder consume that quota, ordered so a full run against a freshly started backend spends the first five and ends on the rate-limit request's `429`.\n- Every request asserts status code and response shape with `pm.test()`, so the Runner reports real failures.\n- Full API reference: `docs/api.md` in the repository.",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"auth": {
@@ -145,7 +145,7 @@
 		},
 		{
 			"name": "Contact",
-			"description": "The contact endpoint and every documented failure path: validation, the body cap, the honeypot and the rate limiter.\n\nSix of these requests consume rate-limit quota and the limit is 5 per IP per 15 minutes, so a full-folder run exhausts it by design. Their tests report a `429` as **skipped** rather than failed, since the limiter has its own request at the end of the folder. Restart the backend to clear the counter and get a full pass again.",
+			"description": "The contact endpoint and every documented failure path: validation, the body cap, malformed JSON, the honeypot and the rate limiter.\n\nSix of these requests consume rate-limit quota against a limit of 5 per IP per 15 minutes. They are ordered so that, against a freshly started backend, the first five fit in the window and the sixth, the rate-limit request at the end of the folder, is the one that gets the `429`. The 16 KB and malformed-JSON requests are rejected by the body parser before the limiter and cost nothing.\n\nA second run inside the window finds it already spent. The other quota-consuming requests then report the `429` as **skipped** rather than failed, since the limiter has its own request. Restart the backend to clear the counter and get a full pass again.",
 			"item": [
 				{
 					"name": "POST /api/contact - Valid submission",
@@ -155,10 +155,10 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"// This endpoint allows 5 requests / IP / 15 min, and a full",
-									"// collection run exceeds that. A 429 here means the window is",
-									"// exhausted, not that the behaviour under test broke - so report",
-									"// it as skipped and let the dedicated rate-limit request cover it.",
+									"// This endpoint allows 5 requests / IP / 15 min. A full run against a",
+									"// fresh backend fits, but a second run inside the window does not. A 429",
+									"// here means the window is spent, not that the behaviour under test broke,",
+									"// so report it as skipped and let the dedicated rate-limit request cover it.",
 									"if (pm.response.code === 429) {",
 									"  pm.test.skip('skipped: rate-limit window exhausted', () => {});",
 									"} else {",
@@ -169,9 +169,11 @@
 									"  const json = pm.response.json();",
 									"",
 									"  if (pm.response.code === 200) {",
-									"    pm.test('returns success payload', () => {",
-									"      pm.expect(json.success).to.eql(true);",
-									"      pm.expect(json.message).to.be.a('string');",
+									"    // Exactly this and nothing more: the honeypot answers with the same",
+									"    // body, so any extra field, such as a mail id, would tell a bot it",
+									"    // had been caught.",
+									"    pm.test('returns the success payload and nothing else', () => {",
+									"      pm.expect(json).to.eql({ success: true, message: 'Message sent successfully.' });",
 									"    });",
 									"  } else {",
 									"    pm.test('returns mailer error payload (503 unconfigured / 502 delivery failed)', () => {",
@@ -202,7 +204,7 @@
 								"contact"
 							]
 						},
-						"description": "Submits a valid payload.\n\n- `200` when the email sends. The response carries Resend's `id`.\n- `503` if the mailer is unconfigured (`RESEND_API_KEY`, `EMAIL_FROM` or `EMAIL_TO` unset on the server).\n- `502` if Resend rejects the send.\n\nThe test accepts all three, so the request passes against a backend running without mail credentials.\n\n**This is the only request in the collection that sends a real email.** Every other request stops before the mailer and is safe to run against production.",
+						"description": "Submits a valid payload.\n\n- `200` when the email sends, with `{ \"success\": true, \"message\": \"Message sent successfully.\" }` and no other field. A tripped honeypot answers with the same bytes, which is why no Resend id comes back.\n- `503` if the mailer is unconfigured (`RESEND_API_KEY`, `EMAIL_FROM` or `EMAIL_TO` unset on the server).\n- `502` if Resend rejects the send.\n\nThe test accepts all three, so the request passes against a backend running without mail credentials.\n\n**This is the only request in the collection that sends a real email.** Every other request stops before the mailer and is safe to run against production.",
 						"body": {
 							"mode": "raw",
 							"raw": "{\n  \"name\": \"Postman Tester\",\n  \"email\": \"tester@example.com\",\n  \"subject\": \"Hello from Postman\",\n  \"message\": \"This is a test message submitted via the Postman collection.\"\n}",
@@ -234,7 +236,7 @@
 										"contact"
 									]
 								},
-								"description": "Submits a valid payload.\n\n- `200` when the email sends. The response carries Resend's `id`.\n- `503` if the mailer is unconfigured (`RESEND_API_KEY`, `EMAIL_FROM` or `EMAIL_TO` unset on the server).\n- `502` if Resend rejects the send.\n\nThe test accepts all three, so the request passes against a backend running without mail credentials.\n\n**This is the only request in the collection that sends a real email.** Every other request stops before the mailer and is safe to run against production.",
+								"description": "Submits a valid payload.\n\n- `200` when the email sends, with `{ \"success\": true, \"message\": \"Message sent successfully.\" }` and no other field. A tripped honeypot answers with the same bytes, which is why no Resend id comes back.\n- `503` if the mailer is unconfigured (`RESEND_API_KEY`, `EMAIL_FROM` or `EMAIL_TO` unset on the server).\n- `502` if Resend rejects the send.\n\nThe test accepts all three, so the request passes against a backend running without mail credentials.\n\n**This is the only request in the collection that sends a real email.** Every other request stops before the mailer and is safe to run against production.",
 								"body": {
 									"mode": "raw",
 									"raw": "{\n  \"name\": \"Postman Tester\",\n  \"email\": \"tester@example.com\",\n  \"subject\": \"Hello from Postman\",\n  \"message\": \"This is a test message submitted via the Postman collection.\"\n}",
@@ -255,7 +257,7 @@
 								}
 							],
 							"cookie": [],
-							"body": "{\n  \"success\": true,\n  \"message\": \"Message sent successfully.\",\n  \"id\": \"8f1b2c3d-4e5f-6a7b-8c9d-0e1f2a3b4c5d\"\n}"
+							"body": "{\n  \"success\": true,\n  \"message\": \"Message sent successfully.\"\n}"
 						},
 						{
 							"name": "503 Mailer not configured",
@@ -277,7 +279,7 @@
 										"contact"
 									]
 								},
-								"description": "Submits a valid payload.\n\n- `200` when the email sends. The response carries Resend's `id`.\n- `503` if the mailer is unconfigured (`RESEND_API_KEY`, `EMAIL_FROM` or `EMAIL_TO` unset on the server).\n- `502` if Resend rejects the send.\n\nThe test accepts all three, so the request passes against a backend running without mail credentials.\n\n**This is the only request in the collection that sends a real email.** Every other request stops before the mailer and is safe to run against production.",
+								"description": "Submits a valid payload.\n\n- `200` when the email sends, with `{ \"success\": true, \"message\": \"Message sent successfully.\" }` and no other field. A tripped honeypot answers with the same bytes, which is why no Resend id comes back.\n- `503` if the mailer is unconfigured (`RESEND_API_KEY`, `EMAIL_FROM` or `EMAIL_TO` unset on the server).\n- `502` if Resend rejects the send.\n\nThe test accepts all three, so the request passes against a backend running without mail credentials.\n\n**This is the only request in the collection that sends a real email.** Every other request stops before the mailer and is safe to run against production.",
 								"body": {
 									"mode": "raw",
 									"raw": "{\n  \"name\": \"Postman Tester\",\n  \"email\": \"tester@example.com\",\n  \"subject\": \"Hello from Postman\",\n  \"message\": \"This is a test message submitted via the Postman collection.\"\n}",
@@ -310,10 +312,10 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"// This endpoint allows 5 requests / IP / 15 min, and a full",
-									"// collection run exceeds that. A 429 here means the window is",
-									"// exhausted, not that the behaviour under test broke - so report",
-									"// it as skipped and let the dedicated rate-limit request cover it.",
+									"// This endpoint allows 5 requests / IP / 15 min. A full run against a",
+									"// fresh backend fits, but a second run inside the window does not. A 429",
+									"// here means the window is spent, not that the behaviour under test broke,",
+									"// so report it as skipped and let the dedicated rate-limit request cover it.",
 									"if (pm.response.code === 429) {",
 									"  pm.test.skip('skipped: rate-limit window exhausted', () => {});",
 									"} else {",
@@ -347,7 +349,7 @@
 								"contact"
 							]
 						},
-						"description": "Omits `name`. Validation stops at the first failure and returns `400` naming the offending field.",
+						"description": "Omits `name`. Validation stops at the first failure and returns `400` naming the offending field.\n\nAn empty `{}` takes the same path and gets the same response, since `name` is checked first.",
 						"body": {
 							"mode": "raw",
 							"raw": "{\n  \"email\": \"tester@example.com\",\n  \"subject\": \"No name field\",\n  \"message\": \"Name is missing on purpose.\"\n}",
@@ -379,7 +381,7 @@
 										"contact"
 									]
 								},
-								"description": "Omits `name`. Validation stops at the first failure and returns `400` naming the offending field.",
+								"description": "Omits `name`. Validation stops at the first failure and returns `400` naming the offending field.\n\nAn empty `{}` takes the same path and gets the same response, since `name` is checked first.",
 								"body": {
 									"mode": "raw",
 									"raw": "{\n  \"email\": \"tester@example.com\",\n  \"subject\": \"No name field\",\n  \"message\": \"Name is missing on purpose.\"\n}",
@@ -412,10 +414,10 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"// This endpoint allows 5 requests / IP / 15 min, and a full",
-									"// collection run exceeds that. A 429 here means the window is",
-									"// exhausted, not that the behaviour under test broke - so report",
-									"// it as skipped and let the dedicated rate-limit request cover it.",
+									"// This endpoint allows 5 requests / IP / 15 min. A full run against a",
+									"// fresh backend fits, but a second run inside the window does not. A 429",
+									"// here means the window is spent, not that the behaviour under test broke,",
+									"// so report it as skipped and let the dedicated rate-limit request cover it.",
 									"if (pm.response.code === 429) {",
 									"  pm.test.skip('skipped: rate-limit window exhausted', () => {});",
 									"} else {",
@@ -524,10 +526,10 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"// This endpoint allows 5 requests / IP / 15 min, and a full",
-									"// collection run exceeds that. A 429 here means the window is",
-									"// exhausted, not that the behaviour under test broke - so report",
-									"// it as skipped and let the dedicated rate-limit request cover it.",
+									"// This endpoint allows 5 requests / IP / 15 min. A full run against a",
+									"// fresh backend fits, but a second run inside the window does not. A 429",
+									"// here means the window is spent, not that the behaviour under test broke,",
+									"// so report it as skipped and let the dedicated rate-limit request cover it.",
 									"if (pm.response.code === 429) {",
 									"  pm.test.skip('skipped: rate-limit window exhausted', () => {});",
 									"} else {",
@@ -615,108 +617,6 @@
 							],
 							"cookie": [],
 							"body": "{\n  \"success\": false,\n  \"error\": \"Field \\\"name\\\" is too long.\"\n}"
-						}
-					]
-				},
-				{
-					"name": "POST /api/contact - Empty body",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"type": "text/javascript",
-								"exec": [
-									"// This endpoint allows 5 requests / IP / 15 min, and a full",
-									"// collection run exceeds that. A 429 here means the window is",
-									"// exhausted, not that the behaviour under test broke - so report",
-									"// it as skipped and let the dedicated rate-limit request cover it.",
-									"if (pm.response.code === 429) {",
-									"  pm.test.skip('skipped: rate-limit window exhausted', () => {});",
-									"} else {",
-									"  pm.test('status is 400', () => pm.response.to.have.status(400));",
-									"",
-									"  pm.test('returns a validation error', () => {",
-									"    const json = pm.response.json();",
-									"    pm.expect(json.success).to.eql(false);",
-									"    pm.expect(json.error).to.be.a('string');",
-									"  });",
-									"}"
-								]
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"url": {
-							"raw": "{{baseUrl}}/api/contact",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"api",
-								"contact"
-							]
-						},
-						"description": "Sends `{}`. Every field is missing, so the first one checked triggers the `400`.",
-						"body": {
-							"mode": "raw",
-							"raw": "{}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						}
-					},
-					"response": [
-						{
-							"name": "400 Bad Request",
-							"originalRequest": {
-								"method": "POST",
-								"header": [
-									{
-										"key": "Content-Type",
-										"value": "application/json"
-									}
-								],
-								"url": {
-									"raw": "{{baseUrl}}/api/contact",
-									"host": [
-										"{{baseUrl}}"
-									],
-									"path": [
-										"api",
-										"contact"
-									]
-								},
-								"description": "Sends `{}`. Every field is missing, so the first one checked triggers the `400`.",
-								"body": {
-									"mode": "raw",
-									"raw": "{}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								}
-							},
-							"status": "Bad Request",
-							"code": 400,
-							"_postman_previewlanguage": "json",
-							"header": [
-								{
-									"key": "Content-Type",
-									"value": "application/json; charset=utf-8"
-								}
-							],
-							"cookie": [],
-							"body": "{\n  \"success\": false,\n  \"error\": \"Missing required field: name.\"\n}"
 						}
 					]
 				},
@@ -831,6 +731,106 @@
 					]
 				},
 				{
+					"name": "POST /api/contact - Malformed JSON",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('status is 400', () => pm.response.to.have.status(400));",
+									"",
+									"pm.test('returns the malformed-JSON error', () => {",
+									"  const json = pm.response.json();",
+									"  pm.expect(json.success).to.eql(false);",
+									"  pm.expect(json.error).to.eql('Malformed JSON body.');",
+									"});",
+									"",
+									"// express.json() runs before the router, so the body is rejected",
+									"// ahead of the rate limiter and this request costs no quota.",
+									"pm.test('did not consume rate-limit quota', () => {",
+									"  pm.expect(pm.response.headers.has('RateLimit-Remaining')).to.eql(false);",
+									"});"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/contact",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"contact"
+							]
+						},
+						"description": "Sends a body cut off mid-object, with `Content-Type: application/json`.\n\n`express.json()` fails to parse it, and the central error handler answers `400` with `{ \"success\": false, \"error\": \"Malformed JSON body.\" }`. Like 'Body over the 16 KB cap', it is rejected before the router, so it costs no rate-limit quota. The test asserts that by checking no `RateLimit-Remaining` header came back.\n\nPostman may flag the body as invalid JSON in the editor. That is the point of the request.",
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Postman Tester\",\n  \"email\": \"tester@example.com\",",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						}
+					},
+					"response": [
+						{
+							"name": "400 Bad Request",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/api/contact",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"contact"
+									]
+								},
+								"description": "Sends a body cut off mid-object, with `Content-Type: application/json`.\n\n`express.json()` fails to parse it, and the central error handler answers `400` with `{ \"success\": false, \"error\": \"Malformed JSON body.\" }`. Like 'Body over the 16 KB cap', it is rejected before the router, so it costs no rate-limit quota. The test asserts that by checking no `RateLimit-Remaining` header came back.\n\nPostman may flag the body as invalid JSON in the editor. That is the point of the request.",
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"name\": \"Postman Tester\",\n  \"email\": \"tester@example.com\",",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"success\": false,\n  \"error\": \"Malformed JSON body.\"\n}"
+						}
+					]
+				},
+				{
 					"name": "POST /api/contact - Honeypot tripped",
 					"event": [
 						{
@@ -838,25 +838,24 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"// This endpoint allows 5 requests / IP / 15 min, and a full",
-									"// collection run exceeds that. A 429 here means the window is",
-									"// exhausted, not that the behaviour under test broke - so report",
-									"// it as skipped and let the dedicated rate-limit request cover it.",
+									"// This endpoint allows 5 requests / IP / 15 min. A full run against a",
+									"// fresh backend fits, but a second run inside the window does not. A 429",
+									"// here means the window is spent, not that the behaviour under test broke,",
+									"// so report it as skipped and let the dedicated rate-limit request cover it.",
 									"if (pm.response.code === 429) {",
 									"  pm.test.skip('skipped: rate-limit window exhausted', () => {});",
 									"} else {",
 									"  pm.test('status is 200', () => pm.response.to.have.status(200));",
 									"",
-									"  // Answers exactly like a real send, on purpose.",
-									"  pm.test('looks like an ordinary success', () => {",
-									"    const json = pm.response.json();",
-									"    pm.expect(json.success).to.eql(true);",
-									"    pm.expect(json.message).to.match(/sent successfully/i);",
+									"  // The same body a real send returns, on purpose: a bot that could tell",
+									"  // rejection from success would just retry without the field.",
+									"  pm.test('body is exactly the success payload', () => {",
+									"    pm.expect(pm.response.json()).to.eql({ success: true, message: 'Message sent successfully.' });",
 									"  });",
 									"",
-									"  // A real send returns Resend's id; a dropped one has none.",
-									"  pm.test('no mail id, so the message was dropped', () => {",
-									"    pm.expect(pm.response.json().id).to.be.undefined;",
+									"  // A mail id used to be the one tell. Neither path returns it now.",
+									"  pm.test('carries no mail id', () => {",
+									"    pm.expect(pm.response.json()).to.not.have.property('id');",
 									"  });",
 									"}"
 								]
@@ -881,7 +880,7 @@
 								"contact"
 							]
 						},
-						"description": "Fills the hidden `website` honeypot field.\n\nThe submission is dropped without sending, but answers with the same `200` and the same message a real send returns - a bot that could tell rejection from success would just retry without the field. The only tell is the absent `id`.\n\nSafe against production: no email is sent. It does, however, consume rate-limit quota, because the check runs inside the router, after the limiter.",
+						"description": "Fills the hidden `website` honeypot field on an otherwise valid payload.\n\nThe submission is dropped without sending, but answers with a `200` byte-identical to a real send: `{ \"success\": true, \"message\": \"Message sent successfully.\" }`. A bot that could tell rejection from success would just retry without the field, so the test asserts the exact body and the absence of an `id`.\n\nThe check runs after validation, so an invalid payload with `website` filled gets the same `400` it would get without it. The trap never answers differently from the public form.\n\nSafe against production: no email is sent. It does, however, consume rate-limit quota, because the check runs inside the router, after the limiter.",
 						"body": {
 							"mode": "raw",
 							"raw": "{\n  \"name\": \"Spam Bot\",\n  \"email\": \"bot@example.com\",\n  \"subject\": \"Buy things\",\n  \"message\": \"Spam body.\",\n  \"website\": \"http://spam.example.com\"\n}",
@@ -913,7 +912,7 @@
 										"contact"
 									]
 								},
-								"description": "Fills the hidden `website` honeypot field.\n\nThe submission is dropped without sending, but answers with the same `200` and the same message a real send returns - a bot that could tell rejection from success would just retry without the field. The only tell is the absent `id`.\n\nSafe against production: no email is sent. It does, however, consume rate-limit quota, because the check runs inside the router, after the limiter.",
+								"description": "Fills the hidden `website` honeypot field on an otherwise valid payload.\n\nThe submission is dropped without sending, but answers with a `200` byte-identical to a real send: `{ \"success\": true, \"message\": \"Message sent successfully.\" }`. A bot that could tell rejection from success would just retry without the field, so the test asserts the exact body and the absence of an `id`.\n\nThe check runs after validation, so an invalid payload with `website` filled gets the same `400` it would get without it. The trap never answers differently from the public form.\n\nSafe against production: no email is sent. It does, however, consume rate-limit quota, because the check runs inside the router, after the limiter.",
 								"body": {
 									"mode": "raw",
 									"raw": "{\n  \"name\": \"Spam Bot\",\n  \"email\": \"bot@example.com\",\n  \"subject\": \"Buy things\",\n  \"message\": \"Spam body.\",\n  \"website\": \"http://spam.example.com\"\n}",
@@ -946,21 +945,30 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"// Passes on every iteration: below the limit it checks the normal",
-									"// response, and on the 429 it checks the limiter's contract.",
+									"// The body omits `name`, so this request can never reach the mailer, even",
+									"// against production. The limiter counts the 400 all the same: run alone,",
+									"// iterations 1-5 get a 400 and the sixth gets the 429. At the end of a full",
+									"// run against a fresh backend the window is already spent, so the first",
+									"// iteration is the limited one.",
 									"const limited = pm.response.code === 429;",
 									"",
-									"pm.test('status is a known contact response', () => {",
-									"  pm.expect([200, 400, 429, 502, 503]).to.include(pm.response.code);",
+									"pm.test('status is 400 or 429', () => {",
+									"  pm.expect([400, 429]).to.include(pm.response.code);",
 									"});",
 									"",
-									"pm.test(limited ? 'rate limited as expected' : 'not yet rate limited (run 6+ iterations)', () => {",
-									"  if (!limited) return;",
+									"pm.test(limited ? 'rate limited as expected' : 'not yet rate limited: a counted 400 (run 6+ iterations)', () => {",
 									"  const json = pm.response.json();",
 									"  pm.expect(json.success).to.eql(false);",
-									"  pm.expect(json.error).to.match(/too many requests/i);",
-									"  pm.expect(pm.response.headers.get('RateLimit-Limit')).to.not.be.null;",
-									"  pm.expect(pm.response.headers.get('RateLimit-Reset')).to.not.be.null;",
+									"  if (limited) {",
+									"    pm.expect(json.error).to.match(/too many requests/i);",
+									"    pm.expect(pm.response.headers.has('RateLimit-Limit')).to.eql(true);",
+									"    pm.expect(pm.response.headers.has('RateLimit-Reset')).to.eql(true);",
+									"  } else {",
+									"    pm.expect(json.error).to.eql('Missing required field: name.');",
+									"    // Only the limiter sets this header, so its presence shows the 400",
+									"    // was counted against the window.",
+									"    pm.expect(pm.response.headers.has('RateLimit-Remaining')).to.eql(true);",
+									"  }",
 									"});"
 								]
 							}
@@ -984,10 +992,10 @@
 								"contact"
 							]
 						},
-						"description": "The limiter allows 5 requests per IP per 15 minutes.\n\nTo trigger it, open the Collection Runner, select this request, set Iterations to 6 or more, and run. The first five pass validation; the sixth returns `429` with `RateLimit-*` headers.\n\nThe limiter is in-memory, so restarting the backend clears the counter. This payload is valid, so against a configured backend the first five iterations send real email - prefer running it locally with the mailer unconfigured.",
+						"description": "The limiter allows 5 requests per IP per 15 minutes and counts every request that reaches it, the `400`s included.\n\nThe body omits `name`, so this request fails validation and can never send email, even against production. To trigger the limit on its own, open the Collection Runner, select this request, set Iterations to 6 or more, and run. Iterations one to five return `400` with `Missing required field: name.`, and the sixth returns `429` with `RateLimit-*` headers.\n\nIn a full collection run against a freshly started backend, the five quota-consuming requests before it have already spent the window, so its first iteration gets the `429`.\n\nThe limiter is in-memory, so restarting the backend clears the counter.",
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"name\": \"Rate Limit Tester\",\n  \"email\": \"ratelimit@example.com\",\n  \"subject\": \"Burst\",\n  \"message\": \"Run this six times in a row with the Runner to trigger a 429.\"\n}",
+							"raw": "{\n  \"email\": \"ratelimit@example.com\",\n  \"subject\": \"Burst\",\n  \"message\": \"No name on purpose, so this never sends. Run it six times in a row to trigger a 429.\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -997,7 +1005,7 @@
 					},
 					"response": [
 						{
-							"name": "429 Too Many Requests",
+							"name": "400 Bad Request (iterations 1-5)",
 							"originalRequest": {
 								"method": "POST",
 								"header": [
@@ -1016,10 +1024,65 @@
 										"contact"
 									]
 								},
-								"description": "The limiter allows 5 requests per IP per 15 minutes.\n\nTo trigger it, open the Collection Runner, select this request, set Iterations to 6 or more, and run. The first five pass validation; the sixth returns `429` with `RateLimit-*` headers.\n\nThe limiter is in-memory, so restarting the backend clears the counter. This payload is valid, so against a configured backend the first five iterations send real email - prefer running it locally with the mailer unconfigured.",
+								"description": "The limiter allows 5 requests per IP per 15 minutes and counts every request that reaches it, the `400`s included.\n\nThe body omits `name`, so this request fails validation and can never send email, even against production. To trigger the limit on its own, open the Collection Runner, select this request, set Iterations to 6 or more, and run. Iterations one to five return `400` with `Missing required field: name.`, and the sixth returns `429` with `RateLimit-*` headers.\n\nIn a full collection run against a freshly started backend, the five quota-consuming requests before it have already spent the window, so its first iteration gets the `429`.\n\nThe limiter is in-memory, so restarting the backend clears the counter.",
 								"body": {
 									"mode": "raw",
-									"raw": "{\n  \"name\": \"Rate Limit Tester\",\n  \"email\": \"ratelimit@example.com\",\n  \"subject\": \"Burst\",\n  \"message\": \"Run this six times in a row with the Runner to trigger a 429.\"\n}",
+									"raw": "{\n  \"email\": \"ratelimit@example.com\",\n  \"subject\": \"Burst\",\n  \"message\": \"No name on purpose, so this never sends. Run it six times in a row to trigger a 429.\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "RateLimit-Limit",
+									"value": "5"
+								},
+								{
+									"key": "RateLimit-Remaining",
+									"value": "4"
+								},
+								{
+									"key": "RateLimit-Reset",
+									"value": "900"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"success\": false,\n  \"error\": \"Missing required field: name.\"\n}"
+						},
+						{
+							"name": "429 Too Many Requests (iteration 6)",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/api/contact",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"contact"
+									]
+								},
+								"description": "The limiter allows 5 requests per IP per 15 minutes and counts every request that reaches it, the `400`s included.\n\nThe body omits `name`, so this request fails validation and can never send email, even against production. To trigger the limit on its own, open the Collection Runner, select this request, set Iterations to 6 or more, and run. Iterations one to five return `400` with `Missing required field: name.`, and the sixth returns `429` with `RateLimit-*` headers.\n\nIn a full collection run against a freshly started backend, the five quota-consuming requests before it have already spent the window, so its first iteration gets the `429`.\n\nThe limiter is in-memory, so restarting the backend clears the counter.",
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"email\": \"ratelimit@example.com\",\n  \"subject\": \"Burst\",\n  \"message\": \"No name on purpose, so this never sends. Run it six times in a row to trigger a 429.\"\n}",
 									"options": {
 										"raw": {
 											"language": "json"

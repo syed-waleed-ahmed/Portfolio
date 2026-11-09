@@ -43,10 +43,12 @@
     justify-content: center;
     padding-inline: var(--space-2);
     pointer-events: none;
+    /* Visibility flips at once on the way back, so the slide-in is seen. The
+       hidden state below delays it instead, so the slide-out is too. */
     transition:
       translate var(--duration-base) var(--ease-out),
       opacity var(--duration-base) ease,
-      visibility 0s linear var(--duration-base);
+      visibility 0s;
 
     @media print {
       display: none;
@@ -174,6 +176,12 @@
     box-shadow: var(--shadow-md);
     opacity: 0;
     translate: -50% 4px;
+
+    /* The Command key glyph in "Search", drawn as an icon because the font
+       subset has no U+2318. Sits on the text's baseline like a letter. */
+    & svg {
+      vertical-align: -0.125em;
+    }
     pointer-events: none;
     transition:
       opacity var(--duration-fast) ease,
@@ -218,6 +226,7 @@
       visibility: hidden;
       opacity: 0;
       translate: 0 100%;
+      transition-delay: 0s, 0s, var(--duration-base);
     }
   }
 }
