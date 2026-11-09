@@ -53,13 +53,35 @@ const token = (name) => {
 
 // ----- 1. The analytics hash ------------------------------------------------
 
+// Every <script> element in a page, in any letter case and with any
+// attributes, ending at a </script> that may carry whitespace or junk before
+// its ">", as browsers accept. Matching only the exact "<script>" would let a
+// second inline script written <SCRIPT> or <script defer> past the check below,
+// to be blocked by the CSP on the live site with no error anywhere.
+const scriptElements = (html) =>
+  [...html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script\b[^>]*>/gi)].map(([, attributes, body]) => ({
+    attributes,
+    body,
+    src: /\bsrc\s*=/i.test(attributes),
+    type: attributes.match(/\btype\s*=\s*["']?([^"'\s>]+)/i)?.[1].toLowerCase(),
+  }));
+
+// The ones the CSP's script-src governs: inline (no src) and executable, so no
+// type or a JavaScript one. The JSON-LD blocks are data and need no hash.
+const EXECUTABLE_TYPES = new Set(["text/javascript", "application/javascript", "module"]);
+const inlineScripts = (html) =>
+  scriptElements(html).filter((script) => !script.src && (!script.type || EXECUTABLE_TYPES.has(script.type)));
+
 test("the CSP pins the hash of the inline analytics script", () => {
-  const html = read("frontend/index.html");
-  const inline = [...html.matchAll(/<script>([\s\S]*?)<\/script>/g)];
-  assert.equal(inline.length, 1, "frontend/index.html should hold exactly one untyped inline <script>, the analytics loader");
+  const inline = inlineScripts(read("frontend/index.html"));
+  assert.equal(
+    inline.length,
+    1,
+    "frontend/index.html should hold exactly one inline executable <script>, the analytics loader; any other needs its own hash in the CSP"
+  );
   // CRLF normalised, as docs/deployment.md computes it: the browser hashes the
   // LF bytes Netlify serves, whatever a Windows checkout holds.
-  const hash = createHash("sha256").update(inline[0][1].replace(/\r\n/g, "\n")).digest("base64");
+  const hash = createHash("sha256").update(inline[0].body.replace(/\r\n/g, "\n")).digest("base64");
   const pinned = pick(read("frontend/public/_headers"), /'sha256-([A-Za-z0-9+/=]+)'/, "a sha256 source in the CSP");
   assert.equal(
     pinned,

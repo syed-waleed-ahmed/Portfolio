@@ -26,6 +26,12 @@ than by individual commit.
   globs and the package is a development dependency, but both Dependabot alerts
   are now resolved and `npm audit` reports nothing, dev dependencies included.
   `docs/development.md` records when to remove the override.
+- **The invariants test found the inline analytics script by its exact
+  spelling** (CodeQL `js/bad-tag-filter`). It matched only a bare lowercase
+  `<script>`, so a second inline script written `<SCRIPT>` or `<script defer>`
+  would have passed it while the CSP blocked that script on the live site. It
+  now finds `<script>` elements in any case and with any attributes, keeps the
+  inline executable ones, and fails unless there is exactly one.
 
 ## [2.0.0] - 2026-11-10
 

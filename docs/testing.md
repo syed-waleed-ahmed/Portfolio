@@ -131,7 +131,7 @@ build as well, and every failure message says what to change.
 
 | Test | Asserts |
 |------|---------|
-| `the CSP pins the hash of the inline analytics script` | The `sha256-` source in `_headers` is the hash of the one untyped inline `<script>` in `index.html`, CRLF normalised |
+| `the CSP pins the hash of the inline analytics script` | `index.html` holds exactly one inline executable `<script>` (found in any letter case and with any attributes; JSON-LD and `src` scripts excluded), and the `sha256-` source in `_headers` is its hash, CRLF normalised |
 | `index.html keeps the exact root element the prerender looks for` | `<div id="root"></div>` appears exactly once |
 | `the portrait preload matches the AVIF source in Hero.jsx` | `imagesrcset` and `imagesizes` equal the AVIF `srcSet` and `PORTRAIT_SIZES` |
 | `the theme-color metas and 404.html use the token palette` | Both theme-color metas equal `--color-bg`, and every hex colour in `404.html` is a token |
