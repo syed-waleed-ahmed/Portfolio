@@ -15,6 +15,18 @@ than by individual commit.
 
 ## [Unreleased]
 
+### Security
+
+- **`minimatch` moves to 11 under ESLint** (GHSA-g3hv-75wg-m249, moderate: a
+  crafted glob pattern could expand into quadratic work). Every 10.x release is
+  affected and ESLint 10.14 still requires `^10`, so Dependabot could not
+  update it and `npm audit fix` would have downgraded ESLint. Both projects now
+  carry an npm `overrides` entry for `minimatch` `^11.0.1` (resolving 11.0.5).
+  The risk here was low, since ESLint only matches the repository's own config
+  globs and the package is a development dependency, but both Dependabot alerts
+  are now resolved and `npm audit` reports nothing, dev dependencies included.
+  `docs/development.md` records when to remove the override.
+
 ## [2.0.0] - 2026-11-10
 
 ### Added

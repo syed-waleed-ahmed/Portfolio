@@ -137,9 +137,22 @@ Two rules are worth stating explicitly:
   `npm ci`, which fails outright if the two disagree.
 - **A transitive advisory is still your advisory.** `npm audit fix` resolves
   most of them by tightening a nested version in the lockfile alone, which is a
-  lockfile-only commit and needs no `package.json` edit. The weekly Dependabot
-  PRs will not clear one for you, because they only bump what `package.json`
-  names directly.
+  lockfile-only commit and needs no `package.json` edit. The weekly grouped
+  PRs will not clear one, because they only bump what `package.json` names
+  directly; Dependabot security updates (enabled) open their own PR when a
+  patched version fits the dependents' ranges.
+- **When no compatible patch exists, override it, and say when to stop.** In
+  November 2026 every `minimatch` 10.x was vulnerable (GHSA-g3hv-75wg-m249),
+  the fix was 11.0.1, and ESLint 10.14 still required `^10`, so neither
+  Dependabot nor `npm audit fix` could resolve it without downgrading ESLint.
+  Both `package.json` files therefore carry `"overrides": { "minimatch":
+  "^11.0.1" }`. ESLint calls only `new Minimatch(pattern, { dot: true })`,
+  `.match()` and `.pattern`, which minimatch 11 kept, and lint was checked to
+  still ignore `dist/`, catch an error, and apply each config block to its
+  files. Remove the override once `npm view eslint dependencies.minimatch`
+  and `npm view @eslint/config-array dependencies.minimatch` both allow 11:
+  delete the `overrides` key, run `npm install`, and check `npm ls minimatch`
+  still resolves 11.
 
 The audit gate covers production dependencies at high severity and above. A
 dev-dependency finding does not fail CI, but it is still worth clearing while
