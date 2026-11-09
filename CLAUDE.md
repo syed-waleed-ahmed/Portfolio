@@ -124,7 +124,7 @@ Middleware order is deliberate: Helmet, CORS, the 16 KB `express.json` cap, then
 - **No em dashes anywhere:** code, comments, copy, docs, this file.
 - Comments explain why, not what. Match the tone of the existing ones.
 - Conventional Commits, under about 72 characters. Types in use: `feat`, `fix`, `docs`, `refactor`, `perf`, `test`, `chore`, `ci`, `content`, `seo`.
-- Update docs in the same commit as the behaviour. Add a `CHANGELOG.md` entry under `Unreleased` for anything user-visible. If the API surface changes, update `docs/api.md` and the collection in `postman/`.
+- Update docs in the same commit as the behaviour. Add a `CHANGELOG.md` entry under `## [Unreleased]` for anything user-visible. A release moves those entries under `## [X.Y.Z] - YYYY-MM-DD` with a compare link at the end of the file, sets that version in all three `package.json` files (the invariants test checks they match), and is tagged `vX.Y.Z` with a GitHub Release built from its section: the steps are in `docs/deployment.md#release-process`. If the API surface changes, update `docs/api.md` and the collection in `postman/`.
 - Keep the lean bundle: no CSS framework, animation library, UI kit or state manager. Measure a new dependency with and without it, and prefer a release at least two weeks old; Dependabot waits seven days (`cooldown` in `.github/dependabot.yml`).
 - Workflows pin every action to a full commit SHA with a `# vX.Y.Z` comment, and `actions/checkout` gets `persist-credentials: false` unless the job pushes.
 - Keep the personal touches through any design clean-up: the hand-drawn crewmate favicon and the `hi, Waleed here.` hero greeting are deliberate.

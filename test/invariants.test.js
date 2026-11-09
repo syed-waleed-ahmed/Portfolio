@@ -189,6 +189,18 @@ test("the Node version is pinned the same way everywhere", () => {
   }
 });
 
+test("the three manifests and the newest changelog release name one version", () => {
+  const versions = ["package.json", "frontend/package.json", "backend/package.json"].map((file) => [file, JSON.parse(read(file)).version]);
+  const released = pick(read("CHANGELOG.md"), /^## \[(\d+\.\d+\.\d+)\] - \d{4}-\d{2}-\d{2}$/m, "a released version heading in CHANGELOG.md");
+  for (const [file, version] of versions) {
+    assert.equal(
+      version,
+      released,
+      `${file} is ${version} but the newest release in CHANGELOG.md is ${released}. A release moves all three manifests and the changelog together (docs/deployment.md#release-process).`
+    );
+  }
+});
+
 // ----- 7. The contact form, mirrored on both sides --------------------------
 
 test("the contact form's fields, email pattern and honeypot match the API", () => {

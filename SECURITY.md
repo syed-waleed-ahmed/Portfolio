@@ -23,8 +23,12 @@ If you find a security issue in this codebase or the deployed site
 (`syedwaleedahmed.me`), please report it privately rather than opening a
 public GitHub issue.
 
-- **Email:** [syedwaleedahmed9@gmail.com](mailto:syedwaleedahmed9@gmail.com)
-- **Subject:** `Security: <short summary>`
+- **Preferred:** GitHub's private form,
+  [Report a vulnerability](https://github.com/syed-waleed-ahmed/Portfolio/security/advisories/new),
+  which keeps the report and any fix in a private advisory until it is
+  published.
+- **Or email:** [syedwaleedahmed9@gmail.com](mailto:syedwaleedahmed9@gmail.com),
+  with the subject `Security: <short summary>`.
 
 Please include:
 
@@ -62,7 +66,12 @@ Out of scope:
 Some classes of issue are already gated in CI on every push to `main` and every
 pull request against it, so a report in these areas may already be covered:
 
-- **Secret scanning** - `gitleaks` runs over the full git history
+- **Secret scanning** - `gitleaks` runs over the full git history, and
+  GitHub's secret scanning, with push protection, refuses a push that contains
+  a recognised credential
+- **Dependency alerts** - Dependabot alerts and security updates open a pull
+  request for a vulnerable dependency, transitive ones included, without
+  waiting for the weekly run
 - **Dependency audit** - `npm audit --omit=dev --audit-level=high` on both
   projects. Note this gates *production* dependencies at high severity and
   above; dev-dependency and low-severity findings are reviewed manually rather

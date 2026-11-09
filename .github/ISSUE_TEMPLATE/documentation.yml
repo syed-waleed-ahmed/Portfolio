@@ -1,0 +1,25 @@
+name: Documentation problem
+description: Something in the README, docs/ or a code comment is wrong, unclear or out of date.
+labels: ["documentation"]
+body:
+  - type: input
+    id: location
+    attributes:
+      label: Which file and section?
+      placeholder: docs/development.md, "Updating site content"
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: What is wrong or unclear?
+      description: Quote the text if you can, and say what the code actually does.
+    validations:
+      required: true
+
+  - type: textarea
+    id: suggestion
+    attributes:
+      label: Suggested wording
+      description: Optional. A pull request is welcome too.

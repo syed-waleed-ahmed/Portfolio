@@ -1,0 +1,66 @@
+name: Bug report
+description: Something on the site, the contact API or the tooling does not work as it should.
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time. Security issues do not belong here: please follow
+        [SECURITY.md](https://github.com/syed-waleed-ahmed/Portfolio/blob/main/SECURITY.md)
+        and report them privately.
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Where is the problem?
+      options:
+        - The site (layout, behaviour, accessibility, performance)
+        - The contact form or its API
+        - CI, tests or other tooling
+        - Somewhere else
+    validations:
+      required: true
+
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened, and what did you expect?
+      placeholder: The Experience rows do not open with the keyboard. I expected Enter to toggle them.
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: The URL or endpoint, and what you did, step by step.
+      placeholder: |
+        1. Open https://syedwaleedahmed.me/ at 390px wide
+        2. Tab to the first Experience row
+        3. Press Enter
+    validations:
+      required: true
+
+  - type: input
+    id: environment
+    attributes:
+      label: Browser, OS and viewport
+      description: For an API problem, give the request body and the response instead.
+      placeholder: Firefox 133, Windows 11, 1440 x 900
+
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Screenshots, console output or logs
+      description: Anything that shows the problem. Remove personal details first.
+      render: text
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Before submitting
+      options:
+        - label: I searched the existing issues and this is not a duplicate.
+          required: true
+        - label: This is not a security vulnerability.
+          required: true

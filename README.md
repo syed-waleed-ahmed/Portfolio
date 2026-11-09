@@ -3,6 +3,8 @@
 [![Syed Waleed Ahmed, AI Engineer: multi-agent systems, RAG pipelines and LLM workflow automation](frontend/public/images/og-card.png)](https://syedwaleedahmed.me/)
 
 [![CI](https://github.com/syed-waleed-ahmed/Portfolio/actions/workflows/ci.yml/badge.svg)](https://github.com/syed-waleed-ahmed/Portfolio/actions/workflows/ci.yml)
+[![Link check](https://github.com/syed-waleed-ahmed/Portfolio/actions/workflows/links.yml/badge.svg)](https://github.com/syed-waleed-ahmed/Portfolio/actions/workflows/links.yml)
+[![Release](https://img.shields.io/github/v/release/syed-waleed-ahmed/Portfolio)](https://github.com/syed-waleed-ahmed/Portfolio/releases)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Node](https://img.shields.io/badge/node-%5E22.19%20%7C%7C%20%3E%3D24.5-brightgreen.svg)](.nvmrc)
 [![Live](https://img.shields.io/badge/live-syedwaleedahmed.me-0a7cff.svg)](https://syedwaleedahmed.me/)
@@ -87,7 +89,7 @@ forking the repository can run it without reading the source.
 
 **Engineering**
 
-- 18 backend API tests, 12 frontend content tests and 15 repository invariants
+- 18 backend API tests, 12 frontend content tests and 16 repository invariants
   on Node's built-in runner, with no test dependencies; the invariants pin the
   couplings between files that would otherwise fail silently, such as the CSP
   hash and the hand-copied palette
@@ -146,10 +148,10 @@ Full detail in [`docs/architecture.md`](docs/architecture.md).
 
 ```text
 portfolio/
-├── .github/          CI, link-check and snapshot workflows, Dependabot config, PR template
-├── backend/          Express API (config, routes, services, tests)
-├── frontend/         React app (components, data, styles, scripts, public, tests)
-├── docs/             Documentation set - see the index below
+├── .github/          Workflows, Dependabot, issue forms, PR template, CODEOWNERS
+├── backend/          Express API (config, routes, services, tests), with its own README
+├── frontend/         React app (components, data, styles, scripts, public, tests), with its own README
+├── docs/             Documentation set, indexed in docs/README.md and below
 ├── postman/          API collection and environments
 ├── scripts/          One-off generators (social card)
 ├── test/             Repository invariants, across both projects
@@ -310,7 +312,7 @@ expectations are in [`CONTRIBUTING.md`](CONTRIBUTING.md).
 ```bash
 npm test                             # 18 backend API tests via node --test
 npm test --prefix frontend           # 12 content tests over frontend/src/data
-npm run test:invariants              # 15 checks that files which must agree still do
+npm run test:invariants              # 16 checks that files which must agree still do
 npm run size --prefix frontend       # bundle budgets, after a build
 npm run test:e2e --prefix frontend   # 20 browser tests, after a build
 ```

@@ -6,14 +6,26 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 The site deploys continuously from `main`, so a version heading marks a
-documented milestone rather than a build artifact. Entries dated before this
-file existed were reconstructed from the git history and group the work by
-milestone rather than by individual commit.
+documented milestone rather than a build artifact. Each version is tagged
+`vX.Y.Z` and published as a GitHub Release with its section below as the
+notes; the tags for versions before 2.0.0 were added on 2026-11-10, on the
+last commit of each version's date. Entries dated before this file existed
+were reconstructed from the git history and group the work by milestone rather
+than by individual commit.
 
-## Unreleased
+## [Unreleased]
+
+## [2.0.0] - 2026-11-10
 
 ### Added
 
+- **Open-source repository structure.** Issue forms for a bug, an improvement
+  and a documentation problem, with blank issues turned off and links that
+  route security reports and personal contact elsewhere
+  (`.github/ISSUE_TEMPLATE/`); a `CODEOWNERS` file; a `docs/README.md` index
+  for anyone opening the folder on GitHub; and short READMEs in `frontend/` and
+  `backend/` giving each project's layout and commands. Every version in this
+  file is now a git tag and a GitHub Release, the older ones included.
 - **Command palette** ([cmdk](https://github.com/pacocoursey/cmdk)): Ctrl/Cmd+K, or
   the Search item in the dock, jumps to a section, opens a project's repository
   or copies the email address. Searching a technology finds the project built with
@@ -51,7 +63,7 @@ milestone rather than by individual commit.
   named exports once left the About "Approach" paragraphs and the globe caption
   unchecked.
 - **Repository invariants** (`test/invariants.test.js` at the root, `npm run
-  test:invariants`): 15 tests with no dependencies, reading source files only,
+  test:invariants`): 16 tests with no dependencies, reading source files only,
   for couplings that used to fail silently. They check that the CSP hash matches
   the inline analytics script, that `index.html` keeps the exact root element the
   prerender looks for, that the portrait preload matches the AVIF source in
@@ -152,6 +164,11 @@ milestone rather than by individual commit.
 
 ### Changed
 
+- The three manifests move to version 2.0.0 together (the frontend's was
+  Vite's default `0.0.0`, the backend's `1.0.0`), and the frontend and backend
+  ones carry the same author, licence and repository fields as the root. The
+  invariants test now fails if the three versions or the newest version heading
+  here disagree.
 - **Visual redesign on the same identity** (dark navy, cyan accent). Hanken
   Grotesk replaces NTR: NTR ships one weight, so every bold on the site was
   synthesised by the browser. Section headers are left-aligned with no gradient
@@ -520,6 +537,11 @@ milestone rather than by individual commit.
 
 ### Security
 
+- **GitHub's own protections are on.** Private vulnerability reporting, which
+  `SECURITY.md` now names as the preferred route; secret scanning with push
+  protection; and Dependabot alerts and security updates, which open a pull
+  request for a vulnerable transitive dependency instead of leaving the audit
+  step red until someone runs `npm audit fix`.
 - **The notification email's reply links could be rewritten by the sender.**
   The submitter's address went into its `mailto:` links HTML-escaped but not
   URL-encoded, and the API's email pattern admits `?`, `&` and `=`, so an
@@ -565,7 +587,7 @@ milestone rather than by individual commit.
   the frontend's dev tree, resolved in the lockfile. Dev-only, so they were not
   failing CI.
 
-## 1.0.0 - 2026-07-15
+## [1.0.0] - 2026-07-15
 
 The redesign that produced the current site.
 
@@ -595,7 +617,7 @@ The redesign that produced the current site.
 - Anchor jumps land on the correct section, with smoother scrolling.
 - Email template ink matched to the site background.
 
-## 0.6.0 - 2026-06-28
+## [0.6.0] - 2026-06-28
 
 ### Added
 
@@ -609,7 +631,7 @@ The redesign that produced the current site.
 - Hardened `.gitignore`; stopped tracking local editor and agent settings.
 - HTML-escape hardening in the email template.
 
-## 0.5.0 - 2026-05-19
+## [0.5.0] - 2026-05-19
 
 ### Added
 
@@ -627,7 +649,7 @@ The redesign that produced the current site.
   `engines` fields.
 - Dropped `tsparticles` from the frontend.
 
-## 0.4.0 - 2026-04-20
+## [0.4.0] - 2026-04-20
 
 ### Added
 
@@ -635,7 +657,7 @@ The redesign that produced the current site.
   the shared portfolio constants.
 - `_headers` file configuring security headers and content types on Netlify.
 
-## 0.3.0 - 2026-03-06
+## [0.3.0] - 2026-03-06
 
 ### Added
 
@@ -651,7 +673,7 @@ The redesign that produced the current site.
 - Analytics deferred to `requestIdleCallback` so it never blocks first paint.
 - URLs normalized to the apex domain.
 
-## 0.2.0 - 2025-12-26
+## [0.2.0] - 2025-12-26
 
 ### Added
 
@@ -663,10 +685,20 @@ The redesign that produced the current site.
 
 - Email handling moved to Resend, with improved error handling.
 
-## 0.1.0 - 2025-12-05
+## [0.1.0] - 2025-12-05
 
 ### Added
 
 - Initial React portfolio: hero, about, experience, projects, skills, interests
   and contact sections.
 - MIT licence and first README.
+
+[Unreleased]: https://github.com/syed-waleed-ahmed/Portfolio/compare/v2.0.0...HEAD
+[2.0.0]: https://github.com/syed-waleed-ahmed/Portfolio/compare/v1.0.0...v2.0.0
+[1.0.0]: https://github.com/syed-waleed-ahmed/Portfolio/compare/v0.6.0...v1.0.0
+[0.6.0]: https://github.com/syed-waleed-ahmed/Portfolio/compare/v0.5.0...v0.6.0
+[0.5.0]: https://github.com/syed-waleed-ahmed/Portfolio/compare/v0.4.0...v0.5.0
+[0.4.0]: https://github.com/syed-waleed-ahmed/Portfolio/compare/v0.3.0...v0.4.0
+[0.3.0]: https://github.com/syed-waleed-ahmed/Portfolio/compare/v0.2.0...v0.3.0
+[0.2.0]: https://github.com/syed-waleed-ahmed/Portfolio/compare/v0.1.0...v0.2.0
+[0.1.0]: https://github.com/syed-waleed-ahmed/Portfolio/releases/tag/v0.1.0

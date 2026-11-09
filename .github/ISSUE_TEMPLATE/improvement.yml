@@ -1,0 +1,50 @@
+name: Improvement
+description: An accessibility, performance, security or tooling improvement.
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Improvements of these kinds are welcome. Content changes and redesigns are not:
+        the copy describes one person, and the visual language is deliberate. The full
+        scope is in [CONTRIBUTING.md](https://github.com/syed-waleed-ahmed/Portfolio/blob/main/CONTRIBUTING.md#what-is-welcome).
+
+  - type: dropdown
+    id: kind
+    attributes:
+      label: What kind of improvement?
+      options:
+        - Accessibility
+        - Performance
+        - Security
+        - Tooling, tests or CI
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: What would you change?
+    validations:
+      required: true
+
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Why, with evidence
+      description: >-
+        A measurement, an axe or Lighthouse finding, a spec reference or a failing case.
+        A claim about speed should come with a before and after.
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Before submitting
+      options:
+        - label: This is not a content change or a redesign.
+          required: true
+        - label: >-
+            If it adds a dependency, it loads as a separate chunk on intent and gets a
+            budget in frontend/.size-limit.json (see CONTRIBUTING.md).

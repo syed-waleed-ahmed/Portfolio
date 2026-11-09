@@ -34,17 +34,22 @@ portfolio/
 │   ├── workflows/ci.yml            Lint, tests, invariants, build, size, browser tests, audit, secret scan
 │   ├── workflows/links.yml         Weekly link check (lychee)
 │   ├── workflows/refresh-activity.yml  Weekly commit of the contribution snapshot
-│   ├── dependabot.yml              Grouped weekly dependency PRs
+│   ├── dependabot.yml              Grouped weekly dependency PRs, after a seven-day cooldown
+│   ├── ISSUE_TEMPLATE/             Issue forms (bug, improvement, documentation); blank issues off
+│   ├── CODEOWNERS                  Requests the maintainer's review on every PR
 │   └── PULL_REQUEST_TEMPLATE.md
 ├── backend/
 │   ├── config/env.js               Env parsing + boot-time validation
 │   ├── routes/contactRoutes.js     Rate limit, validation, honeypot
 │   ├── services/mailerService.js   Resend delivery + email templates
-│   ├── test/contact.test.js        API tests (node --test)
+│   ├── test/contact.test.js        API tests with the mailer unconfigured (node --test)
+│   ├── test/delivery.test.js       The send path, against a fake Resend
 │   ├── server.js                   App assembly; exports app, listens when run directly
 │   ├── eslint.config.js            Lint rules for Node
+│   ├── README.md                   The project's layout and commands
 │   └── .env.example
 ├── frontend/
+│   ├── README.md                   The project's layout and commands
 │   ├── public/                     Static passthrough (see below)
 │   ├── scripts/prerender.mjs       Writes the rendered page into dist/index.html
 │   ├── scripts/fetch-github-activity.mjs  Refreshes the contribution snapshot
@@ -67,15 +72,20 @@ portfolio/
 │   ├── vite.config.js
 │   ├── eslint.config.js
 │   └── .env.example
-├── docs/                           This documentation set
-├── postman/                        Collection + local and production envs
+├── docs/                           This documentation set, indexed by docs/README.md
+├── postman/                        Collection + local and production envs, with a README
 ├── scripts/gen-og-card.mjs         Rebuilds the 1200x630 social card
 ├── test/invariants.test.js         Repository invariants: files that must agree (node --test)
 ├── .editorconfig  .gitattributes  .gitignore  .npmrc  .nvmrc
 ├── lychee.toml                     Link checker configuration
 ├── netlify.toml                    Pins NODE_VERSION for Netlify builds
-└── package.json                    Root scripts that drive both projects
+├── package.json                    Root scripts that drive both projects
+└── README.md  CHANGELOG.md  CONTRIBUTING.md  CODE_OF_CONDUCT.md  SECURITY.md  LICENSE  CLAUDE.md
 ```
+
+The community files sit at the root, where GitHub and readers look first.
+`CLAUDE.md` is guidance for AI coding agents working in the repository; it is
+kept in step with the docs like any other.
 
 `frontend/public/` is copied verbatim into the build. It holds the branded
 `404.html`, the Netlify `_headers` file, the self-hosted font, favicons, the

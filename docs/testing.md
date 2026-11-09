@@ -123,7 +123,7 @@ bundler. They also run in Netlify's build, through the prebuild gate.
 npm run test:invariants      # from the repository root
 ```
 
-Fifteen tests in `test/invariants.test.js` at the repository root, on the same
+Sixteen tests in `test/invariants.test.js` at the repository root, on the same
 runner with no dependencies. Each pins a coupling that fails silently: two files
 that must agree, where a mismatch breaks nothing a build or a glance would
 catch. They read source files only, never build output, so they run before a
@@ -141,6 +141,7 @@ build as well, and every failure message says what to change.
 | `the globe's WebGL cyan is the accent` | `CYAN` is `--color-accent` as 0-1 fractions |
 | `the three last-modified dates agree` | `dateModified` in `index.html`, `<lastmod>` in `sitemap.xml` and `Last update` in `humans.txt` name the same day |
 | `the Node version is pinned the same way everywhere` | `.nvmrc` and `NODE_VERSION` in `netlify.toml` name the same major, and every `engines.node` admits it |
+| `the three manifests and the newest changelog release name one version` | The root, frontend and backend `package.json` versions equal the newest `## [X.Y.Z] - date` heading in `CHANGELOG.md` |
 | `the contact form's fields, email pattern and honeypot match the API` | Field names and caps, `EMAIL_RE` and the honeypot name agree between `Contact.jsx` and `contactRoutes.js` |
 | `the CSP and the DNS hint name the API origin the form calls` | The default origin in `Contact.jsx` is in `connect-src` and is the `dns-prefetch` target |
 | `the graph and the globe switch at the breakpoint the calendar measures` | `GitHubActivity.css` and `LocationGlobe.css` both use the `WIDE` query from `GitHubActivityCalendar.jsx` |

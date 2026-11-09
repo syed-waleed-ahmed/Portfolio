@@ -322,10 +322,26 @@ release is a documentation event rather than a build event:
    If the site has not changed, check the Netlify deploy log: a failed gate
    keeps the previous deploy live.
 3. Move the entries under `Unreleased` in [`CHANGELOG.md`](../CHANGELOG.md)
-   into a new dated version heading.
+   into a new heading, `## [X.Y.Z] - YYYY-MM-DD`, leave an empty
+   `## [Unreleased]` above it, and add the version's compare link to the
+   references at the end of the file.
+4. Set the same version in all three `package.json` files, then run
+   `npm install --package-lock-only` in `frontend/` and `backend/` so the
+   lockfiles agree. The repository invariants fail if any manifest disagrees
+   with the newest release heading. Commit, push, and wait for CI.
+5. Tag the release commit and publish its notes from the changelog section:
 
-Bump the version in the root `package.json` when the change is significant
-enough to reference by number.
+   ```bash
+   git tag -a vX.Y.Z -m "X.Y.Z" && git push origin vX.Y.Z
+   awk '/^## \[X.Y.Z\]/{f=1;next} /^## \[/{f=0} f' CHANGELOG.md > notes.md
+   gh release create vX.Y.Z --title "X.Y.Z" --notes-file notes.md --verify-tag
+   ```
+
+Versions follow [Semantic Versioning](https://semver.org/) read for a site:
+**major** for a change to the API contract or a redesign (2.0.0 had both),
+**minor** for a new feature or section, **patch** for fixes, content and
+dependency updates. Every release so far is tagged `vX.Y.Z` and published as
+a GitHub Release.
 
 ---
 

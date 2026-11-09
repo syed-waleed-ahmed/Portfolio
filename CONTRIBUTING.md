@@ -35,8 +35,10 @@ If you are unsure whether something fits, open an issue before writing code.
 
 ## Reporting a bug
 
-Open a [GitHub issue](https://github.com/syed-waleed-ahmed/Portfolio/issues)
-including:
+Open an issue with the
+[bug report form](https://github.com/syed-waleed-ahmed/Portfolio/issues/new?template=bug_report.yml).
+There are forms for an improvement and a documentation problem too, and blank
+issues are turned off, so every report arrives with what it needs:
 
 - What you expected and what happened instead
 - Steps to reproduce, with the URL or endpoint
