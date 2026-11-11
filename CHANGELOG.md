@@ -15,6 +15,19 @@ than by individual commit.
 
 ## [Unreleased]
 
+## [2.1.3] - 2026-11-12
+
+### Fixed
+
+- **The footer's source link meets the touch-target floor.** On a touch
+  screen it was 22px tall, the one tappable element without the 48px
+  minimum; WCAG exempts it as an inline link, but the README promises 48px.
+
+### Changed
+
+- **The GitHub activity snapshot is refreshed by hand** to 2026-11-11 (1,008
+  contributions), ahead of Monday's scheduled run.
+
 ## [2.1.2] - 2026-11-12
 
 ### Fixed
@@ -762,7 +775,8 @@ The redesign that produced the current site.
   and contact sections.
 - MIT licence and first README.
 
-[Unreleased]: https://github.com/syed-waleed-ahmed/Portfolio/compare/v2.1.2...HEAD
+[Unreleased]: https://github.com/syed-waleed-ahmed/Portfolio/compare/v2.1.3...HEAD
+[2.1.3]: https://github.com/syed-waleed-ahmed/Portfolio/compare/v2.1.2...v2.1.3
 [2.1.2]: https://github.com/syed-waleed-ahmed/Portfolio/compare/v2.1.1...v2.1.2
 [2.1.1]: https://github.com/syed-waleed-ahmed/Portfolio/compare/v2.1.0...v2.1.1
 [2.1.0]: https://github.com/syed-waleed-ahmed/Portfolio/compare/v2.0.0...v2.1.0
