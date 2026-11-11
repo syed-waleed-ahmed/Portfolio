@@ -11,6 +11,7 @@ export const skillGroups = [
     tags: [
       "Multi-Agent Systems",
       "RAG",
+      "LLM Evaluation",
       "Prompt Engineering",
       "Fine-tuning",
       "Mastra",
@@ -49,6 +50,7 @@ export const skillGroups = [
       "Next.js",
       "Server Components",
       "Node.js",
+      "FastAPI",
       "ASP.NET Core",
       "REST APIs",
       "Serverless",
