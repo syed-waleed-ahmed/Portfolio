@@ -15,6 +15,15 @@ than by individual commit.
 
 ## [Unreleased]
 
+## [2.1.2] - 2026-11-12
+
+### Fixed
+
+- **The MemorAIz dates now match the resume and the GitHub profile.** The
+  Experience entry read "Feb 2026 - Oct 2026", running to graduation; it now
+  reads "Feb 2026 - Sep 2026", the internship (Feb - Jun) plus the thesis
+  collaboration that followed it.
+
 ## [2.1.1] - 2026-11-11
 
 ### Changed
@@ -753,7 +762,8 @@ The redesign that produced the current site.
   and contact sections.
 - MIT licence and first README.
 
-[Unreleased]: https://github.com/syed-waleed-ahmed/Portfolio/compare/v2.1.1...HEAD
+[Unreleased]: https://github.com/syed-waleed-ahmed/Portfolio/compare/v2.1.2...HEAD
+[2.1.2]: https://github.com/syed-waleed-ahmed/Portfolio/compare/v2.1.1...v2.1.2
 [2.1.1]: https://github.com/syed-waleed-ahmed/Portfolio/compare/v2.1.0...v2.1.1
 [2.1.0]: https://github.com/syed-waleed-ahmed/Portfolio/compare/v2.0.0...v2.1.0
 [2.0.0]: https://github.com/syed-waleed-ahmed/Portfolio/compare/v1.0.0...v2.0.0
