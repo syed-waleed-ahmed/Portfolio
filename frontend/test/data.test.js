@@ -94,12 +94,18 @@ test("links are absolute https URLs", () => {
     personalInfo.resumeUrl,
     ...Object.values(socialLinks),
     ...projects.map((p) => p.github).filter(Boolean),
+    ...projects.map((p) => p.demo).filter(Boolean),
   ];
   for (const url of urls) {
     assert.equal(new URL(url).protocol, "https:", url);
   }
   for (const p of projects.filter((project) => project.github)) {
     assert.ok(p.github.startsWith("https://github.com/"), `${p.title}: ${p.github}`);
+  }
+  // The demo link sits beside "View source" in the card's last row; beside a
+  // sourceNote it would put a link and a note in one row track.
+  for (const p of projects.filter((project) => project.demo)) {
+    assert.ok(p.github, `${p.title}: a demo link needs a github link beside it`);
   }
   assert.match(personalInfo.email, /^[^\s@]+@[^\s@]+\.[^\s@]+$/);
 });
@@ -148,7 +154,9 @@ test("command palette search finds what was asked for", () => {
   assert.equal(bestMatch("skills").id, "go-skills");
   assert.equal(bestMatch("kafka").id, "go-skills");
   assert.equal(bestMatch("zzzzqq"), undefined);
-  assert.match(bestMatch("faiss").label, /RAG/);
+  // A technology finds the project's source; asking for a demo finds the demo.
+  assert.match(bestMatch("pgvector").label, /RAG$/);
+  assert.match(bestMatch("rag demo").label, /RAG live demo$/);
 });
 
 test("the GitHub activity snapshot is a usable year of days", () => {

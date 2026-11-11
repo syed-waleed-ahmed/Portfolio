@@ -16,6 +16,8 @@ dist-server/
 .vite/
 .eslintcache
 .cache/
+# lychee's cookie jar (cookie_jar in lychee.toml), written by a local link check
+.lychee-cookies.json
 
 # === Env / secrets ===
 # No slash, so these match at any depth, including backend/ and frontend/.

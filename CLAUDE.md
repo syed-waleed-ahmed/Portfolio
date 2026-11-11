@@ -67,7 +67,7 @@ On Windows, stop any running Vite (dev or preview) or `e2e/serve.mjs` before `np
 
 - Every `stats` figure in `about.js` must appear in an Experience or Projects entry naming its `source`, so change both together.
 - Project descriptions run 32-53 words, highlights 9-26, with 4-5 stack chips; experience bullets run 12-26 words. When a new fact arrives, drop an older one rather than growing the entry.
-- Each project has exactly one of `github` or `sourceNote`, because the cards share a subgrid row that would otherwise sit empty.
+- Each project has exactly one of `github` or `sourceNote`, because the cards share a subgrid row that would otherwise sit empty. An optional `demo` link sits beside `github` in that row, so it needs one.
 - Copy may only use characters in the font subset. `FONT_RANGES` in the test mirrors the `unicode-range` in `styles/base.css`, and the test scans every export of every data module. Arrows and similar symbols fail, so use `react-icons` (the Search tooltip draws the Command key with `LuCommand` for this reason). JSX copy follows the same rule unchecked.
 
 Tests cannot check truth: project copy must come from that project's own repository or report, and a figure that cannot be traced to one does not go on the page.

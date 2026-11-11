@@ -208,7 +208,7 @@ few pieces of prose are tied to one component and live there instead:
 | Change | File |
 |--------|------|
 | New job or internship | `experience.js` |
-| New project | `projects.js` - array order is page order; each card carries exactly one of `github` or `sourceNote` |
+| New project | `projects.js` - array order is page order; each card carries exactly one of `github` or `sourceNote`, plus an optional `demo` URL beside `github` |
 | New skill group or tag | `skills.js` |
 | Approach copy, a stat, a degree, a target role | `about.js` |
 | Name, email, resume link, socials, GitHub username, section order | `portfolio.js` |

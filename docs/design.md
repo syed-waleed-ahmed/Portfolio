@@ -341,7 +341,10 @@ Three details are load-bearing:
    or, where there is no public repository, `sourceNote` as a muted
    line. The row is shared across the cards, so a card holding neither ended with
    61px of blank surface its neighbour did not have (measured at 1280px before
-   the fix). A card carries one field or the other, never both.
+   the fix). A card carries one field or the other, never both. A card with a
+   running deployment adds `demo`, a "Live demo" link beside "View source";
+   the row is a wrapping flex line, so in a narrow card the second link drops
+   below the first rather than shrinking its tap target.
 
 Without subgrid support the cards fall back to ordinary columns: content still
 reads top to bottom, it just stops lining up. That fallback is why the layout

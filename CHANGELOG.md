@@ -15,6 +15,37 @@ than by individual commit.
 
 ## [Unreleased]
 
+### Added
+
+- **Live demo links on project cards.** A card can carry `demo`, shown as
+  "Live demo" beside "View source", and the command palette lists each demo
+  as its own entry. The RAG, multi-agent and LLM-as-Judge cards link their
+  deployments. The weekly link check now keeps a cookie jar, because
+  Streamlit Community Cloud sends a client without cookies round an endless
+  auth redirect, which would fail on both demos while they were up.
+
+### Changed
+
+- **Three project cards re-synced with their repositories,** each of which
+  had grown into a deployed service. Figures come from each repository's
+  README, evaluation or build-status page; test counts and coverage were
+  measured from a checkout of `main`.
+  - *Self-Correcting Multi-Agent RAG* (was *Self-Correcting RAG Pipeline*):
+    hybrid BM25 and vector search, a tool-using agent with read-only SQL and
+    private uploads; recall@5 rose from 0.967 to 0.992 over dense retrieval on
+    a 60-question golden set; 341 tests (was 31). The stack drops
+    sentence-transformers and FAISS, now optional, for pgvector and Next.js.
+  - *Campaign Forge* (now *Multi-Agent Marketing Platform*, as its 2.0.0
+    release calls it): from four agents in one pipeline to a workflow engine
+    of 28 agents and 14 templates, with checkpointed, resumable runs and an
+    Evaluation Lab; branch coverage is 97% (the card said 94%).
+  - *LLM-as-Judge* returns, cut in July when it was a prototype: an
+    evaluation platform published on PyPI, with 98% test coverage.
+- **The Bachelor's thesis card is removed.** It had no repository, and its
+  "~25% control-loop stability" figure could not be traced to a source, so it
+  broke the rule that every figure on the page is checkable. Six cards keep
+  the grid at two full rows of three.
+
 ### Security
 
 - **`minimatch` moves to 11 under ESLint** (GHSA-g3hv-75wg-m249, moderate: a
