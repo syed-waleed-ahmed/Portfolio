@@ -108,10 +108,10 @@ bundler. They also run in Netlify's build, through the prebuild gate.
 | `experience bullets stay within the shared length range` | Every bullet 12-26 words |
 | `titles, keys and tags are unique` | Project titles, companies, section ids, stats and skill tags (several are React keys) |
 | `section ids are valid fragment identifiers` | Lowercase ids with a label, and none collides with the hero's `top` |
-| `links are absolute https URLs` | The resume, socials and repositories are `https`; project repositories are on GitHub; a valid email |
+| `links are absolute https URLs` | The resume, socials, repositories and demos are `https`; project repositories are on GitHub; a demo only on a card with a repository; a valid email |
 | `command palette entries point somewhere real` | Every entry jumps to a real section or opens an `https` URL |
 | `command palette ids and labels are unique` | Entry ids and labels are unique |
-| `command palette search finds what was asked for` | Searches land on the right entry, and nonsense matches nothing |
+| `command palette search finds what was asked for` | Searches land on the right entry (a technology on the project's source before its demo), and nonsense matches nothing |
 | `the GitHub activity snapshot is a usable year of days` | At least 300 valid days, in date order |
 | `all copy is drawable by the self-hosted font subset` | No export of any data module uses a character outside the font's `unicode-range` |
 
@@ -249,7 +249,9 @@ deploy.
 
 It runs weekly rather than per push because a third-party site having a bad hour
 should not turn a commit red. `lychee.toml` holds the configuration: `429`
-counts as alive, failures are retried three times, and a few hosts are excluded
+counts as alive, failures are retried three times, cookies are kept (Streamlit
+Community Cloud, where two project demos run, loops a cookie-less client
+through its auth redirect), and a few hosts are excluded
 with the reason beside each: LinkedIn and LeetCode refuse automated clients,
 the API sleeps and has no pages, the analytics loader is not a page, and the
 docs quote wildcard, placeholder and loopback hosts.

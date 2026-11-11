@@ -17,6 +17,12 @@ max_retries = 3
 retry_wait_time = 5
 timeout = 30
 
+# Streamlit Community Cloud, which hosts two of the project demos, sends a
+# visitor to its auth host to collect a cookie and back. A client that drops
+# cookies goes round that loop until it gives up, so a live app would fail.
+# Gitignored: a local run writes it to the repository root.
+cookie_jar = ".lychee-cookies.json"
+
 # The web, and local files: relative links between the docs, and the
 # root-relative favicon and font paths in index.html, resolved against
 # frontend/public by --root-dir in links.yml. mailto: addresses are not checked.

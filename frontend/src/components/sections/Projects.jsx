@@ -1,4 +1,4 @@
-import { FaArrowRight, FaGithub } from "react-icons/fa";
+import { FaArrowRight, FaGithub, FaPlay } from "react-icons/fa";
 import GitHubActivity from "@/components/sections/GitHubActivity";
 import ExternalLink from "@/components/ui/ExternalLink";
 import Reveal from "@/components/ui/Reveal";
@@ -38,16 +38,27 @@ const Projects = () => (
           {/* The last subgrid row. A card with no public repository fills it
               with `sourceNote` instead of a link: the row is shared by every
               card in the grid row, so leaving it empty left the card with a
-              band of blank surface its neighbours did not have. */}
+              band of blank surface its neighbours did not have. A running
+              deployment adds a second link beside the source. */}
           {(project.github || project.sourceNote) && (
             <div className="project-card__links">
               {project.github ? (
-                <ExternalLink href={project.github} className="text-link">
-                  <FaGithub aria-hidden="true" />
-                  View source
-                  <span className="visually-hidden"> for {project.title}</span>
-                  <FaArrowRight aria-hidden="true" className="project-card__arrow" />
-                </ExternalLink>
+                <>
+                  <ExternalLink href={project.github} className="text-link">
+                    <FaGithub aria-hidden="true" />
+                    View source
+                    <span className="visually-hidden"> for {project.title}</span>
+                    <FaArrowRight aria-hidden="true" className="project-card__arrow" />
+                  </ExternalLink>
+                  {project.demo && (
+                    <ExternalLink href={project.demo} className="text-link">
+                      <FaPlay aria-hidden="true" />
+                      Live demo
+                      <span className="visually-hidden"> of {project.title}</span>
+                      <FaArrowRight aria-hidden="true" className="project-card__arrow" />
+                    </ExternalLink>
+                  )}
+                </>
               ) : (
                 <p className="project-card__source-note">{project.sourceNote}</p>
               )}

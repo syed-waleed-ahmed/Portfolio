@@ -4,6 +4,15 @@
 // classification the course project never did, and the multi-agent and RAG
 // stacks listed LangGraph and LangChain, which neither codebase uses.
 //
+// In November 2026 the RAG, multi-agent and LLM-as-Judge repositories each
+// grew into a deployed service, and their cards were re-synced again: figures
+// come from each repository's README, evaluation or build-status page, and
+// the test counts and coverage were measured from a checkout of `main`. The
+// LLM-as-Judge card returned, having been cut in July 2026 when that
+// repository was a prototype, and the Bachelor's thesis card left to keep two
+// full rows of three: it had no repository, and its "~25% control-loop
+// stability" figure could not be traced to a source.
+//
 // Density matches across cards: two-sentence descriptions of 32-53 words,
 // highlights of 9-26 words, four or five stack chips. test/data.test.js
 // checks the ranges.
@@ -12,7 +21,8 @@
 // last row of the card grid, and a card holding neither left a band of blank
 // surface its neighbour in the same row did not have. `sourceNote` states why
 // there is no link and nothing more - it is not a place for a further claim
-// about the work.
+// about the work. `demo`, a running deployment, sits beside `github` in that
+// row, so it needs a public repository too.
 export const projects = [
   {
     title: "RemindrAI: Embeddable Multi-Tenant Reminder Capability",
@@ -39,24 +49,39 @@ export const projects = [
       "No map coordinates in the source: every station and cube pose is discovered from markers at runtime, so the mission moves to a new world unchanged.",
   },
   {
-    title: "Campaign Forge: Multi-Agent Marketing Workflow",
+    title: "Campaign Forge: Multi-Agent Marketing Platform",
     role: "Independent Project",
-    stack: ["Python", "OpenAI SDK", "Groq", "Pydantic", "pytest"],
+    stack: ["Python", "Pydantic", "FastAPI", "Streamlit", "Groq"],
     github: "https://github.com/syed-waleed-ahmed/Multi-Agent-Workflow",
+    // Opens in demo mode, where a simulated responder answers and labels
+    // every output as such; live mode needs a Groq key.
+    demo: "https://campaign-forge.streamlit.app/",
     description:
-      "A multi-agent pipeline that turns a one-line product brief into a campaign ready to hand off. Research, copywriter, art-director and manager agents each own one stage, running on any OpenAI-compatible endpoint with Groq as the default.",
+      "A multi-agent workflow engine that turns a product brief into reviewed, evidence-backed marketing work, from full campaigns to landing pages and SEO packs. Its 28 agents run on free-tier providers, checkpoint every step, pause at a quota and resume, and cite research checked against what was retrieved.",
     highlight:
-      "Retries with backoff, Pydantic-validated output and a self-repairing JSON step, backed by 94% test coverage and an adversarial eval corpus.",
+      "An Evaluation Lab scores workflows on deterministic checks, including 14 prompt-injection attacks, and the test suite holds 97% branch coverage.",
   },
   {
-    title: "Self-Correcting RAG Pipeline",
+    title: "Self-Correcting Multi-Agent RAG",
     role: "Independent Project",
-    stack: ["Python", "FastAPI", "sentence-transformers", "FAISS", "Groq"],
+    stack: ["Python", "FastAPI", "PostgreSQL / pgvector", "Next.js", "Groq"],
     github: "https://github.com/syed-waleed-ahmed/Self-Correcting-RAG",
+    demo: "https://scrag-web.onrender.com/",
     description:
-      "A RAG pipeline that checks its own work. A guardrail agent scores each retrieved chunk and drops off-topic context, then an evaluator grades the answer against its sources and triggers a bounded correction loop when grounding is weak.",
+      "A RAG system that checks its own work: a guardrail agent drops off-topic chunks from hybrid BM25 and vector search, and an evaluator grades each answer against its sources, correcting weak ones in a bounded loop. A tool-using agent adds read-only SQL, and visitors can search their own uploads.",
     highlight:
-      "Keeps the best-scoring attempt, so a correction never regresses an answer. Served as a FastAPI service and a CLI, with 31 offline tests.",
+      "Hybrid search lifted recall@5 from 0.967 to 0.992 over dense retrieval on a 60-question golden set, backed by 341 tests.",
+  },
+  {
+    title: "LLM-as-Judge: Evaluation Platform for LLM Outputs",
+    role: "Independent Project",
+    stack: ["Python", "Pydantic", "FastAPI", "Streamlit", "Groq / Ollama"],
+    github: "https://github.com/syed-waleed-ahmed/LLM-as-Judge",
+    demo: "https://llm-as-judge.streamlit.app/",
+    description:
+      "A platform that grades LLM outputs with an LLM judge: pairwise, pointwise, reference-based, ranking, RAG faithfulness and agent trajectories. Each pair can be judged in both orders to offset position bias, and results flag suspected prompt injection, verbosity bias and self-preference.",
+    highlight:
+      "Published on PyPI as one engine behind a library, CLI, REST API and Streamlit dashboard, with 98% test coverage.",
   },
   {
     title: "Visual Inspection of Motorcycle Connecting Rods",
@@ -68,15 +93,5 @@ export const projects = [
       "A classical computer-vision pipeline that inspects connecting rods from grayscale images. It tells the two rod types apart by hole count, then measures each rod's position, orientation, length and width, and every hole's center and diameter.",
     highlight:
       "Extended to cope with distractor objects and scattered iron powder, using Gaussian and bilateral filtering and area-filtered connected components.",
-  },
-  {
-    title: "Delay Classification for Tele-Robotic Systems",
-    role: "Bachelor's Thesis",
-    stack: ["Signal Processing", "TCP/IP", "UDP", "Networking", "C++"],
-    description:
-      "A time-series and ML pipeline that classifies network delay across LAN, WAN, and 4G environments. Built from captured latency traces, it flags the conditions that would destabilize a remote tele-robotic control loop before they cause failures.",
-    highlight:
-      "~25% improvement in control-loop stability under variable network conditions.",
-    sourceNote: "No public repository",
   },
 ];

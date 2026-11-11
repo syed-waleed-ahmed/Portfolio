@@ -7,7 +7,7 @@
 //   copy    copy the text to the clipboard
 //
 // `keywords` are matched by the search but not shown, which is what makes a
-// search for "FAISS" find the RAG project and "Kafka" find the Skills section.
+// search for "pgvector" find the RAG project and "Kafka" find the Skills section.
 import { experiences } from "./experience.js";
 import { personalInfo, sections, socialLinks } from "./portfolio.js";
 import { projects } from "./projects.js";
@@ -26,7 +26,7 @@ const SECTION_KEYWORDS = {
 // nearly anything, so "copy email" selected Skills and Enter went there instead.
 //
 // A label match ranks first. Among keyword matches a shorter list ranks higher,
-// so the project built with FAISS comes above the section listing every skill.
+// so the project built on pgvector comes above the section listing every skill.
 export const scoreCommand = (label, search, keywords = []) => {
   const words = search.toLowerCase().split(/\s+/).filter(Boolean);
   const lowerLabel = label.toLowerCase();
@@ -53,14 +53,30 @@ export const commandGroups = [
   {
     heading: "Projects",
     // A project with no public repository has nowhere to open, so its entry
-    // goes to the section that describes it.
-    items: projects.map((project, index) => ({
-      id: `project-${index}`,
-      label: project.title,
-      keywords: [...project.stack, project.role],
-      action: project.github ? "open" : "scroll",
-      target: project.github ?? "projects",
-    })),
+    // goes to the section that describes it. A running demo gets an entry of
+    // its own under the project's short name, the part of the title before
+    // any colon. Its keyword list is one longer than the source entry's, so a
+    // search for a technology ranks the source first (see scoreCommand).
+    items: projects.flatMap((project, index) => [
+      {
+        id: `project-${index}`,
+        label: project.title,
+        keywords: [...project.stack, project.role],
+        action: project.github ? "open" : "scroll",
+        target: project.github ?? "projects",
+      },
+      ...(project.demo
+        ? [
+            {
+              id: `project-${index}-demo`,
+              label: `${project.title.split(":")[0]} live demo`,
+              keywords: [...project.stack, project.role, "deployment"],
+              action: "open",
+              target: project.demo,
+            },
+          ]
+        : []),
+    ]),
   },
   {
     heading: "Contact",

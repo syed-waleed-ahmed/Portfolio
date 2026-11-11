@@ -108,7 +108,12 @@
     align-self: start;
   }
 
+  /* Source, then a live demo where one runs. They wrap rather than shrink, so
+     each link keeps its full tap target in a narrow card. */
   .project-card__links {
+    display: flex;
+    flex-wrap: wrap;
+    column-gap: var(--space-5);
     align-self: end;
     padding-block-start: var(--space-1);
     border-block-start: 1px solid var(--color-border);
