@@ -5,7 +5,10 @@ export const experiences = [
   {
     title: "AI Engineer · Master's Thesis",
     company: "MemorAIz S.r.l.",
-    period: "Feb 2026 - Oct 2026",
+    // The internship ran Feb - Jun 2026 and the thesis collaboration through
+    // Sep 2026, as the resume and the GitHub profile README put it; the range
+    // covers both. Graduation (Oct 2026) belongs to the Education entry.
+    period: "Feb 2026 - Sep 2026",
     location: "Bologna, Italy",
     bullets: [
       "Built RemindrAI for my thesis: a multi-tenant reminder backend, its operator console, and the Mastra capability other AI assistants register in one line.",
