@@ -15,7 +15,7 @@ There is no database, auth or client-side router. Both sides deploy on every pus
 
 ## Commands
 
-Run from the repo root. CI and Netlify run Node 24, pinned twice: `.nvmrc` (read by CI) and `NODE_VERSION` in `netlify.toml` (read by Netlify from the repo root even though its base directory is `frontend`); the invariants test fails if they differ. `engines` is `>=22.13` for the root and backend and `^22.19.0 || >=24.5.0` for the frontend (Size Limit's floor). `engine-strict=true` in the root `.npmrc` only reaches `npm run install:all`; installs run inside `frontend/` or `backend/`, including CI's, Netlify's and Render's, do not enforce engines.
+Run from the repo root. CI and Netlify run Node 24, pinned twice: `.nvmrc` (read by CI) and `NODE_VERSION` in `netlify.toml` (read by Netlify from the repo root even though its base directory is `frontend`); the invariants test fails if they differ. `engines` is `>=22.13` for the root and backend and `^22.19.0 || ^24.5.0 || >=26.0.0` for the frontend (Size Limit's floor). `engine-strict=true` in the root `.npmrc` only reaches `npm run install:all`; installs run inside `frontend/` or `backend/`, including CI's, Netlify's and Render's, do not enforce engines.
 
 ```bash
 npm run install:all          # install both projects; also needed after pulling a Dependabot merge

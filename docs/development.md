@@ -67,20 +67,27 @@ there is no need to change directories.
 | `npm run lint` | ESLint over the frontend, then the backend |
 | `npm test` | Backend API test suite (`node --test`) |
 | `npm run test:invariants` | Repository invariants in `test/invariants.test.js` |
-| `npm start` | Backend in production mode |
+| `npm start` | The backend without the file watcher, as Render starts it |
 
 Inside `frontend/` there are also:
 
 | Script | What it does |
 |--------|--------------|
 | `npm test` | The content tests in `test/data.test.js` |
-| `npm run preview` | Serves the built `dist/` for a final look. The only way to see the prerendered page locally, since the dev server renders on the client, but it ignores `public/_headers` |
+| `npm run preview` | Serves the built `dist/`: the only way to see the prerendered page by hand, since the dev server renders on the client. It ignores `public/_headers`, so the page runs without its CSP |
 | `npm run size` | Size Limit budgets, against an existing build |
 | `npm run test:e2e` | The Playwright and axe browser suite, against an existing build served with its real CSP |
 
 `backend/` has `npm run lint` and `npm test` of its own, which the root scripts
 call. What each suite covers, and how to run the browser tests, is in
 [Testing](testing.md).
+
+Two scripts run with plain `node` from the repository root.
+`node scripts/gen-og-card.mjs` regenerates the social card. It needs `sharp`,
+`fontkit` and `wawoff2`, which are installed on demand rather than kept as
+dependencies - see [Design](design.md#generated-assets).
+`node frontend/scripts/fetch-github-activity.mjs` refreshes the contribution
+snapshot and needs no install - see [below](#updating-site-content).
 
 ### The prebuild gate
 
@@ -96,13 +103,6 @@ To skip it deliberately, for instance while working on a build problem with a
 lint error you already know about, run `npm run build --ignore-scripts` inside
 `frontend/`. CI does exactly that, because it runs the three checks as separate
 steps.
-
-`node scripts/gen-og-card.mjs` regenerates the social card. It needs `sharp`,
-`fontkit` and `wawoff2`, which are installed on demand rather
-than kept as dependencies - see [Design](design.md#generated-assets).
-
-`node frontend/scripts/fetch-github-activity.mjs` refreshes the contribution
-snapshot and needs no install - see [below](#updating-site-content).
 
 ---
 
@@ -131,16 +131,16 @@ Run `npm run install:all` after pulling a Dependabot merge. Otherwise
 `node_modules` stays behind the lockfile, and local builds run on older versions
 than CI and Netlify do.
 
-Two rules are worth stating explicitly:
+Three rules are worth stating explicitly:
 
 - **Commit the lockfile with the `package.json` change.** CI installs with
   `npm ci`, which fails outright if the two disagree.
 - **A transitive advisory is still your advisory.** `npm audit fix` resolves
-  most of them by tightening a nested version in the lockfile alone, which is a
-  lockfile-only commit and needs no `package.json` edit. The weekly grouped
-  PRs will not clear one, because they only bump what `package.json` names
-  directly; Dependabot security updates (enabled) open their own PR when a
-  patched version fits the dependents' ranges.
+  most of them by moving a nested version in the lockfile alone, so the fix is
+  a lockfile-only commit with no `package.json` edit. The weekly grouped PRs
+  will not clear one, because they only bump what `package.json` names
+  directly; Dependabot security updates, which are enabled, open their own PR
+  when a patched version fits the dependents' ranges.
 - **When no compatible patch exists, override it, and say when to stop.** In
   November 2026 every `minimatch` 10.x was vulnerable (GHSA-g3hv-75wg-m249),
   the fix was 11.0.1, and ESLint 10.14 still required `^10`, so neither
@@ -170,7 +170,7 @@ reference for what each variable does. The tables below are the summary.
 | Variable | Required | Purpose |
 |----------|----------|---------|
 | `PORT` | no | Listen port. Defaults to 5000; Render sets it automatically |
-| `NODE_ENV` | recommended | `production` suppresses error detail in responses |
+| `NODE_ENV` | recommended | `production` suppresses error detail in `500` responses |
 | `RESEND_API_KEY` | yes | API key from [resend.com](https://resend.com) |
 | `EMAIL_FROM` | yes | Verified sender, or `onboarding@resend.dev` for testing |
 | `EMAIL_TO` | yes | Where submissions are delivered |
@@ -194,8 +194,8 @@ put a secret in one.
 The template sets `VITE_API_BASE_URL=http://localhost:5000`, so with a copied
 `frontend/.env` every local build calls your local backend, `npm run build`
 included. That is what you want for the contact form, and what the browser
-tests refuse: build with the variable empty before `npm run test:e2e` (see
-[Testing](testing.md#browser-tests)).
+tests refuse: build with the variable set to the production origin before
+`npm run test:e2e` (see [Testing](testing.md#browser-tests)).
 
 ---
 
@@ -223,8 +223,9 @@ first, third and fourth; the second rests on whoever writes the copy:
 
 1. **Stats in `about.js` are aggregates, not new claims.** Every figure there
    is already stated in `experience.js` or `projects.js` - the 985-test tile,
-   for instance, restates the MemorAIz experience bullet. Change one without
-   the other and the test fails rather than the page contradicting itself.
+   for instance, restates the RemindrAI bullet in the MemorAIz entry. Change
+   one without the other and the test fails rather than the page
+   contradicting itself.
 2. **Every claim must be checkable.** Project copy is written from the
    project's own repository or report. A figure that cannot be traced to one
    does not go on the page.
@@ -249,8 +250,8 @@ needs:
 
 - `index.html`: the meta description, the Open Graph and Twitter text, and the
   `Person` JSON-LD (`jobTitle`, `alumniOf`, `knowsAbout`, `sameAs` and the rest)
-- `frontend/public/humans.txt`, which names the contact details, socials and
-  location
+- `frontend/public/humans.txt`, which repeats the name, contact details,
+  socials and location
 - for the name, role or headline, the `NAME`, `ROLE` and `BLURB` constants in
   `scripts/gen-og-card.mjs`, and a regenerated card (see
   [Design](design.md#generated-assets))
@@ -262,12 +263,14 @@ invariants fail if the three disagree, but cannot tell whether they are
 current, so moving them is still part of the change. The weekly snapshot commit
 does not count as a content change.
 
-The contribution graph reads a committed snapshot. The
-`refresh-activity.yml` workflow refreshes it every Monday and commits the result,
-which also triggers a Netlify deploy, so a local `main` will need a `git pull`. To refresh
-it by hand, run `node frontend/scripts/fetch-github-activity.mjs`. A failed run
-leaves the last good snapshot in place. Deleting the workflow stops the commits,
-and the graph then shows its age in its label.
+The contribution graph reads a committed snapshot,
+`frontend/src/data/github-activity.json`. The `refresh-activity.yml` workflow
+regenerates it every Monday and commits the result to `main`, which also
+triggers a Netlify deploy, so a local `main` will need a `git pull`. To refresh
+it outside that schedule, run
+`node frontend/scripts/fetch-github-activity.mjs`. A failed run leaves the last
+good snapshot in place. Deleting the workflow stops the commits, and the graph
+then shows its age in its label.
 
 A new section needs an entry in `sections` in `portfolio.js`, a component in
 `components/sections/`, and a line in the `SECTION_COMPONENTS` map in
@@ -281,7 +284,7 @@ Visual changes are governed by the token system - read
 
 ## Code conventions
 
-- **ES modules everywhere**, both projects. Both `package.json` files set
+- **ES modules everywhere**, both projects. All three `package.json` files set
   `"type": "module"`.
 - **Imports use the `@/` alias** in the frontend rather than relative paths
   that climb directories.
@@ -317,12 +320,13 @@ globals. They hold correctness, not formatting; style is held by
    npm run lint                         # frontend and backend
    npm test --prefix frontend           # content changes
    npm run test:invariants              # any change
-   npm run build                        # frontend changes; runs the three above first
+   npm run build                        # frontend changes; runs frontend lint and the two tests above first
    npm run size --prefix frontend       # frontend changes, after the build
-   npm run test:e2e --prefix frontend   # UI changes, after a build with VITE_API_BASE_URL empty
+   npm run test:e2e --prefix frontend   # UI changes, after a build against the production API origin
    npm test                             # backend changes
    ```
-4. Update the Postman collection if you changed the API surface, and
+4. Update [`api.md`](api.md) and the Postman collection if you changed the API
+   surface, and add an entry under `Unreleased` in
    [`CHANGELOG.md`](../CHANGELOG.md) if the change is user-visible.
 5. Open a PR and fill in the template. CI runs lint, the content tests, the
    invariants, a build, the size budgets, the browser suite, the backend tests,
@@ -337,8 +341,9 @@ Full contributor guidance, including commit message conventions, is in
 ## Troubleshooting
 
 **`npm run install:all` fails with `EBADENGINE` / "Unsupported engine".**
-Your Node version is outside the frontend's `^22.19.0 || >=24.5.0`, or below the
-backend's 22.13. Run `nvm use` (or install Node 24). This is `engine-strict=true`
+Your Node version is outside the frontend's `^22.19.0 || ^24.5.0 || >=26.0.0`
+(Node 25 included), or below the backend's 22.13. Run `nvm use` (or install
+Node 24). This is `engine-strict=true`
 in the root `.npmrc` doing its job; an install inside `frontend/` or `backend/`
 prints the same warning without stopping.
 
@@ -403,8 +408,8 @@ finds it by exact string match, so it must stay an empty
 invariants report this before the build starts.
 
 **`git push` is rejected as non-fast-forward on `main`.**
-The weekly workflow may have committed a new contribution snapshot since your last
-pull. Run `git pull --rebase` and push again.
+The weekly workflow may have committed a new contribution snapshot since your
+last pull. Run `git pull --rebase` and push again.
 
 **A hydration error in the browser console.**
 Something renders differently at build time than in the browser: a date, a
@@ -414,7 +419,7 @@ into an effect, or fix them at build time as the footer year is.
 **Analytics stopped reporting after an edit to `index.html`.**
 The inline analytics snippet is pinned in the CSP by SHA-256 hash. Any change,
 including whitespace, invalidates it and the browser blocks the script with no
-visible symptom. The repository invariants now fail on it first, with the new
+visible symptom. The repository invariants fail on it first, with the new
 value in the message, so this should only reach the live site if the gate was
 skipped. Recompute the hash - see
 [Deployment](deployment.md#the-inline-analytics-hash).

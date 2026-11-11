@@ -88,7 +88,7 @@ too.
 | Start command | `npm start` |
 | Health check path | `/health` |
 
-Required environment variables, set in the Render dashboard:
+Environment variables, set in the Render dashboard:
 
 ```text
 NODE_ENV=production
@@ -118,11 +118,12 @@ Two details matter on this platform specifically:
 
 The service runs on Render's free tier and sleeps after inactivity. The first
 request after idle can take 30 to 60 seconds. Three mitigations are already in
-place: `index.html` carries a `dns-prefetch` hint for the backend origin, focusing
-the contact form sends one `no-cors` request to `/health` so the backend is already
-waking by the time someone presses send, and after six seconds the form explains
-the delay rather than appearing frozen. An uptime pinger against `/health` would
-remove the delay entirely at the cost of keeping a free instance awake.
+place: `index.html` carries a `dns-prefetch` hint for the backend origin,
+focusing the contact form sends one `no-cors` request to `/health` so the
+backend is already waking by the time someone presses send, and after six
+seconds the form explains the delay rather than appearing frozen. An uptime
+pinger against `/health` would remove the delay entirely at the cost of keeping
+a free instance awake.
 
 ---
 
@@ -141,7 +142,8 @@ per ref.
 
 Node comes from `node-version-file: .nvmrc` in every job, never a hardcoded
 number, so CI cannot drift from local or from Netlify. What each suite covers is
-in [Testing](testing.md).
+in [Testing](testing.md). CodeQL code scanning runs as well, from GitHub's
+default setup in the repository settings rather than from a workflow file.
 
 Every action in every workflow is pinned to a full commit SHA, with its version
 in a comment (`actions/checkout@3d3c42e… # v7.0.1`). A tag can be moved to other
@@ -150,27 +152,32 @@ bumps the SHA and the comment together. Every checkout that does not push sets
 `persist-credentials: false`, so the token is not left in `.git/config` for
 later steps to read. `refresh-activity.yml` pushes, so it keeps it.
 
-CI does not deploy, and it does not hold a deploy back either. Netlify builds every
-push to `main` whatever CI reports, stopped only by its own
+CI does not deploy, and it does not hold a deploy back either. Netlify builds
+every push to `main` whatever CI reports, stopped only by its own
 [build gate](#the-netlify-build-gate), and Render's auto-deploy is configured
-separately in its own dashboard. A red CI run on `main` therefore means the commit
-may already be live.
+separately in its own dashboard. A red CI run on `main` therefore means the
+commit may already be live.
 
 ### Weekly snapshot commit
 
 `.github/workflows/refresh-activity.yml` keeps the contribution graph current. It
 runs at 04:17 UTC every Monday, and on demand from the Actions tab.
 
-- It runs `frontend/scripts/fetch-github-activity.mjs`, and commits
-  `src/data/github-activity.json` to `main` only if the file changed. Every such
-  commit starts a Netlify deploy, whose build gate runs the content test on the
-  new snapshot. The push uses `GITHUB_TOKEN`, so it starts no CI run.
-- It is the one workflow here that writes, so it asks for `contents: write` itself
-  rather than widening the default. If `main` is ever given a rule requiring pull
-  requests, its push will start failing.
-- A failed run changes nothing: the script writes only a validated response, so the
-  site keeps the last good snapshot and the graph's label shows its age.
-- Deleting the file stops the commits. The graph keeps working.
+- It runs `frontend/scripts/fetch-github-activity.mjs` and commits
+  `frontend/src/data/github-activity.json` to `main` only if the file changed.
+  Every such commit starts a Netlify deploy, whose build gate runs the content
+  tests on the new snapshot. The push uses `GITHUB_TOKEN`, so it starts no CI
+  run.
+- It is the one workflow here that writes, so it asks for `contents: write`
+  itself rather than widening the default. If `main` is ever given a rule
+  requiring pull requests, its push will start failing.
+- A failed run changes nothing: the script writes only a validated response, so
+  the site keeps the last good snapshot and the graph's label shows its age.
+- Deleting the workflow file stops the commits. The graph keeps working.
+
+The same script refreshes the snapshot by hand: run
+`node frontend/scripts/fetch-github-activity.mjs` from the repository root and
+commit the result.
 
 ### Weekly link check
 
@@ -184,7 +191,7 @@ configuration and how to run it locally are in
 ### Dependency updates
 
 `.github/dependabot.yml` opens grouped weekly PRs for `frontend/`, `backend/`
-and the GitHub Actions used in CI.
+and the GitHub Actions the workflows use.
 
 - **npm: minor and patch only.** Majors are ignored on purpose. A major can
   break the app and deserves a manual read of the changelog.
@@ -194,9 +201,13 @@ and the GitHub Actions used in CI.
   `checkout`/`setup-node` three majors behind and `gitleaks-action` two.
 - **A seven-day cooldown on all three.** A release is not proposed until it is
   a week old, since a compromised or broken version is usually caught and pulled
-  within days. The cooldown would not delay Dependabot security updates, but
-  those are not enabled on this repository: see
-  [Security](security.md#repository-and-supply-chain).
+  within days.
+- **Security updates are separate.** Dependabot alerts and security updates are
+  enabled on the repository, and the cooldown does not delay them: a security
+  update opens its own PR as soon as a patched version fits the dependents'
+  ranges, transitive dependencies included. When none fits, the fix is by hand
+  (see [Development](development.md#dependencies)). The full list of controls
+  is in [Security](security.md#repository-and-supply-chain).
 
 ---
 
@@ -228,7 +239,7 @@ Three sources look looser than the rest, and each is load-bearing:
 |--------|-----------------|
 | `style-src 'unsafe-inline'` | `cobe` and `react-activity-calendar` each add a `<style>` element at runtime, and `Reveal` writes a `style` attribute (`--reveal-delay`) into the prerendered HTML for the staggered Experience rows. Without it the browser blocks all three and reports a violation for each |
 | `img-src data:` | `cobe` ships its map texture as a `data:` PNG, which this allows it to load |
-| `script-src 'unsafe-inline'` | A fallback for CSP Level 2 browsers only. A browser that understands hashes ignores it whenever a hash is present, so the hash below is what is enforced |
+| `script-src 'unsafe-inline'` | A fallback for CSP Level 1 browsers, which predate hash sources. A browser that understands hashes ignores it whenever a hash is present, so the hash below is what is enforced |
 
 `font-src` is `'self'` alone: the site's one font is a file in `public/fonts/`,
 and nothing loads a `data:` font.
@@ -274,7 +285,7 @@ end: the snippet runs under the real CSP and adds its tag.
 
 The snippet itself is deferred to `requestIdleCallback` (falling back to
 `setTimeout`), so the tag only starts fetching once the main thread is idle and
-never competes with first paint or the hero font preload. There is no
+never competes with first paint or the font preload. There is no
 `gtag.js` tag in `<head>` and no analytics package in `package.json`.
 
 ---
@@ -313,28 +324,35 @@ be deleted.
 ## Release process
 
 The project is deployed continuously from `main` rather than from tags, so a
-release is a documentation event rather than a build event:
+release is a documentation event rather than a build event. It goes through a
+pull request like any other change, either on its own or in the PR that carries
+the last change it covers:
 
-1. Merge the change to `main`. Render deploys automatically, and Netlify does
-   once its [build gate](#the-netlify-build-gate) passes.
-2. Verify the deploy: load the site, then run the Postman collection against
-   the production environment (see [Testing](testing.md#running-against-production)).
-   If the site has not changed, check the Netlify deploy log: a failed gate
-   keeps the previous deploy live.
-3. Move the entries under `Unreleased` in [`CHANGELOG.md`](../CHANGELOG.md)
-   into a new heading, `## [X.Y.Z] - YYYY-MM-DD`, leave an empty
-   `## [Unreleased]` above it, and add the version's compare link to the
-   references at the end of the file.
-4. Set the same version in all three `package.json` files, then run
+1. Move the entries under `Unreleased` in [`CHANGELOG.md`](../CHANGELOG.md)
+   into a new heading, `## [X.Y.Z] - YYYY-MM-DD`, and leave an empty
+   `## [Unreleased]` above it. In the references at the end of the file, add
+   the version's compare link and start the `[Unreleased]` link from the new
+   tag.
+2. Set the same version in all three `package.json` files, then run
    `npm install --package-lock-only` in `frontend/` and `backend/` so the
    lockfiles agree. The repository invariants fail if any manifest disagrees
-   with the newest release heading. Commit, push, and wait for CI.
-5. Tag the release commit and publish its notes from the changelog section:
+   with the newest release heading.
+3. Open the PR, wait for CI, and squash-merge it. Render deploys the merge
+   commit automatically, and Netlify does once its
+   [build gate](#the-netlify-build-gate) passes.
+4. Verify the deploy: load the site, then run the Postman collection against
+   the production environment (see
+   [Testing](testing.md#running-against-production)). If the site has not
+   changed, check the Netlify deploy log: a failed gate keeps the previous
+   deploy live.
+5. Tag the squash-merge commit and publish its notes from the changelog
+   section:
 
    ```bash
+   git switch main && git pull   # HEAD is now the merge commit, unless something landed since
    git tag -a vX.Y.Z -m "X.Y.Z" && git push origin vX.Y.Z
-   awk '/^## \[X.Y.Z\]/{f=1;next} /^## \[/{f=0} f' CHANGELOG.md > notes.md
-   gh release create vX.Y.Z --title "X.Y.Z" --notes-file notes.md --verify-tag
+   awk '/^## \[X.Y.Z\]/{f=1;next} /^## \[/{f=0} f' CHANGELOG.md |
+     gh release create vX.Y.Z --title "X.Y.Z" --notes-file - --verify-tag
    ```
 
 Versions follow [Semantic Versioning](https://semver.org/) read for a site:

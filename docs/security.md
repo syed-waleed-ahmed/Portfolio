@@ -69,14 +69,15 @@ deliverability and renders in clients with HTML disabled.
 
 `helmet()` with `crossOriginResourcePolicy` relaxed to `cross-origin`, since
 the API is consumed by a browser on a different origin. Notable resulting
-headers: `Content-Security-Policy: default-src 'self'`,
-`Strict-Transport-Security: max-age=31536000; includeSubDomains`,
+headers: `Content-Security-Policy` (`default-src 'self'` plus Helmet's other
+defaults), `Strict-Transport-Security: max-age=31536000; includeSubDomains`,
 `X-Frame-Options: SAMEORIGIN`, `X-Content-Type-Options: nosniff`,
 `Referrer-Policy: no-referrer`, `X-DNS-Prefetch-Control: off`.
 
 ### Site (Netlify `_headers`)
 
 A separate and stricter set applies to the site itself: `X-Frame-Options: DENY`,
+`X-Content-Type-Options: nosniff`,
 `Referrer-Policy: strict-origin-when-cross-origin`, a
 `Permissions-Policy` denying camera, microphone and geolocation, and a
 `default-src 'self'` CSP with `object-src 'none'`, `base-uri 'self'`,
@@ -85,9 +86,12 @@ A separate and stricter set applies to the site itself: `X-Frame-Options: DENY`,
 
 The one inline script (the analytics snippet) is pinned by SHA-256 hash rather
 than allowed wholesale, and the repository invariants fail if the hash goes
-stale. `style-src` does allow `'unsafe-inline'`, because two of the lazy
-libraries add `<style>` elements at runtime; the reasons for that and for
-`img-src data:` are in
+stale. `script-src` also lists `'unsafe-inline'`, but only as a fallback for
+browsers too old to support hashes: one that supports them ignores
+`'unsafe-inline'` whenever a hash is present. `style-src` does allow
+`'unsafe-inline'`, because two of the lazy libraries add `<style>` elements at
+runtime and the prerendered HTML carries a `style` attribute for the reveal
+stagger; the reasons for that and for `img-src data:` are in
 [Deployment](deployment.md#security-headers-and-csp). The exact hash and the
 procedure for recomputing it are in
 [Deployment](deployment.md#the-inline-analytics-hash).
@@ -137,18 +141,21 @@ and the honeypot are the controls that actually bound abuse.
 
 | Control | Implementation |
 |---------|----------------|
-| Secret scanning | `gitleaks` runs in CI on every push to `main` and every pull request against it, over the full git history rather than the tip commit |
+| Secret scanning | `gitleaks` runs in CI on every push to `main` and every pull request against it, over the full git history rather than the tip commit. GitHub's secret scanning is on as well, with push protection, which refuses a push containing a recognized credential before it lands |
+| Code scanning | GitHub's CodeQL default setup analyzes the JavaScript and the workflow files on every push to `main`, every pull request against it, and weekly |
+| Dependency alerts | Dependabot alerts and security updates are on, so an advisory gets its own pull request outside the weekly schedule when a patched version fits the dependents' ranges, transitive dependencies included. When none does, the fix is an npm `overrides` entry (see [Development](development.md#dependencies)) |
 | Dependency audit | `npm audit --omit=dev --audit-level=high` on both projects; CI fails on a high or critical production advisory |
-| Dependency updates | Dependabot opens grouped weekly PRs (npm minor and patch; GitHub Actions including majors), each release at least seven days old |
+| Dependency updates | Dependabot opens grouped weekly PRs (npm minor and patch; GitHub Actions including majors), each release at least seven days old. The cooldown does not delay security updates |
 | Pinned actions | Every GitHub Action is pinned to a full commit SHA, which cannot be moved to other code the way a tag can |
 | Least-privilege CI | `permissions: contents: read` at workflow level in CI and the link check. `refresh-activity.yml` alone asks for `contents: write`, to commit its snapshot. Every checkout that does not push sets `persist-credentials: false` |
 | Third-party data | The weekly snapshot job reads a community API for contribution counts, validates every day in the response before writing it, and commits the result as data. Visitors' browsers never call that API |
 | Secret hygiene | `.env` files are gitignored while `.env.example` templates are tracked; keys, certificates and keystores are ignored by extension |
 | Runtime pinning | One Node major across CI and Netlify, checked by the repository invariants. `engine-strict=true` refuses a mismatched local install through `npm run install:all`; installs inside `frontend/` or `backend/`, and so CI, Netlify and Render, only warn |
 
-GitHub's own Dependabot alerts, Dependabot security updates, secret scanning and
-push protection are not enabled on the repository. The CI audit and gitleaks
-are the controls in place; turning those on is the owner's decision.
+Private vulnerability reporting is on too, and is the route
+[`SECURITY.md`](../SECURITY.md) prefers. GitHub's secret scanning, code
+scanning, Dependabot alerts and security updates, and private reporting are
+repository settings rather than tracked files, so a fork does not inherit them.
 
 ---
 

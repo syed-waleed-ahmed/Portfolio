@@ -25,7 +25,7 @@ these tests).
 | Command | What it does |
 |---------|--------------|
 | `npm run dev` | `node --watch` on :5000 |
-| `npm start` | Production start |
+| `npm start` | `node server.js`, as Render starts it |
 | `npm test` | API tests; they never send mail, whatever `.env` holds |
 | `npm run lint` | ESLint |
 

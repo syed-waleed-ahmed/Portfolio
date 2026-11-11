@@ -15,18 +15,36 @@ than by individual commit.
 
 ## [Unreleased]
 
+## [2.1.4] - 2026-11-12
+
+### Changed
+
+- **Every Markdown document was reviewed against the code.** Versions, test
+  counts, size figures, commands, links and anchors were checked and
+  corrected where they had drifted, and wording and formatting were made
+  consistent across the README, the community files and `docs/`. Among the
+  corrections: `docs/security.md` said GitHub's security features were off
+  (they are on), the release process now matches how releases are cut, and
+  both architecture diagrams show the browser calling Render directly.
+
+### Fixed
+
+- **The frontend's `engines` range matches Size Limit's.** It read
+  `^22.19.0 || >=24.5.0`, which admits Node 25; Size Limit 14 requires
+  `^22.19.0 || ^24.5.0 || >=26.0.0`, and the range is now exactly that.
+
 ## [2.1.3] - 2026-11-12
+
+### Changed
+
+- **The GitHub activity snapshot is refreshed by hand** to 2026-11-11 (1,008
+  contributions), ahead of Monday's scheduled run.
 
 ### Fixed
 
 - **The footer's source link meets the touch-target floor.** On a touch
   screen it was 22px tall, the one tappable element without the 48px
   minimum; WCAG exempts it as an inline link, but the README promises 48px.
-
-### Changed
-
-- **The GitHub activity snapshot is refreshed by hand** to 2026-11-11 (1,008
-  contributions), ahead of Monday's scheduled run.
 
 ## [2.1.2] - 2026-11-12
 
@@ -775,7 +793,8 @@ The redesign that produced the current site.
   and contact sections.
 - MIT licence and first README.
 
-[Unreleased]: https://github.com/syed-waleed-ahmed/Portfolio/compare/v2.1.3...HEAD
+[Unreleased]: https://github.com/syed-waleed-ahmed/Portfolio/compare/v2.1.4...HEAD
+[2.1.4]: https://github.com/syed-waleed-ahmed/Portfolio/compare/v2.1.3...v2.1.4
 [2.1.3]: https://github.com/syed-waleed-ahmed/Portfolio/compare/v2.1.2...v2.1.3
 [2.1.2]: https://github.com/syed-waleed-ahmed/Portfolio/compare/v2.1.1...v2.1.2
 [2.1.1]: https://github.com/syed-waleed-ahmed/Portfolio/compare/v2.1.0...v2.1.1

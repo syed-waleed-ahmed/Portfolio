@@ -1,23 +1,27 @@
 # Architecture
 
-Two independent npm projects in one repository, deployed to two platforms and
-talking over a single HTTP endpoint.
+Two independent npm projects in one repository, deployed to two platforms. The
+browser loads the site from one and calls the other directly for the only real
+endpoint, the contact form.
 
 ```text
 Browser
   |
-  |  static assets (HTML / CSS / JS / fonts / images)
-  v
-Netlify CDN  <--  frontend/  (React 19 + Vite, prerendered to dist/)
+  +-- page: HTML / CSS / JS / fonts / images ---->  Netlify CDN  <--  frontend/
   |
-  |  POST /api/contact   (JSON, CORS-restricted)
-  v
-Render       <--  backend/   (Node + Express, ESM)
-  |
-  |  Resend SDK
-  v
-Resend  ->  inbox
+  +-- POST /api/contact (JSON, CORS-restricted) ->  Render       <--  backend/
+  +-- GET /health (no-cors wake-up ping) -------->    |
+                                                      |  Resend SDK
+                                                      v
+                                                    Resend  ->  inbox
 ```
+
+`frontend/` is React 19 and Vite, prerendered into `dist/` at build time;
+`backend/` is Node and Express, as ES modules. Netlify does not proxy `/api`:
+the browser calls the Render origin directly, cross-origin, so the backend's
+CORS allow-list names the site's origins and the site's CSP names the backend
+in `connect-src`. The `/health` request is sent once, when a visitor first
+focuses the form, to wake the free-tier instance before they press send.
 
 There is no database and no session state. The only server-side work in the
 whole system is validating a contact form and handing it to an email provider,
@@ -89,9 +93,9 @@ kept in step with the docs like any other.
 
 `frontend/public/` is copied verbatim into the build. It holds the branded
 `404.html`, the Netlify `_headers` file, the self-hosted font, favicons, the
-social card, `robots.txt`, `sitemap.xml`, `humans.txt`, the Search Console
-verification file, and `sw.js` (a kill-switch service worker - see
-[Deployment](deployment.md#stale-service-worker-recovery)).
+portrait images, the social card, `robots.txt`, `sitemap.xml`, `humans.txt`,
+the Search Console verification file, and `sw.js` (a kill-switch service
+worker - see [Deployment](deployment.md#stale-service-worker-recovery)).
 
 ---
 
@@ -120,26 +124,29 @@ in `Contact.jsx`. See [Development](development.md#updating-site-content) for
 the per-file guide.
 
 `data/portfolio.js` exports `sections`, the ordered list of section ids and
-labels. It is the single source for the dock's links and for the `<section>`
-elements `App.jsx` renders, so a section cannot be added to one and forgotten
-in the other. Each section is labelled by its heading, whose id is
-`${sectionId}-title`.
+labels. It is the single source for the dock's links, the command palette's
+"Go to" entries and the `<section>` elements `App.jsx` renders, so a section
+cannot be added to one and forgotten in another. Each section is labelled by
+its heading, whose id is `${sectionId}-title`.
 
 The section headings are the exception to "one file per section owns its own
 markup": all of them render through `components/ui/SectionHeader`, which takes
-the heading id, the title and the subtitle, plus a variant and label for the
-heavier forms that Projects and Contact use. Sharing one component is what stops
-the headings drifting apart as sections are edited independently.
+the heading id, the title and the subtitle, plus a `variant` for the heavier
+forms that Projects and Contact use and a `label` for the pill in the Projects
+one. Sharing one component is what stops the headings drifting apart as
+sections are edited independently.
 
 `frontend/test/data.test.js` turns the data layer's conventions into checks:
 every About figure must appear in the Experience or Projects entry it cites,
-project copy stays within a shared length range, links are absolute `https`,
-no export of a data module uses a character the font subset cannot draw, every
-command palette entry points somewhere real, and the activity snapshot is a
-usable year of days. The data modules stay importable by plain Node for that
-reason: relative imports with `.js` extensions, no JSX and no `@/` alias, and
-nothing imported into `portfolio.js`, which the snapshot workflow loads without
-installing dependencies. The repository invariants check those import rules.
+project and experience copy stay within shared length ranges, each project
+card carries exactly one of `github` or `sourceNote`, links are absolute
+`https`, no export of a data module uses a character the font subset cannot
+draw, every command palette entry points somewhere real, and the activity
+snapshot is a usable year of days. The data modules stay importable by plain
+Node for that reason: relative imports with `.js` extensions, no JSX and no
+`@/` alias, and nothing imported into `portfolio.js`, which the snapshot
+workflow loads without installing dependencies. The repository invariants
+check those import rules.
 
 ### Import alias
 
@@ -193,7 +200,7 @@ never reach them. Each is a separate chunk, fetched only when wanted:
 
 | Extra | Library | Gzipped | Fetched when |
 |-------|---------|---------|--------------|
-| Command palette | `cmdk` | 18 KB | The trigger is hovered or focused, or Ctrl/Cmd+K is pressed |
+| Command palette | `cmdk` | 19 KB | The trigger is hovered or focused, or Ctrl/Cmd+K is pressed |
 | Contribution graph | `react-activity-calendar` | 25 KB, with its tooltips and data | The block comes within 600px of the viewport |
 | Globe | `cobe` | 6 KB | The block comes within 200px of the viewport, on screens of 80rem and up |
 
@@ -202,7 +209,7 @@ Limit budgets in `frontend/.size-limit.json` hold the entry bundle and each of
 these chunks to a limit, so a static import that drags a library into the entry
 fails CI (see [Testing](testing.md#bundle-size-budgets)). A failed chunk cannot
 take the page down: the palette's loader catches it, because the dock sits
-outside every `ErrorBoundary`, the graph has a boundary of its own, and the
+outside every `ErrorBoundary`; the graph has a boundary of its own; and the
 globe's loader catches the failure and leaves its caption in place.
 `cmdk` also bundles Radix Dialog, which the palette does not use, since a native
 `<dialog>` gives synchronous focus restoration. It cannot be tree-shaken out, and
@@ -258,9 +265,10 @@ fighting over 5000.
 8. The honeypot check runs on the valid body. A filled `website` field returns
    the same `200` a real send produces, logs the sender, and stops.
 9. `mailerService` escapes the values, URL-encodes the address for the
-   `mailto:` links, strips control characters from header-bound fields and the
-   plain-text part's one-line fields, renders the HTML and plain-text parts, and
-   sends via Resend with the submitter's address as `Reply-To`.
+   `mailto:` links, flattens control characters to spaces in header-bound
+   fields and the plain-text part's one-line fields, renders the HTML and
+   plain-text parts, and sends via Resend with the submitter's address as
+   `Reply-To`.
 10. On success the route logs Resend's message ID and returns the same `200`
     body as step 8. Failures map to `503` (unconfigured) or `502` (rejected, or
     Resend unreachable). Anything unexpected reaches the central handler as a
@@ -289,11 +297,13 @@ checks each pair, and runs in CI and in Netlify's build.
 
 **The build has no environment-dependent steps.** There is no PostCSS
 configuration and no CSS purging, so `npm run build` produces the same output
-locally, in CI and on Netlify with no variables set. The one variable is
+locally, in CI and on Netlify with no variables set. Nor does it touch the
+network: the contribution graph reads a committed snapshot, and a weekly
+workflow refreshes that as an ordinary commit. The one variable is
 `VITE_API_BASE_URL`, which a local `frontend/.env` usually sets for work on the
-contact form. It does not touch the
-network either: the contribution graph reads a committed snapshot, and a weekly
-workflow refreshes that as an ordinary commit.
+contact form. Vite bakes it into any build made with that file present, and the
+production CSP would block the call, so `e2e/serve.mjs` refuses such a build
+rather than test it.
 
 **Secrets never reach the client.** The Resend key lives only in the backend
 environment. The frontend's only configurable value is the API base URL, and

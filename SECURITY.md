@@ -10,12 +10,14 @@ already implemented in the code and the platform configuration, see
 
 The project deploys continuously from `main`. Only the currently deployed
 version of the site and API is supported; there are no maintained release
-branches and fixes are not backported.
+branches and fixes are not backported. Releases are tagged `vX.Y.Z` to mark
+milestones in [`CHANGELOG.md`](CHANGELOG.md), not as separate lines of
+support: a fix ships from `main` and is listed under the next release.
 
 | Version | Supported |
 |---------|-----------|
 | `main` (live) | Yes |
-| Anything else | No |
+| Earlier releases and any other branch | No |
 
 ## Reporting a vulnerability
 
@@ -63,27 +65,32 @@ Out of scope:
 
 ## Automated hygiene
 
-Some classes of issue are already gated in CI on every push to `main` and every
-pull request against it, so a report in these areas may already be covered:
+Some classes of issue are already checked automatically, by CI on every push
+to `main` and every pull request against it or by GitHub's own security
+features, so a report in these areas may already be covered:
 
-- **Secret scanning** - `gitleaks` runs over the full git history, and
+- **Secret scanning** - `gitleaks` runs in CI over the full git history, and
   GitHub's secret scanning, with push protection, refuses a push that contains
-  a recognised credential
+  a recognized credential
+- **Code scanning** - GitHub's CodeQL default setup analyzes the JavaScript
+  and the workflow files on every push to `main`, every pull request against
+  it, and weekly
 - **Dependency alerts** - Dependabot alerts and security updates open a pull
-  request for a vulnerable dependency, transitive ones included, without
-  waiting for the weekly run
+  request for a vulnerable dependency without waiting for the weekly run,
+  transitive ones included when a patched version fits the dependents' ranges
 - **Dependency audit** - `npm audit --omit=dev --audit-level=high` on both
   projects. Note this gates *production* dependencies at high severity and
   above; dev-dependency and low-severity findings are reviewed manually rather
   than blocking a build
-- **Dependency updates** - Dependabot opens grouped weekly PRs (npm minor +
-  patch; GitHub Actions including majors), after a seven-day cooldown
+- **Dependency updates** - Dependabot opens grouped weekly PRs (npm minor and
+  patch; GitHub Actions including majors), after a seven-day cooldown that
+  security updates skip
 - **Pinned actions** - every GitHub Action is pinned to a full commit SHA
 - **Content Security Policy** - the browser tests load the built site under the
   production CSP and fail on any violation, and the repository invariants fail
   if the hash of the inline script drifts from the one the CSP pins
 
-## Safe-harbor
+## Safe harbour
 
 Good-faith research that follows responsible-disclosure principles will
 not result in legal action. Please do not:
