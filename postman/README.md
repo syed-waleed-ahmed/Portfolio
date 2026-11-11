@@ -1,4 +1,4 @@
-# Portfolio API - Postman Collection
+# Portfolio API - Postman collection
 
 API tests for the backend in [`../backend`](../backend). Fourteen requests
 across four folders, each asserting status code and response shape with
@@ -14,12 +14,14 @@ The API contract itself is documented in [`../docs/api.md`](../docs/api.md).
 | `Portfolio-API.postman_environment.json` | `baseUrl` for local development (`http://localhost:5000`) |
 | `Portfolio-API.postman_environment.production.json` | `baseUrl` for the live backend on Render |
 
-`{{baseUrl}}` is the only variable. The collection carries a local default, so
-it still runs if you forget to select an environment.
+`{{baseUrl}}` is the only variable to set; the two oversized values are built
+by pre-request scripts. The collection carries a local default for `baseUrl`,
+so it still runs if you forget to select an environment.
 
 ## Quick start
 
-1. In Postman, **Import** and drop in the collection plus one environment file.
+1. In Postman, choose **Import** and drop in the collection and the local
+   environment file.
 2. Select **Portfolio API - Local** from the environment dropdown.
 3. Start the backend:
    ```bash
@@ -59,7 +61,7 @@ request can take 30 to 60 seconds to cold-start. Re-run if it times out.
 |--------|---------|---------|
 | Health | `GET /` - Root probe | `200` with running status |
 | Health | `GET /health` - Health check | `200` with an ISO timestamp |
-| Contact | Valid submission | `200`, or `503`/`502` when the mailer is unavailable |
+| Contact | Valid submission | `200`, or `503` when the mailer is unconfigured and `502` when the send fails |
 | Contact | Missing required field | `400` naming the field |
 | Contact | Invalid email | `400` |
 | Contact | Field over its length cap | `400` from route validation |
@@ -67,10 +69,10 @@ request can take 30 to 60 seconds to cold-start. Re-run if it times out.
 | Contact | Malformed JSON | `400` from the body parser, no quota consumed |
 | Contact | Honeypot tripped | `200` identical to a real send, nothing sent |
 | Contact | Rate limit (run 6+ times) | `400` while quota remains, then `429`; never sends |
-| CORS | Preflight from an allowed origin | `204` echoing the origin |
+| CORS | Preflight from an allowed origin | `204` echoing the origin, allowing `POST` and caching the preflight for 24 hours |
 | CORS | Preflight from a disallowed origin | No `Access-Control-Allow-Origin`, no `5xx` |
-| Negative | `GET /api/unknown` | `404` catch-all |
-| Negative | `GET /api/contact` | `404`, since only `POST` is registered |
+| Negative | `GET /api/unknown` - Unmapped path | `404` catch-all |
+| Negative | `GET /api/contact` - Unsupported method | `404`, since only `POST` is registered |
 
 The primary requests carry saved response examples, so the expected payload is
 visible in Postman without sending anything.
@@ -90,8 +92,9 @@ backend to clear the in-memory counter and get a full pass again.
 **Verifying the limiter deliberately.** Open the Runner, select
 *Rate limit (run 6+ times)*, set Iterations to 6 or more, and run. Its body
 omits `name`, so it fails validation and can never send mail, even against
-production. The limiter counts those `400`s all the same: iterations one to
-five return `400`, and the sixth returns `429` with `RateLimit-*` headers.
+production. The limiter counts those `400`s all the same: in a fresh window,
+iterations one to five return `400`, and the sixth returns `429` with
+`RateLimit-*` headers.
 
 **"Field over its length cap" and "Body over the 16 KB cap" are different
 paths.** The first sends a 101-character name against the 100-character cap and

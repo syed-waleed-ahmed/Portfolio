@@ -4,9 +4,9 @@ Seven layers, each catching something the others cannot:
 
 | Layer | Tool | Scope | Where it runs |
 |-------|------|-------|---------------|
-| API tests | `node --test` | Backend routing, validation, limits, the honeypot, CORS | Locally and in CI |
+| API tests | `node --test` | Backend routing, validation, limits, the honeypot, CORS, the email sent | Locally and in CI |
 | Content tests | `node --test` | Frontend content rules in `src/data/` | Locally, in CI and in Netlify's build |
-| Repository invariants | `node --test` | Pairs of files that must agree: the CSP hash, the palette copies, the mirrored form rules, the dates, the Node version, the house style | Locally, in CI and in Netlify's build |
+| Repository invariants | `node --test` | Files that must agree (the CSP hash, the palette copies, the mirrored form rules, the dates, the versions), and the house style | Locally, in CI and in Netlify's build |
 | Browser tests | Playwright + axe-core | The built page in Chromium under its real CSP | Locally and in CI |
 | Bundle budgets | Size Limit | Gzipped size of the entry bundle and each lazy chunk | Locally after a build, and in CI |
 | Link check | lychee | Every link in the data modules, `index.html`, `humans.txt` and the docs | Weekly in GitHub Actions, and on demand |
@@ -131,7 +131,7 @@ build as well, and every failure message says what to change.
 
 | Test | Asserts |
 |------|---------|
-| `the CSP pins the hash of the inline analytics script` | `index.html` holds exactly one inline executable `<script>` (found in any letter case and with any attributes; JSON-LD and `src` scripts excluded), and the `sha256-` source in `_headers` is its hash, CRLF normalised |
+| `the CSP pins the hash of the inline analytics script` | `index.html` holds exactly one inline executable `<script>` (found in any letter case and with any attributes; JSON-LD and `src` scripts excluded), and the `sha256-` source in `_headers` is its hash, CRLF normalized |
 | `index.html keeps the exact root element the prerender looks for` | `<div id="root"></div>` appears exactly once |
 | `the portrait preload matches the AVIF source in Hero.jsx` | `imagesrcset` and `imagesizes` equal the AVIF `srcSet` and `PORTRAIT_SIZES` |
 | `the theme-color metas and 404.html use the token palette` | Both theme-color metas equal `--color-bg`, and every hex colour in `404.html` is a token |
@@ -170,11 +170,11 @@ from `dist/_headers`, so the suite runs under the CSP visitors get (which
 does. Analytics and the backend are answered inside the test with `page.route`,
 so the suite never touches the network and never sends mail.
 
-**Build against the production API origin.** `frontend/.env` sets
+**Build against the production API origin.** A copied `frontend/.env` sets
 `VITE_API_BASE_URL` for work on the contact form, and Vite inlines it, so that
-build calls `localhost`, which the real CSP blocks. `serve.mjs` looks for the default origin in the entry chunk and
-refuses such a build with the fix, rather than letting the contact tests fail
-with "could not be reached":
+build calls `localhost`, which the real CSP blocks. `serve.mjs` looks for the
+default origin in the entry chunk and refuses such a build with the fix, rather
+than letting the contact tests fail with "could not be reached":
 
 ```bash
 # Setting the production origin works in every shell. Clearing the variable
@@ -190,7 +190,7 @@ $env:VITE_API_BASE_URL='https://portfolio-backend-kmum.onrender.com'; npm run bu
 | `reveals everything that starts below the fold` | No `[data-reveal="pending"]` remains after a scroll through |
 | `every revealed element keeps the reveal's fade` | Every `[data-reveal]` element still transitions `opacity`: a component rule that sets its own `transition` replaces the reveal's, as the project cards once did |
 | `has no horizontal overflow at <width>px`, five tests | No horizontal scroll at 320, 390, 768, 1440 and 1920px, with the lazy graph and globe loaded |
-| `axe finds no WCAG 2.2 A or AA violations on desktop` and `on phone` | No axe violations for the WCAG 2.0, 2.1 and 2.2 A and AA tags, at 1440 and 390px, under reduced motion so axe reads final colours |
+| `axe finds no WCAG 2.2 A or AA violations on desktop` and `on phone` | No axe violations for the WCAG 2.0 and 2.1 A and AA tags and the 2.2 AA tag (axe has no 2.2 A tag), at 1440 and 390px, under reduced motion so axe reads final colours |
 | `axe finds no violations with the command palette open` | The same scan with the dialog open |
 | `opens with Ctrl+K, runs a search, and gives focus back on Escape` | The input is focused; "copy email" and Enter announce the copy; Escape closes the dialog |
 | `returns focus to the Search button it was opened from` | Focus is back on the dock's Search button after Escape |
@@ -229,8 +229,10 @@ budgets in `frontend/.size-limit.json`, so it needs a build first.
 | Contribution graph, `react-activity-calendar` | `GitHubActivityCalendar-*.js` and `Tooltip-*.js` | 27 kB |
 | Globe, `cobe` | `index.esm-*.js` | 6.5 kB |
 
-Each limit sits about 5 to 10% above what the build measured when the budgets
-were set. The entry budget is the one that matters most: a static import of any
+Each limit was set about 5 to 10% above what the build measured at the time;
+the entry chunk has grown into some of that, and on 2026-11-12 it measured
+83.3 kB against its 87 kB budget. The entry budget is the one that matters
+most: a static import of any
 of the three lazy libraries moves it into the entry chunk and fails that budget.
 To change a budget, edit `.size-limit.json` in the same commit as the change
 that needs it, and give the reason in the commit message.
@@ -242,19 +244,21 @@ that needs it, and give the reason in the commit message.
 `.github/workflows/links.yml` runs [lychee](https://github.com/lycheeverse/lychee)
 every Monday at 05:47 UTC, and on demand from the Actions tab. It checks every
 link in `frontend/src/data/*.js`, `frontend/index.html`,
-`frontend/public/humans.txt`, the root Markdown files, `docs/*.md` and
-`postman/README.md`, including the relative links between files. A broken link
+`frontend/public/humans.txt`, `README.md`, `CONTRIBUTING.md`, `SECURITY.md`,
+`CODE_OF_CONDUCT.md`, `docs/*.md` and the READMEs in `frontend/`, `backend/`
+and `postman/`, including the relative links between files. A broken link
 fails the run, and GitHub emails the repository owner. It does not block a
 deploy.
 
 It runs weekly rather than per push because a third-party site having a bad hour
 should not turn a commit red. `lychee.toml` holds the configuration: `429`
-counts as alive, failures are retried three times, cookies are kept (Streamlit
-Community Cloud, where two project demos run, loops a cookie-less client
-through its auth redirect), and a few hosts are excluded
-with the reason beside each: LinkedIn and LeetCode refuse automated clients,
-the API sleeps and has no pages, the analytics loader is not a page, and the
-docs quote wildcard, placeholder and loopback hosts.
+counts as alive, failures are retried three times, `mailto:` addresses are not
+checked, and cookies are kept in `.lychee-cookies.json` (gitignored), because
+Streamlit Community Cloud, where two project demos run, loops a cookie-less
+client through its auth redirect. A few hosts are excluded, with the reason
+beside each: LinkedIn and LeetCode refuse automated clients, the API sleeps and
+has no pages, the analytics loader is not a page, and the docs quote wildcard,
+placeholder and loopback hosts.
 
 To run it locally, install lychee and pass the file list from `links.yml`.
 `--root-dir` resolves root-relative paths in `index.html` and must be absolute;
@@ -263,7 +267,8 @@ To run it locally, install lychee and pass the file list from `links.yml`.
 ```bash
 lychee --config lychee.toml --no-progress --root-dir "$PWD/frontend/public" \
   'frontend/src/data/*.js' frontend/index.html frontend/public/humans.txt \
-  README.md CONTRIBUTING.md SECURITY.md CODE_OF_CONDUCT.md 'docs/*.md' postman/README.md
+  README.md CONTRIBUTING.md SECURITY.md CODE_OF_CONDUCT.md 'docs/*.md' \
+  postman/README.md frontend/README.md backend/README.md
 ```
 
 ---
@@ -300,9 +305,10 @@ The limiter is in-memory, so restarting the backend clears the counter.
 Select the **Portfolio API - Production** environment. Nothing else changes;
 `baseUrl` is the only environment-specific value.
 
-> Only the **valid submission** sends a real email. Validation, payload-too-large,
-> malformed JSON, honeypot, rate-limit, CORS and 404 requests all stop before
-> the mailer and are safe to run against production.
+> Only the **valid submission** sends a real email. Every other request stops
+> before the mailer, so the validation, payload-cap, malformed-JSON, honeypot,
+> rate-limit, CORS and negative requests are all safe to run against
+> production.
 
 The backend is on Render's free tier, so the first request after idle may take
 30 to 60 seconds to cold-start. Re-run if it times out.
@@ -326,8 +332,8 @@ and invariant steps the `frontend` job runs on their own. The link check is a
 separate weekly workflow, described [above](#link-check).
 
 The audit gate covers **production** dependencies at high severity and above.
-Dev-dependency and low-severity findings are reviewed rather than blocking a
-build.
+Dev-dependency findings, and production findings below high, are reviewed
+rather than blocking a build.
 
 ---
 
@@ -337,9 +343,9 @@ build.
 npm run lint                         # frontend and backend
 npm test --prefix frontend           # content changes
 npm run test:invariants              # any change
-npm run build                        # frontend changes; runs the three above first
+npm run build                        # frontend changes; runs frontend lint and the two tests above first
 npm run size --prefix frontend       # frontend changes, after the build
-npm run test:e2e --prefix frontend   # UI changes, after a build with VITE_API_BASE_URL empty
+npm run test:e2e --prefix frontend   # UI changes, after a build against the production API origin
 npm test                             # backend changes
 ```
 

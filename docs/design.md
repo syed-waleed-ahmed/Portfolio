@@ -1,6 +1,6 @@
 # Design System
 
-The visual language of the site, how the CSS is organised, and the handful of
+The visual language of the site, how the CSS is organized, and the handful of
 rules that keep it from drifting. Read this before changing colours, type
 sizes, layout or motion.
 
@@ -76,7 +76,7 @@ dark-only by design.
 |-------|-------|-----|
 | `--color-bg` | `#0b1221` | Page background |
 | `--color-surface` | `#111a2d` | Project cards, the stats band, the activity panel, the command palette, the dock, monograms |
-| `--color-surface-raised` | `#17223a` | Dock item hover, the portrait's ring |
+| `--color-surface-raised` | `#17223a` | Dock item hover, the portrait's ring, autofilled form fields |
 | `--color-border` / `--color-border-strong` | slate at 14% / 28% | Hairlines, control outlines |
 | `--color-text-strong` | `#f5f7fb` | Headings, emphasis |
 | `--color-text` | `#dce3ec` | Body text |
@@ -86,6 +86,9 @@ dark-only by design.
 | `--color-indigo` | `#6366f1` | The hero name's gradient and the reading-progress line |
 | `--color-dot` / `--color-halo` | slate at 13% / 5% | The squares of the dot band, and the faint ring round a skill tag; decorative only |
 | `--color-scrim` | near-black at 60% | Dims the page behind the command palette |
+
+The same file holds the accent's hover, ink, subtle and border variants, and
+the danger and success colours of the form's messages.
 
 Three rules keep it consistent:
 
@@ -135,11 +138,12 @@ where figures line up in a column.
 
 ### Metric-matched fallback
 
-A second `@font-face`, `Hanken Grotesk Fallback`, points at local Arial with
+A second `@font-face`, `Hanken Grotesk Fallback`, points at a local Arial
+(Helvetica Neue, Helvetica or Roboto where there is none) with
 `ascent-override: 100%`, `descent-override: 30.3%` and `line-gap-override: 0%`,
 so the text that paints before the web font arrives occupies the same space
 and nothing reflows on swap. Hanken Grotesk's average advance width is within
-1% of Arial's, so no `size-adjust` is needed. The values come from the font's
+1% of Arial's, so `size-adjust` stays at 100%. The values come from the font's
 own `hhea` metrics (ascent 1000, descent 303 on a 1000-unit em). If the typeface
 changes, recompute them rather than copying these.
 
@@ -151,11 +155,11 @@ files have almost no per-breakpoint font-size overrides. The one exception is th
 contact panel's invitation, which takes `--text-title` once it has a column of its
 own.
 
-The font subset covers Latin-1 plus general punctuation. A character outside
-it (an arrow, for example) renders in a fallback face, so `test/data.test.js`
-fails if any export of any module in `src/data/` uses one. Copy written in JSX
-(the hero, the section subtitles, the contact panel) is not checked and follows
-the same rule by hand. Icons come from `react-icons` instead: the Search
+The font subset covers Latin-1, general punctuation and a few symbols. A
+character outside it (a right arrow, for example) renders in a fallback face,
+so `test/data.test.js` fails if any export of any module in `src/data/` uses
+one. Copy written in JSX (the hero, the section subtitles, the contact panel)
+is not checked and follows the same rule by hand. Icons come from `react-icons` instead: the Search
 tooltip, for one, draws the Mac Command key as the `LuCommand` icon, because
 U+2318 is outside the subset.
 
@@ -185,10 +189,11 @@ rather than a width breakpoint. Two exceptions, both above the 24px WCAG 2.2
 minimum: `.btn--sm`, which is 36px on fine pointers and 48px on touch, and the
 dock's items, which are 40px on fine pointers and 48px tall on touch. On a 320px
 phone a dock item gives up width first, down to 39px wide, so all seven still fit.
-Links inside a sentence, such as the footer's source link or the email link in
-the form's rate-limit message, take the height of their line, which WCAG
-exempts; a link that stands alone, like the activity panel's "View profile",
-gets the full target.
+Links inside a sentence, such as the email link in the form's error message,
+take the height of their line, which WCAG exempts. The footer's source link sits
+in a line of text too, but takes the full target on touch screens all the same.
+A link that stands alone, like the activity panel's "View profile" or a project
+card's "View source", gets the full target at every size.
 
 Off-site links render through `components/ui/ExternalLink.jsx`, which sets
 `target="_blank" rel="noopener noreferrer"` and tells screen-reader users the
@@ -278,15 +283,20 @@ included, not just to the hero.
 `components/ui/CommandPalette.jsx` is `cmdk` inside a native modal `<dialog>`,
 which supplies the top layer, the inert background, focus containment and Escape.
 Its entries are in `data/commands.js`, built from the other data modules, so a new
-section, project or skill reaches the palette without being listed twice.
+section, project or skill reaches the palette without being listed twice. A
+project's entry opens its repository, or jumps to Projects when there is no
+public one, and a running demo gets an entry of its own.
 
 Two details are load-bearing:
 
 1. **Search uses `scoreCommand`, not `cmdk`'s default.** The default fuzzy score
    matches letters in sequence across an entry's keywords. Over the Skills entry's
    long list that matched nearly anything, so "copy email" selected Skills and
-   Enter went there. `scoreCommand` needs every word to appear, and `test/data.test.js`
-   holds it to that.
+   Enter went there. `scoreCommand` needs every word to appear. A label match
+   ranks first, and among keyword matches a shorter list ranks higher, which puts
+   the project built on pgvector above the Skills section, and a project's source
+   entry above its demo, whose list is one keyword longer. `test/data.test.js`
+   holds it to both.
 2. **The input is focused explicitly after `showModal()`.** The dialog otherwise
    focuses `cmdk`'s root, which has a `tabIndex` of -1, and typing goes nowhere.
 
@@ -312,22 +322,24 @@ arrives.
 ### The globe
 
 `LocationGlobe.jsx` rises from the bottom of the contact panel's left column, on
-screens of 80rem and up only, marking the three places in `education`. It sways
-rather than spins, because a full turn would hide all three for half of every
-rotation, and it draws only while on screen. It is decorative, so the canvas is
-hidden from assistive technology and its caption says the same thing in words.
-Without WebGL it stays hidden. Below 80rem it is `display: none`, so its observer
-only ever reports it off screen: a phone never downloads `cobe`, and never
-creates a WebGL context either, since the support check runs only when the
-globe is about to load and releases its context straight away.
+screens of 80rem and up only, marking the three places in `education` (listed
+with their coordinates as `locations` in `data/about.js`). It sways rather than
+spins, because a full turn would hide all three for half of every rotation, and
+it draws only while on screen. It is decorative, so the canvas is hidden from
+assistive technology and its caption says the same thing in words. Without
+WebGL the canvas never fades in and the caption stands alone. Below 80rem it is
+`display: none`, so its observer only ever reports it off screen: a phone never
+downloads `cobe`, and never creates a WebGL context either, since the support
+check runs only when the globe is about to load and releases its context
+straight away.
 
 ### Project cards line up on shared rows
 
-`.project-grid` is two columns on tablets and three on desktops, and each card
-spans six row tracks with `grid-template-rows: subgrid`: context, title,
-description, highlight, stack and links. A two-line title on one card therefore
-pushes its neighbour's description down to match, and every band lines up across
-the row.
+`.project-grid` is one column on phones, two from 44rem and three from 72rem.
+Each card spans six row tracks with `grid-template-rows: subgrid`: context,
+title, description, highlight, stack and links. A two-line title on one card
+therefore pushes its neighbour's description down to match, and every band
+lines up across the row.
 
 Three details are load-bearing:
 
@@ -338,13 +350,14 @@ Three details are load-bearing:
    to the tallest highlight in the grid row, and a stretched box showed a band
    of empty background under the shorter one.
 3. **Every card fills the last row.** It holds `github` as a "View source" link
-   or, where there is no public repository, `sourceNote` as a muted
-   line. The row is shared across the cards, so a card holding neither ended with
-   61px of blank surface its neighbour did not have (measured at 1280px before
-   the fix). A card carries one field or the other, never both. A card with a
-   running deployment adds `demo`, a "Live demo" link beside "View source";
-   the row is a wrapping flex line, so in a narrow card the second link drops
-   below the first rather than shrinking its tap target.
+   or, where there is no public repository, `sourceNote` as a muted line. The
+   row is shared across the cards, so a card holding neither ended with 61px of
+   blank surface its neighbour did not have (measured at 1280px before the
+   fix). A card carries one field or the other, never both. A card with a
+   running deployment adds `demo`, a "Live demo" link beside "View source", so
+   it needs `github` as well: beside a `sourceNote` it would not render. The
+   row is a wrapping flex line, so in a narrow card the second link drops below
+   the first rather than shrinking its tap target.
 
 Without subgrid support the cards fall back to ordinary columns: content still
 reads top to bottom, it just stops lining up. That fallback is why the layout

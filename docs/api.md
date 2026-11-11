@@ -74,6 +74,11 @@ process rather than just an open socket.
 
 `time` is an ISO 8601 UTC string generated per request.
 
+The site's contact form also sends this endpoint one `no-cors` request when a
+visitor first focuses a field. The free-tier instance sleeps when idle, and
+waking it then means the cold start is mostly over by the time they press send.
+That is why `/health` stays cheap and outside the rate limiter.
+
 ### `POST /api/contact`
 
 Validates a submission and sends it as an email to the site owner, with the
@@ -83,14 +88,16 @@ sender's address set as `Reply-To`.
 
 | Field | Type | Required | Max length | Notes |
 |-------|------|----------|------------|-------|
-| `name` | string | yes | 100 | Trimmed before validation |
-| `email` | string | yes | 100 | Must match `/^[^\s@]+@[^\s@]+\.[^\s@]+$/` |
-| `subject` | string | yes | 200 | Control characters stripped before use as a mail header |
+| `name` | string | yes | 100 | Shown as the sender in the email |
+| `email` | string | yes | 100 | Must match `/^[^\s@]+@[^\s@]+\.[^\s@]+$/`; becomes the `Reply-To` |
+| `subject` | string | yes | 200 | Control characters flattened to spaces before use as a mail header |
 | `message` | string | yes | 5000 | Rendered into both the HTML and plain-text parts |
 | `website` | string | no | - | Honeypot. See below. Real clients leave it empty |
 
-A field that is missing, not a string, or empty after trimming is treated the
-same way: `400` naming the first field that failed. Unknown fields are ignored.
+Every required field is trimmed before validation, the length cap applies to
+the trimmed value, and the trimmed value is what gets sent. A field that is
+missing, not a string, or empty after trimming is treated the same way: `400`
+naming the first field that failed. Unknown fields are ignored.
 A body sent with a `Content-Type` other than JSON is not parsed at all, so it
 fails validation as if it were empty.
 
@@ -179,8 +186,9 @@ it first, as described [below](#cors).
 ## Rate limiting
 
 `POST /api/contact` allows **5 requests per IP per 15-minute window**. Replies
-carry the standard draft headers - `RateLimit-Limit`, `RateLimit-Remaining`,
-`RateLimit-Reset` - and the legacy `X-RateLimit-*` set is disabled.
+carry the IETF draft-6 headers - `RateLimit-Policy`, `RateLimit-Limit`,
+`RateLimit-Remaining`, `RateLimit-Reset` - and the legacy `X-RateLimit-*` set
+is disabled. A `429` adds `Retry-After`, in seconds.
 
 The client IP comes from the first proxy hop (`trust proxy` is set to `1`),
 which is what Render forwards in `X-Forwarded-For`. Hops beyond the first are
@@ -189,10 +197,11 @@ are keyed by their `/56` subnet rather than the full address, the default in
 `express-rate-limit` 8, since one subscriber is usually handed a whole block and
 could otherwise rotate through it for fresh quota.
 
-Every request that reaches the router counts, whatever happens to it next:
+Every `POST` that reaches the router counts, whatever happens to it next:
 a validation failure, a tripped honeypot and a real send all spend quota.
-Requests rejected by the 16 KB body cap or as malformed JSON never reach the
-limiter: `express.json` is registered before the router, so they cost no quota.
+Requests the body parser rejects (over the 16 KB cap, malformed JSON, or an
+unsupported charset or encoding) never reach the limiter: `express.json` is
+registered before the router, so they cost no quota.
 
 ---
 
@@ -211,7 +220,8 @@ Set `ALLOWED_ORIGINS` (comma-separated) to replace that list without editing
 code. It replaces the defaults rather than adding to them, so list every origin
 that should keep working; setting only a new domain locks out the live site.
 Only `GET`, `POST` and `OPTIONS` are advertised, only `Content-Type` is an
-accepted request header, and preflights are cached for 24 hours.
+accepted request header, and `Access-Control-Max-Age: 86400` lets a browser
+cache a preflight for up to 24 hours (Chromium caps it at two).
 
 **A disallowed origin is not rejected with an error status.** The middleware
 simply omits the `Access-Control-Allow-Origin` header, and the browser blocks

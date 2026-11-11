@@ -13,7 +13,7 @@
     "directory": "frontend"
   },
   "engines": {
-    "node": "^22.19.0 || >=24.5.0"
+    "node": "^22.19.0 || ^24.5.0 || >=26.0.0"
   },
   "scripts": {
     "dev": "vite",
