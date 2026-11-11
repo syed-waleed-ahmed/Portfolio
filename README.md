@@ -234,6 +234,7 @@ export const projects = [
     highlight: "The one thing worth noticing.",
     stack: ["React", "Node", "Express", "Resend"],
     github: "https://github.com/…",   // or sourceNote, never both
+    demo: "https://…",                // optional, needs github
   },
   // …
 ];
@@ -242,7 +243,10 @@ export const projects = [
 Listed in render order. Each card carries exactly one of `github`, which draws
 a "View source" link at the foot of the card, or `sourceNote`, a short line
 saying why there is no public repository (for example "Private repository").
-The content tests fail on a card with neither or both, and hold descriptions,
+A card with a running deployment adds `demo`, a "Live demo" link beside
+"View source" that the command palette also lists.
+The content tests fail on a card with neither or both, or with a `demo` and
+no `github`, and hold descriptions,
 highlights and stacks to the same density as the other cards. There is no
 ordering or emphasis flag - array order is page order.
 

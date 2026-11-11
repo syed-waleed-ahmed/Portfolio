@@ -15,6 +15,8 @@ than by individual commit.
 
 ## [Unreleased]
 
+## [2.1.0] - 2026-11-11
+
 ### Added
 
 - **Live demo links on project cards.** A card can carry `demo`, shown as
@@ -742,7 +744,8 @@ The redesign that produced the current site.
   and contact sections.
 - MIT licence and first README.
 
-[Unreleased]: https://github.com/syed-waleed-ahmed/Portfolio/compare/v2.0.0...HEAD
+[Unreleased]: https://github.com/syed-waleed-ahmed/Portfolio/compare/v2.1.0...HEAD
+[2.1.0]: https://github.com/syed-waleed-ahmed/Portfolio/compare/v2.0.0...v2.1.0
 [2.0.0]: https://github.com/syed-waleed-ahmed/Portfolio/compare/v1.0.0...v2.0.0
 [1.0.0]: https://github.com/syed-waleed-ahmed/Portfolio/compare/v0.6.0...v1.0.0
 [0.6.0]: https://github.com/syed-waleed-ahmed/Portfolio/compare/v0.5.0...v0.6.0
