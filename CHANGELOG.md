@@ -15,6 +15,15 @@ than by individual commit.
 
 ## [Unreleased]
 
+## [2.1.1] - 2026-11-11
+
+### Changed
+
+- **Skills and crawler data follow the re-synced projects.** Skills adds
+  FastAPI, which serves all three, and LLM Evaluation, now a project of its
+  own; the `Person` JSON-LD's `knowsAbout` adds LLM Evaluation too.
+- **The Projects subtitle mentions the live demos** beside the source links.
+
 ## [2.1.0] - 2026-11-11
 
 ### Added
@@ -744,7 +753,8 @@ The redesign that produced the current site.
   and contact sections.
 - MIT licence and first README.
 
-[Unreleased]: https://github.com/syed-waleed-ahmed/Portfolio/compare/v2.1.0...HEAD
+[Unreleased]: https://github.com/syed-waleed-ahmed/Portfolio/compare/v2.1.1...HEAD
+[2.1.1]: https://github.com/syed-waleed-ahmed/Portfolio/compare/v2.1.0...v2.1.1
 [2.1.0]: https://github.com/syed-waleed-ahmed/Portfolio/compare/v2.0.0...v2.1.0
 [2.0.0]: https://github.com/syed-waleed-ahmed/Portfolio/compare/v1.0.0...v2.0.0
 [1.0.0]: https://github.com/syed-waleed-ahmed/Portfolio/compare/v0.6.0...v1.0.0

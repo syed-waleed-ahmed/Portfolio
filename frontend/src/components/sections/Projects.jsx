@@ -10,7 +10,8 @@ const Projects = () => (
   <div className="container">
     <SectionHeader id="projects-title" title="Selected projects" label="Projects" variant="feature">
       Thesis, independent and university work across applied AI and robotics.
-      Source code is linked wherever the repository is public.
+      Source code is linked wherever the repository is public, and a live demo
+      wherever one runs.
     </SectionHeader>
 
     {/* The grid is also each card's row template (subgrid), so context,
