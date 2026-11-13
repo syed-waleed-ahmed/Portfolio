@@ -178,6 +178,88 @@ test("the globe's WebGL cyan is the accent", () => {
   });
 });
 
+// ----- 4b. The colour system itself -----------------------------------------
+// The browser suite measures contrast on the rendered page. These read only
+// tokens.css and the stylesheets, so they also run in Netlify's build gate,
+// and they name the token to change.
+
+const luminance = (hex) => {
+  const [r, g, b] = hexToRgb(hex).map((value) => {
+    const channel = value / 255;
+    return channel <= 0.03928 ? channel / 12.92 : ((channel + 0.055) / 1.055) ** 2.4;
+  });
+  return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+};
+const contrast = (a, b) => {
+  const [lighter, darker] = [luminance(a), luminance(b)].sort((x, y) => y - x);
+  return (lighter + 0.05) / (darker + 0.05);
+};
+
+test("every text, accent and status colour is 7:1 on the page and on a panel", () => {
+  const inks = [
+    "--color-text-strong",
+    "--color-text",
+    "--color-text-soft",
+    "--color-text-muted",
+    "--color-accent",
+    "--color-success",
+    "--color-warning",
+    "--color-danger",
+  ];
+  for (const ink of inks) {
+    for (const ground of ["--color-bg", "--color-surface"]) {
+      const ratio = contrast(token(ink), token(ground));
+      assert.ok(ratio >= 7, `${ink} on ${ground} is ${ratio.toFixed(2)}:1, under the 7:1 of WCAG AAA that every text colour here keeps`);
+    }
+  }
+  // The two filled pairs: the primary button, and the inverse chips (the
+  // pills and tooltips), whose tokens alias --color-text-strong and --color-bg.
+  for (const [ink, ground] of [["--color-accent-ink", "--color-accent"], ["--color-accent-ink", "--color-accent-hover"], ["--color-bg", "--color-text-strong"]]) {
+    const ratio = contrast(token(ink), token(ground));
+    assert.ok(ratio >= 7, `${ink} on ${ground} is ${ratio.toFixed(2)}:1, under 7:1`);
+  }
+});
+
+test("every hue derives its border and its tint the same way", () => {
+  const css = read("frontend/src/styles/tokens.css");
+  for (const hue of ["accent", "success", "warning", "danger"]) {
+    for (const [step, share] of [["border", 50], ["subtle", 10]]) {
+      const name = `--color-${hue}-${step}`;
+      const value = pick(css, new RegExp(`${name}:\\s*([^;]+);`), `${name} in tokens.css`);
+      assert.equal(
+        value,
+        `color-mix(in srgb, var(--color-${hue}) ${share}%, transparent)`,
+        `${name} should be --color-${hue} at ${share}%, like every other hue's: one formula is what makes the status colours and the accent read as one family`
+      );
+    }
+  }
+});
+
+test("stylesheets take every colour from the tokens", () => {
+  const stylesheets = [];
+  const walk = (dir) => {
+    for (const entry of readdirSync(join(ROOT, dir))) {
+      const path = `${dir}/${entry}`;
+      if (statSync(join(ROOT, path)).isDirectory()) walk(path);
+      else if (extname(entry) === ".css" && path !== "frontend/src/styles/tokens.css") stylesheets.push(path);
+    }
+  };
+  walk("frontend/src");
+  assert.ok(stylesheets.length >= 15, "expected the component stylesheets under frontend/src");
+  // A hex, a colour function, or the two named colours a rule is likely to
+  // reach for. color-mix() of tokens, transparent and currentColor are fine.
+  const literal = /#[0-9a-f]{3,8}\b|\b(?:rgba?|hsla?|hwb|lab|lch|oklab|oklch)\(|\b(?:white|black)\b(?![-\w])/i;
+  for (const path of stylesheets) {
+    const css = read(path).replace(/\/\*[\s\S]*?\*\//g, "");
+    for (const declaration of css.split(/[;{}]/)) {
+      // A mask is painted in alpha, not colour: black there means "show".
+      if (/^\s*(?:-webkit-)?mask/.test(declaration)) continue;
+      const found = declaration.match(literal);
+      assert.ok(!found, `${path} writes the colour "${found?.[0]}" in "${declaration.trim().slice(0, 70)}". Every colour is a token in styles/tokens.css: use one, or add a role there`);
+    }
+  }
+});
+
 // ----- 5. The hand-kept dates -----------------------------------------------
 
 test("the three last-modified dates agree", () => {

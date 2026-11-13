@@ -149,6 +149,22 @@
     border-block-end: 1px solid var(--color-border);
     background-color: var(--color-surface-raised);
     object-fit: cover;
+    /* Two of the six are screenshots of light interfaces, shown as their
+       projects really look, and at full strength each was the brightest
+       thing on the page by a wide margin. All six rest a step dimmer, the
+       same step, so none is singled out, and come up to full strength with
+       the pointer. Not dimmed for print, where there is no glare. */
+    filter: brightness(0.84);
+    transition: filter var(--duration-base) ease;
+
+    @media print {
+      filter: none;
+    }
+  }
+
+  .project-card:hover .project-card__image,
+  .project-card:focus-within .project-card__image {
+    filter: none;
   }
 
   .project-card__context {

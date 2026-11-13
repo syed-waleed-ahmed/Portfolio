@@ -69,43 +69,73 @@ widely available) rather than an older explicit one.
 
 ## Colour tokens
 
-Every colour is a custom property in `src/styles/tokens.css`. The site is
-dark-only by design.
+Every colour is a custom property in `src/styles/tokens.css`, and each is a
+role: a component picks a role, never a value. The site is dark-only by design.
+The hues are few on purpose: one navy for every surface, one slate for every
+line, cyan for what can be acted on, and a status colour only while there is a
+status to report.
 
-| Token | Value | Use |
-|-------|-------|-----|
-| `--color-bg` | `#0b1221` | Page background |
-| `--color-surface` | `#111a2d` | Project cards, the stats band, the activity panel, the command palette, the dock, monograms |
-| `--color-surface-raised` | `#17223a` | Dock item hover, the portrait's ring, autofilled form fields |
-| `--color-border` / `--color-border-strong` / `--color-border-field` | slate at 22% / 42% / 56% | Hairlines and card edges (about 1.5:1 on the page), control outlines (about 2.3:1), form fields (3:1) |
-| `--color-text-strong` | `#f5f7fb` | Headings, emphasis |
-| `--color-text` | `#dce3ec` | Body text |
-| `--color-text-soft` | `#b7c2d0` | Descriptions, long-form copy |
-| `--color-text-muted` | `#a1adbf` | Metadata, secondary labels |
-| `--color-accent` | `#22d3ee` | Links, primary buttons, focus rings, the current section in the dock |
-| `--color-indigo` | `#6366f1` | The hero name's gradient and the reading-progress line |
-| `--color-dot` / `--color-halo` | slate at 13% / 8% | The squares of the dot band, and the faint ring round a skill tag; decorative only |
-| `--color-scrim` | near-black at 60% | Dims the page behind the command palette |
+| Role | Token | Value | Used for | Contrast |
+|------|-------|-------|----------|----------|
+| Page | `--color-bg` | `#0b1221` | The page, and anything cut into a panel: tags, form fields, contact channels, dock items | |
+| Panel | `--color-surface` | `#111a2d` | Project cards, the stats band, the activity panel, the command palette, monograms | 1.08:1 on the page |
+| Raised | `--color-surface-raised` | `#17223a` | A hovered dock item, the portrait's ring, a picture's placeholder, autofilled fields | 1.10:1 on a panel |
+| Floating | `--color-surface-translucent` | panel at 88% | The dock, over whatever scrolls beneath it | |
+| Hairline | `--color-border` | slate at 22% | Card and panel edges, tags, separators | 1.5:1 |
+| Outline | `--color-border-strong` | slate at 42% | Buttons, the dock, the palette, contact channels | 2.3:1 |
+| Field | `--color-border-field` | slate at 56% | Form fields | 3.1:1 |
+| Heading | `--color-text-strong` | `#f5f7fb` | Headings, figures, emphasis | 17.4:1, 16.2:1 |
+| Body | `--color-text` | `#dce3ec` | Body text | 14.5:1, 13.4:1 |
+| Soft | `--color-text-soft` | `#b7c2d0` | Descriptions, long-form copy, tags | 10.4:1, 9.6:1 |
+| Muted | `--color-text-muted` | `#a1adbf` | Metadata, secondary labels | 8.2:1, 7.6:1 |
+| Accent | `--color-accent` | `#22d3ee` | Links, the primary button, focus rings, the current section in the dock | 10.4:1, 9.6:1 |
+| Accent, hovered | `--color-accent-hover` | `#67e8f9` | The same, under the pointer | |
+| Accent ink | `--color-accent-ink` | `#04161c` | Text on the accent | 10.2:1 on the accent |
+| Partner | `--color-indigo` | `#6366f1` | Blended into cyan in the hero name and the reading-progress line, never alone | |
+| Inverse | `--color-inverse`, `--color-inverse-ink` | heading on page, swapped | The section pills and every tooltip | 17.4:1 |
+| Success | `--color-success` | `#86efac` | A sent message | 13.3:1, 12.4:1 |
+| Warning | `--color-warning` | `#fcd34d` | A send that failed through nothing the visitor did | 13.0:1, 12.0:1 |
+| Error | `--color-danger` | `#fca5a5` | An invalid field, a message the server rejected | 9.9:1, 9.1:1 |
+| Decoration | `--color-dot`, `--color-scrim` | slate at 13%, near-black at 60% | The dot band's squares; the dimmed page behind the palette | |
 
-The same file holds the accent's hover, ink, subtle and border variants, and
-the danger and success colours of the form's messages.
+Where two ratios are given, they are against the page and against a panel.
 
-Three rules keep it consistent:
+Each hue also has two derived steps, and they are derived the same way for
+all four (accent, success, warning, danger): `-border` is the hue at 50%,
+which holds at least 3.3:1 as an edge, and `-subtle` is the hue at 10%, a tint
+for text of that hue to sit on (at least 8.3:1). Until November 2026 each
+status colour had its own hand-picked border and tint, taken from a different
+red and green than its text, at 35% and 40%. That left an invalid field with a
+border of about 1.9:1, fainter than the 3.1:1 of a valid one.
+
+Six rules keep it consistent:
 
 1. **One accent.** Cyan marks what you can act on, and where you are in the
    dock. Technology tags and metadata are deliberately neutral: a tag is
    information, not an action.
-2. **Every text colour passes WCAG AAA**, 7:1, on both `--color-bg` and
-   `--color-surface`: `--color-text-muted`, the dimmest, is 8.2:1 and 7.6:1.
-   A browser test runs axe's enhanced-contrast rule over the page, so check
-   contrast before adding a text token or a surface. Edges are held to less,
-   by what each has to do: a hairline only separates, a control's outline
-   marks a thing, and a form field's border, the only sign that there is
-   somewhere to type, meets the 3:1 of WCAG 1.4.11, which a second test
-   measures. Until November 2026 the borders were slate at 14% and 28%, which
-   put cards and panels about 1.2:1 off the page, and muted text was
-   `#8c99ad` at about 6:1.
-3. **Six places inline the palette by hand** and cannot read the tokens, so
+2. **Every text colour passes WCAG AAA**, 7:1, on both the page and a panel,
+   the status colours on their own tints included. An invariant computes it
+   from `tokens.css`, and the browser suite runs axe's enhanced-contrast rule
+   over the rendered page and over each state of the form. Edges are held to
+   less, by what each has to do: a hairline only separates, an outline marks
+   a thing, and a form field's border, the only sign that there is somewhere
+   to type, meets the 3:1 of WCAG 1.4.11.
+3. **A role is named for its job.** The pills and tooltips once used
+   `--color-text-strong` as a background and `--color-bg` as a text colour;
+   they now use the inverse pair, which aliases the same two values. The dock's
+   translucent fill was a one-off `color-mix()` in its stylesheet and is a
+   token.
+4. **No colour is written outside `tokens.css`.** An invariant scans every
+   other stylesheet for a hex, a colour function or a named colour, and names
+   the declaration. `color-mix()` of tokens, `transparent`, `currentColor`
+   and the alpha of a mask are fine.
+5. **Information has no hue.** A neutral note (the form's "still sending")
+   uses the text and outline roles. The warning exists because a rate limit,
+   a sleeping server and a dropped connection are not the visitor's error,
+   and red said they were; only a field to correct, or a `400`, is an error.
+   A link inside a status message takes the message's colour and stays
+   underlined, so one sentence never carries three hues.
+6. **Six places inline the palette by hand** and cannot read the tokens, so
    they need updating in step:
    - `GitHubActivityCalendar.jsx`, whose library takes literal colours: the
      accent mixed into `--color-surface` at 25, 50, 75 and 100%, over
@@ -124,6 +154,33 @@ Three rules keep it consistent:
    fails CI and Netlify's build until they all follow. A new copy belongs in
    this list and in that test. One raster also bakes in a colour, the
    Apple touch icon's background: see [Generated assets](#generated-assets).
+
+Three paints on the rendered page are not tokens, and are known: the
+contribution graph's own 4% white stroke round each day, which the library
+sets inline; the browser's default colours on the honeypot input, which is a
+pixel wide and off screen; and the shadow tokens' near-black.
+
+### States
+
+Every control answers the pointer in the language of its family, and keyboard
+focus is the same on all of them: a 2px accent ring, or on a form field an
+accent border with a soft halo.
+
+| Family | At rest | Under the pointer | Other states |
+|--------|---------|-------------------|--------------|
+| Filled: `.btn--primary` | Accent, accent ink | Accent-hover | Busy: 70% opacity, a progress cursor, still focusable |
+| Outlined: `.btn--secondary`, `.btn--icon`, the contact channels | Outline border | Accent border and a 10% accent fill; the label keeps its colour | |
+| Text link: `.text-link` | Accent | Accent-hover, underlined | In a status message: the message's colour, underlined |
+| Dock item | Page fill, hairline, muted icon | Raised fill, heading-colour icon | Current section: accent border, tint and icon |
+| Form field | Page fill, field border | Muted border | Focus: accent border and halo. Invalid: error border, at 3.3:1 |
+| Project card | Panel, hairline, its picture a step dimmed | The pointer's light, its picture at full strength, and a ring if it holds a link | |
+
+The three outlined controls each had a hover of their own until November
+2026: one tinted its fill, one coloured its icon, one coloured its label.
+
+A technology tag looks the same wherever it appears: the page colour as its
+fill, a hairline, soft text. Skills shows it a size larger and changes only
+its measurements.
 
 ---
 
@@ -411,6 +468,12 @@ picture row is shared like the other six, so a card without one would show an
 empty band: a content test requires both files and an `imageAlt` of 12 to 40
 words for every project. They were cut by hand with `sharp` (extract, resize,
 AVIF at quality 55); a new card needs the same two files.
+
+Two of the six are screenshots of light interfaces, shown as those projects
+really look, and at full strength each was the brightest thing on the page by
+a wide margin. All six therefore rest at 84% brightness, the same step, so none
+is singled out, and come up to full strength while the pointer or keyboard
+focus is in their card. Print leaves them alone.
 
 Three details are load-bearing:
 

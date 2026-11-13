@@ -4,7 +4,14 @@
 @layer components {
   /* ========= Buttons =========
      .btn is the shape. --primary is the one filled action in a group,
-     --secondary the outlined alternative, --icon a square icon-only control. */
+     --secondary the outlined alternative, --icon a square icon-only control.
+
+     Every control answers the pointer in the language of its family, and
+     there are four: a filled control brightens (accent to accent-hover); an
+     outlined one, here or the contact channels, takes the accent on its edge
+     and a 10% accent fill, and its label keeps its colour; a text link
+     brightens and underlines; a dock item lifts to the raised surface.
+     Keyboard focus is the same 2px accent ring on all of them. */
   .btn {
     display: inline-flex;
     align-items: center;
@@ -76,7 +83,7 @@
 
     &:hover {
       border-color: var(--color-accent-border);
-      color: var(--color-accent);
+      background-color: var(--color-accent-subtle);
     }
   }
 
@@ -101,7 +108,10 @@
 
   /* ========= Tags =========
      Neutral on purpose: a technology name is information, not an action, so it
-     does not borrow the accent colour that marks links and buttons. */
+     does not borrow the accent colour that marks links and buttons. One look
+     wherever a tag appears: a chip cut into its panel, so filled with the
+     page colour like a form field, with a hairline edge. Skills only makes
+     it larger. */
   .tag-list {
     display: flex;
     flex-wrap: wrap;
@@ -116,6 +126,7 @@
     padding: 0.125rem 0.5rem;
     border: 1px solid var(--color-border);
     border-radius: var(--radius-sm);
+    background-color: var(--color-bg);
     font-size: var(--text-2xs);
     font-weight: var(--weight-medium);
     line-height: 1.5;

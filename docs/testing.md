@@ -125,7 +125,7 @@ bundler. They also run in Netlify's build, through the prebuild gate.
 npm run test:invariants      # from the repository root
 ```
 
-Sixteen tests in `test/invariants.test.js` at the repository root, on the same
+Nineteen tests in `test/invariants.test.js` at the repository root, on the same
 runner with no dependencies. Each pins a coupling that fails silently: two files
 that must agree, where a mismatch breaks nothing a build or a glance would
 catch. They read source files only, never build output, so they run before a
@@ -141,6 +141,9 @@ build as well, and every failure message says what to change.
 | `the contact email's BRAND copies the token palette` | `accent`, `accent2` and `ink` equal `--color-indigo`, `--color-accent` and `--color-bg` |
 | `the contribution graph's scale is the accent mixed into the surface` | `THEME` is `--color-surface-raised`, the accent over `--color-surface` at 25, 50 and 75%, then the accent |
 | `the globe's WebGL cyan is the accent` | `CYAN` is `--color-accent` as 0-1 fractions |
+| `every text, accent and status colour is 7:1 on the page and on a panel` | The four text tokens, the accent and the three status colours are each at least 7:1 on `--color-bg` and `--color-surface`, as are the accent ink on the accent and the inverse pair |
+| `every hue derives its border and its tint the same way` | For accent, success, warning and danger, `-border` is the hue at 50% and `-subtle` the hue at 10% |
+| `stylesheets take every colour from the tokens` | No stylesheet but `tokens.css` writes a hex, a colour function or a named colour; a mask's alpha is exempt |
 | `the three last-modified dates agree` | `dateModified` in `index.html`, `<lastmod>` in `sitemap.xml` and `Last update` in `humans.txt` name the same day |
 | `the Node version is pinned the same way everywhere` | `.nvmrc` and `NODE_VERSION` in `netlify.toml` name the same major, and every `engines.node` admits it |
 | `the three manifests and the newest changelog release name one version` | The root, frontend and backend `package.json` versions equal the newest `## [X.Y.Z] - date` heading in `CHANGELOG.md` |
@@ -164,7 +167,7 @@ npm run build
 npm run test:e2e
 ```
 
-Twenty-four tests in `frontend/e2e/site.spec.js`, on Playwright Test with
+Twenty-five tests in `frontend/e2e/site.spec.js`, on Playwright Test with
 `@axe-core/playwright`, against the built and prerendered site.
 `e2e/serve.mjs` serves `frontend/dist` on `127.0.0.1:4174` with the `/*` headers
 from `dist/_headers`, so the suite runs under the CSP visitors get (which
@@ -203,6 +206,7 @@ $env:VITE_API_BASE_URL='https://portfolio-backend-kmum.onrender.com'; npm run bu
 | `an empty submit focuses the first field and marks it invalid` | Name has focus and `aria-invalid="true"` |
 | `a successful send is announced in the live region` | A mocked `200` puts the thank-you in the live region and clears the form |
 | `a rate-limited send explains the wait and offers email` | A mocked `429` shows the 15-minute message with a `mailto:` link |
+| `every form message has its own tone and keeps 7:1` | The field errors, a `429` as a warning, a `400` as an error and a `200` as a success each show their own class, and axe's enhanced-contrast rule finds nothing in the form in any of the four. Run at 1024px, where the globe never loads |
 | `the contribution graph fits a phone without its own scroller` | At 390px the library's own scroll container has nothing to scroll |
 | `printing shows content the visitor had not scrolled to` | Under print media every `[data-reveal]` element has opacity 1 |
 | `every skill mark draws from the sprite` | Every `<use>` in a skill tag has a bounding box, so the sprite loaded under the CSP and holds each id: a missing one is an empty box, not an error |
@@ -239,7 +243,7 @@ budgets in `frontend/.size-limit.json`, so it needs a build first.
 
 Each limit was set about 5 to 10% above what the build measured at the time;
 the entry chunk has grown into some of that, and on 2026-11-14 it measured
-84.8 kB against its 87 kB budget. The entry budget is the one that matters
+84.9 kB against its 87 kB budget. The entry budget is the one that matters
 most: a static import of any
 of the three lazy libraries moves it into the entry chunk and fails that budget.
 The sprite's budget is there for the same reason from the other side: its
