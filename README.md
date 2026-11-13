@@ -78,7 +78,8 @@ forking the repository can run it without reading the source.
 - Data-driven content: entries, figures and links live in `src/data/`, with
   content tests that keep figures traceable and entries consistent
 - Accessibility: skip link, named landmarks, one focus style, an accessible
-  dock and form, reduced motion honoured, 48px tap targets on touch screens;
+  dock and form, text at WCAG AAA contrast (7:1), reduced motion honoured,
+  48px tap targets on touch screens;
   an axe-core WCAG 2.2 A/AA scan of the built page runs in CI
 - Responsive from 320px up with no horizontal scroll, and a branded 404 page
 - An error boundary per section
@@ -104,7 +105,7 @@ forking the repository can run it without reading the source.
   on Node's built-in runner, with no test dependencies; the invariants pin the
   couplings between files that would otherwise fail silently, such as the CSP
   hash and the hand-copied palette
-- 22 browser tests in Playwright, with axe-core, against the built site under
+- 24 browser tests in Playwright, with axe-core, against the built site under
   its production CSP
 - Size Limit budgets on the entry bundle and each lazy chunk
 - Postman collection covering every endpoint: validation, the body cap,
@@ -330,7 +331,7 @@ npm test                             # 18 backend API tests via node --test
 npm test --prefix frontend           # 14 content tests over frontend/src/data
 npm run test:invariants              # 16 checks that files which must agree still do
 npm run size --prefix frontend       # bundle budgets, after a build
-npm run test:e2e --prefix frontend   # 22 browser tests, after a build
+npm run test:e2e --prefix frontend   # 24 browser tests, after a build
 ```
 
 The API suite binds an ephemeral port and covers both health probes, all three

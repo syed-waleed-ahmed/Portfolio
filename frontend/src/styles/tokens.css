@@ -17,14 +17,22 @@
     --color-bg: #0b1221;
     --color-surface: #111a2d;
     --color-surface-raised: #17223a;
-    --color-border: rgb(148 163 184 / 0.14);
-    --color-border-strong: rgb(148 163 184 / 0.28);
+    /* Three weights of the same slate, by what the line has to do. A hairline
+       only separates (about 1.5:1 on the page). A control's outline says
+       "this is a thing" (about 2.3:1). A form field's border is the only
+       sign that there is somewhere to type, so it meets the 3:1 that WCAG
+       1.4.11 asks of an input's boundary. At 14% and 28%, as these were until
+       November 2026, cards and panels sat 1.2:1 off the page and the whole
+       layout read as dark on dark. */
+    --color-border: rgb(148 163 184 / 0.22);
+    --color-border-strong: rgb(148 163 184 / 0.42);
+    --color-border-field: rgb(148 163 184 / 0.56);
 
-    /* ----- Colour: text (all pass WCAG AA on --color-surface) ----- */
+    /* ----- Colour: text (all pass WCAG AAA, 7:1, on --color-surface) ----- */
     --color-text-strong: #f5f7fb;
     --color-text: #dce3ec;
     --color-text-soft: #b7c2d0;
-    --color-text-muted: #8c99ad;
+    --color-text-muted: #a1adbf;
 
     /* ----- Colour: accent -----
        Cyan is the single accent: links, primary actions, focus rings and the
@@ -40,7 +48,7 @@
     /* Decorative only: the squares of the dot band and the faint halo round a
        skill tag, never behind text that has to be read at this contrast. */
     --color-dot: rgb(148 163 184 / 0.13);
-    --color-halo: rgb(148 163 184 / 0.05);
+    --color-halo: rgb(148 163 184 / 0.08);
 
     /* Dims the page behind the command palette. */
     --color-scrim: rgb(2 6 23 / 0.6);
@@ -156,6 +164,7 @@
       --color-surface-raised: #fff;
       --color-border: #d4d8de;
       --color-border-strong: #b6bcc5;
+      --color-border-field: #8a919c;
       --color-text-strong: #111;
       --color-text: #222;
       --color-text-soft: #333;

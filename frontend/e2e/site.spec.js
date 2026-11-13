@@ -150,6 +150,46 @@ test.describe("accessibility", () => {
     await openPalette(page);
     expect(violations(await axe(page))).toEqual([]);
   });
+
+  // AA asks 4.5:1 of text and the scans above hold that. The tokens aim
+  // higher, 7:1 for every text colour on every surface it sits on, and this
+  // is what keeps a new token or a new surface from quietly ending that.
+  test("all text meets the 7:1 of WCAG AAA", async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.goto("/");
+    await scrollThrough(page);
+    const results = await new AxeBuilder({ page }).withRules(["color-contrast-enhanced"]).analyze();
+    expect(violations(results)).toEqual([]);
+  });
+
+  // A field's border is the only sign there is somewhere to type, and WCAG
+  // 1.4.11 asks 3:1 of it. axe has no rule for this, so it is measured.
+  test("form fields have a border of at least 3:1 against the panel", async ({ page }) => {
+    await page.goto("/");
+    const ratio = await page.locator(".field__control").first().evaluate((field) => {
+      const canvas = document.createElement("canvas");
+      canvas.width = canvas.height = 1;
+      const context = canvas.getContext("2d", { willReadFrequently: true });
+      // Paints colours in order, as layers, and reads back the opaque result.
+      const flatten = (...colours) => {
+        context.clearRect(0, 0, 1, 1);
+        for (const colour of colours) {
+          context.fillStyle = colour;
+          context.fillRect(0, 0, 1, 1);
+        }
+        return [...context.getImageData(0, 0, 1, 1).data].slice(0, 3);
+      };
+      const luminance = (rgb) => {
+        const [r, g, b] = rgb.map((v) => (v / 255 <= 0.03928 ? v / 255 / 12.92 : ((v / 255 + 0.055) / 1.055) ** 2.4));
+        return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+      };
+      const page = getComputedStyle(document.body).backgroundColor;
+      const outside = luminance(flatten(page));
+      const border = luminance(flatten(page, getComputedStyle(field).borderTopColor));
+      return (Math.max(border, outside) + 0.05) / (Math.min(border, outside) + 0.05);
+    });
+    expect(ratio).toBeGreaterThanOrEqual(3);
+  });
 });
 
 test.describe("command palette", () => {

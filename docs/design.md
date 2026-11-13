@@ -77,14 +77,14 @@ dark-only by design.
 | `--color-bg` | `#0b1221` | Page background |
 | `--color-surface` | `#111a2d` | Project cards, the stats band, the activity panel, the command palette, the dock, monograms |
 | `--color-surface-raised` | `#17223a` | Dock item hover, the portrait's ring, autofilled form fields |
-| `--color-border` / `--color-border-strong` | slate at 14% / 28% | Hairlines, control outlines |
+| `--color-border` / `--color-border-strong` / `--color-border-field` | slate at 22% / 42% / 56% | Hairlines and card edges (about 1.5:1 on the page), control outlines (about 2.3:1), form fields (3:1) |
 | `--color-text-strong` | `#f5f7fb` | Headings, emphasis |
 | `--color-text` | `#dce3ec` | Body text |
 | `--color-text-soft` | `#b7c2d0` | Descriptions, long-form copy |
-| `--color-text-muted` | `#8c99ad` | Metadata, secondary labels |
+| `--color-text-muted` | `#a1adbf` | Metadata, secondary labels |
 | `--color-accent` | `#22d3ee` | Links, primary buttons, focus rings, the current section in the dock |
 | `--color-indigo` | `#6366f1` | The hero name's gradient and the reading-progress line |
-| `--color-dot` / `--color-halo` | slate at 13% / 5% | The squares of the dot band, and the faint ring round a skill tag; decorative only |
+| `--color-dot` / `--color-halo` | slate at 13% / 8% | The squares of the dot band, and the faint ring round a skill tag; decorative only |
 | `--color-scrim` | near-black at 60% | Dims the page behind the command palette |
 
 The same file holds the accent's hover, ink, subtle and border variants, and
@@ -95,9 +95,16 @@ Three rules keep it consistent:
 1. **One accent.** Cyan marks what you can act on, and where you are in the
    dock. Technology tags and metadata are deliberately neutral: a tag is
    information, not an action.
-2. **Every text colour passes WCAG AA** on `--color-surface`, including
-   `--color-text-muted` at about 6:1. Check contrast before adding a new text
-   token.
+2. **Every text colour passes WCAG AAA**, 7:1, on both `--color-bg` and
+   `--color-surface`: `--color-text-muted`, the dimmest, is 8.2:1 and 7.6:1.
+   A browser test runs axe's enhanced-contrast rule over the page, so check
+   contrast before adding a text token or a surface. Edges are held to less,
+   by what each has to do: a hairline only separates, a control's outline
+   marks a thing, and a form field's border, the only sign that there is
+   somewhere to type, meets the 3:1 of WCAG 1.4.11, which a second test
+   measures. Until November 2026 the borders were slate at 14% and 28%, which
+   put cards and panels about 1.2:1 off the page, and muted text was
+   `#8c99ad` at about 6:1.
 3. **Six places inline the palette by hand** and cannot read the tokens, so
    they need updating in step:
    - `GitHubActivityCalendar.jsx`, whose library takes literal colours: the

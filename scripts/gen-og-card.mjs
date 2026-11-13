@@ -33,7 +33,7 @@ const FONT = pub("fonts/hanken-grotesk-latin-wght.woff2");
 const BG = "#0b1221"; // --color-bg
 const TEXT = "#f5f7fb"; // --color-text-strong
 const SOFT = "#b7c2d0"; // --color-text-soft
-const MUTED = "#8c99ad"; // --color-text-muted
+const MUTED = "#a1adbf"; // --color-text-muted
 const CYAN = "#22d3ee"; // --color-accent
 const INDIGO = "#6366f1"; // --color-indigo
 

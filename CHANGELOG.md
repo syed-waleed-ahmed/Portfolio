@@ -15,6 +15,27 @@ than by individual commit.
 
 ## [Unreleased]
 
+## [2.3.1] - 2026-11-14
+
+### Changed
+
+- **Stronger colour contrast across the page.** Text already passed WCAG AA;
+  what read as dark on dark was the edges. Card and panel borders were slate
+  at 14%, about 1.2:1 against the page, and are now 22% (about 1.5:1);
+  control outlines go from 28% to 42% (about 2.3:1). Muted text, the dimmest
+  on the page, goes from `#8c99ad` (6.0:1 on a card) to `#a1adbf` (7.6:1),
+  so every text colour now meets WCAG AAA on every surface, and a browser
+  test runs axe's enhanced-contrast rule to keep it there: it found 21
+  failing elements before the change and none after. The social card's
+  domain line uses the same colour and was regenerated.
+
+### Fixed
+
+- **Contact form fields have a visible boundary.** Their border was about
+  1.7:1 against the panel, below the 3:1 that WCAG 1.4.11 asks of an input's
+  edge, which no automated check had flagged. A new `--color-border-field`
+  token meets 3:1, and a browser test measures it.
+
 ## [2.3.0] - 2026-11-14
 
 ### Added
@@ -850,7 +871,8 @@ The redesign that produced the current site.
   and contact sections.
 - MIT licence and first README.
 
-[Unreleased]: https://github.com/syed-waleed-ahmed/Portfolio/compare/v2.3.0...HEAD
+[Unreleased]: https://github.com/syed-waleed-ahmed/Portfolio/compare/v2.3.1...HEAD
+[2.3.1]: https://github.com/syed-waleed-ahmed/Portfolio/compare/v2.3.0...v2.3.1
 [2.3.0]: https://github.com/syed-waleed-ahmed/Portfolio/compare/v2.2.0...v2.3.0
 [2.2.0]: https://github.com/syed-waleed-ahmed/Portfolio/compare/v2.1.4...v2.2.0
 [2.1.4]: https://github.com/syed-waleed-ahmed/Portfolio/compare/v2.1.3...v2.1.4
