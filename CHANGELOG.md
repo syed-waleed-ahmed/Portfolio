@@ -15,6 +15,37 @@ than by individual commit.
 
 ## [Unreleased]
 
+## [2.2.0] - 2026-11-13
+
+### Added
+
+- **Brand marks on the skill tags.** A tag that names a product now shows its
+  mark before the name, 34 tags in all, from
+  [Simple Icons](https://github.com/simple-icons/simple-icons) (CC0-1.0) and,
+  for Mastra, OpenAI and Groq, [Lobe Icons](https://github.com/lobehub/lobe-icons)
+  (MIT). They are drawn in one ink rather than brand colours, several of which
+  are black and would vanish on the page. The marks ship as a single SVG
+  sprite of 20.5 KB gzipped, fetched once as an image and cached like the
+  rest of `/assets/`; the entry JavaScript grew by 0.5 KB and the CSS by
+  0.2 KB. Neither package is a dependency: `frontend/scripts/gen-skill-icons.mjs`
+  builds the sprite from `skillIcons` in `data/skills.js`, a content test
+  fails when the two differ, and a browser test fails when a mark does not
+  draw. Practices such as RAG have no mark, seven tools are in neither set,
+  and AWS, MySQL and ASP.NET Core were tried and left as text, because each
+  mark is its own name in letters too small to read.
+- **A light under the pointer on project cards.** On a screen with a mouse, a
+  card shows a soft cyan wash where the pointer is and a brighter arc on the
+  nearest stretch of its border, adapted from the Magic Card in
+  [magicuidesign/magicui](https://github.com/magicuidesign/magicui) (MIT) as
+  two CSS gradients and one event listener, with no dependency. It is off on
+  touch screens and absent from print.
+
+### Fixed
+
+- **Skill tags align on their text.** With a mark in front, a tag took its
+  baseline from the mark's bottom edge, which set the tag and its group's
+  name 3px below the rows beside them.
+
 ## [2.1.4] - 2026-11-12
 
 ### Changed
@@ -793,7 +824,8 @@ The redesign that produced the current site.
   and contact sections.
 - MIT licence and first README.
 
-[Unreleased]: https://github.com/syed-waleed-ahmed/Portfolio/compare/v2.1.4...HEAD
+[Unreleased]: https://github.com/syed-waleed-ahmed/Portfolio/compare/v2.2.0...HEAD
+[2.2.0]: https://github.com/syed-waleed-ahmed/Portfolio/compare/v2.1.4...v2.2.0
 [2.1.4]: https://github.com/syed-waleed-ahmed/Portfolio/compare/v2.1.3...v2.1.4
 [2.1.3]: https://github.com/syed-waleed-ahmed/Portfolio/compare/v2.1.2...v2.1.3
 [2.1.2]: https://github.com/syed-waleed-ahmed/Portfolio/compare/v2.1.1...v2.1.2

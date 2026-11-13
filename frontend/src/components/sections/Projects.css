@@ -52,6 +52,66 @@
       box-shadow: 0 0 0 2px var(--color-border);
     }
 
+    /* A light under the pointer: a wash on the surface and a brighter arc on
+       the border nearest it, at the --spot-x and --spot-y Projects.jsx
+       writes. Both are absolutely positioned, which keeps them out of the
+       grid: an in-flow pseudo-element would be a grid item and take one of
+       the six shared rows. isolation lets the wash sit at z-index -1, over
+       the card's own background and under its text. */
+    position: relative;
+    isolation: isolate;
+
+    &::before,
+    &::after {
+      content: "";
+      position: absolute;
+      border-radius: inherit;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity var(--duration-base) ease;
+    }
+
+    &::before {
+      inset: 0;
+      z-index: -1;
+      background: radial-gradient(
+        22rem circle at var(--spot-x, 50%) var(--spot-y, 0%),
+        var(--color-accent-subtle),
+        transparent 70%
+      );
+    }
+
+    /* Laid over the border, then masked down to it: the mask keeps the 1px
+       of padding and cuts the content box out. */
+    &::after {
+      inset: -1px;
+      padding: 1px;
+      background: radial-gradient(
+        14rem circle at var(--spot-x, 50%) var(--spot-y, 0%),
+        var(--color-accent-border),
+        transparent 70%
+      );
+      mask:
+        linear-gradient(black 0 0) content-box exclude,
+        linear-gradient(black 0 0);
+    }
+
+    /* Only where there is a pointer to follow. A tap leaves :hover stuck on
+       a touch screen, which would park the light on the last card touched. */
+    @media (hover: hover) and (pointer: fine) {
+      &:hover::before,
+      &:hover::after {
+        opacity: 1;
+      }
+    }
+
+    @media print {
+      &::before,
+      &::after {
+        display: none;
+      }
+    }
+
     /* The reveal runs left to right along each row, so its stagger follows
        the column count. Set here rather than through Reveal's delay prop,
        because the JSX cannot know how many cards a row holds. */

@@ -251,7 +251,8 @@ underneath the dock.
   explicit column counts, so a row is never left with an empty cell showing the
   band's background.
 - Skills is a definition list, one group per row, with two groups across from
-  64rem.
+  64rem. A tag naming a product carries its mark: see
+  [Skill marks](#skill-marks).
 
 ### The dock
 
@@ -333,6 +334,44 @@ downloads `cobe`, and never creates a WebGL context either, since the support
 check runs only when the globe is about to load and releases its context
 straight away.
 
+### Skill marks
+
+A skill tag that names a product shows that product's mark before its name:
+34 tags and 33 marks, since Vercel's serves two, from [Simple Icons](https://github.com/simple-icons/simple-icons)
+(CC0-1.0) and, for Mastra, OpenAI and Groq, which it does not carry, from
+[Lobe Icons](https://github.com/lobehub/lobe-icons) (MIT). The marks are
+trademarks of their owners and are used only to name the tool beside them.
+
+- **One sprite, not thirty-three components.** `scripts/gen-skill-icons.mjs`
+  writes `src/assets/skill-icons.svg`, a file of `<symbol>` elements, and each
+  tag holds an `<svg><use href="...#id"></svg>`. The browser fetches the
+  sprite once, as an image, and Vite fingerprints it, so it is cached like the
+  rest of `/assets/`. Imported as `react-icons` components, the same paths
+  would sit in the entry chunk and a second time in the prerendered HTML.
+- **`skillIcons` in `data/skills.js` is the source.** It maps a tag to a symbol
+  id, the script builds the sprite from it, and a content test fails when the
+  two differ. The script installs nothing permanent: both icon packages are
+  fetched with `npm i --no-save`, as the command at the top of the script
+  shows, and the sprite is committed, so a build needs neither.
+- **One ink.** Every mark is drawn in `--color-text-soft`. Brand colours were
+  not used: several marks are black and would vanish on this background, and
+  thirty hues in a row would outweigh the names.
+- **Not every tag has one, on purpose.** A practice such as RAG or CI/CD has
+  no mark. Neither set carries XGBoost, Matplotlib, Seaborn, Power BI, SQL
+  Server, pgvector or Twilio, and a look-alike would claim a different product.
+  AWS, MySQL and ASP.NET Core were tried and removed: each mark is mostly its
+  own name in letters, which at a tag's 16px is a smudge repeating the word
+  beside it.
+- **The tag aligns on its text, not its mark.** A flex box takes its baseline
+  from its first item, and a mark sitting first has none but its bottom edge,
+  which dropped every marked tag, and the group name aligned to it, 3px below
+  its neighbours. The tag aligns its items on the baseline and the mark
+  centres itself.
+
+The mark is decoration, hidden from assistive technology: the tag's text is
+its name. A `<use>` whose sprite failed to load draws nothing and reports
+nothing, so the browser suite checks that every one has a bounding box.
+
 ### Project cards line up on shared rows
 
 `.project-grid` is one column on phones, two from 44rem and three from 72rem.
@@ -359,6 +398,18 @@ Three details are load-bearing:
    row is a wrapping flex line, so in a narrow card the second link drops below
    the first rather than shrinking its tap target.
 
+A fourth follows from the first: **the light under the pointer is two
+absolutely positioned pseudo-elements.** On a screen with a mouse, a card
+shows a soft cyan wash where the pointer is and a brighter arc on the nearest
+stretch of its border, the pattern of Magic UI's Magic Card (see
+[Design lineage](#design-lineage)). `Projects.jsx` has one `pointermove`
+listener on the grid that writes `--spot-x` and `--spot-y` to the card under
+the pointer, with no state and so no re-render, and `Projects.css` draws two
+radial gradients there: `::before` under the text at `z-index: -1`, and
+`::after` over the border, masked down to its 1px. In flow, either one would
+be a grid item and take one of the six rows. The light is off on touch
+screens, where a tap would leave `:hover` parked on the last card touched.
+
 Without subgrid support the cards fall back to ordinary columns: content still
 reads top to bottom, it just stops lining up. That fallback is why the layout
 carries no fixed heights.
@@ -383,6 +434,7 @@ library.
 | Command palette | Fades in and settles 6px, 220ms, over a fading backdrop |
 | Globe | Sways slowly about its centre on `requestAnimationFrame`, in WebGL, only while on screen |
 | Hover and focus | Colour and border changes, 150ms. Project cards that hold a link gain a soft ring over 220ms and do not lift, because they are not click targets |
+| Pointer light | A project card under a mouse pointer shows a soft wash and a brighter border where the pointer is, fading in over 220ms. It moves only as the pointer does. See [Project cards](#project-cards-line-up-on-shared-rows) |
 
 `Reveal` only ever hides content that is below the viewport **after**
 hydration, by writing `data-reveal="pending"` to the node. The prerendered HTML
@@ -458,6 +510,7 @@ need regenerating rather than editing:
 | Asset | Source | How |
 |-------|--------|-----|
 | `images/og-card.png` | `images/Profile.avif` + the font | `scripts/gen-og-card.mjs` |
+| `src/assets/skill-icons.svg` (in `src/`, not `public/`, so Vite fingerprints it) | `skillIcons` in `src/data/skills.js` + two icon packages | `frontend/scripts/gen-skill-icons.mjs`, see [Skill marks](#skill-marks) |
 | `favicon.ico`, `favicon-96x96.png`, `apple-touch-icon.png` | `favicon.svg`, the hand-drawn crewmate | Rasterised from the SVG; the touch icon bakes in the previous navy `#0a192f`, visually indistinguishable from `--color-bg` |
 | `images/Profile.{avif,webp}` | 680x680, square-cropped from the original photo | Re-crop from the original if the photo changes |
 | `images/Profile-320.{avif,webp}` | Downscaled from `Profile.avif`. Phones and tablets, where the portrait renders at 96px and 148px, and desktops at 1x, where it renders at 320px | `sharp` resize, then keep `sizes` in `Hero.jsx` and the preload in `index.html` in step |
@@ -491,13 +544,17 @@ The interaction patterns are adapted from
 [magicuidesign/portfolio](https://github.com/magicuidesign/portfolio) by Dillion
 Verma, MIT licensed, Copyright (c) 2024 Dillion Verma: the floating dock, the
 expandable work rows, the blur-fade entrance, the pill-on-a-rule header and the dot
-band. Its narrow single column was not kept: see [Layout](#layout).
+band. Its narrow single column was not kept: see [Layout](#layout). The light
+under the pointer on project cards is adapted the same way from the Magic Card
+in the same author's [magicuidesign/magicui](https://github.com/magicuidesign/magicui),
+also MIT.
 
 They were rewritten for this codebase rather than copied in. That project is built
 on Next.js, Tailwind, shadcn/ui and Motion, and none of those are dependencies
 here: the blur-fade is a CSS transition, the dock's magnification is `:has()`, the
-accordion is `<details>`, and the dot band is CSS gradients where the original
-draws to a canvas. The palette, typeface, copy and content are this site's own.
+accordion is `<details>`, the dot band is CSS gradients where the original
+draws to a canvas, and the pointer light is two gradients and a dozen lines of
+event handler where the original animates motion values. The palette, typeface, copy and content are this site's own.
 
 ---
 

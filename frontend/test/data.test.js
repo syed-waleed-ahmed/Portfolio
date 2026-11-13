@@ -170,6 +170,25 @@ test("the GitHub activity snapshot is a usable year of days", () => {
   }
 });
 
+// The sprite is generated from skillIcons and committed, so the two can part:
+// a <use> pointing at a symbol the sprite lacks draws nothing and reports
+// nothing, and a mark keyed by a renamed tag silently stops showing.
+test("every skill mark names a real tag and a symbol in the sprite", () => {
+  const { skillIcons } = skillsModule;
+  const tags = new Set(skillGroups.flatMap((g) => g.tags));
+  for (const tag of Object.keys(skillIcons)) {
+    assert.ok(tags.has(tag), `skillIcons lists "${tag}", which is not a skill tag`);
+  }
+  const sprite = readFileSync(new URL("../src/assets/skill-icons.svg", import.meta.url), "utf8");
+  const symbols = [...sprite.matchAll(/<symbol id="([^"]+)"/g)].map(([, id]) => id).sort();
+  const wanted = [...new Set(Object.values(skillIcons))].sort();
+  assert.deepEqual(
+    symbols,
+    wanted,
+    "src/assets/skill-icons.svg is out of date: run scripts/gen-skill-icons.mjs (the command is at the top of that file)"
+  );
+});
+
 // Every export of every data module, so a new one is covered the day it is
 // added. A list of named exports here once left the About "Approach"
 // paragraphs and the globe caption unchecked. Functions serialise to nothing.

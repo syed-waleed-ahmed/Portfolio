@@ -42,6 +42,7 @@
 # diffs start collapsed in pull requests
 package-lock.json linguist-generated=true
 frontend/src/data/github-activity.json linguist-generated=true
+frontend/src/assets/skill-icons.svg linguist-generated=true
 
 # Docs count as documentation, not as part of the project's language mix.
 # (Postman JSON is deliberately not marked generated - collection diffs need
