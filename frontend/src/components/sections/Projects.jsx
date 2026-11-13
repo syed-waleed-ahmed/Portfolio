@@ -6,6 +6,12 @@ import SectionHeader from "@/components/ui/SectionHeader";
 import { projects } from "@/data/projects";
 import "./Projects.css";
 
+// Every picture in src/assets/projects, by file name, as the fingerprinted
+// URL Vite gives it. The data modules stay plain data that Node can import,
+// so a project names its picture and the files are resolved here.
+const pictures = import.meta.glob("@/assets/projects/*.avif", { eager: true, query: "?url", import: "default" });
+const picture = (name, width) => pictures[`/src/assets/projects/${name}-${width}.avif`];
+
 // Tells the card under the pointer where the pointer is, for the light
 // Projects.css draws there. One listener on the grid, writing straight to the
 // card's style: no state, so moving the mouse never re-renders anything, and
@@ -27,14 +33,28 @@ const Projects = () => (
       wherever one runs.
     </SectionHeader>
 
-    {/* The grid is also each card's row template (subgrid), so context,
-        title, description, highlight, stack and link line up across a row
-        whatever length each card's text runs to. */}
+    {/* The grid is also each card's row template (subgrid), so picture,
+        context, title, description, highlight, stack and link line up across
+        a row whatever length each card's text runs to. */}
     <ul className="project-grid" onPointerMove={trackPointer}>
       {/* No delay prop: the stagger depends on how many cards share a row,
           which only the CSS knows. See Projects.css. */}
       {projects.map((project) => (
         <Reveal as="li" key={project.title} className="project-card">
+          {/* Below the fold on every screen, so lazy. width and height give
+              the 2:1 box before the file arrives, and sizes follows the
+              grid: three columns of at most 30rem, then two, then one. */}
+          <img
+            className="project-card__image"
+            src={picture(project.image, 960)}
+            srcSet={`${picture(project.image, 480)} 480w, ${picture(project.image, 960)} 960w`}
+            sizes="(min-width: 72rem) 30rem, (min-width: 44rem) 50vw, 100vw"
+            alt={project.imageAlt}
+            width="960"
+            height="480"
+            loading="lazy"
+            decoding="async"
+          />
           <p className="project-card__context">{project.role}</p>
           <h3 className="project-card__title">{project.title}</h3>
           <p className="project-card__description">{project.description}</p>

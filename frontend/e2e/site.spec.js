@@ -308,19 +308,17 @@ test("the light under the pointer leaves the project cards' rows aligned", async
   }).toPass();
   // The two layers of the light are pseudo-elements of a subgrid. In flow
   // they would be grid items: the first would take the top row and move the
-  // card's own first line down a row, in every card alike, so comparing the
-  // cards with each other would not show it. Its distance from the card's
-  // top does. offsetTop, measured from the card, rather than a bounding box:
-  // the cards are still settling from their staggered reveal.
+  // card's picture down a row, in every card alike, so comparing the cards
+  // with each other would not show it. The picture's distance from the
+  // card's top does: it bleeds to the edge, so that distance is 0.
+  // offsetTop, measured from the card, rather than a bounding box: the cards
+  // are still settling from their staggered reveal.
   const rows = await cards.evaluateAll((elements) =>
-    elements.slice(0, 3).map((element) => ({
-      padding: parseFloat(getComputedStyle(element).paddingTop),
-      tops: [...element.children].map((child) => child.offsetTop),
-    }))
+    elements.slice(0, 3).map((element) => [...element.children].map((child) => child.offsetTop))
   );
-  for (const { padding, tops } of rows) {
-    expect(tops).toHaveLength(6);
-    expect(tops[0]).toBe(padding);
-    expect(tops).toEqual(rows[0].tops);
+  for (const tops of rows) {
+    expect(tops).toHaveLength(7);
+    expect(tops[0]).toBe(0);
+    expect(tops).toEqual(rows[0]);
   }
 });

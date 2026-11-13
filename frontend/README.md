@@ -12,7 +12,7 @@ frontend/
 ├── src/
 │   ├── components/   layout/ (masthead, dock, command menu, footer), sections/ (page sections and the parts they mount), ui/ (primitives)
 │   ├── data/         All entries, figures and links, as plain modules with no JSX, plus the activity snapshot
-│   ├── assets/       Files imported by URL: the generated sprite of skill marks
+│   ├── assets/       Files imported by URL: the generated sprite of skill marks, and the project pictures
 │   ├── styles/       Layer order, tokens and global CSS
 │   ├── App.jsx       The page
 │   ├── main.jsx      Hydrates the prerendered markup

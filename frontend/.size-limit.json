@@ -18,6 +18,12 @@
     "limit": "23 kB"
   },
   {
+    "name": "Project pictures, all twelve, loaded lazily",
+    "path": "dist/assets/*.avif",
+    "gzip": true,
+    "limit": "175 kB"
+  },
+  {
     "name": "Command palette chunk (cmdk), fetched on intent",
     "path": ["dist/assets/CommandPalette-*.js", "dist/assets/CommandPalette-*.css"],
     "gzip": true,

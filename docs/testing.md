@@ -96,7 +96,7 @@ npm test --prefix frontend
 npm test --prefix frontend --silent -- --test-name-pattern=density   # a subset by name
 ```
 
-Thirteen checks in `frontend/test/data.test.js`, on the same built-in runner with
+Fourteen checks in `frontend/test/data.test.js`, on the same built-in runner with
 no dependencies. The data files are plain modules, so they import without a
 bundler. They also run in Netlify's build, through the prebuild gate.
 
@@ -113,6 +113,7 @@ bundler. They also run in Netlify's build, through the prebuild gate.
 | `command palette ids and labels are unique` | Entry ids and labels are unique |
 | `command palette search finds what was asked for` | Searches land on the right entry (a technology on the project's source before its demo), and nonsense matches nothing |
 | `the GitHub activity snapshot is a usable year of days` | At least 300 valid days, in date order |
+| `every project names a picture that exists, with words for it` | Every project has an `image` whose 480 and 960px AVIF files are in `src/assets/projects/`, no two share one, and its `imageAlt` runs 12-40 words |
 | `every skill mark names a real tag and a symbol in the sprite` | Every key of `skillIcons` is a skill tag, and the symbols in `src/assets/skill-icons.svg` are exactly the ids it names, so a stale sprite fails with the command that rebuilds it |
 | `all copy is drawable by the self-hosted font subset` | No export of any data module uses a character outside the font's `unicode-range` |
 
@@ -203,7 +204,7 @@ $env:VITE_API_BASE_URL='https://portfolio-backend-kmum.onrender.com'; npm run bu
 | `the contribution graph fits a phone without its own scroller` | At 390px the library's own scroll container has nothing to scroll |
 | `printing shows content the visitor had not scrolled to` | Under print media every `[data-reveal]` element has opacity 1 |
 | `every skill mark draws from the sprite` | Every `<use>` in a skill tag has a bounding box, so the sprite loaded under the CSP and holds each id: a missing one is an empty box, not an error |
-| `the light under the pointer leaves the project cards' rows aligned` | Hovering a card writes `--spot-x`; each of the first three cards still has six children, the first starting at the card's padding and all six at the same offsets across the row. An in-flow pseudo-element would take the top row and move that first line down in every card alike |
+| `the light under the pointer leaves the project cards' rows aligned` | Hovering a card writes `--spot-x`; each of the first three cards still has seven children, the picture at the card's very top and all seven at the same offsets across the row. An in-flow pseudo-element would take the top row and move the picture down in every card alike |
 
 The suite runs in Chromium only, with four workers locally and two in CI, where
 a failed test gets one retry. Locally there is none, so a flaky test shows up
@@ -229,13 +230,14 @@ budgets in `frontend/.size-limit.json`, so it needs a build first.
 | Entry JS, which every visitor downloads | `index-*.js` | 87 kB |
 | Entry CSS | `index-*.css` | 8 kB |
 | Skill marks sprite, one image request | `skill-icons-*.svg` | 23 kB |
+| Project pictures, all twelve files, loaded lazily | `*.avif` | 175 kB |
 | Command palette, `cmdk` | `CommandPalette-*.js` and `.css` | 20 kB |
 | Contribution graph, `react-activity-calendar` | `GitHubActivityCalendar-*.js` and `Tooltip-*.js` | 27 kB |
 | Globe, `cobe` | `index.esm-*.js` | 6.5 kB |
 
 Each limit was set about 5 to 10% above what the build measured at the time;
-the entry chunk has grown into some of that, and on 2026-11-13 it measured
-83.8 kB against its 87 kB budget. The entry budget is the one that matters
+the entry chunk has grown into some of that, and on 2026-11-14 it measured
+84.8 kB against its 87 kB budget. The entry budget is the one that matters
 most: a static import of any
 of the three lazy libraries moves it into the entry chunk and fails that budget.
 The sprite's budget is there for the same reason from the other side: its
