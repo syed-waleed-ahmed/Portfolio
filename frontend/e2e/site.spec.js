@@ -283,3 +283,44 @@ test("printing shows content the visitor had not scrolled to", async ({ page }) 
   );
   expect(opacities.every((opacity) => opacity === "1")).toBe(true);
 });
+
+test("every skill mark draws from the sprite", async ({ page }) => {
+  await page.goto("/");
+  // A <use> whose sprite did not load, or whose id the sprite lacks, is not
+  // an error anywhere: it is an empty box. Its bounding box says which.
+  const empty = () =>
+    page.locator(".tag__icon use").evaluateAll((uses) =>
+      uses.filter((use) => use.getBBox().width === 0).map((use) => use.getAttribute("href"))
+    );
+  await expect(page.locator(".tag__icon").first()).toBeAttached();
+  await expect.poll(empty).toEqual([]);
+});
+
+test("the light under the pointer leaves the project cards' rows aligned", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto("/");
+  await hydrated(page);
+  const cards = page.locator(".project-card");
+  await cards.first().scrollIntoViewIfNeeded();
+  await expect(async () => {
+    await cards.nth(1).hover();
+    await expect(cards.nth(1)).toHaveCSS("--spot-x", /px$/, { timeout: 1000 });
+  }).toPass();
+  // The two layers of the light are pseudo-elements of a subgrid. In flow
+  // they would be grid items: the first would take the top row and move the
+  // card's own first line down a row, in every card alike, so comparing the
+  // cards with each other would not show it. Its distance from the card's
+  // top does. offsetTop, measured from the card, rather than a bounding box:
+  // the cards are still settling from their staggered reveal.
+  const rows = await cards.evaluateAll((elements) =>
+    elements.slice(0, 3).map((element) => ({
+      padding: parseFloat(getComputedStyle(element).paddingTop),
+      tops: [...element.children].map((child) => child.offsetTop),
+    }))
+  );
+  for (const { padding, tops } of rows) {
+    expect(tops).toHaveLength(6);
+    expect(tops[0]).toBe(padding);
+    expect(tops).toEqual(rows[0].tops);
+  }
+});

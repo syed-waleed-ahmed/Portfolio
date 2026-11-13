@@ -37,5 +37,23 @@
     box-shadow: 0 0 0 2px var(--color-halo);
     font-size: var(--text-xs);
     color: var(--color-text);
+    /* baseline, with the mark centring itself below: a flex box takes its
+       own baseline from its first item, and a mark sitting first has none
+       but its bottom edge. That dropped every tag with a mark, and the group
+       name aligned to it, 3px below the rows beside them. */
+    align-items: baseline;
+  }
+
+  /* One ink for every mark, not each brand's own colour: several are black
+     and would vanish on this background, and thirty hues would shout over
+     the names. Sized in em so it follows the tag's text. */
+  .tag__icon {
+    flex: none;
+    align-self: center;
+    inline-size: 1.2em;
+    block-size: 1.2em;
+    margin-inline-end: 0.45em;
+    fill: currentColor;
+    color: var(--color-text-soft);
   }
 }

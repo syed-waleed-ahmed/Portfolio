@@ -89,6 +89,11 @@ dependencies - see [Design](design.md#generated-assets).
 `node frontend/scripts/fetch-github-activity.mjs` refreshes the contribution
 snapshot and needs no install - see [below](#updating-site-content).
 
+A third runs from `frontend/`: `node scripts/gen-skill-icons.mjs` rebuilds the
+sprite of brand marks in the Skills section from `skillIcons` in `skills.js`.
+It reads two icon packages that are also installed on demand - see
+[Design](design.md#skill-marks).
+
 ### The prebuild gate
 
 `frontend/package.json` has a `prebuild` script, which npm runs before every
@@ -209,7 +214,7 @@ few pieces of prose are tied to one component and live there instead:
 |--------|------|
 | New job or internship | `experience.js` |
 | New project | `projects.js` - array order is page order; each card carries exactly one of `github` or `sourceNote`, plus an optional `demo` URL beside `github` |
-| New skill group or tag | `skills.js` |
+| New skill group or tag | `skills.js`; if the tag is a product with a mark, add it to `skillIcons` there and rebuild the sprite, see [Design](design.md#skill-marks) |
 | Approach copy, a stat, a degree, a target role | `about.js` |
 | Name, email, resume link, socials, GitHub username, section order | `portfolio.js` |
 | A place on the globe | `about.js`: `locations` and its caption |

@@ -57,7 +57,9 @@ portfolio/
 │   ├── public/                     Static passthrough (see below)
 │   ├── scripts/prerender.mjs       Writes the rendered page into dist/index.html
 │   ├── scripts/fetch-github-activity.mjs  Refreshes the contribution snapshot
+│   ├── scripts/gen-skill-icons.mjs  Rebuilds the sprite of skill marks
 │   ├── src/
+│   │   ├── assets/                 Files a component imports by URL: the skill marks sprite (generated)
 │   │   ├── components/
 │   │   │   ├── layout/             Masthead, Dock, CommandMenu, Footer
 │   │   │   ├── sections/           Page sections and the parts they mount, each with its .css if it has styles
@@ -141,8 +143,9 @@ every About figure must appear in the Experience or Projects entry it cites,
 project and experience copy stay within shared length ranges, each project
 card carries exactly one of `github` or `sourceNote`, links are absolute
 `https`, no export of a data module uses a character the font subset cannot
-draw, every command palette entry points somewhere real, and the activity
-snapshot is a usable year of days. The data modules stay importable by plain
+draw, every command palette entry points somewhere real, the activity
+snapshot is a usable year of days, and the generated sprite of skill marks
+holds exactly the symbols `skills.js` names. The data modules stay importable by plain
 Node for that reason: relative imports with `.js` extensions, no JSX and no
 `@/` alias, and nothing imported into `portfolio.js`, which the snapshot
 workflow loads without installing dependencies. The repository invariants
@@ -203,6 +206,12 @@ never reach them. Each is a separate chunk, fetched only when wanted:
 | Command palette | `cmdk` | 19 KB | The trigger is hovered or focused, or Ctrl/Cmd+K is pressed |
 | Contribution graph | `react-activity-calendar` | 25 KB, with its tooltips and data | The block comes within 600px of the viewport |
 | Globe | `cobe` | 6 KB | The block comes within 200px of the viewport, on screens of 80rem and up |
+
+The brand marks in Skills take a third route, since they are images rather
+than code: one SVG sprite in `src/assets/`, referenced by `<use>`, which the
+browser fetches as a single low-priority image request and caches as a
+fingerprinted asset. As components they would have put about 21 KB of path
+data into the entry chunk and again into the prerendered HTML.
 
 The small components that load them add about 2 KB to the first load. Size
 Limit budgets in `frontend/.size-limit.json` hold the entry bundle and each of

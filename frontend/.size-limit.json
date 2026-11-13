@@ -12,6 +12,12 @@
     "limit": "8 kB"
   },
   {
+    "name": "Skill marks sprite, one cached image request",
+    "path": "dist/assets/skill-icons-*.svg",
+    "gzip": true,
+    "limit": "23 kB"
+  },
+  {
     "name": "Command palette chunk (cmdk), fetched on intent",
     "path": ["dist/assets/CommandPalette-*.js", "dist/assets/CommandPalette-*.css"],
     "gzip": true,

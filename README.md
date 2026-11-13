@@ -60,13 +60,19 @@ forking the repository can run it without reading the source.
   ([react-activity-calendar](https://github.com/grubersjoe/react-activity-calendar))
   and a globe ([cobe](https://github.com/shuding/cobe)), each a separate chunk
   fetched only when it is wanted
+- Brand marks on the skill tags, from
+  [Simple Icons](https://github.com/simple-icons/simple-icons) (CC0) and
+  [Lobe Icons](https://github.com/lobehub/lobe-icons) (MIT), built into one
+  cached SVG sprite so they add nothing to the JavaScript or the HTML
 - Modern CSS architecture: cascade layers, design tokens, native nesting,
   fluid `clamp()` type, container queries, `subgrid`, `:has()`, animated
   `<details>` and a scroll-driven reading-progress line, with styles co-located
   beside each component
-- A floating dock, expandable work rows and a blur-fade entrance, adapted from
-  [magicuidesign/portfolio](https://github.com/magicuidesign/portfolio) (MIT) and
-  rewritten in plain CSS with no new dependencies
+- A floating dock, expandable work rows, a blur-fade entrance and a light that
+  follows the pointer across the project cards, adapted from
+  [magicuidesign/portfolio](https://github.com/magicuidesign/portfolio) and
+  [magicui](https://github.com/magicuidesign/magicui) (both MIT) and rewritten
+  in plain CSS with no new dependencies
 - Data-driven content: entries, figures and links live in `src/data/`, with
   content tests that keep figures traceable and entries consistent
 - Accessibility: skip link, named landmarks, one focus style, an accessible
@@ -92,11 +98,11 @@ forking the repository can run it without reading the source.
 
 **Engineering**
 
-- 18 backend API tests, 12 frontend content tests and 16 repository invariants
+- 18 backend API tests, 13 frontend content tests and 16 repository invariants
   on Node's built-in runner, with no test dependencies; the invariants pin the
   couplings between files that would otherwise fail silently, such as the CSP
   hash and the hand-copied palette
-- 20 browser tests in Playwright, with axe-core, against the built site under
+- 22 browser tests in Playwright, with axe-core, against the built site under
   its production CSP
 - Size Limit budgets on the entry bundle and each lazy chunk
 - Postman collection covering every endpoint: validation, the body cap,
@@ -319,10 +325,10 @@ expectations are in [`CONTRIBUTING.md`](CONTRIBUTING.md).
 
 ```bash
 npm test                             # 18 backend API tests via node --test
-npm test --prefix frontend           # 12 content tests over frontend/src/data
+npm test --prefix frontend           # 13 content tests over frontend/src/data
 npm run test:invariants              # 16 checks that files which must agree still do
 npm run size --prefix frontend       # bundle budgets, after a build
-npm run test:e2e --prefix frontend   # 20 browser tests, after a build
+npm run test:e2e --prefix frontend   # 22 browser tests, after a build
 ```
 
 The API suite binds an ephemeral port and covers both health probes, all three
@@ -468,3 +474,8 @@ portfolio; replace the content in `frontend/src/data/`, the hero text in
 `githubUsername` in `portfolio.js`, and run
 `node frontend/scripts/fetch-github-activity.mjs` to replace the contribution
 snapshot.
+
+The brand marks in `frontend/src/assets/skill-icons.svg` are not covered by
+that licence. They come from Simple Icons (CC0-1.0) and Lobe Icons (MIT), and
+each remains a trademark of its owner, shown here only to name the tool beside
+it.

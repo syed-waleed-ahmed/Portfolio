@@ -6,6 +6,19 @@ import SectionHeader from "@/components/ui/SectionHeader";
 import { projects } from "@/data/projects";
 import "./Projects.css";
 
+// Tells the card under the pointer where the pointer is, for the light
+// Projects.css draws there. One listener on the grid, writing straight to the
+// card's style: no state, so moving the mouse never re-renders anything, and
+// React never renders these two properties, so it cannot overwrite them.
+const trackPointer = (event) => {
+  if (event.pointerType !== "mouse") return;
+  const card = event.target.closest(".project-card");
+  if (!card) return;
+  const box = card.getBoundingClientRect();
+  card.style.setProperty("--spot-x", `${event.clientX - box.left}px`);
+  card.style.setProperty("--spot-y", `${event.clientY - box.top}px`);
+};
+
 const Projects = () => (
   <div className="container">
     <SectionHeader id="projects-title" title="Selected projects" label="Projects" variant="feature">
@@ -17,7 +30,7 @@ const Projects = () => (
     {/* The grid is also each card's row template (subgrid), so context,
         title, description, highlight, stack and link line up across a row
         whatever length each card's text runs to. */}
-    <ul className="project-grid">
+    <ul className="project-grid" onPointerMove={trackPointer}>
       {/* No delay prop: the stagger depends on how many cards share a row,
           which only the CSS knows. See Projects.css. */}
       {projects.map((project) => (

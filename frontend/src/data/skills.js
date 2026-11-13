@@ -80,3 +80,50 @@ export const skillGroups = [
     tags: ["AWS", "Vercel", "Docker", "Kubernetes", "Terraform", "CI/CD", "Linux"],
   },
 ];
+
+// The brand mark drawn beside a tag: tag name to symbol id in
+// src/assets/skill-icons.svg, which scripts/gen-skill-icons.mjs builds from
+// this map. Only products with a published mark are listed. A practice
+// (RAG, CI/CD) has none, and neither icon set carries XGBoost, Matplotlib,
+// Seaborn, Power BI, SQL Server, pgvector or Twilio, so those tags stay
+// text: a borrowed or look-alike mark would claim a different product.
+// AWS, MySQL and ASP.NET Core have marks and are left out on purpose: each
+// is mostly its own name in letters, which at a tag's 16px is a grey smudge
+// repeating the word beside it.
+// After editing, regenerate the sprite; the content tests fail if they differ.
+export const skillIcons = {
+  Mastra: "mastra",
+  "Vercel AI SDK": "vercel",
+  LangChain: "langchain",
+  LangGraph: "langgraph",
+  "Hugging Face": "huggingface",
+  OpenAI: "openai",
+  Groq: "groq",
+  PyTorch: "pytorch",
+  TensorFlow: "tensorflow",
+  "scikit-learn": "scikitlearn",
+  OpenCV: "opencv",
+  Pandas: "pandas",
+  NumPy: "numpy",
+  Python: "python",
+  TypeScript: "typescript",
+  JavaScript: "javascript",
+  "C++": "cplusplus",
+  React: "react",
+  "Next.js": "nextdotjs",
+  "Node.js": "nodedotjs",
+  FastAPI: "fastapi",
+  Vitest: "vitest",
+  PostgreSQL: "postgresql",
+  MongoDB: "mongodb",
+  "Turso / libSQL": "turso",
+  "Drizzle ORM": "drizzle",
+  Redis: "redis",
+  Kafka: "apachekafka",
+  "Upstash QStash": "upstash",
+  Vercel: "vercel",
+  Docker: "docker",
+  Kubernetes: "kubernetes",
+  Terraform: "terraform",
+  Linux: "linux",
+};

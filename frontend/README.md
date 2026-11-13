@@ -12,12 +12,13 @@ frontend/
 ├── src/
 │   ├── components/   layout/ (masthead, dock, command menu, footer), sections/ (page sections and the parts they mount), ui/ (primitives)
 │   ├── data/         All entries, figures and links, as plain modules with no JSX, plus the activity snapshot
+│   ├── assets/       Files imported by URL: the generated sprite of skill marks
 │   ├── styles/       Layer order, tokens and global CSS
 │   ├── App.jsx       The page
 │   ├── main.jsx      Hydrates the prerendered markup
 │   └── entry-server.jsx   Build-time render entry
 ├── public/           Copied verbatim: fonts, images, favicons, _headers (CSP and caching), 404.html, crawler files, sw.js (a kill-switch)
-├── scripts/          prerender.mjs (build step), fetch-github-activity.mjs (graph snapshot)
+├── scripts/          prerender.mjs (build step), fetch-github-activity.mjs (graph snapshot), gen-skill-icons.mjs (skill marks sprite)
 ├── test/             Content tests over src/data
 ├── e2e/              Playwright + axe suite and the server that applies the real CSP
 ├── index.html        Page shell: meta tags, JSON-LD, the hash-pinned analytics snippet, the prerender target
