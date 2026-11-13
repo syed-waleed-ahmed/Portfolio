@@ -13,52 +13,79 @@
   ::backdrop {
     color-scheme: dark;
 
-    /* ----- Colour: surfaces ----- */
+    /* ===== Colour =====
+       Every colour on the site is one of the roles below, and a component
+       picks a role, never a value. The hues are few on purpose: one navy for
+       every surface, one slate for every line and every grey, cyan for what
+       can be acted on, and a status colour only while there is a status to
+       report. docs/design.md has the table and the contrast of each pair. */
+
+    /* ----- Surfaces: three steps of one navy, each lighter than the last -----
+       The page; a panel resting on it (cards, the stats band, the dock, the
+       palette); and something raised on a panel (a hovered dock item, the
+       portrait's ring, a picture's placeholder). Chips and form fields are
+       cut into a panel instead, so they are filled with the page colour. */
     --color-bg: #0b1221;
     --color-surface: #111a2d;
     --color-surface-raised: #17223a;
-    /* Three weights of the same slate, by what the line has to do. A hairline
-       only separates (about 1.5:1 on the page). A control's outline says
-       "this is a thing" (about 2.3:1). A form field's border is the only
-       sign that there is somewhere to type, so it meets the 3:1 that WCAG
-       1.4.11 asks of an input's boundary. At 14% and 28%, as these were until
-       November 2026, cards and panels sat 1.2:1 off the page and the whole
-       layout read as dark on dark. */
+    /* The dock floats over whatever scrolls beneath it. */
+    --color-surface-translucent: color-mix(in srgb, var(--color-surface) 88%, transparent);
+
+    /* ----- Borders: three weights of one slate, by what the line has to do -----
+       A hairline only separates (about 1.5:1 on the page). A control's
+       outline says "this is a thing" (about 2.3:1). A form field's border is
+       the only sign that there is somewhere to type, so it meets the 3:1 that
+       WCAG 1.4.11 asks of an input's boundary. */
     --color-border: rgb(148 163 184 / 0.22);
     --color-border-strong: rgb(148 163 184 / 0.42);
     --color-border-field: rgb(148 163 184 / 0.56);
 
-    /* ----- Colour: text (all pass WCAG AAA, 7:1, on --color-surface) ----- */
+    /* ----- Text: four steps, all at least 7:1 (WCAG AAA) on bg and surface -----
+       Headings and figures; body; descriptions and long copy; metadata. */
     --color-text-strong: #f5f7fb;
     --color-text: #dce3ec;
     --color-text-soft: #b7c2d0;
     --color-text-muted: #a1adbf;
 
-    /* ----- Colour: accent -----
-       Cyan is the single accent: links, primary actions, focus rings and the
-       current section in the dock. Indigo only appears blended into cyan (the
-       hero name and the reading-progress line). */
+    /* ----- Accent: the one brand colour -----
+       Cyan marks what can be acted on and where you are: links, the primary
+       button, focus rings, the current section in the dock. Indigo is its
+       partner in two gradients (the hero name, the reading-progress line) and
+       is never used alone. The derived steps are the same for every hue in
+       this file: -border is the colour at 50%, enough to hold 3:1 as an edge,
+       and -subtle is the colour at 10%, a tint to sit text of that hue on. */
     --color-accent: #22d3ee;
     --color-accent-hover: #67e8f9;
     --color-accent-ink: #04161c;
+    --color-accent-border: color-mix(in srgb, var(--color-accent) 50%, transparent);
     --color-accent-subtle: color-mix(in srgb, var(--color-accent) 10%, transparent);
-    --color-accent-border: color-mix(in srgb, var(--color-accent) 40%, transparent);
     --color-indigo: #6366f1;
 
-    /* Decorative only: the squares of the dot band and the faint halo round a
-       skill tag, never behind text that has to be read at this contrast. */
-    --color-dot: rgb(148 163 184 / 0.13);
-    --color-halo: rgb(148 163 184 / 0.08);
+    /* ----- Inverse: a light chip on the dark page -----
+       The section pills and every tooltip. Named for the job, so that a text
+       colour is never borrowed as a background. */
+    --color-inverse: var(--color-text-strong);
+    --color-inverse-ink: var(--color-bg);
 
-    /* Dims the page behind the command palette. */
-    --color-scrim: rgb(2 6 23 / 0.6);
-
-    --color-danger: #fca5a5;
-    --color-danger-border: rgb(248 113 113 / 0.4);
-    --color-danger-subtle: rgb(248 113 113 / 0.08);
+    /* ----- Status: shown only while there is something to report -----
+       Success, a warning (try again later: nothing the visitor did wrong) and
+       an error (something to correct). Information has no hue of its own: a
+       neutral note uses the text and border roles above. */
     --color-success: #86efac;
-    --color-success-border: rgb(34 197 94 / 0.35);
-    --color-success-subtle: rgb(34 197 94 / 0.08);
+    --color-success-border: color-mix(in srgb, var(--color-success) 50%, transparent);
+    --color-success-subtle: color-mix(in srgb, var(--color-success) 10%, transparent);
+    --color-warning: #fcd34d;
+    --color-warning-border: color-mix(in srgb, var(--color-warning) 50%, transparent);
+    --color-warning-subtle: color-mix(in srgb, var(--color-warning) 10%, transparent);
+    --color-danger: #fca5a5;
+    --color-danger-border: color-mix(in srgb, var(--color-danger) 50%, transparent);
+    --color-danger-subtle: color-mix(in srgb, var(--color-danger) 10%, transparent);
+
+    /* ----- Decoration and depth -----
+       The squares of the dot band, never behind text that has to be read at
+       this contrast; and the scrim that dims the page behind the palette. */
+    --color-dot: rgb(148 163 184 / 0.13);
+    --color-scrim: rgb(2 6 23 / 0.6);
 
     /* ----- Typography ----- */
     --font-sans: "Hanken Grotesk", "Hanken Grotesk Fallback", system-ui, -apple-system,
@@ -172,6 +199,9 @@
       --color-accent: #0b5f70;
       --color-accent-hover: #0b5f70;
       --color-accent-border: #b6bcc5;
+      --color-success: #166534;
+      --color-warning: #854d0e;
+      --color-danger: #b91c1c;
       --shadow-md: none;
       --shadow-lg: none;
     }

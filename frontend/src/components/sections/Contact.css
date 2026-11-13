@@ -89,29 +89,26 @@
     color: var(--color-text);
     font-size: var(--text-sm);
     font-weight: var(--weight-medium);
-    transition:
-      color var(--duration-fast) ease,
-      border-color var(--duration-fast) ease;
+    transition: border-color var(--duration-fast) ease;
 
     & svg {
       flex-shrink: 0;
       width: 0.875rem;
       height: 0.875rem;
       color: var(--color-text-muted);
-      transition: color var(--duration-fast) ease;
     }
 
     & span {
       overflow-wrap: anywhere;
     }
 
+    /* The outlined control's hover, as on .btn--secondary: accent edge, 10%
+       accent fill, label unchanged. The fill is a gradient layer because the
+       channel is already filled with the page colour, to keep the dot band
+       from showing through it, and the tint has to sit on top of that. */
     &:hover {
       border-color: var(--color-accent-border);
-    }
-
-    &:hover,
-    &:hover svg {
-      color: var(--color-accent);
+      background-image: linear-gradient(var(--color-accent-subtle) 0 0);
     }
   }
 
@@ -268,16 +265,37 @@
     }
   }
 
+  /* Unmodified, the box is a neutral note. The three below each take one
+     status colour for the text, its -border for the edge and its -subtle for
+     the fill, so the three read as one family. */
   .form-feedback--success {
     border-color: var(--color-success-border);
     background-color: var(--color-success-subtle);
     color: var(--color-success);
   }
 
+  .form-feedback--warning {
+    border-color: var(--color-warning-border);
+    background-color: var(--color-warning-subtle);
+    color: var(--color-warning);
+  }
+
   .form-feedback--error {
     border-color: var(--color-danger-border);
     background-color: var(--color-danger-subtle);
     color: var(--color-danger);
+  }
+
+  /* A link inside a message takes the message's colour and stays underlined:
+     accent cyan in the middle of amber or red text was a third hue in one
+     sentence, and underlined it is still plainly a link. */
+  .form-feedback .text-link {
+    color: inherit;
+    text-decoration-color: currentColor;
+
+    &:hover {
+      color: var(--color-text-strong);
+    }
   }
 
   /* Honeypot. Deliberately not display:none or visibility:hidden - bots skip

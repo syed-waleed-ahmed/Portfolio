@@ -64,6 +64,9 @@ forking the repository can run it without reading the source.
   [Simple Icons](https://github.com/simple-icons/simple-icons) (CC0) and
   [Lobe Icons](https://github.com/lobehub/lobe-icons) (MIT), built into one
   cached SVG sprite so they add nothing to the JavaScript or the HTML
+- A colour system of named roles, held by tests: no colour is written outside
+  the token file, every text colour is 7:1 on every surface, and each hue
+  derives its border and tint by one formula
 - Modern CSS architecture: cascade layers, design tokens, native nesting,
   fluid `clamp()` type, container queries, `subgrid`, `:has()`, animated
   `<details>` and a scroll-driven reading-progress line, with styles co-located
@@ -101,11 +104,11 @@ forking the repository can run it without reading the source.
 
 **Engineering**
 
-- 18 backend API tests, 14 frontend content tests and 16 repository invariants
+- 18 backend API tests, 14 frontend content tests and 19 repository invariants
   on Node's built-in runner, with no test dependencies; the invariants pin the
   couplings between files that would otherwise fail silently, such as the CSP
   hash and the hand-copied palette
-- 24 browser tests in Playwright, with axe-core, against the built site under
+- 25 browser tests in Playwright, with axe-core, against the built site under
   its production CSP
 - Size Limit budgets on the entry bundle and each lazy chunk
 - Postman collection covering every endpoint: validation, the body cap,
@@ -329,9 +332,9 @@ expectations are in [`CONTRIBUTING.md`](CONTRIBUTING.md).
 ```bash
 npm test                             # 18 backend API tests via node --test
 npm test --prefix frontend           # 14 content tests over frontend/src/data
-npm run test:invariants              # 16 checks that files which must agree still do
+npm run test:invariants              # 19 checks: files that must agree, and the colour system's rules
 npm run size --prefix frontend       # bundle budgets, after a build
-npm run test:e2e --prefix frontend   # 24 browser tests, after a build
+npm run test:e2e --prefix frontend   # 25 browser tests, after a build
 ```
 
 The API suite binds an ephemeral port and covers both health probes, all three

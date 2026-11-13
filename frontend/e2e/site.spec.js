@@ -297,6 +297,40 @@ test.describe("contact form", () => {
     await expect(status(page)).toContainText("try again in 15 minutes");
     await expect(status(page).getByRole("link")).toHaveAttribute("href", /^mailto:/);
   });
+
+  // Every message the form can show, in the colours of its state: the field
+  // errors, a warning (nothing the visitor did), an error (something to
+  // correct) and the thanks. Each is text in a status colour on that colour's
+  // own tint, which the page-wide contrast scan never sees, because none of
+  // them is on screen when it runs.
+  test("every form message has its own tone and keeps 7:1", async ({ page }) => {
+    const contrast = async () =>
+      violations(await new AxeBuilder({ page }).include(".contact-form").withRules(["color-contrast-enhanced"]).analyze());
+    // Under 80rem the globe beside the form is never loaded. Drawing it in
+    // software next to four submissions and four scans made this test three
+    // times slower and, on a busy runner, slow enough to time out.
+    await page.setViewportSize({ width: 1024, height: 800 });
+    await page.goto("/");
+    await hydrated(page);
+    // From here on nothing fades, so axe reads final colours, not a reveal
+    // part-way through.
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    await page.getByRole("button", { name: "Send message" }).click();
+    await expect(page.locator(".field__error").first()).toBeVisible();
+    expect(await contrast()).toEqual([]);
+
+    for (const [code, body, tone] of [
+      [429, { success: false, error: "Too many requests. Please try again later." }, "warning"],
+      [400, { success: false, error: "Invalid email address." }, "error"],
+      [200, { success: true, message: "Message sent successfully." }, "success"],
+    ]) {
+      await mockContact(page, code, body);
+      await fill(page);
+      await page.getByRole("button", { name: "Send message" }).click();
+      await expect(status(page).locator(`.form-feedback--${tone}`)).toBeVisible();
+      expect(await contrast()).toEqual([]);
+    }
+  });
 });
 
 test("the contribution graph fits a phone without its own scroller", async ({ page }) => {

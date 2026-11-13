@@ -1,5 +1,13 @@
 import { useEffect, useRef, useState } from "react";
-import { FaCheckCircle, FaExclamationCircle, FaFileAlt, FaEnvelope, FaGithub, FaLinkedinIn } from "react-icons/fa";
+import {
+  FaCheckCircle,
+  FaExclamationCircle,
+  FaExclamationTriangle,
+  FaFileAlt,
+  FaEnvelope,
+  FaGithub,
+  FaLinkedinIn,
+} from "react-icons/fa";
 import ExternalLink from "@/components/ui/ExternalLink";
 import Reveal from "@/components/ui/Reveal";
 import LocationGlobe from "@/components/sections/LocationGlobe";
@@ -53,10 +61,15 @@ function failureMessage(status, serverError) {
   return "The message could not be sent right now.";
 }
 
+// A 400 is the one failure the visitor can correct, so it alone is shown as
+// an error. A rate limit, a sleeping or failing server and a dropped
+// connection are all "not now, and not your doing": a warning.
+const failureTone = (status) => (status === 400 ? "error" : "warning");
+
 const Contact = () => {
   const [values, setValues] = useState(initialValues);
   const [errors, setErrors] = useState({});
-  // idle | submitting | success | error
+  // idle | submitting | success | warning | error
   const [status, setStatus] = useState("idle");
   const [feedback, setFeedback] = useState("");
   const [slow, setSlow] = useState(false);
@@ -85,7 +98,7 @@ const Contact = () => {
     const { name, value } = e.target;
     setValues((prev) => ({ ...prev, [name]: value }));
     if (errors[name]) setErrors((prev) => ({ ...prev, [name]: undefined }));
-    if (status === "success" || status === "error") setStatus("idle");
+    if (status === "success" || status === "warning" || status === "error") setStatus("idle");
   };
 
   const handleSubmit = async (e) => {
@@ -118,7 +131,7 @@ const Contact = () => {
       const data = await res.json().catch(() => null);
 
       if (!res.ok || !data?.success) {
-        setStatus("error");
+        setStatus(failureTone(res.status));
         setFeedback(failureMessage(res.status, data?.error));
         return;
       }
@@ -127,7 +140,7 @@ const Contact = () => {
       setStatus("success");
       setFeedback("Thanks for reaching out. Your message is on its way, and I will reply by email.");
     } catch (err) {
-      setStatus("error");
+      setStatus("warning");
       setFeedback(
         err?.name === "TimeoutError"
           ? "The server took too long to respond."
@@ -269,9 +282,13 @@ const Contact = () => {
                     {feedback}
                   </p>
                 )}
-                {status === "error" && (
-                  <p className="form-feedback form-feedback--error">
-                    <FaExclamationCircle aria-hidden="true" />
+                {(status === "warning" || status === "error") && (
+                  <p className={`form-feedback form-feedback--${status}`}>
+                    {status === "warning" ? (
+                      <FaExclamationTriangle aria-hidden="true" />
+                    ) : (
+                      <FaExclamationCircle aria-hidden="true" />
+                    )}
                     <span>
                       {feedback} You can also email me at{" "}
                       <a className="text-link" href={`mailto:${personalInfo.email}`}>

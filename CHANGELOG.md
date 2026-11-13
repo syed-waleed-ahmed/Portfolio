@@ -15,6 +15,47 @@ than by individual commit.
 
 ## [Unreleased]
 
+## [2.4.0] - 2026-11-14
+
+### Changed
+
+- **The colours are one system of named roles.** A rendered audit of the page,
+  its states and the 404 page found every paint already came from a token, but
+  several tokens were doing jobs they were not named for, and similar things
+  were coloured differently. `tokens.css` is now grouped by role (surface,
+  border, text, accent, inverse, status), and three invariants hold it: no
+  stylesheet but the token file may write a colour, every text, accent and
+  status colour is 7:1 on the page and on a panel, and every hue derives its
+  border (50%) and tint (10%) by one formula.
+- **A technology tag looks the same everywhere.** On a project card it was an
+  outline with soft text; in Skills it had a fill, a second ring and brighter
+  text. Both are now one chip, filled with the page colour like a form field,
+  and Skills only makes it larger. The ring's token, `--color-halo`, is gone.
+- **Outlined controls share one hover.** The secondary button tinted its fill,
+  the icon buttons coloured their icon and the contact channels coloured their
+  label. All three now take the accent on their edge and a 10% accent fill.
+- **Project pictures rest a step dimmer.** Two of the six are screenshots of
+  light interfaces and were the brightest things on the page. All six sit at
+  84% brightness and come up to full strength with the pointer or focus.
+- **Pills and tooltips use an inverse pair of tokens** instead of borrowing a
+  text colour as a background, and the dock's translucent fill is a token.
+
+### Added
+
+- **A warning colour, for failures that are not the visitor's.** A rate
+  limit, a server that is down and a dropped connection were shown in the
+  error red, as if the form had been filled in wrongly. They are now amber;
+  only a `400` and an invalid field are red. A link inside a status message
+  takes the message's colour and stays underlined, where it was accent cyan
+  in the middle of red text.
+
+### Fixed
+
+- **An invalid field's border is easier to see than a valid one's, not
+  harder.** The error border was a separate red at 40%, about 1.9:1 against
+  the page, beside the 3.1:1 of an ordinary field. Status borders are now
+  their own hue at 50%: 3.3:1 for an error.
+
 ## [2.3.1] - 2026-11-14
 
 ### Changed
@@ -871,7 +912,8 @@ The redesign that produced the current site.
   and contact sections.
 - MIT licence and first README.
 
-[Unreleased]: https://github.com/syed-waleed-ahmed/Portfolio/compare/v2.3.1...HEAD
+[Unreleased]: https://github.com/syed-waleed-ahmed/Portfolio/compare/v2.4.0...HEAD
+[2.4.0]: https://github.com/syed-waleed-ahmed/Portfolio/compare/v2.3.1...v2.4.0
 [2.3.1]: https://github.com/syed-waleed-ahmed/Portfolio/compare/v2.3.0...v2.3.1
 [2.3.0]: https://github.com/syed-waleed-ahmed/Portfolio/compare/v2.2.0...v2.3.0
 [2.2.0]: https://github.com/syed-waleed-ahmed/Portfolio/compare/v2.1.4...v2.2.0
