@@ -13,14 +13,15 @@
     }
   }
 
-  /* Six shared rows: context, title, description, highlight, stack, links.
+  /* Seven shared rows: picture, context, title, description, highlight,
+     stack, links.
      The card is a grid item of .project-grid and a subgrid of its rows, so a
      two-line title on one card pushes its neighbour's description down to
      match. Without subgrid support the card is an ordinary column; content
      still reads top to bottom, it just stops lining up across the row. */
   .project-card {
     display: grid;
-    grid-row: span 6;
+    grid-row: span 7;
     grid-template-rows: subgrid;
     row-gap: var(--space-3);
     align-content: start;
@@ -56,7 +57,7 @@
        the border nearest it, at the --spot-x and --spot-y Projects.jsx
        writes. Both are absolutely positioned, which keeps them out of the
        grid: an in-flow pseudo-element would be a grid item and take one of
-       the six shared rows. isolation lets the wash sit at z-index -1, over
+       the seven shared rows. isolation lets the wash sit at z-index -1, over
        the card's own background and under its text. */
     position: relative;
     isolation: isolate;
@@ -130,6 +131,24 @@
         --reveal-delay: 100ms;
       }
     }
+  }
+
+  /* Bleeds to the card's edges: the negative margins undo the card's padding
+     on three sides, and the top corners follow the card's, one border-width
+     tighter. Every picture is a 2:1 crop, so the box is the same in every
+     card before any of them has loaded, and the raised surface colour fills
+     it until then. */
+  .project-card__image {
+    display: block;
+    inline-size: calc(100% + 2 * var(--space-5));
+    max-inline-size: none;
+    block-size: auto;
+    aspect-ratio: 2 / 1;
+    margin: calc(-1 * var(--space-5)) calc(-1 * var(--space-5)) var(--space-2);
+    border-radius: calc(var(--radius-lg) - 1px) calc(var(--radius-lg) - 1px) 0 0;
+    border-block-end: 1px solid var(--color-border);
+    background-color: var(--color-surface-raised);
+    object-fit: cover;
   }
 
   .project-card__context {

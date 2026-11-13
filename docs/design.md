@@ -375,10 +375,35 @@ nothing, so the browser suite checks that every one has a bounding box.
 ### Project cards line up on shared rows
 
 `.project-grid` is one column on phones, two from 44rem and three from 72rem.
-Each card spans six row tracks with `grid-template-rows: subgrid`: context,
-title, description, highlight, stack and links. A two-line title on one card
-therefore pushes its neighbour's description down to match, and every band
-lines up across the row.
+Each card spans seven row tracks with `grid-template-rows: subgrid`: picture,
+context, title, description, highlight, stack and links. A two-line title on
+one card therefore pushes its neighbour's description down to match, and every
+band lines up across the row.
+
+**Every card opens with a picture**, a 2:1 crop that bleeds to the card's
+edges. Each is cut from an image in that project's own repository, never a
+mock-up, so it can be checked like the card's figures:
+
+| Card | Source | Shows |
+|------|--------|-------|
+| RemindrAI | The thesis poster (the repository is private) | A chat request becoming one reminder on four channels |
+| TIAGo | `docs/images/task1_map_vs_world.png` | The SLAM map in RViz beside the Gazebo world |
+| Campaign Forge | `docs/images/run-inspector.jpg` | The Run Inspector on a completed demo-mode run |
+| Self-Correcting RAG | `docs/images/live-demo.jpg` | The demo's Ask tab |
+| LLM-as-Judge | `docs/assets/screenshots/playground.png` | A pairwise verdict with a bias warning |
+| FastAPI Niche Assistant | `docs/assets/web-ui.jpg` | The web UI's welcome screen |
+
+The files are in `src/assets/projects/` as AVIF at 480 and 960px wide
+(`<image>-480.avif`, `<image>-960.avif`; the RAG one stops at its source's
+712px), about 159 KB for all twelve. A project names its picture in
+`data/projects.js` and `Projects.jsx` resolves the name to Vite's
+fingerprinted URLs, so the data module stays importable by plain Node. They
+load lazily, since the grid starts below the fold at every width, and the
+`width` and `height` attributes hold the 2:1 box until they arrive. The
+picture row is shared like the other six, so a card without one would show an
+empty band: a content test requires both files and an `imageAlt` of 12 to 40
+words for every project. They were cut by hand with `sharp` (extract, resize,
+AVIF at quality 55); a new card needs the same two files.
 
 Three details are load-bearing:
 
@@ -407,7 +432,7 @@ listener on the grid that writes `--spot-x` and `--spot-y` to the card under
 the pointer, with no state and so no re-render, and `Projects.css` draws two
 radial gradients there: `::before` under the text at `z-index: -1`, and
 `::after` over the border, masked down to its 1px. In flow, either one would
-be a grid item and take one of the six rows. The light is off on touch
+be a grid item and take one of the seven rows. The light is off on touch
 screens, where a tap would leave `:hover` parked on the last card touched.
 
 Without subgrid support the cards fall back to ordinary columns: content still

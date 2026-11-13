@@ -8,7 +8,7 @@
 // neighbours, and a character the self-hosted font subset cannot draw.
 import test from "node:test";
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import * as about from "../src/data/about.js";
 import * as experienceModule from "../src/data/experience.js";
 import * as projectsModule from "../src/data/projects.js";
@@ -168,6 +168,22 @@ test("the GitHub activity snapshot is a usable year of days", () => {
     assert.ok(Number.isInteger(level) && level >= 0 && level <= 4, date);
     if (index > 0) assert.ok(date > days[index - 1].date, `${date} is out of order`);
   }
+});
+
+// The card looks its picture up by name, and a name with no file renders an
+// <img> with no src: a broken-image box on the page and nothing in the build.
+test("every project names a picture that exists, with words for it", () => {
+  for (const p of projects) {
+    assert.match(p.image ?? "", /^[a-z][a-z0-9-]*$/, `${p.title}: image "${p.image}"`);
+    for (const width of [480, 960]) {
+      const file = new URL(`../src/assets/projects/${p.image}-${width}.avif`, import.meta.url);
+      assert.ok(existsSync(file), `${p.title}: src/assets/projects/${p.image}-${width}.avif is missing`);
+    }
+    const n = words(p.imageAlt ?? "");
+    assert.ok(n >= 12 && n <= 40, `${p.title}: ${n}-word imageAlt, expected 12-40, saying what the picture shows`);
+  }
+  const names = projects.map((p) => p.image);
+  assert.equal(new Set(names).size, names.length, "two projects share a picture");
 });
 
 // The sprite is generated from skillIcons and committed, so the two can part:

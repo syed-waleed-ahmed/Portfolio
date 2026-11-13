@@ -52,7 +52,7 @@ forking the repository can run it without reading the source.
 
 - Prerendered at build time and hydrated on load, so the full page is in the
   HTML response and text paints before any JavaScript runs
-- Lean output: about 7 KB of gzipped CSS and 83 KB of gzipped JS on load, held
+- Lean output: about 8 KB of gzipped CSS and 85 KB of gzipped JS on load, held
   there by size budgets in CI, with no CSS framework, animation library, UI kit
   or PWA shell
 - A Ctrl/Cmd+K command palette ([cmdk](https://github.com/pacocoursey/cmdk)), a
@@ -73,6 +73,8 @@ forking the repository can run it without reading the source.
   [magicuidesign/portfolio](https://github.com/magicuidesign/portfolio) and
   [magicui](https://github.com/magicuidesign/magicui) (both MIT) and rewritten
   in plain CSS with no new dependencies
+- A picture on every project card, cropped from that project's own repository
+  and served as lazy AVIF at two widths
 - Data-driven content: entries, figures and links live in `src/data/`, with
   content tests that keep figures traceable and entries consistent
 - Accessibility: skip link, named landmarks, one focus style, an accessible
@@ -98,7 +100,7 @@ forking the repository can run it without reading the source.
 
 **Engineering**
 
-- 18 backend API tests, 13 frontend content tests and 16 repository invariants
+- 18 backend API tests, 14 frontend content tests and 16 repository invariants
   on Node's built-in runner, with no test dependencies; the invariants pin the
   couplings between files that would otherwise fail silently, such as the CSP
   hash and the hand-copied palette
@@ -325,7 +327,7 @@ expectations are in [`CONTRIBUTING.md`](CONTRIBUTING.md).
 
 ```bash
 npm test                             # 18 backend API tests via node --test
-npm test --prefix frontend           # 13 content tests over frontend/src/data
+npm test --prefix frontend           # 14 content tests over frontend/src/data
 npm run test:invariants              # 16 checks that files which must agree still do
 npm run size --prefix frontend       # bundle budgets, after a build
 npm run test:e2e --prefix frontend   # 22 browser tests, after a build

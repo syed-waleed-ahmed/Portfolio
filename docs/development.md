@@ -213,7 +213,7 @@ few pieces of prose are tied to one component and live there instead:
 | Change | File |
 |--------|------|
 | New job or internship | `experience.js` |
-| New project | `projects.js` - array order is page order; each card carries exactly one of `github` or `sourceNote`, plus an optional `demo` URL beside `github` |
+| New project | `projects.js` - array order is page order; each card carries exactly one of `github` or `sourceNote`, plus an optional `demo` URL beside `github`, and an `image` with its `imageAlt`: two AVIF files in `src/assets/projects/`, see [Design](design.md#project-cards-line-up-on-shared-rows) |
 | New skill group or tag | `skills.js`; if the tag is a product with a mark, add it to `skillIcons` there and rebuild the sprite, see [Design](design.md#skill-marks) |
 | Approach copy, a stat, a degree, a target role | `about.js` |
 | Name, email, resume link, socials, GitHub username, section order | `portfolio.js` |

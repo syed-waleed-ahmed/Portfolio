@@ -15,6 +15,32 @@ than by individual commit.
 
 ## [Unreleased]
 
+## [2.3.0] - 2026-11-14
+
+### Added
+
+- **A picture on every project card.** Each card opens with a 2:1 crop that
+  bleeds to its edges, cut from an image in that project's own repository
+  (for RemindrAI, whose repository is private, from the thesis poster), so a
+  picture can be checked against its source like the figures beside it;
+  `docs/design.md` lists each one. They are AVIF at two widths, about 159 KB
+  for all twelve files, loaded lazily with their box reserved, and held by a
+  new 175 kB size budget. The card grid's shared rows go from six to seven, a
+  content test requires every project to name a picture that exists and to
+  describe it, and the entry JavaScript grew by 0.9 KB.
+
+### Changed
+
+- **The FastAPI Niche Assistant replaces the connecting-rod card.** A
+  TinyLlama 1.1B model fine-tuned with LoRA on FastAPI questions, quantized to
+  a 0.7 GB GGUF and served by llama.cpp behind an OpenAI-compatible API, with
+  a Cloudflare Worker in front of Google Cloud Run and a public demo. Its
+  figures are the repository README's: 0.546 against the base model's 0.402
+  on the 108-item held-out set, both scored in one run of the CI eval gate.
+  The card names only what the live deployment runs, so the Worker's optional
+  answer cache and its undeployed backup origins are left out. The
+  connecting-rod course project remains on GitHub.
+
 ## [2.2.0] - 2026-11-13
 
 ### Added
@@ -824,7 +850,8 @@ The redesign that produced the current site.
   and contact sections.
 - MIT licence and first README.
 
-[Unreleased]: https://github.com/syed-waleed-ahmed/Portfolio/compare/v2.2.0...HEAD
+[Unreleased]: https://github.com/syed-waleed-ahmed/Portfolio/compare/v2.3.0...HEAD
+[2.3.0]: https://github.com/syed-waleed-ahmed/Portfolio/compare/v2.2.0...v2.3.0
 [2.2.0]: https://github.com/syed-waleed-ahmed/Portfolio/compare/v2.1.4...v2.2.0
 [2.1.4]: https://github.com/syed-waleed-ahmed/Portfolio/compare/v2.1.3...v2.1.4
 [2.1.3]: https://github.com/syed-waleed-ahmed/Portfolio/compare/v2.1.2...v2.1.3

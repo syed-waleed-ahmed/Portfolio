@@ -59,7 +59,7 @@ portfolio/
 │   ├── scripts/fetch-github-activity.mjs  Refreshes the contribution snapshot
 │   ├── scripts/gen-skill-icons.mjs  Rebuilds the sprite of skill marks
 │   ├── src/
-│   │   ├── assets/                 Files a component imports by URL: the skill marks sprite (generated)
+│   │   ├── assets/                 Files a component imports by URL: the skill marks sprite (generated) and the project pictures
 │   │   ├── components/
 │   │   │   ├── layout/             Masthead, Dock, CommandMenu, Footer
 │   │   │   ├── sections/           Page sections and the parts they mount, each with its .css if it has styles
@@ -141,7 +141,8 @@ sections are edited independently.
 `frontend/test/data.test.js` turns the data layer's conventions into checks:
 every About figure must appear in the Experience or Projects entry it cites,
 project and experience copy stay within shared length ranges, each project
-card carries exactly one of `github` or `sourceNote`, links are absolute
+card carries exactly one of `github` or `sourceNote` and names a picture that
+exists, links are absolute
 `https`, no export of a data module uses a character the font subset cannot
 draw, every command palette entry points somewhere real, the activity
 snapshot is a usable year of days, and the generated sprite of skill marks
