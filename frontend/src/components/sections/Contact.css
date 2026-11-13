@@ -171,7 +171,7 @@
     width: 100%;
     min-height: var(--tap-target);
     padding: var(--space-3) var(--space-4);
-    border: 1px solid var(--color-border-strong);
+    border: 1px solid var(--color-border-field);
     border-radius: var(--radius-md);
     background-color: var(--color-bg);
     color: var(--color-text-strong);
@@ -187,7 +187,7 @@
     }
 
     &:hover {
-      border-color: color-mix(in srgb, var(--color-text-muted) 70%, transparent);
+      border-color: var(--color-text-muted);
     }
 
     /* The control's own ring replaces the global outline here: a border

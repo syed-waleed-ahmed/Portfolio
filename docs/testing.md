@@ -164,7 +164,7 @@ npm run build
 npm run test:e2e
 ```
 
-Twenty-two tests in `frontend/e2e/site.spec.js`, on Playwright Test with
+Twenty-four tests in `frontend/e2e/site.spec.js`, on Playwright Test with
 `@axe-core/playwright`, against the built and prerendered site.
 `e2e/serve.mjs` serves `frontend/dist` on `127.0.0.1:4174` with the `/*` headers
 from `dist/_headers`, so the suite runs under the CSP visitors get (which
@@ -194,6 +194,8 @@ $env:VITE_API_BASE_URL='https://portfolio-backend-kmum.onrender.com'; npm run bu
 | `has no horizontal overflow at <width>px`, five tests | No horizontal scroll at 320, 390, 768, 1440 and 1920px, with the lazy graph and globe loaded |
 | `axe finds no WCAG 2.2 A or AA violations on desktop` and `on phone` | No axe violations for the WCAG 2.0 and 2.1 A and AA tags and the 2.2 AA tag (axe has no 2.2 A tag), at 1440 and 390px, under reduced motion so axe reads final colours |
 | `axe finds no violations with the command palette open` | The same scan with the dialog open |
+| `all text meets the 7:1 of WCAG AAA` | axe's `color-contrast-enhanced` rule finds nothing at 1440px. It cannot judge text over the dot band's gradient and reports that as incomplete, not as a pass |
+| `form fields have a border of at least 3:1 against the panel` | The first field's border, flattened over the page colour, is at least 3:1 against it (WCAG 1.4.11, for which axe has no rule) |
 | `opens with Ctrl+K, runs a search, and gives focus back on Escape` | The input is focused; "copy email" and Enter announce the copy; Escape closes the dialog |
 | `returns focus to the Search button it was opened from` | Focus is back on the dock's Search button after Escape |
 | `the dock's Home link returns to the very top of the page` | `scrollY` is 0, so the masthead is in view, not just the hero |
