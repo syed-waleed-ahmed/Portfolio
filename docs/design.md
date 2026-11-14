@@ -401,7 +401,7 @@ straight away.
 ### Skill marks
 
 A skill tag that names a product shows that product's mark before its name:
-34 tags and 33 marks, since Vercel's serves two, from [Simple Icons](https://github.com/simple-icons/simple-icons)
+35 tags and 34 marks, since Vercel's serves two, from [Simple Icons](https://github.com/simple-icons/simple-icons)
 (CC0-1.0) and, for Mastra, OpenAI and Groq, which it does not carry, from
 [Lobe Icons](https://github.com/lobehub/lobe-icons) (MIT). The marks are
 trademarks of their owners and are used only to name the tool beside them.
@@ -422,7 +422,9 @@ trademarks of their owners and are used only to name the tool beside them.
   thirty hues in a row would outweigh the names.
 - **Not every tag has one, on purpose.** A practice such as RAG or CI/CD has
   no mark. Neither set carries XGBoost, Matplotlib, Seaborn, Power BI, SQL
-  Server, pgvector or Twilio, and a look-alike would claim a different product.
+  Server, pgvector, Twilio, llama.cpp or Google Cloud Run, and a look-alike
+  would claim a different product; Google Cloud's own mark would claim the
+  whole platform for a tag that names one service of it.
   AWS, MySQL and ASP.NET Core were tried and removed: each mark is mostly its
   own name in letters, which at a tag's 16px is a smudge repeating the word
   beside it.

@@ -15,6 +15,17 @@ than by individual commit.
 
 ## [Unreleased]
 
+## [2.4.3] - 2026-11-14
+
+### Changed
+
+- **Skills add llama.cpp, Google Cloud Run and Cloudflare Workers.** The
+  FastAPI Niche Assistant now serves its fine-tuned model with llama.cpp
+  from Google Cloud Run behind a Cloudflare Worker, so each is backed by a
+  deployed project. Cloudflare Workers carries its mark from Simple Icons;
+  neither icon set has one for llama.cpp or Cloud Run, so those two stay
+  text. The resume and the GitHub profile README name the same three.
+
 ## [2.4.2] - 2026-11-14
 
 ### Fixed
@@ -968,7 +979,8 @@ The redesign that produced the current site.
   and contact sections.
 - MIT licence and first README.
 
-[Unreleased]: https://github.com/syed-waleed-ahmed/Portfolio/compare/v2.4.2...HEAD
+[Unreleased]: https://github.com/syed-waleed-ahmed/Portfolio/compare/v2.4.3...HEAD
+[2.4.3]: https://github.com/syed-waleed-ahmed/Portfolio/compare/v2.4.2...v2.4.3
 [2.4.2]: https://github.com/syed-waleed-ahmed/Portfolio/compare/v2.4.1...v2.4.2
 [2.4.1]: https://github.com/syed-waleed-ahmed/Portfolio/compare/v2.4.0...v2.4.1
 [2.4.0]: https://github.com/syed-waleed-ahmed/Portfolio/compare/v2.3.1...v2.4.0
