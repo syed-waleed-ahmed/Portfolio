@@ -14,6 +14,7 @@ export const skillGroups = [
       "LLM Evaluation",
       "Prompt Engineering",
       "Fine-tuning",
+      "llama.cpp",
       "Mastra",
       "Vercel AI SDK",
       "LangChain",
@@ -77,7 +78,17 @@ export const skillGroups = [
   },
   {
     title: "Cloud & DevOps",
-    tags: ["AWS", "Vercel", "Docker", "Kubernetes", "Terraform", "CI/CD", "Linux"],
+    tags: [
+      "AWS",
+      "Vercel",
+      "Google Cloud Run",
+      "Cloudflare Workers",
+      "Docker",
+      "Kubernetes",
+      "Terraform",
+      "CI/CD",
+      "Linux",
+    ],
   },
 ];
 
@@ -85,8 +96,10 @@ export const skillGroups = [
 // src/assets/skill-icons.svg, which scripts/gen-skill-icons.mjs builds from
 // this map. Only products with a published mark are listed. A practice
 // (RAG, CI/CD) has none, and neither icon set carries XGBoost, Matplotlib,
-// Seaborn, Power BI, SQL Server, pgvector or Twilio, so those tags stay
-// text: a borrowed or look-alike mark would claim a different product.
+// Seaborn, Power BI, SQL Server, pgvector, Twilio, llama.cpp or Cloud Run,
+// so those tags stay text: a borrowed or look-alike mark would claim a
+// different product. Google Cloud's own mark would claim the whole platform
+// for a tag that names one service of it.
 // AWS, MySQL and ASP.NET Core have marks and are left out on purpose: each
 // is mostly its own name in letters, which at a tag's 16px is a grey smudge
 // repeating the word beside it.
@@ -122,6 +135,7 @@ export const skillIcons = {
   Kafka: "apachekafka",
   "Upstash QStash": "upstash",
   Vercel: "vercel",
+  "Cloudflare Workers": "cloudflareworkers",
   Docker: "docker",
   Kubernetes: "kubernetes",
   Terraform: "terraform",
