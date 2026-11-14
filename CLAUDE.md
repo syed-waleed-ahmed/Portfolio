@@ -67,7 +67,7 @@ On Windows, stop any running Vite (dev or preview) or `e2e/serve.mjs` before `np
 
 - Every `stats` figure in `about.js` must appear in an Experience or Projects entry naming its `source`, so change both together.
 - Project descriptions run 32-53 words, highlights 9-26, with 4-5 stack chips; experience bullets run 12-26 words. When a new fact arrives, drop an older one rather than growing the entry.
-- Each project names a picture: `image` is the stem of two files in `src/assets/projects/` (`<image>-480.avif`, `<image>-960.avif`, 2:1) and `imageAlt` says what it shows in 12-40 words. The picture is a crop of an image from that project's own repository (the thesis poster for RemindrAI), never a mock-up; `docs/design.md` lists each source.
+- Each project names a picture: `image` is the stem of four files in `src/assets/projects/` (480 and 960px wide, 2:1, each as `.avif` and as the `.webp` a browser without AVIF falls back to) and `imageAlt` says what it shows in 12-40 words. The picture is a crop of an image from that project's own repository (the thesis poster for RemindrAI), never a mock-up; `docs/design.md` lists each source.
 - Each project has exactly one of `github` or `sourceNote`, because the cards share a subgrid row that would otherwise sit empty. An optional `demo` link sits beside `github` in that row, so it needs one.
 - `skillIcons` in `skills.js` maps a tag to a symbol in the generated sprite `src/assets/skill-icons.svg`, and the two must hold the same ids. After editing the map, rebuild the sprite (see "Things that still fail silently"). A tag gets a mark only if it names a product, the mark reads at 16px and one of the two icon sets carries it; never substitute a look-alike.
 - Copy may only use characters in the font subset. `FONT_RANGES` in the test mirrors the `unicode-range` in `styles/base.css`, and the test scans every export of every data module. Arrows and similar symbols fail, so use `react-icons` (the Search tooltip draws the Command key with `LuCommand` for this reason). JSX copy follows the same rule unchecked.
@@ -124,6 +124,8 @@ Middleware order is deliberate: Helmet, CORS, the 16 KB `express.json` cap, then
 - A click or key press before hydration does nothing. Wait for `hydrated(page)` (the first `[data-reveal]`), or retry with `toPass` as `openPalette` does; under `reducedMotion: "reduce"` Reveal marks nothing, so only the retry works there.
 - Every page draws the WebGL globe, in software in headless Chromium, so workers are capped (4 locally, 2 in CI) to keep runs from starving each other into timeouts.
 - The dock floats over element screenshots and moves its `aria-current` as the page scrolls, so read navigation state from the DOM, not from a crop.
+- Playwright's WebKit cannot load the page from `e2e/serve.mjs`: it applies the CSP's `upgrade-insecure-requests` to `http://127.0.0.1` and every asset fails. For a cross-browser look, use the live site or a server with no CSP. It is also a Windows build that cannot decode AVIF, which is how the missing WebP fallback was found.
+- `getComputedStyle` returns the author's colour under emulated forced colours even where the browser paints the system's over it. A state that must survive a contrast theme needs `forced-color-adjust: none` with system colours, and a test has to check that opt-out, not just compare colours.
 
 ## Conventions
 

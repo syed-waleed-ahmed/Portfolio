@@ -133,18 +133,26 @@
     }
   }
 
-  /* Bleeds to the card's edges: the negative margins undo the card's padding
-     on three sides, and the top corners follow the card's, one border-width
-     tighter. Every picture is a 2:1 crop, so the box is the same in every
-     card before any of them has loaded, and the raised surface colour fills
-     it until then. */
-  .project-card__image {
+  /* The card's first grid item. It bleeds to the card's edges: the negative
+     margins undo the card's padding on three sides, and the width adds that
+     padding back. max-inline-size is lifted because the reset caps every
+     picture at 100% of its container, which here is the card's content box:
+     with the cap, the picture stopped 2.5rem short of the right edge. */
+  .project-card__picture {
     display: block;
     inline-size: calc(100% + 2 * var(--space-5));
     max-inline-size: none;
+    margin: calc(-1 * var(--space-5)) calc(-1 * var(--space-5)) var(--space-2);
+  }
+
+  /* The top corners follow the card's, one border-width tighter. Every
+     picture is a 2:1 crop, so the box is the same in every card before any
+     of them has loaded, and the raised surface colour fills it until then. */
+  .project-card__image {
+    display: block;
+    inline-size: 100%;
     block-size: auto;
     aspect-ratio: 2 / 1;
-    margin: calc(-1 * var(--space-5)) calc(-1 * var(--space-5)) var(--space-2);
     border-radius: calc(var(--radius-lg) - 1px) calc(var(--radius-lg) - 1px) 0 0;
     border-block-end: 1px solid var(--color-border);
     background-color: var(--color-surface-raised);

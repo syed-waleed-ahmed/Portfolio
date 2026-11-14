@@ -448,26 +448,38 @@ band lines up across the row.
 edges. Each is cut from an image in that project's own repository, never a
 mock-up, so it can be checked like the card's figures:
 
-| Card | Source | Shows |
-|------|--------|-------|
-| RemindrAI | The thesis poster (the repository is private) | A chat request becoming one reminder on four channels |
-| TIAGo | `docs/images/task1_map_vs_world.png` | The SLAM map in RViz beside the Gazebo world |
-| Campaign Forge | `docs/images/run-inspector.jpg` | The Run Inspector on a completed demo-mode run |
-| Self-Correcting RAG | `docs/images/live-demo.jpg` | The demo's Ask tab |
-| LLM-as-Judge | `docs/assets/screenshots/playground.png` | A pairwise verdict with a bias warning |
-| FastAPI Niche Assistant | `docs/assets/web-ui.jpg` | The web UI's welcome screen |
+| Card | Source | Crop (left, top, width) | Shows |
+|------|--------|-------------------------|-------|
+| RemindrAI | The thesis poster, 2160x2700 (the repository is private) | 195, 848, 1790 | A chat request becoming one reminder on four channels |
+| TIAGo | `docs/images/task1_map_vs_world.png` | 0, 10, 1596 | The SLAM map in RViz beside the Gazebo world |
+| Campaign Forge | `docs/images/run-inspector.jpg` | 318, 0, 1210 | The Run Inspector on a completed demo-mode run |
+| Self-Correcting RAG | `docs/images/live-demo.jpg` | 0, 0, 712 | The demo's Ask tab |
+| LLM-as-Judge | `docs/assets/screenshots/playground.png` | 0, 0, 1060 | A pairwise verdict with a bias warning |
+| FastAPI Niche Assistant | `docs/assets/web-ui.jpg` | 128, 95, 1000 | The web UI's welcome screen |
 
-The files are in `src/assets/projects/` as AVIF at 480 and 960px wide
-(`<image>-480.avif`, `<image>-960.avif`; the RAG one stops at its source's
-712px), about 159 KB for all twelve. A project names its picture in
+Each crop is as wide as the third number and half as tall.
+
+The files are in `src/assets/projects/` at 480 and 960px wide, as AVIF and
+as WebP (`<image>-480.avif`, `<image>-960.webp` and so on; the RAG one stops at
+its source's 712px): about 159 KB for the twelve AVIF files and 190 KB for
+the twelve WebP. Each card renders a `<picture>` with the AVIF as its
+`<source>` and the WebP as its `<img>`, the pattern the hero's portrait
+uses. A browser takes one or the other, never both. The WebP is there
+because a browser that cannot decode AVIF otherwise draws six broken-image
+icons, which is what WebKit's Windows build did when the site was first
+opened in it. A project names its picture in
 `data/projects.js` and `Projects.jsx` resolves the name to Vite's
 fingerprinted URLs, so the data module stays importable by plain Node. They
 load lazily, since the grid starts below the fold at every width, and the
 `width` and `height` attributes hold the 2:1 box until they arrive. The
 picture row is shared like the other six, so a card without one would show an
-empty band: a content test requires both files and an `imageAlt` of 12 to 40
-words for every project. They were cut by hand with `sharp` (extract, resize,
-AVIF at quality 55); a new card needs the same two files.
+empty band: a content test requires all four files and an `imageAlt` of 12 to
+40 words for every project. They were cut by hand with `sharp` (extract, resize,
+AVIF at quality 55, WebP at quality 78); a new card needs the same four files.
+The `<picture>` is the card's grid item and sets its own width with
+`max-inline-size: none`: the reset caps a picture at 100% of its container,
+which here is the card's content box, and with the cap it stopped 2.5rem short
+of the card's right edge.
 
 Two of the six are screenshots of light interfaces, shown as those projects
 really look, and at full strength each was the brightest thing on the page by
@@ -571,6 +583,13 @@ the dock does not magnify and the globe draws one still frame.
   rendered, and so in the accessibility tree, even while it is empty
 - The honeypot input is off-screen rather than `display: none`, out of the tab
   order and hidden from assistive technology
+- Under a Windows contrast theme (`forced-colors: active`), where the browser
+  replaces every author colour, the two states that were shown by a tint
+  alone keep a mark: the dock's current section and the command palette's
+  selected row opt out with `forced-color-adjust: none` and take the system's
+  `Highlight` and `HighlightText`. Everything else is left to the theme: text,
+  borders and focus rings stay visible, and the decoration (the dot band, the
+  reading-progress line, the pointer light) simply goes
 - Tap targets and reduced motion as described above
 
 The browser suite runs an axe-core scan (the WCAG 2.0, 2.1 and 2.2 A and AA
