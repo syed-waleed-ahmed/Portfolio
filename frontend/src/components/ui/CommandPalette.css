@@ -133,6 +133,19 @@
       & svg {
         color: var(--color-accent);
       }
+
+      /* Under a contrast theme the tint is removed with every other author
+         colour, and the row the arrow keys are on looked like all the
+         others. The system's selection colours mark it instead. */
+      @media (forced-colors: active) {
+        forced-color-adjust: none;
+        background-color: Highlight;
+        color: HighlightText;
+
+        & svg {
+          color: HighlightText;
+        }
+      }
     }
   }
 

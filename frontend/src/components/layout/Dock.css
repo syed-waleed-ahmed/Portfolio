@@ -129,6 +129,17 @@
       border-color: var(--color-accent-border);
       background-color: var(--color-accent-subtle);
       color: var(--color-accent);
+
+      /* A Windows contrast theme replaces every author colour, the tint
+         above included, and all ten items became the same ring. The
+         system's own selection colours are the one pair it leaves a page
+         to say "this one" with. */
+      @media (forced-colors: active) {
+        forced-color-adjust: none;
+        border-color: Highlight;
+        background-color: Highlight;
+        color: HighlightText;
+      }
     }
   }
 

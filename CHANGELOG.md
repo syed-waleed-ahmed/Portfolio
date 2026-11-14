@@ -15,6 +15,36 @@ than by individual commit.
 
 ## [Unreleased]
 
+## [2.4.1] - 2026-11-14
+
+### Fixed
+
+- **Project pictures no longer break in a browser without AVIF.** They were
+  AVIF only, so such a browser drew six broken-image icons, while the hero's
+  portrait beside them fell back to WebP. Each card now renders a `<picture>`
+  with a WebP fallback at the same two widths. Found by opening the live site
+  in WebKit's Windows build, which cannot decode AVIF.
+- **A Windows contrast theme no longer hides the two selected states.** Under
+  forced colours the browser replaces every author colour, and the tint that
+  marked the dock's current section and the command palette's selected row
+  went with them: every dock item and every palette row looked the same. Both
+  now take the system's own selection colours.
+
+### Changed
+
+- **The site was checked outside Chromium for the first time.** Firefox 157
+  renders and behaves as Chromium does. WebKit agrees on everything but the
+  pictures above. `docs/testing.md` records how, and why Playwright's WebKit
+  cannot use the project's own test server.
+- **Load speed since 2.1.4 was measured, not assumed.** The skill marks, card
+  pictures and colour work of 2.2.0 to 2.4.0 left First and Largest Contentful
+  Paint where they were: on a throttled phone profile (slow 4G, 4x CPU), a
+  median Largest Contentful Paint of 1212 ms against 1184 ms for 2.1.4, the
+  ranges overlapping, with no layout shift in either. The page downloads 24 kB
+  more before it settles, most of it the sprite of skill marks. Both builds
+  were served locally with gzip and no analytics, so the figures compare the
+  two and do not describe the live site.
+
 ## [2.4.0] - 2026-11-14
 
 ### Changed
@@ -912,7 +942,8 @@ The redesign that produced the current site.
   and contact sections.
 - MIT licence and first README.
 
-[Unreleased]: https://github.com/syed-waleed-ahmed/Portfolio/compare/v2.4.0...HEAD
+[Unreleased]: https://github.com/syed-waleed-ahmed/Portfolio/compare/v2.4.1...HEAD
+[2.4.1]: https://github.com/syed-waleed-ahmed/Portfolio/compare/v2.4.0...v2.4.1
 [2.4.0]: https://github.com/syed-waleed-ahmed/Portfolio/compare/v2.3.1...v2.4.0
 [2.3.1]: https://github.com/syed-waleed-ahmed/Portfolio/compare/v2.3.0...v2.3.1
 [2.3.0]: https://github.com/syed-waleed-ahmed/Portfolio/compare/v2.2.0...v2.3.0

@@ -172,12 +172,15 @@ test("the GitHub activity snapshot is a usable year of days", () => {
 
 // The card looks its picture up by name, and a name with no file renders an
 // <img> with no src: a broken-image box on the page and nothing in the build.
+// Four files each: AVIF, and the WebP a browser without AVIF falls back to.
 test("every project names a picture that exists, with words for it", () => {
   for (const p of projects) {
     assert.match(p.image ?? "", /^[a-z][a-z0-9-]*$/, `${p.title}: image "${p.image}"`);
-    for (const width of [480, 960]) {
-      const file = new URL(`../src/assets/projects/${p.image}-${width}.avif`, import.meta.url);
-      assert.ok(existsSync(file), `${p.title}: src/assets/projects/${p.image}-${width}.avif is missing`);
+    for (const format of ["avif", "webp"]) {
+      for (const width of [480, 960]) {
+        const file = new URL(`../src/assets/projects/${p.image}-${width}.${format}`, import.meta.url);
+        assert.ok(existsSync(file), `${p.title}: src/assets/projects/${p.image}-${width}.${format} is missing`);
+      }
     }
     const n = words(p.imageAlt ?? "");
     assert.ok(n >= 12 && n <= 40, `${p.title}: ${n}-word imageAlt, expected 12-40, saying what the picture shows`);

@@ -9,8 +9,12 @@ import "./Projects.css";
 // Every picture in src/assets/projects, by file name, as the fingerprinted
 // URL Vite gives it. The data modules stay plain data that Node can import,
 // so a project names its picture and the files are resolved here.
-const pictures = import.meta.glob("@/assets/projects/*.avif", { eager: true, query: "?url", import: "default" });
-const picture = (name, width) => pictures[`/src/assets/projects/${name}-${width}.avif`];
+const pictures = import.meta.glob("@/assets/projects/*.{avif,webp}", { eager: true, query: "?url", import: "default" });
+const srcSet = (name, format) =>
+  [480, 960].map((width) => `${pictures[`/src/assets/projects/${name}-${width}.${format}`]} ${width}w`).join(", ");
+
+// The grid: three columns of at most 30rem, then two, then one.
+const PICTURE_SIZES = "(min-width: 72rem) 30rem, (min-width: 44rem) 50vw, 100vw";
 
 // Tells the card under the pointer where the pointer is, for the light
 // Projects.css draws there. One listener on the grid, writing straight to the
@@ -41,20 +45,25 @@ const Projects = () => (
           which only the CSS knows. See Projects.css. */}
       {projects.map((project) => (
         <Reveal as="li" key={project.title} className="project-card">
-          {/* Below the fold on every screen, so lazy. width and height give
-              the 2:1 box before the file arrives, and sizes follows the
-              grid: three columns of at most 30rem, then two, then one. */}
-          <img
-            className="project-card__image"
-            src={picture(project.image, 960)}
-            srcSet={`${picture(project.image, 480)} 480w, ${picture(project.image, 960)} 960w`}
-            sizes="(min-width: 72rem) 30rem, (min-width: 44rem) 50vw, 100vw"
-            alt={project.imageAlt}
-            width="960"
-            height="480"
-            loading="lazy"
-            decoding="async"
-          />
+          {/* AVIF with a WebP fallback, as the hero's portrait has: a browser
+              that cannot decode AVIF otherwise shows six broken-image icons,
+              which is what WebKit's Windows build did. The <picture> is the
+              card's grid item. Below the fold on every screen, so lazy, and
+              width and height give the 2:1 box before the file arrives. */}
+          <picture className="project-card__picture">
+            <source type="image/avif" srcSet={srcSet(project.image, "avif")} sizes={PICTURE_SIZES} />
+            <img
+              className="project-card__image"
+              src={pictures[`/src/assets/projects/${project.image}-960.webp`]}
+              srcSet={srcSet(project.image, "webp")}
+              sizes={PICTURE_SIZES}
+              alt={project.imageAlt}
+              width="960"
+              height="480"
+              loading="lazy"
+              decoding="async"
+            />
+          </picture>
           <p className="project-card__context">{project.role}</p>
           <h3 className="project-card__title">{project.title}</h3>
           <p className="project-card__description">{project.description}</p>

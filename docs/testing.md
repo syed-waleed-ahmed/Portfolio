@@ -113,7 +113,7 @@ bundler. They also run in Netlify's build, through the prebuild gate.
 | `command palette ids and labels are unique` | Entry ids and labels are unique |
 | `command palette search finds what was asked for` | Searches land on the right entry (a technology on the project's source before its demo), and nonsense matches nothing |
 | `the GitHub activity snapshot is a usable year of days` | At least 300 valid days, in date order |
-| `every project names a picture that exists, with words for it` | Every project has an `image` whose 480 and 960px AVIF files are in `src/assets/projects/`, no two share one, and its `imageAlt` runs 12-40 words |
+| `every project names a picture that exists, with words for it` | Every project has an `image` whose 480 and 960px files, AVIF and WebP, are in `src/assets/projects/`, no two share one, and its `imageAlt` runs 12-40 words |
 | `every skill mark names a real tag and a symbol in the sprite` | Every key of `skillIcons` is a skill tag, and the symbols in `src/assets/skill-icons.svg` are exactly the ids it names, so a stale sprite fails with the command that rebuilds it |
 | `all copy is drawable by the self-hosted font subset` | No export of any data module uses a character outside the font's `unicode-range` |
 
@@ -167,7 +167,7 @@ npm run build
 npm run test:e2e
 ```
 
-Twenty-five tests in `frontend/e2e/site.spec.js`, on Playwright Test with
+Twenty-eight tests in `frontend/e2e/site.spec.js`, on Playwright Test with
 `@axe-core/playwright`, against the built and prerendered site.
 `e2e/serve.mjs` serves `frontend/dist` on `127.0.0.1:4174` with the `/*` headers
 from `dist/_headers`, so the suite runs under the CSP visitors get (which
@@ -199,6 +199,7 @@ $env:VITE_API_BASE_URL='https://portfolio-backend-kmum.onrender.com'; npm run bu
 | `axe finds no violations with the command palette open` | The same scan with the dialog open |
 | `all text meets the 7:1 of WCAG AAA` | axe's `color-contrast-enhanced` rule finds nothing at 1440px. It cannot judge text over the dot band's gradient and reports that as incomplete, not as a pass |
 | `form fields have a border of at least 3:1 against the panel` | The first field's border, flattened over the page colour, is at least 3:1 against it (WCAG 1.4.11, for which axe has no rule) |
+| `under forced colours`: `the dock still marks the current section`, `the palette still marks the selected row` | With `forced-colors: active` emulated, the marked element has opted out of forced colours and its fill is at least 3:1 against the fill of an unmarked one. The computed colours alone are not compared: with the mark lost they were black at 10% and black |
 | `opens with Ctrl+K, runs a search, and gives focus back on Escape` | The input is focused; "copy email" and Enter announce the copy; Escape closes the dialog |
 | `returns focus to the Search button it was opened from` | Focus is back on the dock's Search button after Escape |
 | `the dock's Home link returns to the very top of the page` | `scrollY` is 0, so the masthead is in view, not just the hero |
@@ -210,6 +211,7 @@ $env:VITE_API_BASE_URL='https://portfolio-backend-kmum.onrender.com'; npm run bu
 | `the contribution graph fits a phone without its own scroller` | At 390px the library's own scroll container has nothing to scroll |
 | `printing shows content the visitor had not scrolled to` | Under print media every `[data-reveal]` element has opacity 1 |
 | `every skill mark draws from the sprite` | Every `<use>` in a skill tag has a bounding box, so the sprite loaded under the CSP and holds each id: a missing one is an empty box, not an error |
+| `every project picture offers a WebP beside its AVIF, and loads` | Each of the six cards has an AVIF `<source>` and a WebP `<img>` with two widths each, the image has loaded (as AVIF, in this Chromium), and it spans the card edge to edge |
 | `the light under the pointer leaves the project cards' rows aligned` | Hovering a card writes `--spot-x`; each of the first three cards still has seven children, the picture at the card's very top and all seven at the same offsets across the row. An in-flow pseudo-element would take the top row and move the picture down in every card alike |
 
 The suite runs in Chromium only, with four workers locally and two in CI, where
@@ -236,7 +238,8 @@ budgets in `frontend/.size-limit.json`, so it needs a build first.
 | Entry JS, which every visitor downloads | `index-*.js` | 87 kB |
 | Entry CSS | `index-*.css` | 8 kB |
 | Skill marks sprite, one image request | `skill-icons-*.svg` | 23 kB |
-| Project pictures, all twelve files, loaded lazily | `*.avif` | 175 kB |
+| Project pictures, the twelve AVIF files, loaded lazily | `*.avif` | 175 kB |
+| Project pictures, the twelve WebP fallbacks | `*.webp` | 210 kB |
 | Command palette, `cmdk` | `CommandPalette-*.js` and `.css` | 20 kB |
 | Contribution graph, `react-activity-calendar` | `GitHubActivityCalendar-*.js` and `Tooltip-*.js` | 27 kB |
 | Globe, `cobe` | `index.esm-*.js` | 6.5 kB |
@@ -388,7 +391,18 @@ Known and accepted, listed here so nobody has to rediscover them:
   is verified by running the Postman valid submission against a configured
   backend.
 - **Browser tests run in Chromium only.** The suite checks this site's
-  behaviour, not browser support, so Firefox and WebKit are not run.
+  behaviour, not browser support, so Firefox and WebKit are not run in CI. They
+  were run once by hand, on 2026-11-14. In Firefox 157 the suite passed but for
+  the two palette tests, which ask for a clipboard permission Firefox does not
+  have, and the live site looked and behaved as in Chromium. Playwright's WebKit
+  cannot use `e2e/serve.mjs` at all: WebKit applies the CSP's
+  `upgrade-insecure-requests` to `http://127.0.0.1`, asks for every asset over
+  HTTPS and gets nothing, so the page never hydrates. Point it at the live site,
+  or at a server that sends no CSP. There it found the one real fault of the
+  three engines, card pictures with no fallback for a browser without AVIF.
+  That WebKit is a Windows build, not Safari: it also draws the variable font at
+  a single weight, which could not be checked against a real Safari from this
+  machine.
 - **The weekly snapshot commit starts no CI run.** A push made with
   `GITHUB_TOKEN` starts no workflows. Netlify still builds it, and its prebuild
   gate runs the content tests, so a malformed snapshot fails that build and the

@@ -192,6 +192,58 @@ test.describe("accessibility", () => {
   });
 });
 
+// A Windows contrast theme, which replaces every author colour with the
+// system's. A state that was shown by a tint alone then looks like nothing:
+// the dock's current section and the palette's selected row both did.
+test.describe("under forced colours", () => {
+  test.use({ forcedColors: "active" });
+
+  // How far the marked element's fill stands off the fill beside it, as a
+  // contrast ratio, with the marked fill painted over the plain one first.
+  // Comparing the two computed values is not enough: with the mark lost they
+  // were black at 10% and black, different strings and the same pixels.
+  const standsOff = (page, marked, plain) =>
+    page.evaluate(
+      ([markedSelector, plainSelector]) => {
+        const canvas = document.createElement("canvas");
+        canvas.width = canvas.height = 1;
+        const context = canvas.getContext("2d", { willReadFrequently: true });
+        const luminance = (...layers) => {
+          context.clearRect(0, 0, 1, 1);
+          for (const layer of layers) {
+            context.fillStyle = layer;
+            context.fillRect(0, 0, 1, 1);
+          }
+          const [r, g, b] = [...context.getImageData(0, 0, 1, 1).data].slice(0, 3).map((v) => (v / 255 <= 0.03928 ? v / 255 / 12.92 : ((v / 255 + 0.055) / 1.055) ** 2.4));
+          return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+        };
+        const fill = (selector) => getComputedStyle(document.querySelector(selector)).backgroundColor;
+        // The computed value is the author's even where the browser then
+        // paints the system's over it, so a fill only counts if the element
+        // has also opted out of that.
+        if (getComputedStyle(document.querySelector(markedSelector)).forcedColorAdjust !== "none") return 1;
+        const canvasColour = getComputedStyle(document.documentElement).backgroundColor;
+        const ground = luminance(canvasColour, fill(plainSelector));
+        const mark = luminance(canvasColour, fill(plainSelector), fill(markedSelector));
+        return (Math.max(mark, ground) + 0.05) / (Math.min(mark, ground) + 0.05);
+      },
+      [marked, plain]
+    );
+
+  test("the dock still marks the current section", async ({ page }) => {
+    await page.goto("/");
+    await expect(page.locator('.dock__link[aria-current="true"]')).toHaveCount(1);
+    expect(await standsOff(page, '.dock__link[aria-current="true"]', ".dock__link:not([aria-current])")).toBeGreaterThanOrEqual(3);
+  });
+
+  test("the palette still marks the selected row", async ({ page }) => {
+    await page.goto("/");
+    await openPalette(page);
+    await expect(page.locator('.palette__item[data-selected="true"]')).toHaveCount(1);
+    expect(await standsOff(page, '.palette__item[data-selected="true"]', '.palette__item:not([data-selected="true"])')).toBeGreaterThanOrEqual(3);
+  });
+});
+
 test.describe("command palette", () => {
   test.use({ permissions: ["clipboard-read", "clipboard-write"] });
 
@@ -368,6 +420,35 @@ test("every skill mark draws from the sprite", async ({ page }) => {
     );
   await expect(page.locator(".tag__icon").first()).toBeAttached();
   await expect.poll(empty).toEqual([]);
+});
+
+// The cards' pictures are AVIF. A browser that cannot decode AVIF draws a
+// broken-image icon unless it is offered something else, and this suite's
+// Chromium can, so it would never show the gap: WebKit's Windows build did.
+test("every project picture offers a WebP beside its AVIF, and loads", async ({ page }) => {
+  await page.goto("/");
+  await hydrated(page);
+  await scrollThrough(page);
+  const pictures = () =>
+    page.locator(".project-card picture").evaluateAll((elements) =>
+      elements.map((picture) => {
+        const source = picture.querySelector("source");
+        const image = picture.querySelector("img");
+        // Edge to edge inside the card's 1px border. The reset caps a
+        // picture at 100% of the card's content box, which once left it
+        // 2.5rem short of the right edge with every other check passing.
+        const card = picture.closest(".project-card").getBoundingClientRect();
+        const box = image.getBoundingClientRect();
+        return {
+          avif: source?.type === "image/avif" && source.srcset.split(",").length === 2,
+          webp: /\.webp$/.test(image.getAttribute("src")) && image.srcset.split(",").every((candidate) => /\.webp \d+w$/.test(candidate.trim())),
+          loaded: image.complete && image.naturalWidth > 0,
+          chose: image.currentSrc.split(".").pop(),
+          spans: Math.abs(box.left - card.left) <= 1.5 && Math.abs(card.right - box.right) <= 1.5,
+        };
+      })
+    );
+  await expect.poll(pictures).toEqual(Array(6).fill({ avif: true, webp: true, loaded: true, chose: "avif", spans: true }));
 });
 
 test("the light under the pointer leaves the project cards' rows aligned", async ({ page }) => {

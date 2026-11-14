@@ -18,10 +18,16 @@
     "limit": "23 kB"
   },
   {
-    "name": "Project pictures, all twelve, loaded lazily",
+    "name": "Project pictures, the twelve AVIF files, loaded lazily",
     "path": "dist/assets/*.avif",
     "gzip": true,
     "limit": "175 kB"
+  },
+  {
+    "name": "Project pictures, the WebP fallbacks",
+    "path": "dist/assets/*.webp",
+    "gzip": true,
+    "limit": "210 kB"
   },
   {
     "name": "Command palette chunk (cmdk), fetched on intent",
