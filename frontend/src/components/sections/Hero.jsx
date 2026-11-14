@@ -15,12 +15,12 @@ const Hero = () => (
       <picture className="hero__portrait">
         <source
           type="image/avif"
-          srcSet="/images/Profile-320.avif 320w, /images/Profile.avif 680w"
+          srcSet="/images/Profile-192.avif 192w, /images/Profile-320.avif 320w, /images/Profile.avif 680w"
           sizes={PORTRAIT_SIZES}
         />
         <source
           type="image/webp"
-          srcSet="/images/Profile-320.webp 320w, /images/Profile.webp 680w"
+          srcSet="/images/Profile-192.webp 192w, /images/Profile-320.webp 320w, /images/Profile.webp 680w"
           sizes={PORTRAIT_SIZES}
         />
         <img

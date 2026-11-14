@@ -266,10 +266,15 @@
     }
   }
 
-  /* The same entrance as a one-shot keyframe, for the hero's first paint. */
+  /* The hero's one-shot entrance: the same blur and settle as the reveal, but
+     never invisible. On a phone the hero's text is the Largest Contentful
+     Paint, and Chrome does not count an element at opacity 0, so a fade from
+     nothing held the LCP back until the fade was under way: 168ms later on a
+     throttled phone than the first paint it could have been. Starting
+     visible and blurred, the copy sharpens into place instead, and the LCP
+     is the first paint. */
   @keyframes blur-fade {
     from {
-      opacity: 0;
       translate: 0 var(--reveal-shift);
       filter: blur(var(--reveal-blur));
     }

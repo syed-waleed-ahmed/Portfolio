@@ -257,6 +257,32 @@ that needs it, and give the reason in the commit message.
 
 ---
 
+## Load speed
+
+Nothing in CI measures load speed; the size budgets above stand in for it.
+It was measured by hand on 2026-11-14, with PageSpeed Insights on the live
+site and with timed, throttled runs of local builds in Playwright.
+
+| | Performance | FCP | LCP | TBT | CLS |
+|---|---|---|---|---|---|
+| PageSpeed, mobile, v2.4.1 | 97 | 1.0 s | 2.6 s | 30 ms | 0 |
+| PageSpeed, desktop, v2.4.1 | 98 | 0.3 s | 0.3 s | 120 ms | 0 |
+
+Accessibility, Best Practices and SEO were 100 on both. The mobile LCP
+element was the hero's heading, held back by its entrance animation (see
+[Design](design.md#motion)); with the fade changed to start visible, a
+throttled phone profile (slow 4G, 4x CPU, nine interleaved runs) measured an
+LCP of 968 ms against 1100 ms, the ranges not overlapping. Two other
+candidates were measured and not taken. Dropping the font preload made the
+LCP earlier still on the slow profile, but the font then arrived after the
+entrance had finished, a visible swap, and first paint on a fast phone got
+later. A 192px portrait for phones saves 10 KB per visit but did not move
+the LCP; it shipped for the bytes.
+
+PageSpeed's scores move from run to run by a few points. Its mobile LCP is
+simulated from a trace, so a change that makes the LCP happen earlier in the
+trace also shrinks the set of requests it is simulated over.
+
 ## Link check
 
 `.github/workflows/links.yml` runs [lychee](https://github.com/lycheeverse/lychee)

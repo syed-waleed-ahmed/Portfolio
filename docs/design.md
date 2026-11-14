@@ -531,7 +531,7 @@ library.
 
 | Motion | Detail |
 |--------|--------|
-| Hero entrance | The copy blurs and fades in once, settling 6px downward, 40ms apart. The portrait does not animate, so the LCP image paints as soon as it decodes |
+| Hero entrance | The copy sharpens from a 6px blur and settles 6px downward, once, 40ms apart. It is never invisible: on a phone the hero's text is the Largest Contentful Paint, and Chrome does not count an element at opacity 0, so the fade from nothing it had until November 2026 held the LCP back by about 150ms on a throttled phone. The portrait, the LCP on a desktop, does not animate, so it paints as soon as it decodes |
 | Greeting caret | The cursor after "hi, Waleed here." blinks; it is solid under reduced motion |
 | Scroll reveal | Content that starts below the fold gets the same blur, fade and 6px settle when it enters, over 400ms. Experience rows follow each other 40ms apart, and project cards stagger 50ms along each row, by the column count `Projects.css` knows. See below |
 | Reading progress | A 2px line along the top of the viewport, driven by `animation-timeline: scroll()` |
@@ -627,7 +627,8 @@ need regenerating rather than editing:
 | `src/assets/skill-icons.svg` (in `src/`, not `public/`, so Vite fingerprints it) | `skillIcons` in `src/data/skills.js` + two icon packages | `frontend/scripts/gen-skill-icons.mjs`, see [Skill marks](#skill-marks) |
 | `favicon.ico`, `favicon-96x96.png`, `apple-touch-icon.png` | `favicon.svg`, the hand-drawn crewmate | Rasterised from the SVG; the touch icon bakes in the previous navy `#0a192f`, visually indistinguishable from `--color-bg` |
 | `images/Profile.{avif,webp}` | 680x680, square-cropped from the original photo | Re-crop from the original if the photo changes |
-| `images/Profile-320.{avif,webp}` | Downscaled from `Profile.avif`. Phones and tablets, where the portrait renders at 96px and 148px, and desktops at 1x, where it renders at 320px | `sharp` resize, then keep `sizes` in `Hero.jsx` and the preload in `index.html` in step |
+| `images/Profile-192.{avif,webp}` | Downscaled from `Profile.avif` (AVIF quality 60, WebP 82). Phones up to 2x, where the portrait renders at 96px, and tablets at 1x (148px). Added in November 2026, when PageSpeed Insights found phones fetching the 320px file for a 168-pixel slot | `sharp` resize, then keep the `srcSet` in `Hero.jsx` and the preload in `index.html` in step |
+| `images/Profile-320.{avif,webp}` | Downscaled from `Profile.avif`. Phones at 3x, tablets at 2x, and desktops at 1x, where the portrait renders at 320px | `sharp` resize, then keep `sizes` in `Hero.jsx` and the preload in `index.html` in step |
 
 ```bash
 npm i --no-save sharp fontkit wawoff2
