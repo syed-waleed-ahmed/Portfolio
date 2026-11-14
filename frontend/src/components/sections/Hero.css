@@ -165,8 +165,10 @@
     gap: var(--space-3);
   }
 
-  /* A short, one-time entrance on first load, 40ms apart. The portrait is left
-     alone so the LCP image paints as soon as it decodes. */
+  /* A short, one-time entrance on first load, 40ms apart: the copy sharpens
+     and settles, never invisible, because on a phone it is the Largest
+     Contentful Paint (see the keyframes in components.css). The portrait,
+     the LCP on a desktop, is left alone so it paints as soon as it decodes. */
   @media (prefers-reduced-motion: no-preference) {
     .hero__intro > *,
     .hero__body > * {

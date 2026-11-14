@@ -15,6 +15,32 @@ than by individual commit.
 
 ## [Unreleased]
 
+## [2.4.2] - 2026-11-14
+
+### Fixed
+
+- **The hero's text is the first paint on a phone, not a fade later.**
+  PageSpeed Insights scored the live site 97 on mobile with a Largest
+  Contentful Paint of 2.6 s, just past the 2.5 s it counts as good, and named
+  the hero's heading as the LCP element. Its entrance faded it in from
+  opacity 0, which Chrome does not count as painted, so the LCP waited for
+  the fade. The entrance now starts visible and sharpens from the same blur:
+  on a throttled phone profile the LCP moved from 1100 ms to 968 ms, equal to
+  first paint. Desktop, where the portrait is the LCP, is unchanged.
+- **Phones fetch a portrait their size.** It renders at 96 CSS pixels, and
+  phones were given the 320px file. A 192px version (9.4 KB as AVIF, against
+  19.3 KB) is now first in the `srcset` and the preload.
+
+### Changed
+
+- **Checked in the owner's own Chrome and with PageSpeed Insights.** No
+  console error, no failed request, the globe drawn on the real GPU.
+  Accessibility, Best Practices and SEO were 100 on mobile and desktop, and
+  the computed accessibility tree has one `h1`, no skipped heading level, a
+  name for every control and an announcement on every link that opens a new
+  tab. `docs/testing.md` records the figures, and the two fixes tried and
+  not taken.
+
 ## [2.4.1] - 2026-11-14
 
 ### Fixed
@@ -942,7 +968,8 @@ The redesign that produced the current site.
   and contact sections.
 - MIT licence and first README.
 
-[Unreleased]: https://github.com/syed-waleed-ahmed/Portfolio/compare/v2.4.1...HEAD
+[Unreleased]: https://github.com/syed-waleed-ahmed/Portfolio/compare/v2.4.2...HEAD
+[2.4.2]: https://github.com/syed-waleed-ahmed/Portfolio/compare/v2.4.1...v2.4.2
 [2.4.1]: https://github.com/syed-waleed-ahmed/Portfolio/compare/v2.4.0...v2.4.1
 [2.4.0]: https://github.com/syed-waleed-ahmed/Portfolio/compare/v2.3.1...v2.4.0
 [2.3.1]: https://github.com/syed-waleed-ahmed/Portfolio/compare/v2.3.0...v2.3.1
