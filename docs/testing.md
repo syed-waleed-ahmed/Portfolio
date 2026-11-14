@@ -267,8 +267,14 @@ site and with timed, throttled runs of local builds in Playwright.
 |---|---|---|---|---|---|
 | PageSpeed, mobile, v2.4.1 | 97 | 1.0 s | 2.6 s | 30 ms | 0 |
 | PageSpeed, desktop, v2.4.1 | 98 | 0.3 s | 0.3 s | 120 ms | 0 |
+| PageSpeed, mobile, v2.4.2 | 100 | 1.0 s | 1.0 s | 10 ms | 0 |
+| PageSpeed, desktop, v2.4.2 | 100 | 0.3 s | 0.7 s | 10 ms | 0 |
 
-Accessibility, Best Practices and SEO were 100 on both. The mobile LCP
+Accessibility, Best Practices and SEO were 100 on both, in both versions.
+What PageSpeed still lists is known and left alone: the stylesheet blocks
+rendering (inlining critical CSS was measured in 2.0.0 and made the LCP
+worse, see the changelog), and of the unused JavaScript it reports, 74 KiB is
+in Google Analytics' tag, which is the owner's call to replace. The mobile LCP
 element was the hero's heading, held back by its entrance animation (see
 [Design](design.md#motion)); with the fade changed to start visible, a
 throttled phone profile (slow 4G, 4x CPU, nine interleaved runs) measured an
