@@ -32,6 +32,12 @@
 // the others, so every card has one. Each is a crop of an image from that
 // project's own repository, or for RemindrAI from the thesis poster, never a
 // mock-up: docs/design.md lists each source.
+//
+// On 2026-11-15 the TIAGo robotics card gave its place to the AI Workflow
+// Assistant, a deployed data-analysis agent, keeping the grid at two rows of
+// three; TIAGo stays listed on the GitHub profile. The same pass moved the
+// Niche Assistant to its Qwen2.5-Coder release, with a fresh crop of the
+// web UI that shows the new model version, and the RAG test count to 347.
 export const projects = [
   {
     title: "RemindrAI: Embeddable Multi-Tenant Reminder Capability",
@@ -51,17 +57,22 @@ export const projects = [
       "From the thesis poster: a chat message asking for a reminder, the task and time the assistant understood, and the same reminder arriving on WhatsApp, Telegram, Discord and Email.",
   },
   {
-    title: "TIAGo: Autonomous Mapping, Navigation & Pick-and-Place",
-    role: "Robotics Project · Master's · Team of 3",
-    stack: ["ROS 2 Humble", "Nav2 / SLAM", "ArUco", "Gazebo", "Python"],
-    github: "https://github.com/syed-waleed-ahmed/tiago-autonomous-pick-and-place",
-    image: "tiago",
+    title: "AI Workflow Assistant: Data Analyst for Spreadsheets",
+    role: "Independent Project",
+    stack: ["Python", "LangGraph", "FastAPI", "Next.js", "PostgreSQL"],
+    github: "https://github.com/syed-waleed-ahmed/AI-Workflow-Assistant",
+    // The live app asks for a free account; the bundled sample dataset is
+    // one click away once signed in.
+    demo: "https://ai-workflow-assistant-app.vercel.app",
+    image: "ai-workflow-assistant",
     imageAlt:
-      "The map TIAGo built with SLAM, shown in RViz beside the simulated rooms in Gazebo that it explored, with the robot's laser scan sweeping one of them.",
+      "A finished report on the bundled sales dataset in dark mode: the question asked, a banner confirming all 23 figures were verified against computed results, a summary and key revenue metrics.",
     description:
-      "A TIAGo mobile manipulator that maps an unknown indoor space on its own, then recovers where it is from a random start pose, finds two workstations by their ArUco markers, and carries two cubes between them in a required order. It runs end to end with no teleoperation, one launch command per task.",
+      "An AI data analyst for spreadsheets: upload a CSV or Excel file, ask a question in plain language, and get a report with metrics, charts, findings and recommendations. A LangGraph agent plans the analysis and calls deterministic pandas tools, and nothing the model writes is ever executed as code.",
+    // 508 = 375 backend tests (pytest, collected from a checkout of main) and
+    // the README's 133 frontend tests (Vitest, Testing Library, axe).
     highlight:
-      "No map coordinates in the source: every station and cube pose is discovered from markers at runtime, so the mission moves to a new world unchanged.",
+      "Every number in a report is checked against the pandas computation behind it before you see it, backed by 508 tests.",
   },
   {
     title: "Campaign Forge: Multi-Agent Marketing Platform",
@@ -91,7 +102,7 @@ export const projects = [
     description:
       "A RAG system that checks its own work: a guardrail agent drops off-topic chunks from hybrid BM25 and vector search, and an evaluator grades each answer against its sources, correcting weak ones in a bounded loop. A tool-using agent adds read-only SQL, and visitors can search their own uploads.",
     highlight:
-      "Hybrid search lifted recall@5 from 0.967 to 0.992 over dense retrieval on a 60-question golden set, backed by 341 tests.",
+      "Hybrid search lifted recall@5 from 0.967 to 0.992 over dense retrieval on a 60-question golden set, backed by 347 tests.",
   },
   {
     title: "LLM-as-Judge: Evaluation Platform for LLM Outputs",
@@ -116,14 +127,16 @@ export const projects = [
     demo: "https://fastapi-assistant-edge.fastapi-assistant-edge.workers.dev/",
     image: "fastapi-assistant",
     imageAlt:
-      "The assistant's web UI: a prompt to ask anything about FastAPI, the fine-tuned model's version marked ready, and six example questions.",
+      "The assistant's web UI: a prompt to ask anything about FastAPI, the fine-tuned model's version marked ready, a note that the public demo needs no key, and four example questions.",
     // The edge sentence names only what the live deployment runs. The Worker
     // can also cache answers and fail over to a backup origin, but the README
     // lists the Redis cache as optional and the backups as not deployed. The
-    // two scores are the README's: both models in one run of the CI eval gate.
+    // two scores are the README's: the deployed Qwen fine-tune and the
+    // TinyLlama release it replaced on 2026-11-15, both in one run of the CI
+    // eval gate.
     description:
-      "A 1.1B-parameter language model fine-tuned with LoRA to answer FastAPI questions, quantized to a 0.7 GB GGUF and served by llama.cpp on CPU behind an OpenAI-compatible streaming API. A Cloudflare Worker rate-limits requests at the edge in front of Google Cloud Run, all on free tiers.",
+      "A 1.5B-parameter Qwen2.5-Coder model fine-tuned with LoRA to answer FastAPI questions, quantized to a 1 GB GGUF and served by llama.cpp on CPU behind an OpenAI-compatible streaming API. A Cloudflare Worker rate-limits requests at the edge in front of Google Cloud Run, all on free tiers.",
     highlight:
-      "An eval gate decides each release: the fine-tune scored 0.546 against the base model's 0.402 on a 108-item held-out set, run on the production backend.",
+      "An eval gate decides each release: the Qwen fine-tune scored 0.666 against 0.546 for the TinyLlama release it replaced, on a 108-item held-out set.",
   },
 ];
