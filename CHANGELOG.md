@@ -15,6 +15,22 @@ than by individual commit.
 
 ## [Unreleased]
 
+## [2.4.4] - 2026-11-15
+
+### Changed
+
+- **AI Workflow Assistant takes the TIAGo card's place in Projects.** The
+  data-analysis agent is deployed and public (LangGraph, FastAPI, Next.js,
+  PostgreSQL), and its card shows a crop of its own dark-mode report
+  screenshot. The grid stays at two rows of three; TIAGo remains on the
+  GitHub profile.
+- **The FastAPI Niche Assistant card follows its Qwen release.** The live
+  model is now a LoRA fine-tune of Qwen2.5-Coder-1.5B (a 1 GB GGUF), which
+  scored 0.666 against 0.546 for the TinyLlama release it replaced. Its
+  picture is re-cut from the repository's new screenshot, which shows that
+  version.
+- **Self-Correcting RAG's test count is 347**, up from 341.
+
 ## [2.4.3] - 2026-11-14
 
 ### Changed
@@ -979,7 +995,8 @@ The redesign that produced the current site.
   and contact sections.
 - MIT licence and first README.
 
-[Unreleased]: https://github.com/syed-waleed-ahmed/Portfolio/compare/v2.4.3...HEAD
+[Unreleased]: https://github.com/syed-waleed-ahmed/Portfolio/compare/v2.4.4...HEAD
+[2.4.4]: https://github.com/syed-waleed-ahmed/Portfolio/compare/v2.4.3...v2.4.4
 [2.4.3]: https://github.com/syed-waleed-ahmed/Portfolio/compare/v2.4.2...v2.4.3
 [2.4.2]: https://github.com/syed-waleed-ahmed/Portfolio/compare/v2.4.1...v2.4.2
 [2.4.1]: https://github.com/syed-waleed-ahmed/Portfolio/compare/v2.4.0...v2.4.1
