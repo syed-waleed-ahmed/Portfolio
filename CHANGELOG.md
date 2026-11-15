@@ -15,6 +15,8 @@ than by individual commit.
 
 ## [Unreleased]
 
+## [2.4.4] - 2026-11-15
+
 ### Changed
 
 - **AI Workflow Assistant takes the TIAGo card's place in Projects.** The
@@ -993,7 +995,8 @@ The redesign that produced the current site.
   and contact sections.
 - MIT licence and first README.
 
-[Unreleased]: https://github.com/syed-waleed-ahmed/Portfolio/compare/v2.4.3...HEAD
+[Unreleased]: https://github.com/syed-waleed-ahmed/Portfolio/compare/v2.4.4...HEAD
+[2.4.4]: https://github.com/syed-waleed-ahmed/Portfolio/compare/v2.4.3...v2.4.4
 [2.4.3]: https://github.com/syed-waleed-ahmed/Portfolio/compare/v2.4.2...v2.4.3
 [2.4.2]: https://github.com/syed-waleed-ahmed/Portfolio/compare/v2.4.1...v2.4.2
 [2.4.1]: https://github.com/syed-waleed-ahmed/Portfolio/compare/v2.4.0...v2.4.1
