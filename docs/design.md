@@ -345,7 +345,7 @@ included, not just to the hero.
 
 ### Command palette
 
-`components/ui/CommandPalette.jsx` is `cmdk` inside a native modal `<dialog>`,
+`components/widgets/CommandPalette.jsx` is `cmdk` inside a native modal `<dialog>`,
 which supplies the top layer, the inert background, focus containment and Escape.
 Its entries are in `data/commands.js`, built from the other data modules, so a new
 section, project or skill reaches the palette without being listed twice. A

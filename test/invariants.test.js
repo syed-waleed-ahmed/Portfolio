@@ -153,7 +153,7 @@ test("the contact email's BRAND copies the token palette", () => {
 });
 
 test("the contribution graph's scale is the accent mixed into the surface", () => {
-  const jsx = read("frontend/src/components/sections/GitHubActivityCalendar.jsx");
+  const jsx = read("frontend/src/components/widgets/GitHubActivityCalendar.jsx");
   const theme = [...pick(jsx, /const THEME = \{ dark: \[([^\]]+)\]/, "THEME in GitHubActivityCalendar.jsx").matchAll(/#[0-9a-f]{6}/gi)].map(([hex]) => hex.toLowerCase());
   assert.equal(theme.length, 5, "THEME should hold five colours, empty day and four levels");
   const where = `GitHubActivityCalendar.jsx THEME. ${PALETTE_DOC}`;
@@ -171,7 +171,7 @@ test("the contribution graph's scale is the accent mixed into the surface", () =
 });
 
 test("the globe's WebGL cyan is the accent", () => {
-  const jsx = read("frontend/src/components/sections/LocationGlobe.jsx");
+  const jsx = read("frontend/src/components/widgets/LocationGlobe.jsx");
   const cyan = pick(jsx, /const CYAN = \[([^\]]+)\]/, "CYAN in LocationGlobe.jsx").split(",").map(Number);
   hexToRgb(token("--color-accent")).forEach((channel, c) => {
     assert.ok(Math.abs(cyan[c] - channel / 255) <= 0.002, `LocationGlobe.jsx CYAN should be --color-accent as 0-1 fractions. ${PALETTE_DOC}`);
@@ -344,11 +344,11 @@ test("the CSP and the DNS hint name the API origin the form calls", () => {
 
 test("the graph and the globe switch at the breakpoint the calendar measures", () => {
   const wide = pick(
-    read("frontend/src/components/sections/GitHubActivityCalendar.jsx"),
+    read("frontend/src/components/widgets/GitHubActivityCalendar.jsx"),
     /const WIDE = "([^"]+)";/,
     "WIDE in GitHubActivityCalendar.jsx"
   );
-  for (const file of ["frontend/src/components/sections/GitHubActivity.css", "frontend/src/components/sections/LocationGlobe.css"]) {
+  for (const file of ["frontend/src/components/widgets/GitHubActivity.css", "frontend/src/components/widgets/LocationGlobe.css"]) {
     assert.ok(read(file).includes(`@media ${wide}`), `${file} should switch at ${wide}, the query GitHubActivityCalendar.jsx sizes the graph by`);
   }
 });

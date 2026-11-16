@@ -1,13 +1,13 @@
 import { lazy, Suspense, useEffect, useState, useSyncExternalStore } from "react";
 import { createPortal } from "react-dom";
 import { LuCommand, LuSearch } from "react-icons/lu";
-import { isCommandShortcut } from "@/components/ui/commandShortcut";
+import { isCommandShortcut } from "@/components/widgets/commandShortcut";
 
 // The failure is caught here rather than left to throw: the dock sits outside
 // every ErrorBoundary, so a chunk that fails to load (a tab left open across a
 // deploy, say) would otherwise take the whole page down with it.
 const loadPalette = () =>
-  import("@/components/ui/CommandPalette").catch(() => ({ default: () => null }));
+  import("@/components/widgets/CommandPalette").catch(() => ({ default: () => null }));
 const CommandPalette = lazy(loadPalette);
 
 // The prerendered HTML has to say one thing for everyone, so it says "Ctrl K",

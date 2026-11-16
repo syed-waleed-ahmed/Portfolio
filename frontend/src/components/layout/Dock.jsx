@@ -9,9 +9,9 @@ import {
   LuUserRound,
   LuWrench,
 } from "react-icons/lu";
-import CommandMenu from "@/components/layout/CommandMenu";
 import ExternalLink from "@/components/ui/ExternalLink";
 import SectionLink from "@/components/ui/SectionLink";
+import CommandMenu from "@/components/widgets/CommandMenu";
 import { personalInfo, sections, socialLinks } from "@/data/portfolio";
 import "./Dock.css";
 

@@ -10,8 +10,8 @@ import {
 } from "react-icons/fa";
 import ExternalLink from "@/components/ui/ExternalLink";
 import Reveal from "@/components/ui/Reveal";
-import LocationGlobe from "@/components/sections/LocationGlobe";
 import SectionHeader from "@/components/ui/SectionHeader";
+import LocationGlobe from "@/components/widgets/LocationGlobe";
 import { personalInfo, socialLinks } from "@/data/portfolio";
 import "./Contact.css";
 
