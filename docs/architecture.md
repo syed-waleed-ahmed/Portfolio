@@ -61,9 +61,10 @@ portfolio/
 │   ├── src/
 │   │   ├── assets/                 Files a component imports by URL: the skill marks sprite (generated) and the project pictures
 │   │   ├── components/
-│   │   │   ├── layout/             Masthead, Dock, CommandMenu, Footer
-│   │   │   ├── sections/           Page sections and the parts they mount, each with its .css if it has styles
-│   │   │   └── ui/                 Reusable primitives
+│   │   │   ├── layout/             Masthead, Dock, Footer
+│   │   │   ├── sections/           One component per page section, each with its .css
+│   │   │   ├── ui/                 Reusable primitives
+│   │   │   └── widgets/            The palette, the contribution graph and the globe: each lazy library beside what loads it
 │   │   ├── data/                   Portfolio content, no JSX
 │   │   ├── styles/                 Layer order, tokens, reset, base, layout, shared components
 │   │   ├── App.jsx
@@ -110,9 +111,10 @@ sections are added.
 
 | Layer | What lives here | Examples |
 |-------|-----------------|----------|
-| `components/layout/` | Chrome that frames every page | `Masthead`, `Dock`, `CommandMenu`, `Footer` |
-| `components/sections/` | One file per visible section, with its stylesheet beside it | `Hero`, `About`, `Experience`, `Projects`, `Skills`, `Contact`, and the parts they mount: `GitHubActivity`, `LocationGlobe` |
-| `components/ui/` | Reusable primitives, no domain coupling | `Reveal`, `SectionHeader`, `SectionLink`, `ExternalLink`, `Monogram`, `SkipLink`, `ErrorBoundary`, `CommandPalette`, and two helpers: `scrollToSection`, which `SectionLink` and the palette share, and `commandShortcut`, the Ctrl/Cmd+K test the dock's Search item and the palette share |
+| `components/layout/` | Chrome that frames every page | `Masthead`, `Dock`, `Footer` |
+| `components/sections/` | One file per visible section, with its stylesheet beside it: the hero and each entry in `sections` | `Hero`, `About`, `Experience`, `Projects`, `Skills`, `Contact` |
+| `components/ui/` | Reusable primitives, no domain coupling | `Reveal`, `SectionHeader`, `SectionLink`, `ExternalLink`, `Monogram`, `SkipLink`, `ErrorBoundary`, and `scrollToSection`, the helper `SectionLink` and the palette share |
+| `components/widgets/` | The pieces built on a lazily loaded library, each beside the component that loads it | `CommandMenu` (the dock's Search item) loads `CommandPalette` (`cmdk`), and both use `commandShortcut`, the Ctrl/Cmd+K test; `GitHubActivity` (in Projects) loads `GitHubActivityCalendar` (`react-activity-calendar`); `LocationGlobe` (in Contact) loads `cobe` |
 | `data/` | Pure content, no JSX | `about.js`, `experience.js`, `projects.js`, `skills.js`, `portfolio.js`, `commands.js` (built from the others), `github-activity.json` (generated) |
 | `styles/` | Global CSS in cascade layers | `index.css` (layer order), `tokens.css`, `reset.css`, `base.css`, `layout.css`, `components.css`, `utilities.css` |
 

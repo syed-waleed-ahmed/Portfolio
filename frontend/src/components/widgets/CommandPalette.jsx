@@ -8,7 +8,7 @@ import {
   CommandRoot,
 } from "cmdk";
 import { LuArrowRight, LuCheck, LuCopy, LuExternalLink, LuSearch } from "react-icons/lu";
-import { isCommandShortcut } from "@/components/ui/commandShortcut";
+import { isCommandShortcut } from "@/components/widgets/commandShortcut";
 import { scrollToSection } from "@/components/ui/scrollToSection";
 import { commandGroups, scoreCommand } from "@/data/commands";
 import "./CommandPalette.css";

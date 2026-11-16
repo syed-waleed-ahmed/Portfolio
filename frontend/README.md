@@ -10,7 +10,7 @@ It is one of two independent npm projects in this repository, with its own
 ```text
 frontend/
 ├── src/
-│   ├── components/   layout/ (masthead, dock, command menu, footer), sections/ (page sections and the parts they mount), ui/ (primitives)
+│   ├── components/   layout/ (masthead, dock, footer), sections/ (one per page section), ui/ (primitives), widgets/ (palette, graph and globe, each with its lazy library)
 │   ├── data/         All entries, figures and links, as plain modules with no JSX, plus the activity snapshot
 │   ├── assets/       Files imported by URL: the generated sprite of skill marks, and the project pictures
 │   ├── styles/       Layer order, tokens and global CSS

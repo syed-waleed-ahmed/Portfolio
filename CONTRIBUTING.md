@@ -27,7 +27,8 @@ worth reading the first section before you start.
   adding an animation library, a UI kit or a state manager needs to argue its
   case in an issue first. A library that does earn its place loads as a separate
   chunk on intent, as the command palette, contribution graph and globe do,
-  with a size budget of its own in `frontend/.size-limit.json`.
+  sits beside them in `frontend/src/components/widgets/`, and gets a size
+  budget of its own in `frontend/.size-limit.json`.
 
 If you are unsure whether something fits, open an issue before writing code.
 

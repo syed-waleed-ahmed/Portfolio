@@ -1,8 +1,8 @@
 import { FaArrowRight, FaGithub, FaPlay } from "react-icons/fa";
-import GitHubActivity from "@/components/sections/GitHubActivity";
 import ExternalLink from "@/components/ui/ExternalLink";
 import Reveal from "@/components/ui/Reveal";
 import SectionHeader from "@/components/ui/SectionHeader";
+import GitHubActivity from "@/components/widgets/GitHubActivity";
 import { projects } from "@/data/projects";
 import "./Projects.css";
 
