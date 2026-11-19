@@ -54,13 +54,13 @@ In scope:
 Out of scope:
 
 - Third-party services I depend on (Resend, Netlify, Render, GitHub, Google
-  Analytics, and the community API behind the contribution graph) - please report
+  Analytics, and the community API behind the contribution graph); please report
   those directly to the relevant vendor
 - Findings that require physical access to a developer machine
 - Reports based on outdated dependency advisories that are already fixed
   on `main`
 - Missing headers or hardening with no demonstrated impact, and findings that
-  restate a documented, deliberate decision - the reasoning for each is in
+  restate a documented, deliberate decision; the reasoning for each is in
   [`docs/security.md`](docs/security.md#deliberate-non-goals)
 
 ## Automated hygiene
@@ -69,24 +69,24 @@ Some classes of issue are already checked automatically, by CI on every push
 to `main` and every pull request against it or by GitHub's own security
 features, so a report in these areas may already be covered:
 
-- **Secret scanning** - `gitleaks` runs in CI over the full git history, and
+- **Secret scanning:** `gitleaks` runs in CI over the full git history, and
   GitHub's secret scanning, with push protection, refuses a push that contains
   a recognized credential
-- **Code scanning** - GitHub's CodeQL default setup analyzes the JavaScript
+- **Code scanning:** GitHub's CodeQL default setup analyzes the JavaScript
   and the workflow files on every push to `main`, every pull request against
   it, and weekly
-- **Dependency alerts** - Dependabot alerts and security updates open a pull
+- **Dependency alerts:** Dependabot alerts and security updates open a pull
   request for a vulnerable dependency without waiting for the weekly run,
   transitive ones included when a patched version fits the dependents' ranges
-- **Dependency audit** - `npm audit --omit=dev --audit-level=high` on both
-  projects. Note this gates *production* dependencies at high severity and
-  above; dev-dependency and low-severity findings are reviewed manually rather
-  than blocking a build
-- **Dependency updates** - Dependabot opens grouped weekly PRs (npm minor and
+- **Dependency audit:** `npm audit --omit=dev --audit-level=high` on both
+  projects. This gates *production* dependencies at high severity and above;
+  dev-dependency and lower-severity findings are reviewed manually rather than
+  blocking a build
+- **Dependency updates:** Dependabot opens grouped weekly PRs (npm minor and
   patch; GitHub Actions including majors), after a seven-day cooldown that
   security updates skip
-- **Pinned actions** - every GitHub Action is pinned to a full commit SHA
-- **Content Security Policy** - the browser tests load the built site under the
+- **Pinned actions:** every GitHub Action is pinned to a full commit SHA
+- **Content Security Policy:** the browser tests load the built site under the
   production CSP and fail on any violation, and the repository invariants fail
   if the hash of the inline script drifts from the one the CSP pins
 
@@ -102,5 +102,5 @@ not result in legal action. Please do not:
 
 ## Recognition
 
-This is a personal portfolio with no bug-bounty program, but I'm happy
-to credit reporters in commit messages or release notes if they want.
+This is a personal portfolio with no bug-bounty program, but I am happy
+to credit reporters in commit messages or release notes if they wish.

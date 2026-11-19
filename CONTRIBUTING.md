@@ -1,21 +1,22 @@
 # Contributing
 
-Thanks for taking an interest. This is a personal portfolio, so the shape of a
-useful contribution is a little different from a general-purpose library -
-worth reading the first section before you start.
+Thanks for taking an interest. This is a personal portfolio, so a useful
+contribution looks different from one to a general-purpose library; read the
+first section before you start.
 
 ## What is welcome
 
 - **Bug reports.** Broken layout, a console error, an accessibility problem, a
-  failing request - all useful, on any browser or device.
+  failing request: all useful, on any browser or device.
 - **Accessibility, performance and security improvements.** Always welcome.
 - **Documentation fixes.** Anything inaccurate, unclear or out of date.
 - **Tooling and CI improvements** that make the project easier to maintain.
 - **Fork it for your own portfolio.** The MIT licence allows this. Replace the
-  content in `frontend/src/data/`, the images in `frontend/public/`, and the
-  contact details, then set `githubUsername` in `portfolio.js` and run
+  content in `frontend/src/data/`, the images in `frontend/public/`, the
+  project pictures in `frontend/src/assets/projects/` and the contact details,
+  then set `githubUsername` in `portfolio.js` and run
   `node frontend/scripts/fetch-github-activity.mjs` for your own contribution
-  graph - no attribution required, though it is appreciated.
+  graph. No attribution is required, though it is appreciated.
 
 ## What is not
 
@@ -26,7 +27,8 @@ worth reading the first section before you start.
 - **New frameworks or heavy dependencies.** The lean bundle is a feature. A PR
   adding an animation library, a UI kit or a state manager needs to argue its
   case in an issue first. A library that does earn its place loads as a separate
-  chunk on intent, as the command palette, contribution graph and globe do,
+  chunk on intent or proximity, as the command palette, contribution graph and
+  globe do,
   sits beside them in `frontend/src/components/widgets/`, and gets a size
   budget of its own in `frontend/.size-limit.json`.
 
@@ -83,8 +85,8 @@ need Chromium for Playwright, once: `npx playwright install chromium` in
 3. **Follow the existing style.** Two-space indent, ES modules, the `@/` import
    alias in the frontend (except in `src/data/`, which plain Node imports, so
    it uses relative `.js` paths), and `.editorconfig` for the rest. Comments
-   explain why rather than what. The repository uses no em dashes anywhere -
-   in code, comments, copy or docs.
+   explain why rather than what. The repository uses no em dashes anywhere:
+   not in code, comments, copy or docs.
 4. **Update documentation in the same commit** as the behaviour it describes.
    Documentation that lags behind the code is the failure mode this repository
    works hardest to avoid.
@@ -155,7 +157,7 @@ mechanics. Use the body for the reasoning when it is not obvious.
 
 ## Pull requests
 
-Open the PR against `main` and fill in the template - the checklist mirrors
+Open the PR against `main` and fill in the template; its checklist mirrors
 what CI enforces. Then:
 
 - CI must be green. It runs lint on both projects, the content tests, the
@@ -165,8 +167,8 @@ what CI enforces. Then:
 - Expect review comments. `CODEOWNERS` requests the maintainer's review on
   every PR; this is a small project and review is usually quick.
 - PRs are squash-merged, so the branch history does not need to be tidy, but
-  the PR title does - it becomes the commit message. A single-commit PR takes
-  that commit's message instead, so it should follow the same format.
+  the PR title does, because it becomes the commit message. A single-commit PR
+  takes that commit's message instead, so it should follow the same format.
 
 Dependabot's PRs, grouped weekly version updates and a security update
 whenever an advisory has a compatible fix, are handled by the maintainer.
@@ -175,5 +177,4 @@ whenever an advisory has a compatible fix, are handled by the maintainer.
 
 ## Code of conduct
 
-Participation is governed by the [Code of Conduct](CODE_OF_CONDUCT.md). Be
-decent to people.
+Participation is governed by the [Code of Conduct](CODE_OF_CONDUCT.md).

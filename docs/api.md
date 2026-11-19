@@ -11,8 +11,9 @@ There is no database, no authentication and no user state.
 - **Authentication:** none. Abuse is controlled by CORS, rate limiting, a body
   cap and a honeypot rather than by credentials.
 
-A ready-to-run Postman collection covering every endpoint and every error path
-lives in [`postman/`](../postman/README.md).
+A ready-to-run Postman collection covering every endpoint, its validation,
+payload and rate-limit errors, the honeypot and CORS lives in
+[`postman/`](../postman/README.md).
 
 ---
 
@@ -112,7 +113,7 @@ curl -X POST http://localhost:5000/api/contact \
       }'
 ```
 
-**200** - accepted and sent
+**200**: accepted and sent
 
 ```json
 { "success": true, "message": "Message sent successfully." }
@@ -186,8 +187,8 @@ it first, as described [below](#cors).
 ## Rate limiting
 
 `POST /api/contact` allows **5 requests per IP per 15-minute window**. Replies
-carry the IETF draft-6 headers - `RateLimit-Policy`, `RateLimit-Limit`,
-`RateLimit-Remaining`, `RateLimit-Reset` - and the legacy `X-RateLimit-*` set
+carry the IETF draft-6 headers (`RateLimit-Policy`, `RateLimit-Limit`,
+`RateLimit-Remaining`, `RateLimit-Reset`), and the legacy `X-RateLimit-*` set
 is disabled. A `429` adds `Retry-After`, in seconds.
 
 The client IP comes from the first proxy hop (`trust proxy` is set to `1`),
@@ -221,7 +222,7 @@ code. It replaces the defaults rather than adding to them, so list every origin
 that should keep working; setting only a new domain locks out the live site.
 Only `GET`, `POST` and `OPTIONS` are advertised, only `Content-Type` is an
 accepted request header, and `Access-Control-Max-Age: 86400` lets a browser
-cache a preflight for up to 24 hours (Chromium caps it at two).
+cache a preflight for up to 24 hours (Chromium caps it at two hours).
 
 **A disallowed origin is not rejected with an error status.** The middleware
 simply omits the `Access-Control-Allow-Origin` header, and the browser blocks
@@ -260,7 +261,7 @@ consumed by a browser on a different origin. The notable headers:
 | `Cross-Origin-Resource-Policy` | `cross-origin` |
 
 These are the API's own headers. The site served by Netlify has a separate,
-stricter set - see [Deployment](deployment.md#security-headers-and-csp).
+stricter set (see [Deployment](deployment.md#security-headers-and-csp)).
 
 ---
 

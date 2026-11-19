@@ -7,7 +7,7 @@ reviewed.
 
 | Tool | Version | Notes |
 |------|---------|-------|
-| Node.js | `^22.19.0 \|\| >=24.5.0` (24 recommended) | `.nvmrc` pins 24; run `nvm use` to match. The frontend's range is the narrow one, set by Size Limit; the backend and root accept 22.13 and up |
+| Node.js | `^22.19.0 \|\| ^24.5.0 \|\| >=26.0.0` (24 recommended) | `.nvmrc` pins 24; run `nvm use` to match. The frontend's range is the narrow one, set by Size Limit; the backend and root accept 22.13 and up |
 | npm | 11+ | Ships with Node 24 |
 | Resend account | - | Only needed to exercise the email path locally |
 | Chromium for Playwright | - | Only for the browser tests: `npx playwright install chromium` once, in `frontend/` |
@@ -85,14 +85,14 @@ call. What each suite covers, and how to run the browser tests, is in
 Two scripts run with plain `node` from the repository root.
 `node scripts/gen-og-card.mjs` regenerates the social card. It needs `sharp`,
 `fontkit` and `wawoff2`, which are installed on demand rather than kept as
-dependencies - see [Design](design.md#generated-assets).
+dependencies (see [Design](design.md#generated-assets)).
 `node frontend/scripts/fetch-github-activity.mjs` refreshes the contribution
-snapshot and needs no install - see [below](#updating-site-content).
+snapshot and needs no install (see [below](#updating-site-content)).
 
 A third runs from `frontend/`: `node scripts/gen-skill-icons.mjs` rebuilds the
 sprite of brand marks in the Skills section from `skillIcons` in `skills.js`.
-It reads two icon packages that are also installed on demand - see
-[Design](design.md#skill-marks).
+It reads two icon packages that are also installed on demand (see
+[Design](design.md#skill-marks)).
 
 ### The prebuild gate
 
@@ -130,13 +130,14 @@ range in `package.json`, then run the full local gate before pushing
 (`npm run lint` and `npm test` in `backend/`; `npm run build`, which lints and
 runs the content tests and invariants first, then `npm run size` and
 `npm run test:e2e` in `frontend/`). A new dependency's own `engines` can narrow
-the project's: Size Limit 14 is why the frontend needs Node 22.19 or 24.5.
+the project's: Size Limit 14 is why the frontend needs Node 22.19, 24.5, or 26
+and up.
 
 Run `npm run install:all` after pulling a Dependabot merge. Otherwise
 `node_modules` stays behind the lockfile, and local builds run on older versions
 than CI and Netlify do.
 
-Three rules are worth stating explicitly:
+Three rules apply:
 
 - **Commit the lockfile with the `package.json` change.** CI installs with
   `npm ci`, which fails outright if the two disagree.
@@ -213,7 +214,7 @@ few pieces of prose are tied to one component and live there instead:
 | Change | File |
 |--------|------|
 | New job or internship | `experience.js` |
-| New project | `projects.js` - array order is page order; each card carries exactly one of `github` or `sourceNote`, plus an optional `demo` URL beside `github`, and an `image` with its `imageAlt`: two AVIF files in `src/assets/projects/`, see [Design](design.md#project-cards-line-up-on-shared-rows) |
+| New project | `projects.js`: array order is page order; each card carries exactly one of `github` or `sourceNote`, plus an optional `demo` URL beside `github`, and an `image` with its `imageAlt`. `image` is the stem of four files in `src/assets/projects/` (`<image>-480` and `<image>-960`, each as `.avif` and `.webp`); see [Design](design.md#project-cards-line-up-on-shared-rows) |
 | New skill group or tag | `skills.js`; if the tag is a product with a mark, add it to `skillIcons` there and rebuild the sprite, see [Design](design.md#skill-marks) |
 | Approach copy, a stat, a degree, a target role | `about.js` |
 | Name, email, resume link, socials, GitHub username, section order | `portfolio.js` |
@@ -227,8 +228,8 @@ Four rules keep the data layer honest. `npm test` in `frontend/` checks the
 first, third and fourth; the second rests on whoever writes the copy:
 
 1. **Stats in `about.js` are aggregates, not new claims.** Every figure there
-   is already stated in `experience.js` or `projects.js` - the 985-test tile,
-   for instance, restates the RemindrAI bullet in the MemorAIz entry. Change
+   is already stated in `experience.js` or `projects.js`: the 985-test tile,
+   for instance, restates a RemindrAI bullet in the MemorAIz entry. Change
    one without the other and the test fails rather than the page
    contradicting itself.
 2. **Every claim must be checkable.** Project copy is written from the
@@ -238,13 +239,15 @@ first, third and fourth; the second rests on whoever writes the copy:
    53 words, highlights 9 to 26, with four or five stack chips; experience
    bullets 12 to 26 words. When a new fact arrives, drop an older one rather
    than growing the entry.
-4. **Copy stays inside the font subset.** Arrows, curly symbols and the like
+4. **Copy stays inside the font subset.** Arrows and other symbols outside it
    render in a fallback face, so use `react-icons` for them. The test reads
    every export of every data module; prose in the components listed above is
    held to the same rule by hand.
 
-The command palette builds its entries from these files, so new content reaches
-it without being listed again; only its fixed links live in `commands.js`.
+`commands.js` builds the command palette's entries from the other data
+modules, so new content reaches it without being listed again; only the
+Contact group's entries (copy email, resume and profile links) are written out
+there.
 
 ### Facts stated twice
 
@@ -259,7 +262,8 @@ needs:
   socials and location
 - for the name, role or headline, the `NAME`, `ROLE` and `BLURB` constants in
   `scripts/gen-og-card.mjs`, and a regenerated card (see
-  [Design](design.md#generated-assets))
+  [Design](design.md#generated-assets)); the card also draws
+  `images/Profile.avif`, so a new portrait needs one too
 
 Any user-visible content change also moves three dates together: `dateModified`
 in the `ProfilePage` JSON-LD in `index.html`, `<lastmod>` in
@@ -282,7 +286,7 @@ A new section needs an entry in `sections` in `portfolio.js`, a component in
 `App.jsx`, plus an icon in `SECTION_ICONS` in `Dock.jsx` (it falls back to a
 generic one). Its `SectionHeader` id must be `<section id>-title`.
 
-Visual changes are governed by the token system - read
+Visual changes are governed by the token system: read
 [Design](design.md) before touching colours, type sizes or the Projects grid.
 
 ---
@@ -316,9 +320,9 @@ globals. They hold correctness, not formatting; style is held by
 ## Development workflow
 
 1. Branch from `main`, which is what deploys. CI does not hold a deploy back:
-   Netlify builds every push whatever CI reports, stopped only by its own
-   prebuild gate, and Render deploys every push unconditionally, so run the
-   checks before merging.
+   Netlify builds every push to `main` whatever CI reports, stopped only by its
+   own prebuild gate, and Render deploys every push to `main` unconditionally,
+   so run the checks before merging.
 2. Make the change, keeping documentation in step with behaviour.
 3. Run the checks that apply:
    ```bash
@@ -347,10 +351,10 @@ Full contributor guidance, including commit message conventions, is in
 
 **`npm run install:all` fails with `EBADENGINE` / "Unsupported engine".**
 Your Node version is outside the frontend's `^22.19.0 || ^24.5.0 || >=26.0.0`
-(Node 25 included), or below the backend's 22.13. Run `nvm use` (or install
-Node 24). This is `engine-strict=true`
-in the root `.npmrc` doing its job; an install inside `frontend/` or `backend/`
-prints the same warning without stopping.
+(which excludes Node 25), or below the backend's 22.13. Run `nvm use` (or
+install Node 24). This is `engine-strict=true` in the root `.npmrc` doing its
+job; an install inside `frontend/` or `backend/` prints the same warning
+without stopping.
 
 **`npm run build` stops before Vite starts.**
 The prebuild gate failed: an ESLint error, a content test or a repository
@@ -419,21 +423,23 @@ last pull. Run `git pull --rebase` and push again.
 **A hydration error in the browser console.**
 Something renders differently at build time than in the browser: a date, a
 random value, or a read of `window` during render. Move browser-only values
-into an effect, or fix them at build time as the footer year is.
+into an effect, or fix them at build time as the footer year is. The dev server
+does not hydrate, so this only shows on a built page (`npm run preview` in
+`frontend/`).
 
 **Analytics stopped reporting after an edit to `index.html`.**
 The inline analytics snippet is pinned in the CSP by SHA-256 hash. Any change,
 including whitespace, invalidates it and the browser blocks the script with no
 visible symptom. The repository invariants fail on it first, with the new
 value in the message, so this should only reach the live site if the gate was
-skipped. Recompute the hash - see
+skipped. Recompute the hash as described in
 [Deployment](deployment.md#the-inline-analytics-hash).
 
 **Stale content on the live site after a deploy.**
 HTML and images revalidate on every visit, so a hard refresh should be enough.
 If a visitor is stuck on a much older build, they may still have the retired
-service worker installed - see
-[Deployment](deployment.md#stale-service-worker-recovery).
+service worker installed (see
+[Deployment](deployment.md#stale-service-worker-recovery)).
 
 ---
 

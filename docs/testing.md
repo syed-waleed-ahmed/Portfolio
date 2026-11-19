@@ -8,7 +8,7 @@ Seven layers, each catching something the others cannot:
 | Content tests | `node --test` | Frontend content rules in `src/data/` | Locally, in CI and in Netlify's build |
 | Repository invariants | `node --test` | Files that must agree (the CSP hash, the palette copies, the mirrored form rules, the dates, the versions), and the house style | Locally, in CI and in Netlify's build |
 | Browser tests | Playwright + axe-core | The built page in Chromium under its real CSP | Locally and in CI |
-| Bundle budgets | Size Limit | Gzipped size of the entry bundle and each lazy chunk | Locally after a build, and in CI |
+| Bundle budgets | Size Limit | Gzipped size of the entry bundle, each lazy chunk, the skill sprite and the project pictures | Locally after a build, and in CI |
 | Link check | lychee | Every link in the data modules, `index.html`, `humans.txt` and the docs | Weekly in GitHub Actions, and on demand |
 | Manual / live | Postman | The API against a running server, local or production | On demand |
 
@@ -96,7 +96,7 @@ npm test --prefix frontend
 npm test --prefix frontend --silent -- --test-name-pattern=density   # a subset by name
 ```
 
-Fourteen checks in `frontend/test/data.test.js`, on the same built-in runner with
+Fourteen tests in `frontend/test/data.test.js`, on the same built-in runner with
 no dependencies. The data files are plain modules, so they import without a
 bundler. They also run in Netlify's build, through the prebuild gate.
 
@@ -141,9 +141,9 @@ build as well, and every failure message says what to change.
 | `the contact email's BRAND copies the token palette` | `accent`, `accent2` and `ink` equal `--color-indigo`, `--color-accent` and `--color-bg` |
 | `the contribution graph's scale is the accent mixed into the surface` | `THEME` is `--color-surface-raised`, the accent over `--color-surface` at 25, 50 and 75%, then the accent |
 | `the globe's WebGL cyan is the accent` | `CYAN` is `--color-accent` as 0-1 fractions |
-| `every text, accent and status colour is 7:1 on the page and on a panel` | The four text tokens, the accent and the three status colours are each at least 7:1 on `--color-bg` and `--color-surface`, as are the accent ink on the accent and the inverse pair |
+| `every text, accent and status colour is 7:1 on the page and on a panel` | The four text tokens, the accent and the three status colours are each at least 7:1 on `--color-bg` and `--color-surface`, as are the accent ink on the accent and on its hover state, and the inverse pair |
 | `every hue derives its border and its tint the same way` | For accent, success, warning and danger, `-border` is the hue at 50% and `-subtle` the hue at 10% |
-| `stylesheets take every colour from the tokens` | No stylesheet but `tokens.css` writes a hex, a colour function or a named colour; a mask's alpha is exempt |
+| `stylesheets take every colour from the tokens` | No stylesheet but `tokens.css` writes a hex value, a colour function, `white` or `black`; mask declarations are exempt, since a mask is painted in alpha |
 | `the three last-modified dates agree` | `dateModified` in `index.html`, `<lastmod>` in `sitemap.xml` and `Last update` in `humans.txt` name the same day |
 | `the Node version is pinned the same way everywhere` | `.nvmrc` and `NODE_VERSION` in `netlify.toml` name the same major, and every `engines.node` admits it |
 | `the three manifests and the newest changelog release name one version` | The root, frontend and backend `package.json` versions equal the newest `## [X.Y.Z] - date` heading in `CHANGELOG.md` |
@@ -244,16 +244,16 @@ budgets in `frontend/.size-limit.json`, so it needs a build first.
 | Contribution graph, `react-activity-calendar` | `GitHubActivityCalendar-*.js` and `Tooltip-*.js` | 27 kB |
 | Globe, `cobe` | `index.esm-*.js` | 6.5 kB |
 
-Each limit was set about 5 to 10% above what the build measured at the time;
-the entry chunk has grown into some of that, and on 2026-11-14 it measured
-84.9 kB against its 87 kB budget. The entry budget is the one that matters
-most: a static import of any
-of the three lazy libraries moves it into the entry chunk and fails that budget.
-The sprite's budget is there for the same reason from the other side: its
-marks would cost the entry chunk and the prerendered page that much if they
-were imported as components instead.
-To change a budget, edit `.size-limit.json` in the same commit as the change
-that needs it, and give the reason in the commit message.
+Each limit was set about 5 to 10% above what the build measured at the time.
+Two have since grown into most of that margin: on 2026-11-19 the entry chunk
+measured 85.35 kB against its 87 kB budget, and the WebP fallbacks 209.49 kB
+against 210 kB. The entry budget is the one that matters most: a static import
+of any of the three lazy libraries moves it into the entry chunk and fails that
+budget. The sprite's budget is there for the same reason from the other side:
+its marks would cost the entry chunk and the prerendered page that much if they
+were imported as components instead. To change a budget, edit
+`.size-limit.json` in the same commit as the change that needs it, and give
+the reason in the commit message.
 
 ---
 
@@ -263,7 +263,7 @@ Nothing in CI measures load speed; the size budgets above stand in for it.
 It was measured by hand on 2026-11-14, with PageSpeed Insights on the live
 site and with timed, throttled runs of local builds in Playwright.
 
-| | Performance | FCP | LCP | TBT | CLS |
+| Run | Performance | FCP | LCP | TBT | CLS |
 |---|---|---|---|---|---|
 | PageSpeed, mobile, v2.4.1 | 97 | 1.0 s | 2.6 s | 30 ms | 0 |
 | PageSpeed, desktop, v2.4.1 | 98 | 0.3 s | 0.3 s | 120 ms | 0 |
@@ -288,6 +288,8 @@ the LCP; it shipped for the bytes.
 PageSpeed's scores move from run to run by a few points. Its mobile LCP is
 simulated from a trace, so a change that makes the LCP happen earlier in the
 trace also shrinks the set of requests it is simulated over.
+
+---
 
 ## Link check
 
@@ -326,8 +328,9 @@ lychee --config lychee.toml --no-progress --root-dir "$PWD/frontend/public" \
 ## Postman collection
 
 `postman/` holds a collection and two environments that exercise every endpoint
-and every error path against a running server, including the CORS preflights
-and the wrong method.
+against a running server: the validation, payload-cap, malformed-JSON and
+rate-limit errors, the honeypot, the CORS preflights, an unmatched path and the
+wrong method.
 
 | File | Purpose |
 |------|---------|

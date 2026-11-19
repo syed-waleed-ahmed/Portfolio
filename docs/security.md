@@ -3,7 +3,7 @@
 What is implemented in the code and the platform configuration.
 
 For **reporting a vulnerability**, see [`SECURITY.md`](../SECURITY.md) at the
-repository root - that document is the disclosure policy; this one is the
+repository root. That document is the disclosure policy; this one is the
 inventory.
 
 The threat model is narrow. There is no database, no authentication, no user
@@ -40,7 +40,7 @@ was left out as not worth holding requests open for.
 A trip is **logged with the submitter's name and email**, after validation (so
 at most 100 characters each) and formatted with `%j` so a crafted value
 containing newlines cannot forge extra log lines. That logging is deliberate: a
-false positive - a password manager or browser autofill filling the trap - would
+false positive (a password manager or browser autofill filling the trap) would
 otherwise lose a real message silently, and the sender, having seen a success
 message, would have no reason to try the published email address instead.
 
@@ -51,7 +51,7 @@ message, would have no reason to try the published email address instead.
 | Control | Implementation |
 |---------|----------------|
 | HTML escaping | Every user-supplied value is escaped (`&`, `<`, `>`, `"`, `'`) before being interpolated into the HTML email |
-| Header-injection guard | Control characters, including CR and LF, are stripped from header-bound fields (`subject`, `Reply-To`) and whitespace is collapsed, so a crafted value cannot inject additional mail headers |
+| Header-injection guard | Control characters, including CR and LF, are replaced with spaces in header-bound fields (`subject`, `Reply-To`) and whitespace is collapsed, so a crafted value cannot inject additional mail headers |
 | Plain-text part | Name, email and subject are flattened the same way there, so a newline in one cannot forge an extra `Email:` or `Subject:` line. The message keeps its own line breaks |
 | `mailto:` links | The submitter's address is URL-encoded (keeping `@`) before it is HTML-escaped into the two `mailto:` links. The email pattern admits `?`, `&` and `=`, which would otherwise let an address add a `bcc` or replace the subject in the owner's reply draft |
 | Subject truncation | Sanitized subjects are capped at 200 characters before being sent |
@@ -119,8 +119,10 @@ and the honeypot are the controls that actually bound abuse.
 
 ## Error handling and information disclosure
 
-- A centralized error handler logs the full error server-side and returns a
-  generic message. Stack traces are never sent to a client.
+- A centralized error handler logs an unexpected error in full server-side and
+  returns a generic message. Stack traces are never sent to a client. A body
+  the parser rejected is the exception, logged by type only (see
+  [Contact endpoint](#contact-endpoint)).
 - In production, `500` responses always read `Internal server error.`. Outside
   production the real message is included to make local debugging possible,
   which is why `NODE_ENV=production` must be set on Render.

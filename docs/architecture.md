@@ -57,7 +57,7 @@ portfolio/
 │   ├── public/                     Static passthrough (see below)
 │   ├── scripts/prerender.mjs       Writes the rendered page into dist/index.html
 │   ├── scripts/fetch-github-activity.mjs  Refreshes the contribution snapshot
-│   ├── scripts/gen-skill-icons.mjs  Rebuilds the sprite of skill marks
+│   ├── scripts/gen-skill-icons.mjs Rebuilds the sprite of skill marks
 │   ├── src/
 │   │   ├── assets/                 Files a component imports by URL: the skill marks sprite (generated) and the project pictures
 │   │   ├── components/
@@ -74,7 +74,7 @@ portfolio/
 │   ├── e2e/site.spec.js            Browser tests (Playwright + axe)
 │   ├── e2e/serve.mjs               Serves dist/ with its real CSP for those tests
 │   ├── playwright.config.js
-│   ├── .size-limit.json            Gzip budgets for the entry and each lazy chunk
+│   ├── .size-limit.json            Gzip budgets: the entry, each lazy chunk, the sprite, the project pictures
 │   ├── index.html
 │   ├── vite.config.js
 │   ├── eslint.config.js
@@ -98,7 +98,7 @@ kept in step with the docs like any other.
 `404.html`, the Netlify `_headers` file, the self-hosted font, favicons, the
 portrait images, the social card, `robots.txt`, `sitemap.xml`, `humans.txt`,
 the Search Console verification file, and `sw.js` (a kill-switch service
-worker - see [Deployment](deployment.md#stale-service-worker-recovery)).
+worker; see [Deployment](deployment.md#stale-service-worker-recovery)).
 
 ---
 
@@ -144,14 +144,14 @@ sections are edited independently.
 every About figure must appear in the Experience or Projects entry it cites,
 project and experience copy stay within shared length ranges, each project
 card carries exactly one of `github` or `sourceNote` and names a picture that
-exists, links are absolute
-`https`, no export of a data module uses a character the font subset cannot
-draw, every command palette entry points somewhere real, the activity
-snapshot is a usable year of days, and the generated sprite of skill marks
-holds exactly the symbols `skills.js` names. The data modules stay importable by plain
-Node for that reason: relative imports with `.js` extensions, no JSX and no
-`@/` alias, and nothing imported into `portfolio.js`, which the snapshot
-workflow loads without installing dependencies. The repository invariants
+exists, links are absolute `https`, no export of a data module uses a
+character the font subset cannot draw, every command palette entry points
+somewhere real, the activity snapshot is a usable year of days, and the
+generated sprite of skill marks holds exactly the symbols `skills.js` names.
+The data modules stay importable by plain Node for that reason: relative
+imports with `.js` extensions, no JSX and no `@/` alias, and nothing imported
+into `portfolio.js`, which the snapshot workflow loads without installing
+dependencies. The repository invariants
 check those import rules.
 
 ### Import alias
@@ -160,12 +160,12 @@ check those import rules.
 not encode folder depth:
 
 ```js
-// good - identical wherever this file lives
+// good: identical wherever this file lives
 import Reveal from "@/components/ui/Reveal";
 import { projects } from "@/data/projects";
 
-// bad - breaks the moment the file moves
-import Reveal from "../../ui/Reveal";
+// bad: breaks the moment the file moves
+import Reveal from "../ui/Reveal";
 ```
 
 ### Rendering strategy
@@ -319,7 +319,7 @@ rather than test it.
 
 **Secrets never reach the client.** The Resend key lives only in the backend
 environment. The frontend's only configurable value is the API base URL, and
-`VITE_`-prefixed variables are compiled into the bundle by design - never put
+`VITE_`-prefixed variables are compiled into the bundle by design, so never put
 anything sensitive there.
 
 ---

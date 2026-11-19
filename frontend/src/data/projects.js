@@ -26,9 +26,10 @@
 //
 // Later that month the connecting-rod course project gave its place to the
 // FastAPI Niche Assistant, a fine-tuned model running as a public service,
-// and every card gained a picture. `image` names a pair of files in
-// src/assets/projects (<image>-480.avif and <image>-960.avif) and `imageAlt`
-// says what the picture shows. The picture row is shared across the grid like
+// and every card gained a picture. `image` names four files in
+// src/assets/projects (<image>-480 and <image>-960, each as .avif and as the
+// .webp a browser without AVIF falls back to) and `imageAlt` says what the
+// picture shows. The picture row is shared across the grid like
 // the others, so every card has one. Each is a crop of an image from that
 // project's own repository, or for RemindrAI from the thesis poster, never a
 // mock-up: docs/design.md lists each source.

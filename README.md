@@ -6,7 +6,7 @@
 [![Link check](https://github.com/syed-waleed-ahmed/Portfolio/actions/workflows/links.yml/badge.svg)](https://github.com/syed-waleed-ahmed/Portfolio/actions/workflows/links.yml)
 [![Release](https://img.shields.io/github/v/release/syed-waleed-ahmed/Portfolio)](https://github.com/syed-waleed-ahmed/Portfolio/releases)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Node](https://img.shields.io/badge/node-%5E22.19%20%7C%7C%20%3E%3D24.5-brightgreen.svg)](.nvmrc)
+[![Node](https://img.shields.io/badge/node-%5E22.19%20%7C%7C%20%5E24.5%20%7C%7C%20%3E%3D26-brightgreen.svg)](.nvmrc)
 [![Live](https://img.shields.io/badge/live-syedwaleedahmed.me-0a7cff.svg)](https://syedwaleedahmed.me/)
 
 The source of my personal site: an AI engineer's portfolio covering experience,
@@ -31,13 +31,11 @@ and the form delivers email through Resend.
 
 ## Why this exists
 
-A portfolio is usually the first engineering artifact anyone sees, and most are
-either a template with the names swapped out or a heavyweight build that takes
-several seconds to paint on a phone. This one is written to be read as a work
-sample: a prerendered page with no CSS framework, animation library or UI kit,
-a small hardened API rather than a third-party form widget, accessibility and
-caching handled deliberately, and documentation that explains the decisions
-rather than restating the code.
+A portfolio is often the first engineering artifact a reader sees, so this one
+is written to be read as a work sample: a prerendered page with no CSS
+framework, animation library or UI kit, a small hardened API rather than a
+third-party form widget, accessibility and caching handled deliberately, and
+documentation that explains the decisions rather than restating the code.
 
 The constraints that follow from that: ship as little JavaScript as possible,
 keep every visual value in one token system, treat the contact endpoint as a
@@ -76,14 +74,15 @@ forking the repository can run it without reading the source.
   [magicuidesign/portfolio](https://github.com/magicuidesign/portfolio) and
   [magicui](https://github.com/magicuidesign/magicui) (both MIT) and rewritten
   in plain CSS with no new dependencies
-- A picture on every project card, cropped from that project's own repository
-  and served as lazy AVIF at two widths
+- A picture on every project card, cropped from an image in that project's own
+  repository (the thesis poster for RemindrAI) and loaded lazily as AVIF at two
+  widths, with a WebP fallback for browsers without AVIF
 - Data-driven content: entries, figures and links live in `src/data/`, with
   content tests that keep figures traceable and entries consistent
 - Accessibility: skip link, named landmarks, one focus style, an accessible
   dock and form, text at WCAG AAA contrast (7:1), reduced motion honoured,
-  48px tap targets on touch screens;
-  an axe-core WCAG 2.2 A/AA scan of the built page runs in CI
+  48px tap targets on touch screens; an axe-core WCAG 2.2 A/AA scan of the
+  built page runs in CI
 - Responsive from 320px up with no horizontal scroll, and a branded 404 page
 - An error boundary per section
 - SEO: canonical URL, `Person` + `WebSite` + `ProfilePage` JSON-LD, OG and
@@ -97,7 +96,7 @@ forking the repository can run it without reading the source.
 - Helmet security headers, rate limiting, a 16 KB body cap, trust-proxy, a
   centralized error handler that answers malformed bodies with a `400` rather
   than a `500`, and graceful shutdown
-- Honeypot spam trap that answers indistinguishably from a real send
+- Honeypot spam trap whose response is byte-identical to a real send's
 - HTML escaping and mail-header sanitization on every user-supplied value, and
   a URL-encoded address in the email's `mailto:` links
 - Branded HTML and plain-text email templates
@@ -110,7 +109,8 @@ forking the repository can run it without reading the source.
   hash and the hand-copied palette
 - 28 browser tests in Playwright, with axe-core, against the built site under
   its production CSP
-- Size Limit budgets on the entry bundle and each lazy chunk
+- Size Limit budgets on the entry JS and CSS, each lazy chunk, the skill
+  sprite and the project pictures
 - Postman collection covering every endpoint: validation, the body cap,
   malformed JSON, the honeypot, the rate limiter, CORS and the 404s
 - CI runs lint, the content tests, the invariants, a build, the size budgets,
@@ -197,8 +197,8 @@ Without Resend credentials everything still runs; the contact endpoint returns
 `503` instead of sending. The copied `frontend/.env` sets
 `VITE_API_BASE_URL=http://localhost:5000`, which points the form at your local
 backend; without the file, the form calls the production API. Vite bakes the
-value into every build, and the browser tests refuse one that calls localhost
-(see [Troubleshooting](#troubleshooting)).
+value into every build, and the browser tests refuse a build that does not call
+the production API (see [Troubleshooting](#troubleshooting)).
 
 ### Scripts
 
@@ -220,10 +220,10 @@ value into every build, and the browser tests refuse one that calls localhost
 
 ## Configuration
 
-`backend/.env` - `RESEND_API_KEY`, `EMAIL_FROM` and `EMAIL_TO` are required for
+`backend/.env`: `RESEND_API_KEY`, `EMAIL_FROM` and `EMAIL_TO` are required for
 delivery; `PORT`, `NODE_ENV` and `ALLOWED_ORIGINS` are optional.
 
-`frontend/.env` - `VITE_API_BASE_URL` only, and it is compiled into the public
+`frontend/.env`: `VITE_API_BASE_URL` only, and it is compiled into the public
 bundle, so never put a secret there.
 
 Every variable is described in
@@ -238,7 +238,7 @@ Every variable is described in
 
 Entries, figures and links live in `frontend/src/data/`; only the hero text,
 section subtitles and contact panel text are written in their components.
-Adding a project is a data edit, not a component edit:
+Adding a project is a data edit and a picture, not a component edit:
 
 ```js
 // frontend/src/data/projects.js
@@ -251,6 +251,8 @@ export const projects = [
     stack: ["React", "Node", "Express", "Resend"],
     github: "https://github.com/…",   // or sourceNote, never both
     demo: "https://…",                // optional, needs github
+    image: "project-name",            // stem of four files in src/assets/projects/
+    imageAlt: "What the picture shows.",
   },
   // …
 ];
@@ -260,10 +262,13 @@ Each card carries exactly one of `github`, which draws a "View source" link at
 the foot of the card, or `sourceNote`, a short line saying why there is no
 public repository (for example "Private repository"). A card with a running
 deployment adds `demo`, a "Live demo" link beside "View source" that the
-command palette also lists as its own entry. The content tests fail on a card
-with neither or both, or with a `demo` and no `github`, and hold descriptions,
-highlights and stacks to the same density as the other cards. There is no
-ordering or emphasis flag - array order is page order.
+command palette also lists as its own entry. `image` names
+`<image>-480` and `<image>-960` in `frontend/src/assets/projects/`, each as
+`.avif` and `.webp`, and `imageAlt` describes the picture. The content tests
+fail on a card with neither or both of `github` and `sourceNote`, with a `demo`
+and no `github`, or with a missing picture or `imageAlt`, and hold
+descriptions, highlights and stacks to the same density as the other cards.
+There is no ordering or emphasis flag: array order is page order.
 
 The same pattern applies to `experience.js`, `skills.js`, `about.js` and
 `portfolio.js`, and the command palette builds its entries from these files, so
@@ -352,9 +357,10 @@ claims it, hold project and experience copy to a shared length range, give
 every project card exactly one of a source link or a note, require every
 external link to be absolute `https` and every key and section id to be
 unique, and fail on any character in the data modules that the self-hosted
-font subset cannot draw. They also check that every command palette entry
-points somewhere real, that its search finds the right entry, and that the
-activity snapshot is a usable year of days.
+font subset cannot draw. They also check that every project picture exists in
+both formats, that every skill mark has a symbol in the sprite, that every
+command palette entry points somewhere real, that its search finds the right
+entry, and that the activity snapshot is a usable year of days.
 
 The repository invariants pin what used to fail silently, among them the CSP
 hash of the inline analytics script, the six hand-copied palettes, the form
@@ -363,8 +369,10 @@ allow, the hand-kept dates, the Node version, the release version in all three
 manifests and the no-em-dash house style. The browser suite runs the built
 page in Chromium under its production CSP, with the backend and analytics
 answered inside the test: no console or CSP errors, every section revealed, no
-horizontal scroll from 320px to 1920px, no axe violations, and the command
-palette, the dock's Home link, the contact form, the graph's fit on a phone and
+horizontal scroll from 320px to 1920px, no axe violations, all text at 7:1,
+the dock's current section and the palette's selected row still marked under
+forced colours, and the command palette, the dock's Home link, the contact
+form, the graph's fit on a phone, the skill marks, the project pictures and
 printing each checked in turn.
 
 Live and manual testing uses the Postman collection in
@@ -417,7 +425,7 @@ CSP hash procedure and cache rules are in
 
 | Symptom | Cause |
 |---------|-------|
-| `EBADENGINE` on install | Node outside `^22.19.0 \|\| >=24.5.0`. Run `nvm use` |
+| `EBADENGINE` on install | Node outside `^22.19.0 \|\| ^24.5.0 \|\| >=26.0.0`. Run `nvm use` |
 | `npm run build` stops before Vite | The prebuild gate: lint, a content test or an invariant failed, and the output names it |
 | `npm run test:e2e` refuses the build | It was built with `VITE_API_BASE_URL` pointing away from production, as `frontend/.env` does. Rebuild with it set to the production origin; the error prints the command |
 | Contact form returns `503` | `RESEND_API_KEY`, `EMAIL_FROM` or `EMAIL_TO` missing. The boot log names them |
@@ -435,7 +443,7 @@ Longer explanations for each in
 
 ## Roadmap
 
-Not a committed plan, just what is queued:
+Queued work, not a committed plan:
 
 - Delete `frontend/public/sw.js` once analytics show no service-worker traffic
   for about 30 days
@@ -452,7 +460,7 @@ deliberate security non-goals in
 ## Contributing
 
 Bug reports, accessibility and performance fixes, and documentation
-corrections are welcome. Content and redesign PRs are not - see
+corrections are welcome. Content and redesign PRs are not; see
 [`CONTRIBUTING.md`](CONTRIBUTING.md) for the full scope and workflow.
 Participation is governed by the [Code of Conduct](CODE_OF_CONDUCT.md).
 
@@ -473,9 +481,10 @@ linked from the site's dock.
 
 ## License
 
-MIT - see [LICENSE](LICENSE). You are welcome to fork this for your own
-portfolio; replace the content in `frontend/src/data/`, the hero text in
-`Hero.jsx`, the images in `frontend/public/` and the copies listed under
+MIT; see [LICENSE](LICENSE). You are welcome to fork this for your own
+portfolio: replace the content in `frontend/src/data/`, the hero text in
+`Hero.jsx`, the images in `frontend/public/`, the project pictures in
+`frontend/src/assets/projects/` and the copies listed under
 [Facts stated twice](docs/development.md#facts-stated-twice), set
 `githubUsername` in `portfolio.js`, and run
 `node frontend/scripts/fetch-github-activity.mjs` to replace the contribution

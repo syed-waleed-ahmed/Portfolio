@@ -15,42 +15,44 @@ than by individual commit.
 
 ## [Unreleased]
 
+### Added
+
+- **CrewAI and LiteLLM in Skills**, both backed by the Multi-Agent Research
+  Team. CrewAI carries its mark; neither icon set has one for LiteLLM, so it
+  stays text.
+- **An 840px portrait for high-density wide screens.** Above 2048px at 2x
+  the portrait renders at about 850 device pixels, beyond the previous 680px
+  maximum. No other screen downloads it.
+
 ### Changed
 
 - **Multi-Agent Research Team takes Campaign Forge's place in Projects.**
-  The research platform went live on 2026-11-16: three CrewAI agents search
-  the web, write code examples and deliver a cited report, with every step
-  streamed to the browser and each link checked against what the search
-  retrieved. Its public demo runs real agents. The card shows a crop of a
-  real run from the repository, and its 259 tests were counted from a
-  checkout. The grid stays at two rows of three; Campaign Forge stays pinned
-  on the GitHub profile.
+  The platform went live on 2026-11-16: three CrewAI agents search the web,
+  write code examples and deliver a cited report, with every step streamed
+  to the browser and each link checked against the URLs the search
+  retrieved. Its public demo runs real agents, where Campaign Forge's
+  answered with a simulated responder. The card shows a crop of a real run
+  from the repository, and its 259 tests were counted from a checkout. The
+  grid stays at two rows of three; Campaign Forge stays pinned on the GitHub
+  profile.
+- **A new portrait.** A studio headshot replaces the canal photo in the
+  hero, the social card and the JSON-LD, cropped to head and shoulders for
+  the circular frame. The plain backdrop compresses far better: the 320px
+  file desktops load first is 6 KB (was 19 KB), the phone file 3 KB (was
+  9 KB), and the regenerated social card 72 KB (was 107 KB).
 - **The AI Workflow Assistant's picture is re-cut** from the screenshot that
   repository retook when it folded reports into analyses, so the card again
   matches its source. The 508-test figure was re-counted and still holds.
-- **CrewAI and LiteLLM join Skills**, backed by the Research Team. CrewAI
-  carries its mark; neither icon set has one for LiteLLM, so it stays text.
-- **A new portrait.** A studio headshot replaces the canal photo in the hero,
-  the social card and the JSON-LD, cropped to head and shoulders for the
-  circle. Its plain backdrop compresses far better: the 320px file desktops
-  load first is 6 KB instead of 19 KB, and the phone file 3 KB instead of 9.
-  The social card is regenerated from it, 72 KB instead of 107.
-
-### Performance
-
-- **Project pictures are chosen for their real width.** The `sizes` hint now
-  follows the grid's actual card width at every breakpoint. A 1024px screen
-  stops downloading the 960px file for a 461px slot, and a 2560px screen,
-  where cards are 642px wide, stops stretching the 480px one.
-- **An 840px portrait for 5K screens.** Past 2048px at 2x the portrait needs
-  about 850 pixels, and the largest file was 680; the new crop allows 840.
-  Nothing else downloads it.
 
 ### Fixed
 
-- **The Projects subtitle no longer promises university and robotics work.**
-  No card has shown either since TIAGo left on 2026-11-15; it now names
-  what the six cover: agents, retrieval, evaluation and fine-tuning.
+- **Project pictures are chosen for their real width.** The `sizes` hint
+  now follows the card's rendered width at every breakpoint. A 1024px screen
+  no longer downloads the 960px file for a 461px slot, and a 2560px screen,
+  where cards are 642px wide, no longer stretches the 480px one.
+- **The Projects subtitle no longer mentions university or robotics work.**
+  No card has shown either since TIAGo was removed on 2026-11-15; it now
+  names what the six cover: agents, retrieval, evaluation and fine-tuning.
 
 ## [2.4.4] - 2026-11-15
 

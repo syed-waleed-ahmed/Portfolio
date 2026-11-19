@@ -2,7 +2,7 @@
 
 API tests for the backend in [`../backend`](../backend). Fourteen requests
 across four folders, each asserting status code and response shape with
-`pm.test()`, so the whole thing can be run unattended in the Collection Runner.
+`pm.test()`, so the collection can run unattended in the Collection Runner.
 
 The API contract itself is documented in [`../docs/api.md`](../docs/api.md).
 
@@ -30,7 +30,7 @@ so it still runs if you forget to select an environment.
    cp .env.example .env    # fill in Resend values only if you want to test delivery
    npm start
    ```
-4. Run requests individually, or hit **Run collection** in the Runner.
+4. Run requests individually, or choose **Run collection** in the Runner.
 
 Without Resend credentials the backend still serves every route; the valid
 submission returns `503` instead of sending, which the test accepts.

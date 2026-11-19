@@ -9,11 +9,11 @@ It is one of two independent npm projects in this repository, with its own
 
 ```text
 backend/
-├── server.js                  Middleware, health routes, 404 and the central error handler
+├── server.js                  Middleware, health routes, 404, the central error handler and graceful shutdown
 ├── config/env.js              The only reader of process.env
 ├── routes/contactRoutes.js    Rate limit, validation, honeypot
 ├── services/mailerService.js  Email templates and Resend delivery
-├── test/                      contact.test.js (routing and validation), delivery.test.js (the send path, against a fake Resend)
+├── test/                      contact.test.js (routes, validation, honeypot, CORS, rate limit), delivery.test.js (the send path, against a fake Resend)
 └── .env.example               Annotated template for backend/.env
 ```
 

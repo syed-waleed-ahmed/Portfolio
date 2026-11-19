@@ -1,4 +1,4 @@
-<!-- Thanks for the PR! Fill out the sections that apply. -->
+<!-- Thanks for the PR. Fill in the sections that apply. -->
 
 ## Summary
 

@@ -11,8 +11,8 @@ lowers modern syntax only where the browser target needs it.
 
 ### Cascade layers
 
-`src/styles/index.css` declares the layer order once, and every rule in the
-project lives inside one of these layers:
+`src/styles/index.css` declares the layer order once, and every style rule in
+the project lives inside one of these layers:
 
 ```css
 @layer reset, tokens, base, layout, components, utilities;
@@ -21,10 +21,10 @@ project lives inside one of these layers:
 | Layer | File(s) | Holds |
 |-------|---------|-------|
 | `reset` | `styles/reset.css` | Box sizing, margin reset, media defaults |
-| `tokens` | `styles/tokens.css` | Custom properties only |
+| `tokens` | `styles/tokens.css` | Custom properties, and `color-scheme` |
 | `base` | `styles/base.css` | Element defaults: body type, headings, links, focus, selection |
 | `layout` | `styles/layout.css` | `.container`, `.section`, the section header |
-| `components` | `styles/components.css` and the `.css` beside each component | Buttons, tags, the monogram, the dot band, links, reveal, and each section's own styles |
+| `components` | `styles/components.css` and the `.css` beside each component | Buttons, tags, the monogram, the dot band, links, reveal, and each component's own styles |
 | `utilities` | `styles/utilities.css` | `.visually-hidden` |
 
 A later layer beats an earlier one whatever the selector specificity, so a
@@ -103,10 +103,10 @@ Where two ratios are given, they are against the page and against a panel.
 Each hue also has two derived steps, and they are derived the same way for
 all four (accent, success, warning, danger): `-border` is the hue at 50%,
 which holds at least 3.3:1 as an edge, and `-subtle` is the hue at 10%, a tint
-for text of that hue to sit on (at least 8.3:1). Until November 2026 each
-status colour had its own hand-picked border and tint, taken from a different
-red and green than its text, at 35% and 40%. That left an invalid field with a
-border of about 1.9:1, fainter than the 3.1:1 of a valid one.
+for text of that hue to sit on (at least 8.3:1 on the page). Until November
+2026 each status colour had its own hand-picked border and tint, taken from a
+different red and green than its text, at 35% and 40%. That left an invalid
+field with a border of about 1.9:1, fainter than the 3.1:1 of a valid one.
 
 Six rules keep it consistent:
 
@@ -114,16 +114,17 @@ Six rules keep it consistent:
    dock. Technology tags and metadata are deliberately neutral: a tag is
    information, not an action.
 2. **Every text colour passes WCAG AAA**, 7:1, on both the page and a panel,
-   the status colours on their own tints included. An invariant computes it
-   from `tokens.css`, and the browser suite runs axe's enhanced-contrast rule
-   over the rendered page and over each state of the form. Edges are held to
+   the status colours on their own tints included. An invariant computes the
+   plain pairs from `tokens.css`, and the browser suite runs axe's
+   enhanced-contrast rule over the rendered page and over each state of the
+   form, which is where the tints are checked. Edges are held to
    less, by what each has to do: a hairline only separates, an outline marks
    a thing, and a form field's border, the only sign that there is somewhere
    to type, meets the 3:1 of WCAG 1.4.11.
 3. **A role is named for its job.** The pills and tooltips once used
    `--color-text-strong` as a background and `--color-bg` as a text colour;
    they now use the inverse pair, which aliases the same two values. The dock's
-   translucent fill was a one-off `color-mix()` in its stylesheet and is a
+   translucent fill was a one-off `color-mix()` in its stylesheet and is now a
    token.
 4. **No colour is written outside `tokens.css`.** An invariant scans every
    other stylesheet for a hex, a colour function or a named colour, and names
@@ -140,7 +141,8 @@ Six rules keep it consistent:
    - `GitHubActivityCalendar.jsx`, whose library takes literal colours: the
      accent mixed into `--color-surface` at 25, 50, 75 and 100%, over
      `--color-surface-raised` for an empty day
-   - `LocationGlobe.jsx`, whose WebGL colours are RGB fractions of the accent
+   - `LocationGlobe.jsx`, whose WebGL markers and arcs take the accent as RGB
+     fractions
    - `frontend/public/404.html`, a standalone page with no bundled CSS
    - `<meta name="theme-color">` in both `index.html` and `404.html`
    - `scripts/gen-og-card.mjs`, which bakes the palette into the social card
@@ -155,10 +157,11 @@ Six rules keep it consistent:
    this list and in that test. One raster also bakes in a colour, the
    Apple touch icon's background: see [Generated assets](#generated-assets).
 
-Three paints on the rendered page are not tokens, and are known: the
-contribution graph's own 4% white stroke round each day, which the library
-sets inline; the browser's default colours on the honeypot input, which is a
-pixel wide and off screen; and the shadow tokens' near-black.
+Three colours on the rendered page do not come from a colour token, and each
+is known: the contribution graph's own 4% white stroke round each day, which
+the library sets inline; the browser's default colours on the honeypot input,
+which is a pixel wide and off screen; and the near-black inside the shadow
+tokens.
 
 ### States
 
@@ -188,7 +191,7 @@ its measurements.
 
 **Hanken Grotesk**, a variable font (weights 100 to 900) self-hosted from
 `public/fonts/`, latin subset only, about 35 KB. One file serves every weight
-on the page, so bold text is a real bold rather than one synthesised by the
+on the page, so bold text is a real bold rather than one synthesized by the
 browser (`font-synthesis-weight: none` enforces that). `index.html` preloads
 it. Its licence is `public/fonts/OFL-hanken-grotesk.txt`.
 
@@ -223,9 +226,9 @@ The font subset covers Latin-1, general punctuation and a few symbols. A
 character outside it (a right arrow, for example) renders in a fallback face,
 so `test/data.test.js` fails if any export of any module in `src/data/` uses
 one. Copy written in JSX (the hero, the section subtitles, the contact panel)
-is not checked and follows the same rule by hand. Icons come from `react-icons` instead: the Search
-tooltip, for one, draws the Mac Command key as the `LuCommand` icon, because
-U+2318 is outside the subset.
+is not checked and follows the same rule by hand. Symbols come from
+`react-icons` instead: the Search tooltip, for one, draws the Mac Command key
+as the `LuCommand` icon, because U+2318 is outside the subset.
 
 ---
 
@@ -280,10 +283,10 @@ underneath the dock.
 ## Layout
 
 - The page fills a desktop screen. `.container` is
-  `min(100% - 2 * gutter, 92rem)`, and the gutter grows with the viewport, which
-  uses 91% of a 1440px screen and 77% of a 1920px one. A 46rem single column was
-  tried first and rejected for leaving too much of a desktop screen empty, so wide
-  layouts are a requirement here, not a nicety.
+  `min(100% - 2 * gutter, 92rem)`, and the gutter grows with the viewport, so
+  the container uses 91% of a 1440px screen and 77% of a 1920px one. A 46rem
+  single column was tried first and rejected for leaving too much of a desktop
+  screen empty, so wide layouts are a requirement here, not a nicety.
 - Sections spend that width rather than stretching text across it. From 64rem: the
   hero puts the copy beside a large portrait, About puts the story beside education,
   Experience bullets and Skills groups run in two columns, and Contact puts the
@@ -367,8 +370,8 @@ Two details are load-bearing:
 
 ### GitHub activity
 
-`GitHubActivity.jsx` is a panel under the project grid. It reads
-`data/github-activity.json`, a committed snapshot, rather than calling the
+`components/widgets/GitHubActivity.jsx` is a panel under the project grid. It
+reads `data/github-activity.json`, a committed snapshot, rather than calling the
 contributions API from each visitor's browser. That API was measured answering
 with 504s and taking 11 seconds, so a live fetch meant a loading state, a failure
 state and a third-party request on every visit. The snapshot needs no CSP change.
@@ -386,9 +389,10 @@ arrives.
 
 ### The globe
 
-`LocationGlobe.jsx` rises from the bottom of the contact panel's left column, on
-screens of 80rem and up only, marking the three places in `education` (listed
-with their coordinates as `locations` in `data/about.js`). It sways rather than
+`components/widgets/LocationGlobe.jsx` rises from the bottom of the contact
+panel's left column, on screens of 80rem and up only, marking the three places
+in `education` (listed with their coordinates as `locations` in
+`data/about.js`). It sways rather than
 spins, because a full turn would hide all three for half of every rotation, and
 it draws only while on screen. It is decorative, so the canvas is hidden from
 assistive technology and its caption says the same thing in words. Without
@@ -401,30 +405,32 @@ straight away.
 ### Skill marks
 
 A skill tag that names a product shows that product's mark before its name:
-36 tags and 35 marks, since Vercel's serves two, from [Simple Icons](https://github.com/simple-icons/simple-icons)
-(CC0-1.0) and, for Mastra, OpenAI and Groq, which it does not carry, from
+36 tags and 35 marks, since Vercel's serves two, from
+[Simple Icons](https://github.com/simple-icons/simple-icons) (CC0-1.0) and, for
+Mastra, OpenAI and Groq, which it does not carry, from
 [Lobe Icons](https://github.com/lobehub/lobe-icons) (MIT). The marks are
 trademarks of their owners and are used only to name the tool beside them.
 
-- **One sprite, not thirty-six components.** `scripts/gen-skill-icons.mjs`
-  writes `src/assets/skill-icons.svg`, a file of `<symbol>` elements, and each
-  tag holds an `<svg><use href="...#id"></svg>`. The browser fetches the
+- **One sprite, not thirty-six components.**
+  `frontend/scripts/gen-skill-icons.mjs` writes `src/assets/skill-icons.svg`,
+  a file of `<symbol>` elements, and each tag holds an
+  `<svg><use href="...#id"></svg>`. The browser fetches the
   sprite once, as an image, and Vite fingerprints it, so it is cached like the
   rest of `/assets/`. Imported as `react-icons` components, the same paths
   would sit in the entry chunk and a second time in the prerendered HTML.
 - **`skillIcons` in `data/skills.js` is the source.** It maps a tag to a symbol
   id, the script builds the sprite from it, and a content test fails when the
-  two differ. The script installs nothing permanent: both icon packages are
+  two differ. Nothing is installed permanently: both icon packages are
   fetched with `npm i --no-save`, as the command at the top of the script
   shows, and the sprite is committed, so a build needs neither.
 - **One ink.** Every mark is drawn in `--color-text-soft`. Brand colours were
   not used: several marks are black and would vanish on this background, and
-  thirty hues in a row would outweigh the names.
+  thirty-five hues in a row would outweigh the names.
 - **Not every tag has one, on purpose.** A practice such as RAG or CI/CD has
   no mark. Neither set carries XGBoost, Matplotlib, Seaborn, Power BI, SQL
-  Server, pgvector, Twilio, llama.cpp or Google Cloud Run, and a look-alike
-  would claim a different product; Google Cloud's own mark would claim the
-  whole platform for a tag that names one service of it.
+  Server, pgvector, Twilio, llama.cpp, LiteLLM or Google Cloud Run, and a
+  look-alike would claim a different product; Google Cloud's own mark would
+  claim the whole platform for a tag that names one service of it.
   AWS, MySQL and ASP.NET Core were tried and removed: each mark is mostly its
   own name in letters, which at a tag's 16px is a smudge repeating the word
   beside it.
@@ -465,35 +471,41 @@ The files are in `src/assets/projects/` at 480 and 960px wide, as AVIF and
 as WebP (`<image>-480.avif`, `<image>-960.webp` and so on; the RAG one stops at
 its source's 712px and the Research Team's at 900px, since neither is
 upscaled): about 169 KB for the twelve AVIF files and 209 KB for the twelve
-WebP, gzipped as Size Limit counts them. Each card renders a `<picture>` with the AVIF as its
-`<source>` and the WebP as its `<img>`, the pattern the hero's portrait
-uses. A browser takes one or the other, never both. The WebP is there
+WebP, gzipped as Size Limit counts them. Each card renders a `<picture>` with
+the AVIF as its `<source>` and the WebP as its `<img>`, the pattern the hero's
+portrait uses. A browser takes one or the other, never both. The WebP is there
 because a browser that cannot decode AVIF otherwise draws six broken-image
 icons, which is what WebKit's Windows build did when the site was first
-opened in it. A project names its picture in
-`data/projects.js` and `Projects.jsx` resolves the name to Vite's
-fingerprinted URLs, so the data module stays importable by plain Node. They
-load lazily, since the grid starts below the fold at every width, and the
-`width` and `height` attributes hold the 2:1 box until they arrive. The
-picture row is shared like the other six, so a card without one would show an
-empty band: a content test requires all four files and an `imageAlt` of 12 to
-40 words for every project. They were cut by hand with `sharp` (extract, resize,
-AVIF at quality 55, WebP at quality 78); a new card needs the same four files.
-The AI Workflow Assistant's and the Research Team's AVIF files add
+opened in it. A project names its picture in `data/projects.js` and
+`Projects.jsx` resolves the name to Vite's fingerprinted URLs, so the data
+module stays importable by plain Node. They load lazily, since the grid starts
+below the fold at every width, and the `width` and `height` attributes hold
+the 2:1 box until they arrive. Their `sizes`, `PICTURE_SIZES` in
+`Projects.jsx`, follows the picture's rendered width at each breakpoint, so a
+change to the container, the gutter or the grid's columns has to update it;
+the comment there has the derivation. The picture row is shared like the other
+six, so a card without one would show an empty band: a content test requires
+all four files and an `imageAlt` of 12 to 40 words for every project. They
+were cut by hand with `sharp` (extract, resize, AVIF at quality 55, WebP at
+quality 78); a new card needs the same four files. The AI Workflow
+Assistant's and the Research Team's AVIF files add
 `chromaSubsampling: "4:2:0"` and `effort: 9`: both screenshots are mostly
 small text, and at sharp's default 4:4:4 the first pair alone took 63 KB and
 pushed the twelve past their 175 KB budget. At 4:2:0 the two pairs take 40 KB
 and 29 KB with the text still crisp.
-The `<picture>` is the card's grid item and sets its own width with
+
+The `<picture>` is the card's grid item, and it bleeds past the card's padding
+with negative margins and a width that adds the padding back. That needs
 `max-inline-size: none`: the reset caps a picture at 100% of its container,
 which here is the card's content box, and with the cap it stopped 2.5rem short
 of the card's right edge.
 
 Three of the six are light, the LLM-as-Judge and Research Team screenshots
 and the RemindrAI poster, shown as those projects really look, and at full
-strength each is the brightest thing on the page by a wide margin. All six therefore rest at 84% brightness, the same step, so none
-is singled out, and come up to full strength while the pointer or keyboard
-focus is in their card. Print leaves them alone.
+strength each is the brightest thing on the page by a wide margin. All six
+therefore rest at 84% brightness, the same step, so none is singled out, and
+come up to full strength while the pointer or keyboard focus is in their card.
+Print leaves them alone.
 
 Three details are load-bearing:
 
@@ -513,7 +525,7 @@ Three details are load-bearing:
    row is a wrapping flex line, so in a narrow card the second link drops below
    the first rather than shrinking its tap target.
 
-A fourth follows from the first: **the light under the pointer is two
+A fourth follows from the subgrid: **the light under the pointer is two
 absolutely positioned pseudo-elements.** On a screen with a mouse, a card
 shows a soft cyan wash where the pointer is and a brighter arc on the nearest
 stretch of its border, the pattern of Magic UI's Magic Card (see
@@ -533,8 +545,8 @@ carries no fixed heights.
 
 ## Motion
 
-Motion is limited to things that help orientation, and all of it is CSS
-transitions or keyframes, apart from the decorative globe. There is no animation
+Motion mostly serves orientation, and all of it is CSS transitions or
+keyframes, apart from the decorative globe. There is no animation
 library.
 
 | Motion | Detail |
@@ -633,13 +645,20 @@ need regenerating rather than editing:
 |-------|--------|-----|
 | `images/og-card.png` | `images/Profile.avif` + the font | `scripts/gen-og-card.mjs` |
 | `src/assets/skill-icons.svg` (in `src/`, not `public/`, so Vite fingerprints it) | `skillIcons` in `src/data/skills.js` + two icon packages | `frontend/scripts/gen-skill-icons.mjs`, see [Skill marks](#skill-marks) |
-| `favicon.ico`, `favicon-96x96.png`, `apple-touch-icon.png` | `favicon.svg`, the hand-drawn crewmate | Rasterised from the SVG; the touch icon bakes in the previous navy `#0a192f`, visually indistinguishable from `--color-bg` |
-| `images/Profile-840.{avif,webp}` | The crop itself, unscaled: an 840px square (left 48, top 70) of the 960x1280 studio portrait that replaced the canal photo in November 2026, head and shoulders on a plain grey backdrop. Every size below is resized from the same crop with Lanczos, AVIF at quality 60 (effort 9) and WebP at 82. Only screens past 2048px at 2x ask for it, where the portrait renders at 16.6vw | Re-crop from the original if the photo changes; the original is not in the repository |
-| `images/Profile.{avif,webp}` | 680x680. Desktops at 2x, and 1x screens past 1920px. The JSON-LD `image` and the `<img>` fallback point here | `sharp` resize from the crop |
-| `images/Profile-192.{avif,webp}` | Phones up to 2x, where the portrait renders at 96px, and tablets at 1x (148px). Added in November 2026, when PageSpeed Insights found phones fetching the 320px file for a 168-pixel slot | `sharp` resize, then keep the `srcSet` in `Hero.jsx` and the preload in `index.html` in step |
-| `images/Profile-320.{avif,webp}` | Phones at 3x, tablets at 2x, and desktops at 1x, where the portrait renders at 320px | `sharp` resize, then keep `sizes` in `Hero.jsx` and the preload in `index.html` in step |
+| `favicon.ico`, `favicon-96x96.png`, `apple-touch-icon.png` | `favicon.svg`, the hand-drawn crewmate | Rasterized from the SVG; the touch icon bakes in the previous navy `#0a192f`, visually indistinguishable from `--color-bg` |
+| `images/Profile-840.{avif,webp}` | An 840px square (left 48, top 70) of the 960x1280 studio portrait of November 2026, which is not in the repository | `sharp` extract, unscaled. Requested only past 2048px at 2x, where the portrait renders at 16.6vw |
+| `images/Profile.{avif,webp}` | The same crop at 680px | `sharp` resize. Desktops at 2x and 1x screens past 1920px; the JSON-LD `image` and the `<img>` fallback point here |
+| `images/Profile-320.{avif,webp}` | The same crop at 320px | `sharp` resize. Phones at 3x, tablets at 2x and desktops at 1x, where the portrait renders at 320px |
+| `images/Profile-192.{avif,webp}` | The same crop at 192px | `sharp` resize. Phones up to 2x (96px) and tablets at 1x (148px). Added in November 2026, when PageSpeed Insights found phones fetching the 320px file for a 168-pixel slot |
+
+The four portrait sizes are resized with Lanczos and encoded as AVIF at
+quality 60 (effort 9) and WebP at 82. A new photo needs all eight files
+re-cut from one crop, then the OG card regenerated. A new size also changes
+the `srcSet` and `sizes` in `Hero.jsx` and the preload in `index.html`, which
+the invariants test holds in step.
 
 ```bash
+# from the repository root, where the script lives (not frontend/scripts/)
 npm i --no-save sharp fontkit wawoff2
 node scripts/gen-og-card.mjs
 ```
@@ -678,7 +697,8 @@ on Next.js, Tailwind, shadcn/ui and Motion, and none of those are dependencies
 here: the blur-fade is a CSS transition, the dock's magnification is `:has()`, the
 accordion is `<details>`, the dot band is CSS gradients where the original
 draws to a canvas, and the pointer light is two gradients and a dozen lines of
-event handler where the original animates motion values. The palette, typeface, copy and content are this site's own.
+event handler where the original animates motion values. The palette,
+typeface, copy and content are this site's own.
 
 ---
 

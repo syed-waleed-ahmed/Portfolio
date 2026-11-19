@@ -157,9 +157,9 @@
     border-block-end: 1px solid var(--color-border);
     background-color: var(--color-surface-raised);
     object-fit: cover;
-    /* Two of the six are screenshots of light interfaces, shown as their
-       projects really look, and at full strength each was the brightest
-       thing on the page by a wide margin. All six rest a step dimmer, the
+    /* Three of the six are light (two interface screenshots and the thesis
+       poster), shown as their projects really look, and at full strength
+       each is the brightest thing on the page by a wide margin. All six rest a step dimmer, the
        same step, so none is singled out, and come up to full strength with
        the pointer. Not dimmed for print, where there is no glare. */
     filter: brightness(0.84);

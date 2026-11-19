@@ -31,7 +31,7 @@ override it.
 
 The build needs no environment variables. `npm run build` compiles the client
 bundle, compiles a server bundle, and prerenders the page into
-`dist/index.html` - see [Architecture](architecture.md#rendering-strategy). If
+`dist/index.html` (see [Architecture](architecture.md#rendering-strategy)). If
 the prerender step fails the whole build fails, so a deploy can never publish
 an empty page.
 
@@ -65,8 +65,8 @@ Netlify serves `public/404.html` automatically on any unmatched path.
 
 Set `VITE_API_BASE_URL` in the Netlify UI only if the backend moves. Left
 unset, the bundle falls back to the deployed Render URL baked into
-`Contact.jsx`. Remember that `VITE_`-prefixed variables are compiled into the
-client bundle and are therefore public.
+`Contact.jsx`. `VITE_`-prefixed variables are compiled into the client bundle
+and are therefore public.
 
 A new backend origin also has to be added to `connect-src` in
 `frontend/public/_headers`, or the CSP blocks the form, and should replace the
@@ -140,8 +140,8 @@ per ref.
 | `backend` | `npm ci`, lint, `npm test`, `npm audit --omit=dev --audit-level=high` |
 | `secret-scan` | `gitleaks` over the full git history (`fetch-depth: 0`) |
 
-Node comes from `node-version-file: .nvmrc` in every job, never a hardcoded
-number, so CI cannot drift from local or from Netlify. What each suite covers is
+Every job that installs Node takes it from `node-version-file: .nvmrc`, never
+a hardcoded number, so CI cannot drift from local or from Netlify. What each suite covers is
 in [Testing](testing.md). CodeQL code scanning runs as well, from GitHub's
 default setup in the repository settings rather than from a workflow file.
 
@@ -225,11 +225,10 @@ API sets for itself (see [API reference](api.md#security-headers)).
 | `Permissions-Policy` | `camera=(), microphone=(), geolocation=()` |
 | `Content-Security-Policy` | see below |
 
-The CSP is `default-src 'self'` with narrow additions:
-`object-src 'none'`, `base-uri 'self'`, `form-action 'self'`,
-`frame-ancestors 'none'`, `upgrade-insecure-requests`, `font-src 'self'`,
-the backend origin in `connect-src`, and the Google Analytics hosts allow-listed
-per directive rather than globally. The command palette, contribution graph and
+The CSP is `default-src 'self'` plus `object-src 'none'`, `base-uri 'self'`,
+`form-action 'self'`, `frame-ancestors 'none'`, `upgrade-insecure-requests`
+and `font-src 'self'`, with the backend origin in `connect-src` and the Google
+Analytics hosts allow-listed per directive rather than globally. The command palette, contribution graph and
 globe add no origins: their chunks are same-origin, and the graph reads a
 committed snapshot rather than calling an API from the browser.
 
@@ -260,8 +259,8 @@ The site's one inline script is the GA4 snippet at the top of `<body>` in
 
 > **Editing that snippet by even one character silently kills analytics.** The
 > hash covers the script's bytes exactly, whitespace included. The browser
-> blocks the script for failing the hash, the page renders perfectly, and
-> nothing appears in the console for most users.
+> blocks the script for failing the hash, the page renders normally, and the
+> only trace is a CSP error in the browser console.
 
 If you change it, recompute the hash and update `_headers` in the same commit:
 
@@ -272,8 +271,8 @@ node -e "const fs=require('fs'),c=require('crypto');const m=fs.readFileSync('ind
 
 > **The `\r\n` to `\n` normalization is load-bearing on Windows.** `.gitattributes`
 > stores this file with LF, so LF is what Netlify checks out and what the
-> browser hashes - but a Windows working copy can hold CRLF, and hashing those
-> bytes yields a completely different, wrong value. Pasting it produces exactly
+> browser hashes, but an editor on Windows can save the working copy with
+> CRLF, and hashing those bytes yields a completely different, wrong value. Pasting it produces exactly
 > the silent failure this section warns about. Verify by recomputing against an
 > unchanged `index.html` first: if the command does not reproduce the hash
 > already in `_headers`, the command is wrong, not the file.
@@ -355,7 +354,7 @@ the last change it covers:
      gh release create vX.Y.Z --title "X.Y.Z" --notes-file - --verify-tag
    ```
 
-Versions follow [Semantic Versioning](https://semver.org/) read for a site:
+Versions follow [Semantic Versioning](https://semver.org/) as applied to a site:
 **major** for a change to the API contract or a redesign (2.0.0 had both),
 **minor** for a new feature or section, **patch** for fixes, content and
 dependency updates. Every release so far is tagged `vX.Y.Z` and published as
