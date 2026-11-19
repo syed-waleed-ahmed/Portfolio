@@ -403,7 +403,8 @@ fails the deploy rather than publishing an empty page, and it runs frontend
 lint, the content tests and the invariants first: the only gate for the weekly
 snapshot commit and a manual run, which do not pass through CI. After
 publishing, the workflow checks that the deployed origin serves that build,
-applies every rule in `_headers` and answers an unknown path with the 404 page.
+applies every rule in `_headers`, answers an unknown path with the 404 page,
+and that plain HTTP and `www` redirect to it.
 Render has no such gate: it deploys the backend on every push to `main`,
 whatever CI reports.
 

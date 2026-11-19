@@ -9,7 +9,7 @@ Eight layers, each catching something the others cannot:
 | Repository invariants | `node --test` | Files that must agree (the CSP hash, the palette copies, the mirrored form rules, the dates, the versions), and the house style | Locally, in CI and before the build of every deploy |
 | Browser tests | Playwright + axe-core | The built page in Chromium under its real CSP | Locally and in CI, and on demand against a deployed origin |
 | Bundle budgets | Size Limit | Gzipped size of the entry bundle, each lazy chunk, the skill sprite and the project pictures | Locally after a build, and in CI |
-| Deploy check | `node` | A deployed origin: the build it serves, every rule in `_headers`, the 404 page | After every deploy, and on demand |
+| Deploy check | `node` | A deployed origin: the build it serves, every rule in `_headers`, the 404 page, the redirects from HTTP and `www` | After every deploy, and on demand |
 | Link check | lychee | Every link in the data modules, `index.html`, `humans.txt` and the docs | Weekly in GitHub Actions, and on demand |
 | Manual / live | Postman | The API against a running server, local or production | On demand |
 
@@ -335,6 +335,7 @@ needs a build but no install.
 | The build | `/` references the entry script of the build in `dist/`, whose fingerprint changes with every build. Retried for about half a minute, since a CDN can take a few seconds to hand out a new version everywhere |
 | The headers | For each rule in `dist/_headers`, one real URL it matches answers `200` with that rule's headers and the `/*` ones. A `/dir/*` rule is tried on the first file the build put in that directory, so a new rule is covered without an edit |
 | The 404 page | An unknown path answers `404` with the `404.html` page |
+| The redirects | `http://` answers a permanent redirect to `https://`, and every other custom domain in `frontend/wrangler.jsonc` (`www`) to the origin. Both are settings in the Cloudflare zone, not files in the repository. Checked only when the origin is one of those custom domains |
 
 It runs after the publish, so a failure does not undo the deploy: it fails the
 run, so that a deploy that went out wrong is seen rather than passing quietly.

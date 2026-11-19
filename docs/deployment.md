@@ -80,7 +80,8 @@ Each run of `deploy.yml` does three things:
 3. **Verify.** `frontend/scripts/verify-deploy.mjs` fetches the live origin and
    fails the run unless it serves this build (the entry script's fingerprint
    identifies one), applies every rule in `_headers`, tested against one real
-   URL per rule, and answers an unknown path with the 404 page. It is the one
+   URL per rule, answers an unknown path with the 404 page, and redirects
+   plain HTTP and `www` to itself (see [Domain](#domain)). It is the one
    check of the host itself: everything else exercises `_headers` through a
    local imitation.
 
@@ -134,10 +135,22 @@ dashboard:
 
 For a custom domain Cloudflare creates the DNS record and the certificate
 itself, so the zone needs no record written by hand for either hostname, and
-a deploy fails if one is in the way. Both hostnames serve the same pages, and
-`rel="canonical"` in `index.html` names the apex. `workers_dev: false` and
+a deploy fails if one is in the way. `workers_dev: false` and
 `preview_urls: false` leave those two as the only addresses: the Worker has no
 `workers.dev` address of its own.
+
+Two settings live in the Cloudflare zone and not in this repository, because
+they act before a request reaches the Worker:
+
+| Setting | Where | Effect |
+|---------|-------|--------|
+| Always Use HTTPS | SSL/TLS, Edge Certificates | `http://` answers 301 to `https://` |
+| A redirect rule, `https://www.*` to `https://${1}` | Rules, Redirect Rules | `www` answers 301 to the apex, path and query string kept |
+
+So the site has one address, the apex over HTTPS, which is also what
+`rel="canonical"` in `index.html` names. Neither setting can be read from a
+checkout, so `verify-deploy.mjs` requests both after every deploy and fails
+the run if either has stopped redirecting.
 
 Three places name the origin: that first route, the canonical URL, and
 `SITE_URL` in `deploy.yml`, which is the address each deploy is verified
@@ -312,6 +325,7 @@ API sets for itself (see [API reference](api.md#security-headers)).
 | `X-Content-Type-Options` | `nosniff` |
 | `Referrer-Policy` | `strict-origin-when-cross-origin` |
 | `Permissions-Policy` | `camera=(), microphone=(), geolocation=()` |
+| `Strict-Transport-Security` | `max-age=31536000; includeSubDomains` |
 | `Content-Security-Policy` | see below |
 
 The CSP is `default-src 'self'` plus `object-src 'none'`, `base-uri 'self'`,

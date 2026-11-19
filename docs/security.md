@@ -79,7 +79,8 @@ defaults), `Strict-Transport-Security: max-age=31536000; includeSubDomains`,
 A separate and stricter set applies to the site itself: `X-Frame-Options: DENY`,
 `X-Content-Type-Options: nosniff`,
 `Referrer-Policy: strict-origin-when-cross-origin`, a
-`Permissions-Policy` denying camera, microphone and geolocation, and a
+`Permissions-Policy` denying camera, microphone and geolocation,
+`Strict-Transport-Security: max-age=31536000; includeSubDomains`, and a
 `default-src 'self'` CSP with `object-src 'none'`, `base-uri 'self'`,
 `form-action 'self'`, `frame-ancestors 'none'`, `font-src 'self'` and
 `upgrade-insecure-requests`. Cloudflare reads them from

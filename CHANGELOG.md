@@ -15,6 +15,8 @@ than by individual commit.
 
 ## [Unreleased]
 
+## [2.5.0] - 2026-11-19
+
 ### Added
 
 - **CrewAI and LiteLLM in Skills**, both backed by the Multi-Agent Research
@@ -25,9 +27,9 @@ than by individual commit.
   maximum. No other screen downloads it.
 - **A check of the live site after every deploy.**
   `frontend/scripts/verify-deploy.mjs` confirms the origin serves the build
-  that was just published, applies every rule in `_headers` and answers an
-  unknown path with the 404 page, and fails the deploy if not. Nothing looked
-  at the host itself before.
+  that was just published, applies every rule in `_headers`, answers an
+  unknown path with the 404 page, and that plain HTTP and `www` redirect to
+  it, and fails the deploy if not. Nothing looked at the host itself before.
 - **The browser suite can run against a deployed origin.**
   `E2E_BASE_URL=https://...` points it at a live site instead of the local
   build, under the headers the CDN really sends.
@@ -67,6 +69,12 @@ than by individual commit.
 
 ### Fixed
 
+- **HTTPS is enforced again after the host move.** The previous host
+  redirected plain HTTP to HTTPS, sent `www` to the apex and added HSTS by
+  itself; on Cloudflare none of the three is a default, and for an hour the
+  site answered over plain HTTP and served a second copy at `www`. "Always
+  Use HTTPS" and a redirect rule are now set in the zone, both checked after
+  every deploy, and `Strict-Transport-Security` is a line in `_headers`.
 - **Project pictures are chosen for their real width.** The `sizes` hint
   now follows the card's rendered width at every breakpoint. A 1024px screen
   no longer downloads the 960px file for a 461px slot, and a 2560px screen,
@@ -1062,7 +1070,8 @@ The redesign that produced the current site.
   and contact sections.
 - MIT licence and first README.
 
-[Unreleased]: https://github.com/syed-waleed-ahmed/Portfolio/compare/v2.4.4...HEAD
+[Unreleased]: https://github.com/syed-waleed-ahmed/Portfolio/compare/v2.5.0...HEAD
+[2.5.0]: https://github.com/syed-waleed-ahmed/Portfolio/compare/v2.4.4...v2.5.0
 [2.4.4]: https://github.com/syed-waleed-ahmed/Portfolio/compare/v2.4.3...v2.4.4
 [2.4.3]: https://github.com/syed-waleed-ahmed/Portfolio/compare/v2.4.2...v2.4.3
 [2.4.2]: https://github.com/syed-waleed-ahmed/Portfolio/compare/v2.4.1...v2.4.2
