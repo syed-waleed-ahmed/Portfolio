@@ -7,7 +7,7 @@ endpoint, the contact form.
 ```text
 Browser
   |
-  +-- page: HTML / CSS / JS / fonts / images ---->  Netlify CDN  <--  frontend/
+  +-- page: HTML / CSS / JS / fonts / images ---->  Cloudflare   <--  frontend/
   |
   +-- POST /api/contact (JSON, CORS-restricted) ->  Render       <--  backend/
   +-- GET /health (no-cors wake-up ping) -------->    |
@@ -17,11 +17,13 @@ Browser
 ```
 
 `frontend/` is React 19 and Vite, prerendered into `dist/` at build time;
-`backend/` is Node and Express, as ES modules. Netlify does not proxy `/api`:
-the browser calls the Render origin directly, cross-origin, so the backend's
-CORS allow-list names the site's origins and the site's CSP names the backend
-in `connect-src`. The `/health` request is sent once, when a visitor first
-focuses the form, to wake the free-tier instance before they press send.
+`backend/` is Node and Express, as ES modules. Cloudflare serves `dist/` as the
+static assets of a Worker that has no script (`frontend/wrangler.jsonc`), so
+nothing there proxies `/api`: the browser calls the Render origin directly,
+cross-origin, so the backend's CORS allow-list names the site's origins and the
+site's CSP names the backend in `connect-src`. The `/health` request is sent
+once, when a visitor first focuses the form, to wake the free-tier instance
+before they press send.
 
 There is no database and no session state. The only server-side work in the
 whole system is validating a contact form and handing it to an email provider,
@@ -35,9 +37,10 @@ complexity lives.
 ```text
 portfolio/
 ├── .github/
-│   ├── workflows/ci.yml            Lint, tests, invariants, build, size, browser tests, audit, secret scan
+│   ├── workflows/ci.yml            Lint, tests, invariants, build, size, browser tests, audit, secret scan, then the deploy
+│   ├── workflows/deploy.yml        Builds the frontend, publishes it to Cloudflare Workers and checks the result
 │   ├── workflows/links.yml         Weekly link check (lychee)
-│   ├── workflows/refresh-activity.yml  Weekly commit of the contribution snapshot
+│   ├── workflows/refresh-activity.yml  Weekly commit of the contribution snapshot, then its deploy
 │   ├── dependabot.yml              Grouped weekly dependency PRs, after a seven-day cooldown
 │   ├── ISSUE_TEMPLATE/             Issue forms (bug, improvement, documentation); blank issues off
 │   ├── CODEOWNERS                  Requests the maintainer's review on every PR
@@ -58,6 +61,7 @@ portfolio/
 │   ├── scripts/prerender.mjs       Writes the rendered page into dist/index.html
 │   ├── scripts/fetch-github-activity.mjs  Refreshes the contribution snapshot
 │   ├── scripts/gen-skill-icons.mjs Rebuilds the sprite of skill marks
+│   ├── scripts/verify-deploy.mjs   Checks a deployed origin: this build, every _headers rule, the 404 page
 │   ├── src/
 │   │   ├── assets/                 Files a component imports by URL: the skill marks sprite (generated) and the project pictures
 │   │   ├── components/
@@ -77,6 +81,7 @@ portfolio/
 │   ├── .size-limit.json            Gzip budgets: the entry, each lazy chunk, the sprite, the project pictures
 │   ├── index.html
 │   ├── vite.config.js
+│   ├── wrangler.jsonc              Cloudflare Workers configuration: dist/ as static assets, 404.html for unknown paths
 │   ├── eslint.config.js
 │   └── .env.example
 ├── docs/                           This documentation set, indexed by docs/README.md
@@ -85,7 +90,6 @@ portfolio/
 ├── test/invariants.test.js         Repository invariants: files that must agree (node --test)
 ├── .editorconfig  .gitattributes  .gitignore  .npmrc  .nvmrc
 ├── lychee.toml                     Link checker configuration
-├── netlify.toml                    Pins NODE_VERSION for Netlify builds
 ├── package.json                    Root scripts that drive both projects
 └── README.md  CHANGELOG.md  CONTRIBUTING.md  CODE_OF_CONDUCT.md  SECURITY.md  LICENSE  CLAUDE.md
 ```
@@ -95,10 +99,10 @@ The community files sit at the root, where GitHub and readers look first.
 kept in step with the docs like any other.
 
 `frontend/public/` is copied verbatim into the build. It holds the branded
-`404.html`, the Netlify `_headers` file, the self-hosted font, favicons, the
-portrait images, the social card, `robots.txt`, `sitemap.xml`, `humans.txt`,
-the Search Console verification file, and `sw.js` (a kill-switch service
-worker; see [Deployment](deployment.md#stale-service-worker-recovery)).
+`404.html`, the `_headers` file Cloudflare applies, the self-hosted font,
+favicons, the portrait images, the social card, `robots.txt`, `sitemap.xml`,
+`humans.txt`, the Search Console verification file, and `sw.js` (a kill-switch
+service worker; see [Deployment](deployment.md#stale-service-worker-recovery)).
 
 ---
 
@@ -172,7 +176,7 @@ import Reveal from "../ui/Reveal";
 
 The page is **prerendered at build time**. `npm run build` runs three steps,
 after npm's `prebuild` gate of lint, content tests and repository invariants
-(see [Deployment](deployment.md#the-netlify-build-gate)):
+(see [Deployment](deployment.md#the-deploy-gate)):
 
 1. `vite build` produces the client bundle in `dist/`.
 2. `vite build --ssr src/entry-server.jsx --outDir dist-server` compiles the
@@ -293,10 +297,11 @@ Status codes and payloads for each step are documented in the
 
 ## Cross-cutting decisions
 
-**One Node version, one source of truth.** `.nvmrc` pins it; CI reads it via
-`node-version-file`, `netlify.toml` mirrors it, and all three `package.json`
-files declare an `engines.node` range that admits it. The repository invariants
-fail if any of those disagree. `.npmrc` sets `engine-strict=true`, so a
+**One Node version, one source of truth.** `.nvmrc` pins it; every workflow,
+the deploy included, reads it via `node-version-file`, and all three
+`package.json` files declare an `engines.node` range that admits it. The
+repository invariants fail on a workflow that names a version itself and on a
+range that leaves the pin out. `.npmrc` sets `engine-strict=true`, so a
 mismatched `npm run install:all` fails loudly instead of producing confusing
 runtime errors; an install run inside `frontend/` or `backend/` does not read
 that file and only warns.
@@ -305,13 +310,13 @@ that file and only warns.
 across files with nothing at build time to notice when they drift: the CSP hash
 of the inline script, the palette copies, the form rules mirrored between
 `Contact.jsx` and the route, the backend origin in the CSP. `test/invariants.test.js`
-checks each pair, and runs in CI and in Netlify's build.
+checks each pair, and runs in CI and again before the build of every deploy.
 
 **The build has no environment-dependent steps.** There is no PostCSS
 configuration and no CSS purging, so `npm run build` produces the same output
-locally, in CI and on Netlify with no variables set. Nor does it touch the
-network: the contribution graph reads a committed snapshot, and a weekly
-workflow refreshes that as an ordinary commit. The one variable is
+locally, in CI and in the deploy workflow with no variables set. Nor does it
+touch the network: the contribution graph reads a committed snapshot, and a
+weekly workflow refreshes that as an ordinary commit. The one variable is
 `VITE_API_BASE_URL`, which a local `frontend/.env` usually sets for work on the
 contact form. Vite bakes it into any build made with that file present, and the
 production CSP would block the call, so `e2e/serve.mjs` refuses such a build

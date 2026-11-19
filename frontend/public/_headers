@@ -6,16 +6,16 @@
   Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' 'sha256-DcZnhiXzGRqf7Ap1FmHxA25PvMu+ebywXAvTxOAgB+E=' https://www.googletagmanager.com https://*.googletagmanager.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://www.googletagmanager.com https://*.google-analytics.com; connect-src 'self' https://portfolio-backend-kmum.onrender.com https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com; font-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests;
 
 # ===== Caching =====
+# This file is read by Cloudflare, which serves the site (frontend/wrangler.jsonc).
+# After each deploy, scripts/verify-deploy.mjs fetches one URL per rule below and
+# fails the deploy workflow if the live site does not send these headers.
+#
 # HTML: never cache. Browsers must revalidate on every visit so a deploy
-# is visible immediately. (Netlify's CDN still caches at edge, and purges
-# on deploy, so this only hits the browser-cache layer.)
+# is visible immediately. (Cloudflare's edge serves the new version as soon as
+# a deploy finishes, so this only governs the browser's own cache.)
+# /index.html and /404.html have no rule: Cloudflare redirects both to their
+# extensionless URLs, and the 404 page gets this same value by default.
 /
-  Cache-Control: public, max-age=0, must-revalidate
-
-/index.html
-  Cache-Control: public, max-age=0, must-revalidate
-
-/404.html
   Cache-Control: public, max-age=0, must-revalidate
 
 # Service worker: also no-cache so the kill-switch update reaches users

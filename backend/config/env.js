@@ -12,7 +12,6 @@ dotenv.config({ quiet: true });
 // should keep working; setting only a new domain locks out the live site.
 const DEFAULT_ORIGINS = [
   "http://localhost:5173",
-  "https://syedwaleedahmed.netlify.app",
   "https://syedwaleedahmed.me",
   "https://www.syedwaleedahmed.me",
 ];

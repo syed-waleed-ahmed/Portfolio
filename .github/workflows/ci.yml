@@ -30,7 +30,8 @@ jobs:
           persist-credentials: false
 
       # node-version-file, not a hardcoded number: .nvmrc is the single source
-      # of truth for local, CI and Netlify, so they can't drift apart.
+      # of truth for local work, CI and the deploy, so they can't drift apart.
+      # The invariants test fails on a workflow that hardcodes a version.
       - name: Use Node.js from .nvmrc
         uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
@@ -54,8 +55,8 @@ jobs:
 
       # Compiles the client and server bundles and prerenders the page, so a
       # component that throws during render fails here rather than in a deploy.
-      # --ignore-scripts skips the prebuild gate, which exists for Netlify and
-      # repeats the three steps above.
+      # --ignore-scripts skips the prebuild gate, which repeats the three steps
+      # above; it exists for the deploys that do not pass through this job.
       - name: Build
         run: npm run build --ignore-scripts
 
@@ -150,3 +151,17 @@ jobs:
         uses: gitleaks/gitleaks-action@e0c47f4f8be36e29cdc102c57e68cb5cbf0e8d1e # v3.0.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  # The frontend ships only from here, and only once every job above is green
+  # on a push to main: a pull request is checked but never published. A newer
+  # push cancels this run (see `concurrency` at the top), which is safe at any
+  # point, since Cloudflare switches to a new version only when its upload has
+  # finished. The backend is not held back the same way: Render deploys it
+  # from the push itself.
+  deploy:
+    name: Deploy
+    needs: [frontend, e2e, backend, secret-scan]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    uses: ./.github/workflows/deploy.yml
+    secrets:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}

@@ -16,8 +16,8 @@ The root `.npmrc` sets `engine-strict=true`, so `npm run install:all` on an
 unsupported Node version fails immediately rather than breaking at runtime. npm
 passes that setting on to the two installs the script runs. An `npm install` or
 `npm ci` run inside `frontend/` or `backend/`, or with `--prefix`, does not read
-the root `.npmrc` and only warns, which is also why CI, Netlify and Render do
-not enforce `engines`.
+the root `.npmrc` and only warns, which is also why CI, the deploy workflow and
+Render do not enforce `engines`.
 
 ---
 
@@ -76,7 +76,7 @@ Inside `frontend/` there are also:
 | `npm test` | The content tests in `test/data.test.js` |
 | `npm run preview` | Serves the built `dist/`: the only way to see the prerendered page by hand, since the dev server renders on the client. It ignores `public/_headers`, so the page runs without its CSP |
 | `npm run size` | Size Limit budgets, against an existing build |
-| `npm run test:e2e` | The Playwright and axe browser suite, against an existing build served with its real CSP |
+| `npm run test:e2e` | The Playwright and axe browser suite, against an existing build served with its real CSP, or against a deployed origin when `E2E_BASE_URL` names one |
 
 `backend/` has `npm run lint` and `npm test` of its own, which the root scripts
 call. What each suite covers, and how to run the browser tests, is in
@@ -94,15 +94,22 @@ sprite of brand marks in the Skills section from `skillIcons` in `skills.js`.
 It reads two icon packages that are also installed on demand (see
 [Design](design.md#skill-marks)).
 
+A fourth, also from `frontend/`, is `node scripts/verify-deploy.mjs <origin>`,
+which checks that a deployed origin serves the build in `dist/` under every
+rule in `_headers`. The deploy workflow runs it after publishing (see
+[Testing](testing.md#deploy-check)); it needs a build and no install.
+
 ### The prebuild gate
 
 `frontend/package.json` has a `prebuild` script, which npm runs before every
 `npm run build`, from the root or inside `frontend/`: frontend lint, the content
-tests, then the repository invariants. It exists for Netlify, whose build
-command is `npm run build`, so a commit that fails any of the three never
-replaces the live site (see
-[Deployment](deployment.md#the-netlify-build-gate)). Locally it costs a few
-seconds and catches the same failures before you push.
+tests, then the repository invariants. It exists for the deploy:
+`.github/workflows/deploy.yml` builds with `npm run build`, so a commit that
+fails any of the three never replaces the live site (see
+[Deployment](deployment.md#the-deploy-gate)). After a green CI run it repeats
+checks that have just passed; for the weekly snapshot commit and a manual run
+of the workflow, which do not pass through CI, it is the only gate. Locally it
+costs a few seconds and catches the same failures before you push.
 
 To skip it deliberately, for instance while working on a build problem with a
 lint error you already know about, run `npm run build --ignore-scripts` inside
@@ -135,7 +142,7 @@ and up.
 
 Run `npm run install:all` after pulling a Dependabot merge. Otherwise
 `node_modules` stays behind the lockfile, and local builds run on older versions
-than CI and Netlify do.
+than CI and the deploy do.
 
 Three rules apply:
 
@@ -180,7 +187,7 @@ reference for what each variable does. The tables below are the summary.
 | `RESEND_API_KEY` | yes | API key from [resend.com](https://resend.com) |
 | `EMAIL_FROM` | yes | Verified sender, or `onboarding@resend.dev` for testing |
 | `EMAIL_TO` | yes | Where submissions are delivered |
-| `ALLOWED_ORIGINS` | no | Comma-separated origin allow-list. Unset uses the built-in defaults (`http://localhost:5173` and the three live domains). Set, it replaces them rather than adding to them, so list every origin that should keep working |
+| `ALLOWED_ORIGINS` | no | Comma-separated origin allow-list. Unset uses the built-in defaults (`http://localhost:5173` and the site's live domains). Set, it replaces them rather than adding to them, so list every origin that should keep working |
 
 Missing mail variables are reported once at boot with a `[env] missing: …`
 warning rather than failing the process, so the site stays up if the mail
@@ -274,8 +281,8 @@ does not count as a content change.
 
 The contribution graph reads a committed snapshot,
 `frontend/src/data/github-activity.json`. The `refresh-activity.yml` workflow
-regenerates it every Monday and commits the result to `main`, which also
-triggers a Netlify deploy, so a local `main` will need a `git pull`. To refresh
+regenerates it every Monday, commits the result to `main` and publishes that
+commit, so a local `main` will need a `git pull`. To refresh
 it outside that schedule, run
 `node frontend/scripts/fetch-github-activity.mjs`. A failed run leaves the last
 good snapshot in place. Deleting the workflow stops the commits, and the graph
@@ -319,9 +326,9 @@ globals. They hold correctness, not formatting; style is held by
 
 ## Development workflow
 
-1. Branch from `main`, which is what deploys. CI does not hold a deploy back:
-   Netlify builds every push to `main` whatever CI reports, stopped only by its
-   own prebuild gate, and Render deploys every push to `main` unconditionally,
+1. Branch from `main`, which is what deploys. CI holds the frontend back: it is
+   published only once every job has passed on a push to `main`. Nothing holds
+   the backend back: Render deploys every push to `main` whatever CI reports,
    so run the checks before merging.
 2. Make the change, keeping documentation in step with behaviour.
 3. Run the checks that apply:
@@ -360,8 +367,8 @@ without stopping.
 The prebuild gate failed: an ESLint error, a content test or a repository
 invariant. The output above the npm error names which, and each invariant's
 message says what to change. Fix it, or for a deliberate local build skip the
-gate with `npm run build --ignore-scripts` inside `frontend/`. Netlify cannot
-skip it, so the same commit would not deploy.
+gate with `npm run build --ignore-scripts` inside `frontend/`. The deploy
+workflow never skips it, so the same commit would not be published.
 
 **`npm run test:e2e` exits with "frontend/dist was built with VITE_API_BASE_URL set".**
 `frontend/.env` pointed the build at your local backend, and the real CSP the
@@ -439,7 +446,9 @@ skipped. Recompute the hash as described in
 HTML and images revalidate on every visit, so a hard refresh should be enough.
 If a visitor is stuck on a much older build, they may still have the retired
 service worker installed (see
-[Deployment](deployment.md#stale-service-worker-recovery)).
+[Deployment](deployment.md#stale-service-worker-recovery)). If the site has not
+changed at all, look at the `deploy` job of the commit's CI run: when another
+job fails, the frontend is never published.
 
 ---
 
@@ -449,4 +458,4 @@ service worker installed (see
 - [API reference](api.md) - endpoints and error codes
 - [Testing](testing.md) - what the suites, budgets and link check cover, and how to run them
 - [Design](design.md) - the token system and layout invariants
-- [Deployment](deployment.md) - Netlify, Render and the header files
+- [Deployment](deployment.md) - Cloudflare Workers, Render and the header files

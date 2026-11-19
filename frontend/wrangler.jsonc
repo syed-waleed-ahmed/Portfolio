@@ -1,0 +1,30 @@
+// Cloudflare Workers configuration: the site is a Worker with static assets
+// and no script, so every request is a free static asset request and never
+// counts against the Workers request quota.
+//
+// .github/workflows/deploy.yml runs `wrangler deploy` from this directory
+// after a build. Wrangler is not a dependency: the workflow installs the
+// pinned version on demand, as the generator scripts do with their packages.
+{
+  "name": "portfolio",
+  "compatibility_date": "2026-11-01",
+  // The site's two hostnames. For a custom domain Cloudflare creates the DNS
+  // record and the certificate itself; the zone is in the same account, and
+  // the registrar's nameservers point at it. Both serve the same pages, and
+  // rel="canonical" in index.html names the first.
+  "routes": [
+    { "pattern": "syedwaleedahmed.me", "custom_domain": true },
+    { "pattern": "www.syedwaleedahmed.me", "custom_domain": true }
+  ],
+  // One origin: without these the Worker would also answer at its own
+  // workers.dev address, and at a preview address for every version.
+  "workers_dev": false,
+  "preview_urls": false,
+  "assets": {
+    // dist/_headers travels with the build and is applied by Cloudflare: the
+    // CSP, the other security headers and every cache rule.
+    "directory": "./dist",
+    // Unknown paths get dist/404.html with a 404 status.
+    "not_found_handling": "404-page"
+  }
+}

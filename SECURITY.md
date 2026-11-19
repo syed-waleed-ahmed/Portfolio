@@ -53,9 +53,9 @@ In scope:
 
 Out of scope:
 
-- Third-party services I depend on (Resend, Netlify, Render, GitHub, Google
-  Analytics, and the community API behind the contribution graph); please report
-  those directly to the relevant vendor
+- Third-party services I depend on (Resend, Cloudflare, Render, GitHub, Google
+  Analytics, and the community API behind the contribution graph); please
+  report those directly to the relevant vendor
 - Findings that require physical access to a developer machine
 - Reports based on outdated dependency advisories that are already fixed
   on `main`
@@ -87,8 +87,10 @@ features, so a report in these areas may already be covered:
   security updates skip
 - **Pinned actions:** every GitHub Action is pinned to a full commit SHA
 - **Content Security Policy:** the browser tests load the built site under the
-  production CSP and fail on any violation, and the repository invariants fail
-  if the hash of the inline script drifts from the one the CSP pins
+  production CSP and fail on any violation, the repository invariants fail if
+  the hash of the inline script drifts from the one the CSP pins, and every
+  deploy is followed by a check that the host sends each header the site asks
+  for
 
 ## Safe harbour
 

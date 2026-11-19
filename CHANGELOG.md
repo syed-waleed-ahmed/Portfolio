@@ -23,9 +23,30 @@ than by individual commit.
 - **An 840px portrait for high-density wide screens.** Above 2048px at 2x
   the portrait renders at about 850 device pixels, beyond the previous 680px
   maximum. No other screen downloads it.
+- **A check of the live site after every deploy.**
+  `frontend/scripts/verify-deploy.mjs` confirms the origin serves the build
+  that was just published, applies every rule in `_headers` and answers an
+  unknown path with the 404 page, and fails the deploy if not. Nothing looked
+  at the host itself before.
+- **The browser suite can run against a deployed origin.**
+  `E2E_BASE_URL=https://...` points it at a live site instead of the local
+  build, under the headers the CDN really sends.
 
 ### Changed
 
+- **The frontend deploys to Cloudflare Workers, and only after CI passes.**
+  Netlify's free plan pays for about twenty production deploys a month, and
+  on 2026-11-19 it ran out with the site frozen at its last deploy. The site
+  is now a Worker with static assets (`frontend/wrangler.jsonc`), built on a
+  GitHub runner and published by `.github/workflows/deploy.yml`, so the host
+  counts no builds or deploys. CI calls that workflow once every job is
+  green: a commit that fails a test, a size budget or an audit is no longer
+  published, where Netlify built every push whatever CI reported. The weekly
+  snapshot commit deploys through the same workflow. `_headers` is unchanged
+  apart from two rules Cloudflare can never apply, and `.nvmrc` is now the
+  only Node pin, `netlify.toml` having gone. The domain's DNS zone moved to
+  Cloudflare with it, and `routes` in `frontend/wrangler.jsonc` attaches
+  `syedwaleedahmed.me` and `www` to the Worker.
 - **Multi-Agent Research Team takes Campaign Forge's place in Projects.**
   The platform went live on 2026-11-16: three CrewAI agents search the web,
   write code examples and deliver a cited report, with every step streamed
@@ -53,6 +74,13 @@ than by individual commit.
 - **The Projects subtitle no longer mentions university or robotics work.**
   No card has shown either since TIAGo was removed on 2026-11-15; it now
   names what the six cover: agents, retrieval, evaluation and fine-tuning.
+
+### Removed
+
+- **`https://syedwaleedahmed.netlify.app` is no longer an allowed API
+  origin.** The Netlify site is deleted, which frees that name for anyone to
+  claim, so it left the default CORS origins in `backend/config/env.js`. The
+  site's own two hostnames are unchanged.
 
 ## [2.4.4] - 2026-11-15
 

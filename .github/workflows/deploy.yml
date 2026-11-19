@@ -1,0 +1,90 @@
+name: Deploy
+
+# Builds the frontend and publishes it to Cloudflare Workers as static assets
+# (frontend/wrangler.jsonc). Nothing reaches the site except through this file:
+#
+#   * ci.yml calls it once every check has passed on a push to main, so a
+#     commit that fails lint, a test, a size budget or the audit never ships.
+#   * refresh-activity.yml calls it after its weekly commit. That commit is
+#     pushed with GITHUB_TOKEN, which starts no CI run, so nothing else would
+#     publish it.
+#   * workflow_dispatch republishes main by hand, with no new commit.
+#
+# The backend is separate: Render deploys it from the same push on its own.
+on:
+  workflow_call:
+    inputs:
+      ref:
+        description: The commit to deploy. Defaults to the one that started the run.
+        type: string
+        default: ""
+    secrets:
+      CLOUDFLARE_API_TOKEN:
+        required: true
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    name: Deploy to Cloudflare
+    runs-on: ubuntu-latest
+    # One deploy at a time, in order: a second one waits rather than racing the
+    # first to decide which build is live.
+    concurrency:
+      group: deploy-production
+      cancel-in-progress: false
+    # Recorded under the repository's Deployments, with a link to the site.
+    environment:
+      name: production
+      url: ${{ env.SITE_URL }}
+    env:
+      # The origin the published build is verified against: the first route in
+      # frontend/wrangler.jsonc and the canonical URL in index.html. The
+      # invariants test fails if the three stop agreeing.
+      SITE_URL: https://syedwaleedahmed.me
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ inputs.ref || github.sha }}
+          persist-credentials: false
+
+      - name: Use Node.js from .nvmrc
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: ".nvmrc"
+          cache: "npm"
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      # Not --ignore-scripts: the prebuild gate (lint, content tests, repository
+      # invariants) runs here too. After CI it repeats checks that just passed,
+      # which costs seconds; for the weekly snapshot commit and a manual run it
+      # is the only gate there is.
+      - name: Build, behind the prebuild gate
+        run: npm run build
+
+      # Wrangler is installed here at a pinned version rather than kept in
+      # package.json, where every other job would download it and never use it.
+      # The token is scoped to Workers on this one account; the account ID is a
+      # repository variable, since it is an identifier and not a credential.
+      - name: Publish to Cloudflare Workers
+        uses: cloudflare/wrangler-action@953926a2e2182532811c01a25e53647d93bf07c0 # v4.1.3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
+          workingDirectory: frontend
+          wranglerVersion: "4.158.0"
+          command: deploy
+
+      # The live site must now serve this build, apply every rule in _headers
+      # and answer unknown paths with the 404 page. A failure here means the
+      # deploy went out wrong, so it fails the run rather than passing quietly.
+      - name: Verify the live site
+        run: node scripts/verify-deploy.mjs "$SITE_URL"

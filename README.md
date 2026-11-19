@@ -103,7 +103,7 @@ forking the repository can run it without reading the source.
 
 **Engineering**
 
-- 18 backend API tests, 14 frontend content tests and 19 repository invariants
+- 18 backend API tests, 14 frontend content tests and 20 repository invariants
   on Node's built-in runner, with no test dependencies; the invariants pin the
   couplings between files that would otherwise fail silently, such as the CSP
   hash and the hand-copied palette
@@ -116,21 +116,23 @@ forking the repository can run it without reading the source.
 - CI runs lint, the content tests, the invariants, a build, the size budgets,
   the browser suite, the backend tests, `npm audit` and a gitleaks scan on
   every push to `main` and every pull request against it
-- Netlify's build runs frontend lint, the content tests and the invariants
-  first, so a commit that fails them never replaces the live site
+- The frontend is published by a deploy job that waits for every CI job, so a
+  commit that fails any of them never replaces the live site, and each deploy
+  is then checked at the origin it went to: the build served, every header
+  rule and the 404 page
 - Every GitHub Action pinned to a commit SHA; Dependabot opens grouped weekly
   PRs for minor and patch releases and for GitHub Actions, after a seven-day
   cooldown, and npm majors are upgraded by hand after reading the changelog
 - A scheduled workflow refreshes the contribution graph's snapshot every Monday,
   and another checks every link in the site's data and the docs
-- One pinned Node version shared by local, CI and Netlify
+- One pinned Node version, in `.nvmrc`, shared by local work, CI and the deploy
 
 ---
 
 ## Architecture
 
 ```text
-Browser  --  page and assets  -->  Netlify CDN (frontend/, prerendered build)
+Browser  --  page and assets  -->  Cloudflare Workers (frontend/, prerendered build)
    |
    |  POST /api/contact, cross-origin with CORS
    v
@@ -153,7 +155,7 @@ Full detail in [`docs/architecture.md`](docs/architecture.md).
 | Backend | Node.js 24, Express 5 (ESM), Helmet, `express-rate-limit`, Resend |
 | Quality | ESLint 10, `node --test`, Playwright + axe-core, Size Limit, Postman |
 | CI/CD | GitHub Actions, Dependabot, gitleaks, lychee |
-| Hosting | Netlify (frontend), Render (backend) |
+| Hosting | Cloudflare Workers (frontend), Render (backend) |
 
 ---
 
@@ -168,8 +170,7 @@ portfolio/
 ├── postman/          API collection and environments
 ├── scripts/          One-off generators (social card)
 ├── test/             Repository invariants, across both projects
-├── lychee.toml       Link-check configuration
-└── netlify.toml      Node version pin for Netlify builds
+└── lychee.toml       Link-check configuration
 ```
 
 Annotated version in
@@ -337,7 +338,7 @@ expectations are in [`CONTRIBUTING.md`](CONTRIBUTING.md).
 ```bash
 npm test                             # 18 backend API tests via node --test
 npm test --prefix frontend           # 14 content tests over frontend/src/data
-npm run test:invariants              # 19 checks: files that must agree, and the colour system's rules
+npm run test:invariants              # 20 checks: files that must agree, and the colour system's rules
 npm run size --prefix frontend       # bundle budgets, after a build
 npm run test:e2e --prefix frontend   # 28 browser tests, after a build
 ```
@@ -365,8 +366,9 @@ entry, and that the activity snapshot is a usable year of days.
 The repository invariants pin what used to fail silently, among them the CSP
 hash of the inline analytics script, the six hand-copied palettes, the form
 rules mirrored between frontend and backend, the API origin the CSP must
-allow, the hand-kept dates, the Node version, the release version in all three
-manifests and the no-em-dash house style. The browser suite runs the built
+allow, the hand-kept dates, the Node version, the Cloudflare configuration,
+the release version in all three manifests and the no-em-dash house style. The
+browser suite runs the built
 page in Chromium under its production CSP, with the backend and analytics
 answered inside the test: no console or CSP errors, every section revealed, no
 horizontal scroll from 320px to 1920px, no axe violations, all text at 7:1,
@@ -390,13 +392,24 @@ Both sides deploy automatically from `main`:
 
 | Part | Platform | Build |
 |------|----------|-------|
-| Frontend | Netlify | `npm run build` in `frontend/`, publish `frontend/dist` |
+| Frontend | Cloudflare Workers, as static assets | `npm run build` in `frontend/`, then `wrangler deploy` publishes `frontend/dist`, both run by `.github/workflows/deploy.yml` |
 | Backend | Render | `npm ci` then `npm start` in `backend/` |
 
-The frontend build prerenders the page, so a build that fails to render fails
-the deploy rather than publishing an empty page, and it runs frontend lint, the
-content tests and the invariants first, so a commit that fails them leaves the
-previous deploy live. Render has no such gate. Platform settings, security headers, the
+The frontend ships only through that workflow, which CI calls once every job
+has passed on a push to `main`, so a commit that fails lint, a test, the
+browser suite, a size budget, the audit or the secret scan leaves the previous
+deploy live. The build prerenders the page, so a build that fails to render
+fails the deploy rather than publishing an empty page, and it runs frontend
+lint, the content tests and the invariants first: the only gate for the weekly
+snapshot commit and a manual run, which do not pass through CI. After
+publishing, the workflow checks that the deployed origin serves that build,
+applies every rule in `_headers` and answers an unknown path with the 404 page.
+Render has no such gate: it deploys the backend on every push to `main`,
+whatever CI reports.
+
+The domain's DNS zone is on Cloudflare too, and `frontend/wrangler.jsonc`
+attaches `syedwaleedahmed.me` and `www` to the Worker (see
+[Domain](docs/deployment.md#domain)). Platform settings, security headers, the
 CSP hash procedure and cache rules are in
 [`docs/deployment.md`](docs/deployment.md).
 
@@ -410,7 +423,7 @@ CSP hash procedure and cache rules are in
 | [API reference](docs/api.md) | Endpoints, payloads, status codes, rate limiting, CORS |
 | [Development](docs/development.md) | Setup, scripts, configuration, conventions, troubleshooting |
 | [Design system](docs/design.md) | CSS architecture, tokens, typography, layout, the dock, command palette, activity graph and globe, motion, accessibility, print, generated assets |
-| [Deployment](docs/deployment.md) | Netlify and its build gate, Render, CI, the weekly snapshot commit and link check, headers, CSP, caching, releases |
+| [Deployment](docs/deployment.md) | Cloudflare Workers and the deploy gate, Render, CI, the weekly snapshot commit and link check, headers, CSP, caching, releases |
 | [Testing](docs/testing.md) | API, content, invariant and browser suites, size budgets, link check, Postman collection, coverage gaps |
 | [Security controls](docs/security.md) | What is implemented and why |
 | [Postman](postman/README.md) | Importing and running the API collection |

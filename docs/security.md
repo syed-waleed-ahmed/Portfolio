@@ -74,7 +74,7 @@ defaults), `Strict-Transport-Security: max-age=31536000; includeSubDomains`,
 `X-Frame-Options: SAMEORIGIN`, `X-Content-Type-Options: nosniff`,
 `Referrer-Policy: no-referrer`, `X-DNS-Prefetch-Control: off`.
 
-### Site (Netlify `_headers`)
+### Site (Cloudflare `_headers`)
 
 A separate and stricter set applies to the site itself: `X-Frame-Options: DENY`,
 `X-Content-Type-Options: nosniff`,
@@ -82,7 +82,10 @@ A separate and stricter set applies to the site itself: `X-Frame-Options: DENY`,
 `Permissions-Policy` denying camera, microphone and geolocation, and a
 `default-src 'self'` CSP with `object-src 'none'`, `base-uri 'self'`,
 `form-action 'self'`, `frame-ancestors 'none'`, `font-src 'self'` and
-`upgrade-insecure-requests`.
+`upgrade-insecure-requests`. Cloudflare reads them from
+`frontend/public/_headers`, which travels with the build, and after every
+deploy `frontend/scripts/verify-deploy.mjs` fetches one URL per rule in that
+file and fails the run if the host did not send them.
 
 The one inline script (the analytics snippet) is pinned by SHA-256 hash rather
 than allowed wholesale, and the repository invariants fail if the hash goes
@@ -148,11 +151,12 @@ and the honeypot are the controls that actually bound abuse.
 | Dependency alerts | Dependabot alerts and security updates are on, so an advisory gets its own pull request outside the weekly schedule when a patched version fits the dependents' ranges, transitive dependencies included. When none does, the fix is an npm `overrides` entry (see [Development](development.md#dependencies)) |
 | Dependency audit | `npm audit --omit=dev --audit-level=high` on both projects; CI fails on a high or critical production advisory |
 | Dependency updates | Dependabot opens grouped weekly PRs (npm minor and patch; GitHub Actions including majors), each release at least seven days old. The cooldown does not delay security updates |
-| Pinned actions | Every GitHub Action is pinned to a full commit SHA, which cannot be moved to other code the way a tag can |
-| Least-privilege CI | `permissions: contents: read` at workflow level in CI and the link check. `refresh-activity.yml` alone asks for `contents: write`, to commit its snapshot. Every checkout that does not push sets `persist-credentials: false` |
+| Pinned actions | Every GitHub Action is pinned to a full commit SHA, which cannot be moved to other code the way a tag can. Wrangler, which the deploy workflow installs on demand, is pinned to an exact version |
+| Least-privilege CI | `permissions: contents: read` at workflow level in CI, the deploy workflow and the link check. `refresh-activity.yml` alone asks for `contents: write`, to commit its snapshot. Every checkout that does not push sets `persist-credentials: false` |
+| Deploy credentials | The frontend is published with `CLOUDFLARE_API_TOKEN`, a repository secret scoped to Workers on one account. The account ID is a repository variable, being an identifier rather than a credential, and the repository invariants keep it out of `frontend/wrangler.jsonc`. The deploy job runs only on a push to `main` once every CI job has passed, after the weekly snapshot commit, or by hand: a pull request is checked but never published. Each deploy is recorded under a GitHub environment named `production` |
 | Third-party data | The weekly snapshot job reads a community API for contribution counts, validates every day in the response before writing it, and commits the result as data. Visitors' browsers never call that API |
 | Secret hygiene | `.env` files are gitignored while `.env.example` templates are tracked; keys, certificates and keystores are ignored by extension |
-| Runtime pinning | One Node major across CI and Netlify, checked by the repository invariants. `engine-strict=true` refuses a mismatched local install through `npm run install:all`; installs inside `frontend/` or `backend/`, and so CI, Netlify and Render, only warn |
+| Runtime pinning | One Node major, pinned in `.nvmrc` and read from there by every workflow, the deploy included; the repository invariants fail on a workflow that hardcodes a version. `engine-strict=true` refuses a mismatched local install through `npm run install:all`; installs inside `frontend/` or `backend/`, and so CI, the deploy workflow and Render, only warn |
 
 Private vulnerability reporting is on too, and is the route
 [`SECURITY.md`](../SECURITY.md) prefers. GitHub's secret scanning, code

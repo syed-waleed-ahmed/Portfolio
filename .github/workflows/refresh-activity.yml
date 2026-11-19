@@ -24,6 +24,9 @@ jobs:
   refresh:
     name: Refresh snapshot
     runs-on: ubuntu-latest
+    outputs:
+      # The new commit, or empty when the snapshot had not changed.
+      sha: ${{ steps.commit.outputs.sha }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
@@ -38,6 +41,7 @@ jobs:
         run: node frontend/scripts/fetch-github-activity.mjs
 
       - name: Commit if changed
+        id: commit
         run: |
           if git diff --quiet -- frontend/src/data/github-activity.json; then
             echo "No change."
@@ -48,3 +52,18 @@ jobs:
           git add frontend/src/data/github-activity.json
           git commit -m "chore: refresh GitHub activity snapshot"
           git push
+          echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+
+  # That push is made with GITHUB_TOKEN, and GitHub starts no workflow for
+  # such a push, so CI never sees the commit and its deploy job never runs.
+  # The snapshot is published from here instead, through the same workflow
+  # and behind the same prebuild gate. Skipped when nothing was committed.
+  deploy:
+    name: Deploy
+    needs: refresh
+    if: needs.refresh.outputs.sha != ''
+    uses: ./.github/workflows/deploy.yml
+    with:
+      ref: ${{ needs.refresh.outputs.sha }}
+    secrets:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
