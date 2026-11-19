@@ -39,18 +39,19 @@ than by individual commit.
 ### Changed
 
 - **The frontend deploys to Cloudflare Workers, and only after CI passes.**
-  Netlify's free plan pays for about twenty production deploys a month, and
-  on 2026-11-19 it ran out with the site frozen at its last deploy. The site
-  is now a Worker with static assets (`frontend/wrangler.jsonc`), built on a
-  GitHub runner and published by `.github/workflows/deploy.yml`, so the host
-  counts no builds or deploys. CI calls that workflow once every job is
-  green: a commit that fails a test, a size budget or an audit is no longer
-  published, where Netlify built every push whatever CI reported. The weekly
-  snapshot commit deploys through the same workflow. `_headers` is unchanged
-  apart from two rules Cloudflare can never apply, and `.nvmrc` is now the
-  only Node pin, `netlify.toml` having gone. The domain's DNS zone moved to
-  Cloudflare with it, and `routes` in `frontend/wrangler.jsonc` attaches
-  `syedwaleedahmed.me` and `www` to the Worker.
+  The previous host's free plan pays for about twenty production deploys a
+  month, and on 2026-11-19 it ran out with the site frozen at its last
+  deploy. The site is now a Worker with static assets
+  (`frontend/wrangler.jsonc`), built on a GitHub runner and published by
+  `.github/workflows/deploy.yml`, so the host counts no builds or deploys.
+  CI calls that workflow once every job is green: a commit that fails a
+  test, a size budget or an audit is no longer published, where the
+  previous host built every push whatever CI reported. The weekly snapshot
+  commit deploys through the same workflow. `_headers` is unchanged apart
+  from two rules Cloudflare can never apply, and `.nvmrc` is now the only
+  Node pin, the host's own config file having gone. The domain's DNS zone
+  moved to Cloudflare with it, and `routes` in `frontend/wrangler.jsonc`
+  attaches `syedwaleedahmed.me` and `www` to the Worker.
 - **Multi-Agent Research Team takes Campaign Forge's place in Projects.**
   The platform went live on 2026-11-16: three CrewAI agents search the web,
   write code examples and deliver a cited report, with every step streamed
@@ -87,8 +88,8 @@ than by individual commit.
 
 ### Removed
 
-- **`https://syedwaleedahmed.netlify.app` is no longer an allowed API
-  origin.** The Netlify site is deleted, which frees that name for anyone to
+- **The previous host's default address is no longer an allowed API
+  origin.** That site is deleted, which frees its name for anyone to
   claim, so it left the default CORS origins in `backend/config/env.js`. The
   site's own two hostnames are unchanged.
 
@@ -454,9 +455,9 @@ than by individual commit.
   form's API origin is in the CSP and the DNS hint, that the graph and the globe
   switch at the breakpoint the calendar measures, that the data modules import
   only what a bare Node process can load, and that no file contains an em dash.
-- **A build gate on Netlify.** `frontend/package.json` gains a `prebuild` script
+- **A build gate on the host.** `frontend/package.json` gains a `prebuild` script
   that runs ESLint, the content tests and the repository invariants. npm runs it
-  before every `npm run build`, which is Netlify's build command, so Netlify no
+  before every `npm run build`, which is the host's build command, so the host no
   longer publishes a commit that fails any of them; the previous deploy stays
   live. Render still deploys every push. `npm run build --ignore-scripts` skips
   the gate, which CI uses because it runs the same checks as separate steps.
@@ -475,7 +476,7 @@ than by individual commit.
   [axe-core](https://github.com/dequelabs/axe-core), `npm run test:e2e --prefix
   frontend` after a build): 20 tests in `frontend/e2e/site.spec.js` against
   `frontend/dist`, served by `e2e/serve.mjs` with the CSP from `_headers` and
-  with `404.html` for unknown paths, as Netlify serves them. `vite preview`
+  with `404.html` for unknown paths, as the host serves them. `vite preview`
   applies neither, so a CSP break used to show up only in production. Analytics
   and the backend are answered inside the test, so the suite never touches the
   network. It covers a clean load (no console errors, page errors or CSP
@@ -887,7 +888,7 @@ than by individual commit.
   is the one failure this repository is loudest about: the analytics snippet is
   pinned by SHA-256, and a bad hash blocks the script with no console error and
   no visible symptom. `.gitattributes` stores `index.html` with LF, so LF is
-  what Netlify serves and what the browser hashes, but a Windows working copy
+  what the host serves and what the browser hashes, but a Windows working copy
   holds CRLF and the command hashed those bytes. Following the documentation
   exactly would therefore have broken analytics silently. The command now
   normalizes line endings, and the section says to verify it reproduces the
@@ -909,7 +910,7 @@ than by individual commit.
   problem is that the shared 5-per-15-minute window is exhausted.
 - Documented backend security headers now match what Helmet actually sends
   (`X-Frame-Options: SAMEORIGIN`, `Referrer-Policy: no-referrer`); the stricter
-  `DENY` set belongs to the Netlify site headers.
+  `DENY` set belongs to the site's own headers.
 - Documented CORS behaviour corrected: a disallowed origin receives a response
   with no `Access-Control-Allow-Origin` rather than a `403`. The inaccurate
   comment in `server.js` was corrected too.
@@ -1024,7 +1025,7 @@ The redesign that produced the current site.
 
 - Components reorganized into `layout/`, `sections/` and `ui/`, with below-fold
   sections lazily mounted.
-- Node version pinned consistently across `.nvmrc`, `netlify.toml`, CI and both
+- Node version pinned consistently across `.nvmrc`, the host's config, CI and both
   `engines` fields.
 - Dropped `tsparticles` from the frontend.
 
@@ -1034,7 +1035,7 @@ The redesign that produced the current site.
 
 - Centralized data layer in `frontend/src/data/`, starting with experience and
   the shared portfolio constants.
-- `_headers` file configuring security headers and content types on Netlify.
+- `_headers` file configuring security headers and content types on the host.
 
 ## [0.3.0] - 2026-03-06
 
