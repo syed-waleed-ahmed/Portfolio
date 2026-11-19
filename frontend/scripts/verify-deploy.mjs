@@ -8,6 +8,9 @@
 // stopped applying a rule, kept serving the previous build or lost its 404
 // page would pass every other check. Here each rule in dist/_headers is tested
 // against one real URL it matches, so a new rule is covered without an edit.
+// On the site's own domain it also checks the redirects to it, from plain HTTP
+// and from www, which are settings in the Cloudflare zone and not in this
+// repository.
 //
 // Node built-ins only, and it reads dist/, so it needs a build but no install.
 import { existsSync, readdirSync, readFileSync } from "node:fs";
@@ -77,7 +80,7 @@ for (const rule of rules) {
     problems.push(`${rule.pattern}: ${url} answered ${response.status}, so its rule never applies`);
     continue;
   }
-  for (const [name, value] of [...rule.headers, ...everywhere]) {
+  for (const [name, value] of rule.pattern === "/*" ? everywhere : [...rule.headers, ...everywhere]) {
     const got = response.headers.get(name);
     if (got === null || !same(got, value)) problems.push(`${url}: ${name} is ${JSON.stringify(got)}, expected ${JSON.stringify(value)}`);
   }
@@ -89,8 +92,34 @@ const title = readFileSync(path.join(DIST, "404.html"), "utf8").match(/<title>([
 if (missing.status !== 404) problems.push(`an unknown path answered ${missing.status}, expected 404`);
 if (title && !(await missing.text()).includes(title)) problems.push("an unknown path did not get the 404.html page");
 
+// 4. Plain HTTP goes to HTTPS, and every other hostname the Worker is attached
+//    to goes to this origin. Both are settings in the Cloudflare zone ("Always
+//    Use HTTPS" and a redirect rule), not files in the repository, so nothing
+//    else would notice either being switched off. Checked only for an origin
+//    that frontend/wrangler.jsonc names as a custom domain, so the script
+//    still runs against any other address.
+const { protocol, host } = new URL(origin);
+const wrangler = readFileSync(fileURLToPath(new URL("../wrangler.jsonc", import.meta.url)), "utf8");
+const domains = [...wrangler.matchAll(/"pattern":\s*"([^"]+)",\s*"custom_domain":\s*true/g)].map((match) => match[1]);
+let redirects = 0;
+const expectRedirect = async (from, to) => {
+  const response = await fetch(from, { redirect: "manual" });
+  const location = response.headers.get("location") ?? "";
+  if (![301, 308].includes(response.status) || !location.startsWith(to)) {
+    problems.push(`${from} answered ${response.status}${location ? `, to ${location}` : ""}; expected a permanent redirect to ${to}`);
+  }
+  redirects += 1;
+};
+if (protocol === "https:" && domains.includes(host)) {
+  await expectRedirect(`http://${host}/`, `https://${host}/`);
+  for (const other of domains.filter((domain) => domain !== host)) await expectRedirect(`https://${other}/`, `${origin}/`);
+}
+
 if (problems.length) {
   console.error(`verify-deploy: ${origin} failed ${problems.length} check(s):\n- ${problems.join("\n- ")}`);
   process.exit(1);
 }
-console.log(`verify-deploy: ${origin} serves ${entry}, applies all ${rules.length} _headers rules and answers 404 with the 404 page.`);
+console.log(
+  `verify-deploy: ${origin} serves ${entry}, applies all ${rules.length} _headers rules and answers 404 with the 404 page` +
+    (redirects ? `; ${redirects} redirects to it are in place.` : ".")
+);

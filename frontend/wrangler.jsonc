@@ -10,8 +10,9 @@
   "compatibility_date": "2026-11-01",
   // The site's two hostnames. For a custom domain Cloudflare creates the DNS
   // record and the certificate itself; the zone is in the same account, and
-  // the registrar's nameservers point at it. Both serve the same pages, and
-  // rel="canonical" in index.html names the first.
+  // the registrar's nameservers point at it. The first is the site's one
+  // address: a redirect rule in the zone sends www to it, and "Always Use
+  // HTTPS" sends plain HTTP to HTTPS. scripts/verify-deploy.mjs checks both.
   "routes": [
     { "pattern": "syedwaleedahmed.me", "custom_domain": true },
     { "pattern": "www.syedwaleedahmed.me", "custom_domain": true }
