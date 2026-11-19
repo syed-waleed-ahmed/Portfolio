@@ -332,10 +332,16 @@ needs a build but no install.
 
 | Check | Asserts |
 |-------|---------|
-| The build | `/` references the entry script of the build in `dist/`, whose fingerprint changes with every build. Retried for about half a minute, since a CDN can take a few seconds to hand out a new version everywhere |
+| The build | `/` references the entry script of the build in `dist/`, whose fingerprint changes with every build |
 | The headers | For each rule in `dist/_headers`, one real URL it matches answers `200` with that rule's headers and the `/*` ones. A `/dir/*` rule is tried on the first file the build put in that directory, so a new rule is covered without an edit |
 | The 404 page | An unknown path answers `404` with the `404.html` page |
 | The redirects | `http://` answers a permanent redirect to `https://`, and every other custom domain in `frontend/wrangler.jsonc` (`www`) to the origin. Both are settings in the Cloudflare zone, not files in the repository. Checked only when the origin is one of those custom domains |
+
+A new version reaches Cloudflare's edge locations over a few seconds, so the
+whole set is retried for about a minute before a failure counts. It has to be
+the whole set: a deploy that changes only `_headers` leaves the entry script's
+name as it was, and the first such deploy failed on headers that arrived two
+seconds after a check that waited for the name alone.
 
 It runs after the publish, so a failure does not undo the deploy: it fails the
 run, so that a deploy that went out wrong is seen rather than passing quietly.
