@@ -401,12 +401,12 @@ straight away.
 ### Skill marks
 
 A skill tag that names a product shows that product's mark before its name:
-35 tags and 34 marks, since Vercel's serves two, from [Simple Icons](https://github.com/simple-icons/simple-icons)
+36 tags and 35 marks, since Vercel's serves two, from [Simple Icons](https://github.com/simple-icons/simple-icons)
 (CC0-1.0) and, for Mastra, OpenAI and Groq, which it does not carry, from
 [Lobe Icons](https://github.com/lobehub/lobe-icons) (MIT). The marks are
 trademarks of their owners and are used only to name the tool beside them.
 
-- **One sprite, not thirty-three components.** `scripts/gen-skill-icons.mjs`
+- **One sprite, not thirty-six components.** `scripts/gen-skill-icons.mjs`
   writes `src/assets/skill-icons.svg`, a file of `<symbol>` elements, and each
   tag holds an `<svg><use href="...#id"></svg>`. The browser fetches the
   sprite once, as an image, and Vite fingerprints it, so it is cached like the
@@ -453,8 +453,8 @@ mock-up, so it can be checked like the card's figures:
 | Card | Source | Crop (left, top, width) | Shows |
 |------|--------|-------------------------|-------|
 | RemindrAI | The thesis poster, 2160x2700 (the repository is private) | 195, 848, 1790 | A chat request becoming one reminder on four channels |
-| AI Workflow Assistant | `docs/screenshots/report-dark.png` | 280, 121, 1120 | A verified report in dark mode |
-| Campaign Forge | `docs/images/run-inspector.jpg` | 318, 0, 1210 | The Run Inspector on a completed demo-mode run |
+| AI Workflow Assistant | `docs/screenshots/report-dark.png` (retaken 2026-11-16) | 280, 100, 1120 | A verified report in dark mode |
+| Multi-Agent Research Team | `docs/screenshots/report-real.png` (a real run, not the test engine's sample output) | 93, 92, 900 | Three agents completed on one topic |
 | Self-Correcting RAG | `docs/images/live-demo.jpg` | 0, 0, 712 | The demo's Ask tab |
 | LLM-as-Judge | `docs/assets/screenshots/playground.png` | 0, 0, 1060 | A pairwise verdict with a bias warning |
 | FastAPI Niche Assistant | `docs/assets/web-ui.jpg` (the Qwen release's, 1528x634) | 110, 90, 920 | The web UI's welcome screen |
@@ -463,8 +463,9 @@ Each crop is as wide as the third number and half as tall.
 
 The files are in `src/assets/projects/` at 480 and 960px wide, as AVIF and
 as WebP (`<image>-480.avif`, `<image>-960.webp` and so on; the RAG one stops at
-its source's 712px): about 161 KB for the twelve AVIF files and 192 KB for
-the twelve WebP. Each card renders a `<picture>` with the AVIF as its
+its source's 712px and the Research Team's at 900px, since neither is
+upscaled): about 169 KB for the twelve AVIF files and 209 KB for the twelve
+WebP, gzipped as Size Limit counts them. Each card renders a `<picture>` with the AVIF as its
 `<source>` and the WebP as its `<img>`, the pattern the hero's portrait
 uses. A browser takes one or the other, never both. The WebP is there
 because a browser that cannot decode AVIF otherwise draws six broken-image
@@ -478,18 +479,19 @@ picture row is shared like the other six, so a card without one would show an
 empty band: a content test requires all four files and an `imageAlt` of 12 to
 40 words for every project. They were cut by hand with `sharp` (extract, resize,
 AVIF at quality 55, WebP at quality 78); a new card needs the same four files.
-The AI Workflow Assistant's AVIF files add `chromaSubsampling: "4:2:0"` and
-`effort: 9`: its screenshot is mostly small text, and at sharp's default 4:4:4
-the pair alone took 63 KB and pushed the twelve past their 175 KB budget. At
-4:2:0 they take 41 KB with the text still crisp.
+The AI Workflow Assistant's and the Research Team's AVIF files add
+`chromaSubsampling: "4:2:0"` and `effort: 9`: both screenshots are mostly
+small text, and at sharp's default 4:4:4 the first pair alone took 63 KB and
+pushed the twelve past their 175 KB budget. At 4:2:0 the two pairs take 40 KB
+and 29 KB with the text still crisp.
 The `<picture>` is the card's grid item and sets its own width with
 `max-inline-size: none`: the reset caps a picture at 100% of its container,
 which here is the card's content box, and with the cap it stopped 2.5rem short
 of the card's right edge.
 
-Two of the six are light, the LLM-as-Judge screenshot and the RemindrAI
-poster, shown as those projects really look, and at full strength each was
-the brightest thing on the page by a wide margin. All six therefore rest at 84% brightness, the same step, so none
+Three of the six are light, the LLM-as-Judge and Research Team screenshots
+and the RemindrAI poster, shown as those projects really look, and at full
+strength each is the brightest thing on the page by a wide margin. All six therefore rest at 84% brightness, the same step, so none
 is singled out, and come up to full strength while the pointer or keyboard
 focus is in their card. Print leaves them alone.
 

@@ -38,6 +38,14 @@
 // three; TIAGo stays listed on the GitHub profile. The same pass moved the
 // Niche Assistant to its Qwen2.5-Coder release, with a fresh crop of the
 // web UI that shows the new model version, and the RAG test count to 347.
+//
+// On 2026-11-19 Campaign Forge gave its place to the Multi-Agent Research
+// Team, which became a deployed web platform on 2026-11-16. Both are
+// multi-agent pipelines; the Research Team's public demo runs real agents,
+// where Campaign Forge's answers with a simulated responder unless given a
+// key. Campaign Forge stays pinned on the GitHub profile. The same pass
+// re-cut the AI Workflow Assistant's picture from the screenshot that
+// repository retook when it folded reports into analyses.
 export const projects = [
   {
     title: "RemindrAI: Embeddable Multi-Tenant Reminder Capability",
@@ -66,29 +74,34 @@ export const projects = [
     demo: "https://ai-workflow-assistant-app.vercel.app",
     image: "ai-workflow-assistant",
     imageAlt:
-      "A finished report on the bundled sales dataset in dark mode: the question asked, a banner confirming all 23 figures were verified against computed results, a summary and key revenue metrics.",
+      "A finished report on the bundled sales dataset in dark mode: the question asked, a banner confirming all 16 figures were verified against computed results, a summary and key revenue metrics.",
     description:
       "An AI data analyst for spreadsheets: upload a CSV or Excel file, ask a question in plain language, and get a report with metrics, charts, findings and recommendations. A LangGraph agent plans the analysis and calls deterministic pandas tools, and nothing the model writes is ever executed as code.",
-    // 508 = 375 backend tests (pytest, collected from a checkout of main) and
-    // the README's 133 frontend tests (Vitest, Testing Library, axe).
+    // 508 = 375 backend tests (pytest) and 133 frontend tests (Vitest,
+    // Testing Library, axe), both collected from a checkout of main on
+    // 2026-11-19, after the command-menu release.
     highlight:
       "Every number in a report is checked against the pandas computation behind it before you see it, backed by 508 tests.",
   },
   {
-    title: "Campaign Forge: Multi-Agent Marketing Platform",
+    title: "Multi-Agent Research Team: Open-Source AI Research Platform",
     role: "Independent Project",
-    stack: ["Python", "Pydantic", "FastAPI", "Streamlit", "Groq"],
-    github: "https://github.com/syed-waleed-ahmed/Multi-Agent-Workflow",
-    // Opens in demo mode, where a simulated responder answers and labels
-    // every output as such; live mode needs a Groq key.
-    demo: "https://campaign-forge.streamlit.app/",
-    image: "campaign-forge",
+    stack: ["Python", "CrewAI", "LiteLLM", "FastAPI", "React"],
+    github: "https://github.com/syed-waleed-ahmed/Multi-Agent-Research-Team",
+    // Real agents on free tiers: the first visit after 15 idle minutes takes
+    // about a minute to wake the server, and each visitor gets 10 runs a day.
+    demo: "https://multi-agent-research-team-aasz.onrender.com",
+    image: "research-team",
     imageAlt:
-      "Campaign Forge's Run Inspector on a completed full-campaign run in demo mode: 14 model calls, 6128 tokens, 11 of 11 steps, above a graph of the agents that ran.",
+      "A completed research run on rate limiting a public REST API: the research, coding and manager agents each marked completed, with their timings, web searches and model requests.",
     description:
-      "A multi-agent workflow engine that turns a product brief into reviewed, evidence-backed marketing work, from full campaigns to landing pages and SEO packs. Its 28 agents run on free-tier providers, checkpoint every step, pause at a quota and resume, and cite research checked against what was retrieved.",
+      "A research platform where three CrewAI agents search the web, write runnable code examples and deliver a cited Markdown report, while the browser shows every search, retry and provider fallback as it happens. Every report link is checked against the URLs the search actually retrieved, and the rest are flagged.",
+    // 259 = 185 backend tests (pytest), 55 frontend tests (Vitest) and 19
+    // Playwright end-to-end tests, collected from a checkout of main on
+    // 2026-11-19. The three Playwright specs that only take the README's
+    // screenshots are not counted.
     highlight:
-      "An Evaluation Lab scores workflows on deterministic checks, including 14 prompt-injection attacks, and the test suite holds 97% branch coverage.",
+      "Jobs survive restarts and deploys, and per-stage provider fallbacks keep the free-tier demo running, with 259 tests across pytest, Vitest and Playwright.",
   },
   {
     title: "Self-Correcting Multi-Agent RAG",

@@ -15,6 +15,28 @@ than by individual commit.
 
 ## [Unreleased]
 
+### Changed
+
+- **Multi-Agent Research Team takes Campaign Forge's place in Projects.**
+  The research platform went live on 2026-11-16: three CrewAI agents search
+  the web, write code examples and deliver a cited report, with every step
+  streamed to the browser and each link checked against what the search
+  retrieved. Its public demo runs real agents. The card shows a crop of a
+  real run from the repository, and its 259 tests were counted from a
+  checkout. The grid stays at two rows of three; Campaign Forge stays pinned
+  on the GitHub profile.
+- **The AI Workflow Assistant's picture is re-cut** from the screenshot that
+  repository retook when it folded reports into analyses, so the card again
+  matches its source. The 508-test figure was re-counted and still holds.
+- **CrewAI and LiteLLM join Skills**, backed by the Research Team. CrewAI
+  carries its mark; neither icon set has one for LiteLLM, so it stays text.
+
+### Fixed
+
+- **The Projects subtitle no longer promises university and robotics work.**
+  No card has shown either since TIAGo left on 2026-11-15; it now names
+  what the six cover: agents, retrieval, evaluation and fine-tuning.
+
 ## [2.4.4] - 2026-11-15
 
 ### Changed

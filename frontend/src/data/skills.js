@@ -19,6 +19,8 @@ export const skillGroups = [
       "Vercel AI SDK",
       "LangChain",
       "LangGraph",
+      "CrewAI",
+      "LiteLLM",
       "Hugging Face",
       "OpenAI",
       "Groq",
@@ -96,9 +98,9 @@ export const skillGroups = [
 // src/assets/skill-icons.svg, which scripts/gen-skill-icons.mjs builds from
 // this map. Only products with a published mark are listed. A practice
 // (RAG, CI/CD) has none, and neither icon set carries XGBoost, Matplotlib,
-// Seaborn, Power BI, SQL Server, pgvector, Twilio, llama.cpp or Cloud Run,
-// so those tags stay text: a borrowed or look-alike mark would claim a
-// different product. Google Cloud's own mark would claim the whole platform
+// Seaborn, Power BI, SQL Server, pgvector, Twilio, llama.cpp, LiteLLM or
+// Cloud Run, so those tags stay text: a borrowed or look-alike mark would
+// claim a different product. Google Cloud's own mark would claim the whole platform
 // for a tag that names one service of it.
 // AWS, MySQL and ASP.NET Core have marks and are left out on purpose: each
 // is mostly its own name in letters, which at a tag's 16px is a grey smudge
@@ -109,6 +111,7 @@ export const skillIcons = {
   "Vercel AI SDK": "vercel",
   LangChain: "langchain",
   LangGraph: "langgraph",
+  CrewAI: "crewai",
   "Hugging Face": "huggingface",
   OpenAI: "openai",
   Groq: "groq",
