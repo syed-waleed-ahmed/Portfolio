@@ -29,7 +29,9 @@ than by individual commit.
   `frontend/scripts/verify-deploy.mjs` confirms the origin serves the build
   that was just published, applies every rule in `_headers`, answers an
   unknown path with the 404 page, and that plain HTTP and `www` redirect to
-  it, and fails the deploy if not. Nothing looked at the host itself before.
+  it, and fails the deploy if not. It retries for about a minute, since a new
+  version reaches the edge over a few seconds. Nothing looked at the host
+  itself before.
 - **The browser suite can run against a deployed origin.**
   `E2E_BASE_URL=https://...` points it at a live site instead of the local
   build, under the headers the CDN really sends.
