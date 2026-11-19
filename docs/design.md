@@ -634,9 +634,10 @@ need regenerating rather than editing:
 | `images/og-card.png` | `images/Profile.avif` + the font | `scripts/gen-og-card.mjs` |
 | `src/assets/skill-icons.svg` (in `src/`, not `public/`, so Vite fingerprints it) | `skillIcons` in `src/data/skills.js` + two icon packages | `frontend/scripts/gen-skill-icons.mjs`, see [Skill marks](#skill-marks) |
 | `favicon.ico`, `favicon-96x96.png`, `apple-touch-icon.png` | `favicon.svg`, the hand-drawn crewmate | Rasterised from the SVG; the touch icon bakes in the previous navy `#0a192f`, visually indistinguishable from `--color-bg` |
-| `images/Profile.{avif,webp}` | 680x680, square-cropped from the original photo | Re-crop from the original if the photo changes |
-| `images/Profile-192.{avif,webp}` | Downscaled from `Profile.avif` (AVIF quality 60, WebP 82). Phones up to 2x, where the portrait renders at 96px, and tablets at 1x (148px). Added in November 2026, when PageSpeed Insights found phones fetching the 320px file for a 168-pixel slot | `sharp` resize, then keep the `srcSet` in `Hero.jsx` and the preload in `index.html` in step |
-| `images/Profile-320.{avif,webp}` | Downscaled from `Profile.avif`. Phones at 3x, tablets at 2x, and desktops at 1x, where the portrait renders at 320px | `sharp` resize, then keep `sizes` in `Hero.jsx` and the preload in `index.html` in step |
+| `images/Profile-840.{avif,webp}` | The crop itself, unscaled: an 840px square (left 48, top 70) of the 960x1280 studio portrait that replaced the canal photo in November 2026, head and shoulders on a plain grey backdrop. Every size below is resized from the same crop with Lanczos, AVIF at quality 60 (effort 9) and WebP at 82. Only screens past 2048px at 2x ask for it, where the portrait renders at 16.6vw | Re-crop from the original if the photo changes; the original is not in the repository |
+| `images/Profile.{avif,webp}` | 680x680. Desktops at 2x, and 1x screens past 1920px. The JSON-LD `image` and the `<img>` fallback point here | `sharp` resize from the crop |
+| `images/Profile-192.{avif,webp}` | Phones up to 2x, where the portrait renders at 96px, and tablets at 1x (148px). Added in November 2026, when PageSpeed Insights found phones fetching the 320px file for a 168-pixel slot | `sharp` resize, then keep the `srcSet` in `Hero.jsx` and the preload in `index.html` in step |
+| `images/Profile-320.{avif,webp}` | Phones at 3x, tablets at 2x, and desktops at 1x, where the portrait renders at 320px | `sharp` resize, then keep `sizes` in `Hero.jsx` and the preload in `index.html` in step |
 
 ```bash
 npm i --no-save sharp fontkit wawoff2

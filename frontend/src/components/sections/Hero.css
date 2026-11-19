@@ -29,8 +29,8 @@
   /* Keep `PORTRAIT_SIZES` in Hero.jsx and the preload in index.html in step with
      these widths. 20rem is 320px until the root font scales past 1920px, where
      it works out just above 16.6vw. That figure is rounded down on purpose: at
-     16.7vw a 1920px screen asks for 320.6px and downloads the 68 KB file rather
-     than the 19 KB one. */
+     16.7vw a 1920px screen asks for 320.6px and downloads the 20 KB file rather
+     than the 6 KB one. */
   .hero__portrait {
     display: block;
     width: 96px;

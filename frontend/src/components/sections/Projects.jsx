@@ -13,8 +13,16 @@ const pictures = import.meta.glob("@/assets/projects/*.{avif,webp}", { eager: tr
 const srcSet = (name, format) =>
   [480, 960].map((width) => `${pictures[`/src/assets/projects/${name}-${width}.${format}`]} ${width}w`).join(", ");
 
-// The grid: three columns of at most 30rem, then two, then one.
-const PICTURE_SIZES = "(min-width: 72rem) 30rem, (min-width: 44rem) 50vw, 100vw";
+// A picture's rendered width, from the container (its gutter is 5vw - 0.5rem
+// up to 5rem, its width at most 92rem), the grid's 0.75rem gap and the card's
+// 1px borders. Measured within a pixel at 390 to 2560px. Three columns grow as
+// 30vw - 5px until the container stops at 101rem, hold at 480px, and above
+// 120rem follow the root font, which scales with the screen (base.css). The
+// old "50vw" for two columns sent a 1024px screen the 960px file for a 461px
+// slot, and "30rem" sent a 2560px screen the 480px file for a 642px one.
+// Keep in step with the container, the gutter and the grid breakpoints.
+const PICTURE_SIZES =
+  "(min-width: 120rem) 25vw, (min-width: 101rem) 30rem, (min-width: 72rem) calc(30vw - 5px), (min-width: 44rem) 45vw, calc(100vw - 2.5rem)";
 
 // Tells the card under the pointer where the pointer is, for the light
 // Projects.css draws there. One listener on the grid, writing straight to the

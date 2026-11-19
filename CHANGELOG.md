@@ -30,6 +30,21 @@ than by individual commit.
   matches its source. The 508-test figure was re-counted and still holds.
 - **CrewAI and LiteLLM join Skills**, backed by the Research Team. CrewAI
   carries its mark; neither icon set has one for LiteLLM, so it stays text.
+- **A new portrait.** A studio headshot replaces the canal photo in the hero,
+  the social card and the JSON-LD, cropped to head and shoulders for the
+  circle. Its plain backdrop compresses far better: the 320px file desktops
+  load first is 6 KB instead of 19 KB, and the phone file 3 KB instead of 9.
+  The social card is regenerated from it, 72 KB instead of 107.
+
+### Performance
+
+- **Project pictures are chosen for their real width.** The `sizes` hint now
+  follows the grid's actual card width at every breakpoint. A 1024px screen
+  stops downloading the 960px file for a 461px slot, and a 2560px screen,
+  where cards are 642px wide, stops stretching the 480px one.
+- **An 840px portrait for 5K screens.** Past 2048px at 2x the portrait needs
+  about 850 pixels, and the largest file was 680; the new crop allows 840.
+  Nothing else downloads it.
 
 ### Fixed
 
