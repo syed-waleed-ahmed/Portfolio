@@ -11,7 +11,7 @@ the set. The [README](../README.md) is the overview.
 | [Design system](design.md) | Change anything visual: tokens, type, layout, the dock, command palette, activity graph and globe, motion, accessibility, print, generated assets |
 | [Testing](testing.md) | Run or extend the API, content, invariant and browser suites, size budgets and link check, and see what is not covered |
 | [API reference](api.md) | Call `POST /api/contact`: payloads, status codes, rate limiting, CORS |
-| [Deployment](deployment.md) | Ship: Netlify and its build gate, Render, CI, headers and CSP, caching, releases |
+| [Deployment](deployment.md) | Ship: Cloudflare Workers and the deploy gate, Render, CI, headers and CSP, caching, releases |
 | [Security controls](security.md) | See what is implemented, why, and what is out of scope |
 
 Elsewhere in the repository:

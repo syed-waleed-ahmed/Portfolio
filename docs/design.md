@@ -153,7 +153,7 @@ Six rules keep it consistent:
 
    `test/invariants.test.js` at the repository root checks every one of these
    against `tokens.css` and names the file that drifted, so a palette change
-   fails CI and Netlify's build until they all follow. A new copy belongs in
+   fails CI and the deploy's build until they all follow. A new copy belongs in
    this list and in that test. One raster also bakes in a colour, the
    Apple touch icon's background: see [Generated assets](#generated-assets).
 

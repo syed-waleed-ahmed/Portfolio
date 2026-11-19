@@ -1,11 +1,11 @@
-// Serves the built site the way Netlify does, for the Playwright suite.
+// Serves the built site the way Cloudflare does, for the Playwright suite.
 //
 // vite preview ignores public/_headers, so a CSP that blocks the analytics
 // snippet, the font or a lazy chunk looks fine there and breaks only in
 // production. This server sends the "/*" block of dist/_headers (the CSP and
 // the other security headers) with every response, so the suite runs under
 // the policy visitors actually get. Unknown paths get 404.html with a 404, as
-// on Netlify. Node built-ins only.
+// on Cloudflare. Node built-ins only.
 import { createServer } from "node:http";
 import { readFile } from "node:fs/promises";
 import { existsSync, readdirSync, readFileSync } from "node:fs";

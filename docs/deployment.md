@@ -4,30 +4,34 @@ The two projects deploy independently.
 
 | Part | Platform | URL | Trigger |
 |------|----------|-----|---------|
-| Frontend | Netlify | https://syedwaleedahmed.me | Push to `main`, published if the build and its gate pass |
+| Frontend | Cloudflare Workers | https://syedwaleedahmed.me (see [Domain](#domain)) | Push to `main`, published once every CI job has passed |
 | Backend | Render | https://portfolio-backend-kmum.onrender.com | Push to `main` |
 
-Both build from the same repository. CI reads the Node version from `.nvmrc`
-and Netlify from `NODE_VERSION` in `netlify.toml`, and the repository
-invariants fail if the two name different majors.
+Both build from the same repository. Every workflow reads the Node version
+from `.nvmrc`, and the repository invariants fail on one that names a version
+itself.
 
 ---
 
-## Frontend (Netlify)
+## Frontend (Cloudflare Workers)
+
+The site is a Worker with static assets and no script, so every request is a
+static asset request, which Cloudflare serves on its free plan without a quota.
+`frontend/wrangler.jsonc` is the whole configuration:
 
 | Setting | Value |
 |---------|-------|
-| Base directory | `frontend` |
-| Build command | `npm run build` |
-| Publish directory | `frontend/dist` |
-| Node version | `24`, from `netlify.toml` |
+| Worker name | `portfolio` |
+| Assets directory | `./dist`, the Vite build output |
+| Unknown paths | `not_found_handling: "404-page"`, which answers with `404.html` and a 404 status |
+| Node version, for the build | `24`, from `.nvmrc` |
 
-Base directory, build command and publish directory are configured in the
-Netlify UI. `netlify.toml` deliberately carries **only** the Node version, so
-there is exactly one place where each setting lives and no chance of the file
-and the UI disagreeing. Netlify reads it from the repository root even with the
-base directory set to `frontend`; a `.nvmrc` placed in `frontend/` would
-override it.
+Cloudflare builds nothing. `.github/workflows/deploy.yml` builds the site on a
+GitHub runner and uploads the result with `wrangler deploy`, so the host has no
+build minutes or deploy count to run out of. That matters for a site that
+ships about once a day: a host that meters deploys on its free plan can spend
+a month's allowance in two weeks and stop publishing, which is what ended the
+site's previous hosting in November 2026.
 
 The build needs no environment variables. `npm run build` compiles the client
 bundle, compiles a server bundle, and prerenders the page into
@@ -35,38 +39,121 @@ bundle, compiles a server bundle, and prerenders the page into
 the prerender step fails the whole build fails, so a deploy can never publish
 an empty page.
 
-### The Netlify build gate
+### The deploy gate
 
-`frontend/package.json` has a `prebuild` script, which npm runs before every
-`npm run build`, Netlify's included:
+Nothing reaches the site except through `deploy.yml`, which has three callers:
+
+| Caller | When | What has passed first |
+|--------|------|-----------------------|
+| The `deploy` job in `ci.yml` | A push to `main` | Every CI job: lint, the content tests, the invariants, the build, the size budgets, both audits, the browser suite, the backend's tests and the secret scan |
+| `refresh-activity.yml` | After its weekly snapshot commit | The prebuild gate |
+| `workflow_dispatch` | By hand, from the Actions tab, to republish `main` | The prebuild gate |
+
+So a commit that fails any check in CI is never published.
+
+There is a second, smaller gate inside the build itself.
+`frontend/package.json` has a `prebuild` script,
+which npm runs before every `npm run build`, the deploy's included:
 
 ```text
 eslint . && node --test && node --test ../test/invariants.test.js
 ```
 
 That is frontend lint, the content tests and the repository invariants. A commit
-that fails any of them fails the Netlify build before Vite starts, and Netlify
-keeps serving the previous deploy. It is the one check that stands between a
-push to `main` and the live site, since CI runs alongside the deploy rather than
-before it. It does not run the browser suite or the size budgets, and nothing
-gates Render.
+that fails any of them fails the build before Vite starts, nothing is uploaded,
+and Cloudflare keeps serving the previous version. After CI the gate repeats
+checks that have just passed, which costs seconds. For the other two callers it
+is the only gate there is. Nothing gates Render.
 
 `npm run build --ignore-scripts`, run in `frontend/`, skips the gate. CI builds
 that way because it runs the same three checks as separate steps; locally it is
 the deliberate way round a known failure while working on the build itself.
 
-A custom domain with HTTPS is configured for `syedwaleedahmed.me`, with
-`www.syedwaleedahmed.me` and the `syedwaleedahmed.netlify.app` default domain
-also live. All three are on the backend's CORS allow-list.
+Each run of `deploy.yml` does three things:
 
-Netlify serves `public/404.html` automatically on any unmatched path.
+1. **Build.** It checks out the commit, runs `npm ci` and builds behind the
+   gate.
+2. **Publish.** `cloudflare/wrangler-action`, pinned to a commit SHA like every
+   other action, runs `wrangler deploy` with Wrangler 4.158.0. Wrangler is not
+   in `package.json`: only this job uses it, and as a dependency every other
+   job would download it for nothing.
+3. **Verify.** `frontend/scripts/verify-deploy.mjs` fetches the live origin and
+   fails the run unless it serves this build (the entry script's fingerprint
+   identifies one), applies every rule in `_headers`, tested against one real
+   URL per rule, and answers an unknown path with the 404 page. It is the one
+   check of the host itself: everything else exercises `_headers` through a
+   local imitation.
+
+Deploys run one at a time, in order (`concurrency: deploy-production`). A newer
+push cancels the CI run before it, deploy included, which is safe at any point:
+Cloudflare switches to a new version only once its upload has finished. Each
+deploy is recorded under the repository's `production` environment.
+
+The workflow needs two settings in the repository:
+
+| Setting | Kind | Value |
+|---------|------|-------|
+| `CLOUDFLARE_API_TOKEN` | Secret | An API token from Cloudflare's "Edit Cloudflare Workers" template, limited to this one account |
+| `CLOUDFLARE_ACCOUNT_ID` | Variable | The account's ID, which is an identifier and not a credential |
+
+### How Cloudflare serves the files
+
+- **`_headers` is applied as written.** The file travels inside `dist/`, and
+  Cloudflare applies it: the CSP, the other security headers and every cache
+  rule (see
+  [Security headers and CSP](#security-headers-and-csp) and
+  [Caching](#caching)). It is not served itself.
+- **`.html` URLs redirect to their extensionless form.** `/index.html`
+  answers 307 to `/`, and `/404.html` to `/404`, so `_headers` has no rule
+  for either: it could never apply, and `verify-deploy.mjs` fails on a rule
+  whose URL does not answer 200. Google's site-verification file is reached
+  through the same redirect.
+- **A new version is live as soon as its upload finishes.** There is no edge
+  cache to purge.
+- **Rolling back** is `npx wrangler rollback` in `frontend/`, or the Worker's
+  Deployments page in the Cloudflare dashboard. Neither changes `main`, so the
+  next deploy publishes `main` again: revert the commit as well.
+
+### Domain
+
+`syedwaleedahmed.me` is registered at Namecheap, and Namecheap's only job is
+to name Cloudflare's two nameservers. The DNS zone is in the same Cloudflare
+account as the Worker, on the free plan.
+
+The domain is attached to the Worker in `frontend/wrangler.jsonc`, not in a
+dashboard:
+
+```jsonc
+"routes": [
+  { "pattern": "syedwaleedahmed.me", "custom_domain": true },
+  { "pattern": "www.syedwaleedahmed.me", "custom_domain": true }
+],
+"workers_dev": false,
+"preview_urls": false
+```
+
+For a custom domain Cloudflare creates the DNS record and the certificate
+itself, so the zone needs no record written by hand for either hostname, and
+a deploy fails if one is in the way. Both hostnames serve the same pages, and
+`rel="canonical"` in `index.html` names the apex. `workers_dev: false` and
+`preview_urls: false` leave those two as the only addresses: the Worker has no
+`workers.dev` address of its own.
+
+Three places name the origin: that first route, the canonical URL, and
+`SITE_URL` in `deploy.yml`, which is the address each deploy is verified
+against. The repository invariants fail if they stop agreeing. The apex and
+`www` are the two live origins on the backend's CORS allow-list.
+
+The zone holds nothing but the site: no mail or verification records. A
+record for another service is added in the Cloudflare dashboard, under the
+zone's DNS settings.
 
 ### Environment variables
 
-Set `VITE_API_BASE_URL` in the Netlify UI only if the backend moves. Left
-unset, the bundle falls back to the deployed Render URL baked into
-`Contact.jsx`. `VITE_`-prefixed variables are compiled into the client bundle
-and are therefore public.
+The deploy sets none. `VITE_API_BASE_URL` stays unset, so the bundle uses the
+Render URL written into `Contact.jsx`; if the backend moves, change that
+default rather than adding a variable to the workflow. `VITE_`-prefixed
+variables are compiled into the client bundle and are therefore public.
 
 A new backend origin also has to be added to `connect-src` in
 `frontend/public/_headers`, or the CSP blocks the form, and should replace the
@@ -139,10 +226,11 @@ per ref.
 | `e2e` | `npm ci`, `npx playwright install --with-deps chromium`, build with `--ignore-scripts`, the Playwright suite; the report is uploaded as an artifact if it fails, kept 14 days |
 | `backend` | `npm ci`, lint, `npm test`, `npm audit --omit=dev --audit-level=high` |
 | `secret-scan` | `gitleaks` over the full git history (`fetch-depth: 0`) |
+| `deploy` | On a push to `main` only, and only after the four jobs above: calls `deploy.yml` (see [The deploy gate](#the-deploy-gate)) |
 
 Every job that installs Node takes it from `node-version-file: .nvmrc`, never
-a hardcoded number, so CI cannot drift from local or from Netlify. What each suite covers is
-in [Testing](testing.md). CodeQL code scanning runs as well, from GitHub's
+a hardcoded number, so CI and the deploy cannot drift from local work. What
+each suite covers is in [Testing](testing.md). CodeQL code scanning runs as well, from GitHub's
 default setup in the repository settings rather than from a workflow file.
 
 Every action in every workflow is pinned to a full commit SHA, with its version
@@ -152,11 +240,11 @@ bumps the SHA and the comment together. Every checkout that does not push sets
 `persist-credentials: false`, so the token is not left in `.git/config` for
 later steps to read. `refresh-activity.yml` pushes, so it keeps it.
 
-CI does not deploy, and it does not hold a deploy back either. Netlify builds
-every push to `main` whatever CI reports, stopped only by its own
-[build gate](#the-netlify-build-gate), and Render's auto-deploy is configured
-separately in its own dashboard. A red CI run on `main` therefore means the
-commit may already be live.
+CI deploys the frontend, and holds the deploy back until every job is green.
+The backend is not held back the same way: Render's auto-deploy is configured
+in its own dashboard and takes every push to `main` whatever CI reports. A red
+CI run on `main` therefore means the frontend was not published, but the
+backend commit may already be live.
 
 ### Weekly snapshot commit
 
@@ -165,9 +253,10 @@ runs at 04:17 UTC every Monday, and on demand from the Actions tab.
 
 - It runs `frontend/scripts/fetch-github-activity.mjs` and commits
   `frontend/src/data/github-activity.json` to `main` only if the file changed.
-  Every such commit starts a Netlify deploy, whose build gate runs the content
-  tests on the new snapshot. The push uses `GITHUB_TOKEN`, so it starts no CI
-  run.
+  The push uses `GITHUB_TOKEN`, so it starts no CI run, and CI's deploy job
+  never sees the commit. The workflow's second job publishes it instead, by
+  calling `deploy.yml` on the new commit, whose prebuild gate runs the content
+  tests on the new snapshot. With no change there is no commit and no deploy.
 - It is the one workflow here that writes, so it asks for `contents: write`
   itself rather than widening the default. If `main` is ever given a rule
   requiring pull requests, its push will start failing.
@@ -213,7 +302,7 @@ and the GitHub Actions the workflows use.
 
 ## Security headers and CSP
 
-`frontend/public/_headers` is a Netlify edge-header file applied to every
+`frontend/public/_headers` is a headers file that Cloudflare applies to every
 response from the site. It is separate from, and stricter than, the headers the
 API sets for itself (see [API reference](api.md#security-headers)).
 
@@ -246,7 +335,9 @@ and nothing loads a `data:` font.
 A new third-party origin, or a new backend origin, needs its directive here in
 the same commit. `vite preview` does not apply `_headers`, so a CSP break does
 not show there; the browser suite serves the build under this exact policy and
-fails on any violation (see [Testing](testing.md#browser-tests)).
+fails on any violation (see [Testing](testing.md#browser-tests)), and after
+each deploy `verify-deploy.mjs` confirms the live site sends every header in
+the file.
 
 ### The inline analytics hash
 
@@ -270,7 +361,7 @@ node -e "const fs=require('fs'),c=require('crypto');const m=fs.readFileSync('ind
 ```
 
 > **The `\r\n` to `\n` normalization is load-bearing on Windows.** `.gitattributes`
-> stores this file with LF, so LF is what Netlify checks out and what the
+> stores this file with LF, so LF is what the deploy checks out and what the
 > browser hashes, but an editor on Windows can save the working copy with
 > CRLF, and hashing those bytes yields a completely different, wrong value. Pasting it produces exactly
 > the silent failure this section warns about. Verify by recomputing against an
@@ -278,7 +369,7 @@ node -e "const fs=require('fs'),c=require('crypto');const m=fs.readFileSync('ind
 > already in `_headers`, the command is wrong, not the file.
 
 The repository invariants recompute the hash the same way and fail when
-`_headers` does not match, in CI and in Netlify's build gate, so a stale hash
+`_headers` does not match, in CI and in the prebuild gate, so a stale hash
 no longer reaches the live site unnoticed. The browser suite checks the other
 end: the snippet runs under the real CSP and adds its tag.
 
@@ -295,14 +386,14 @@ Cache rules also live in `frontend/public/_headers`:
 
 | Path | Cache | Why |
 |------|-------|-----|
-| `/`, `/index.html`, `/404.html` | `max-age=0, must-revalidate` | A deploy is visible on the next visit. Never serve stale HTML |
+| `/` | `max-age=0, must-revalidate` | A deploy is visible on the next visit. Never serve stale HTML. The 404 page gets the same value from Cloudflare's default |
 | `/sw.js` | `max-age=0, must-revalidate` | The kill-switch service worker needs to reach users without a 24-hour delay |
 | `/assets/*` | `max-age=31536000, immutable` | Filenames are content-hashed by Vite, so a one-year cache is correct |
 | `/fonts/*` | `max-age=31536000, immutable` | The filename encodes family, subset and weight, so the bytes never change. A new typeface means a new file at a new URL |
 | `/images/*` | `max-age=0, must-revalidate` | Unlike `/assets/*`, these filenames are stable, so a `max-age` here would keep serving an old portrait after a swap |
 
-Netlify's CDN still caches at the edge and purges on deploy; these values only
-control the browser-cache layer.
+Cloudflare's edge serves a new version as soon as a deploy finishes; these
+values only control the browser's own cache.
 
 ### Stale service worker recovery
 
@@ -337,13 +428,14 @@ the last change it covers:
    lockfiles agree. The repository invariants fail if any manifest disagrees
    with the newest release heading.
 3. Open the PR, wait for CI, and squash-merge it. Render deploys the merge
-   commit automatically, and Netlify does once its
-   [build gate](#the-netlify-build-gate) passes.
-4. Verify the deploy: load the site, then run the Postman collection against
-   the production environment (see
+   commit automatically, and the CI run on it publishes the frontend once
+   every job has passed (see [The deploy gate](#the-deploy-gate)).
+4. Verify the deploy. The `deploy` job has already checked the live site
+   against the build; load the site as well, then run the Postman collection
+   against the production environment (see
    [Testing](testing.md#running-against-production)). If the site has not
-   changed, check the Netlify deploy log: a failed gate keeps the previous
-   deploy live.
+   changed, look at the CI run on the merge commit: a failed job or gate
+   leaves the previous version live.
 5. Tag the squash-merge commit and publish its notes from the changelog
    section:
 

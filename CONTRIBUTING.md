@@ -107,8 +107,8 @@ npm test                             # backend changes
 ```
 
 CI runs the same checks plus `npm audit` and a gitleaks secret scan, so running
-them locally saves a round trip. Netlify runs frontend lint, the content tests
-and the invariants before every build, and keeps the previous deploy when one
+them locally saves a round trip. On `main` the frontend is published only once
+every one of them has passed, and the previous deploy stays live when one
 fails. The browser tests refuse a build that `frontend/.env` pointed at a local
 backend; how to rebuild for them is in
 [`docs/testing.md`](docs/testing.md#browser-tests).
@@ -129,7 +129,7 @@ of these, read the linked document first:
 | The contribution graph and the globe | Their CSS reserves exact heights and positions at an 80rem breakpoint, so a layout change has to check both | [Design](docs/design.md#github-activity) |
 | `frontend/index.html` root element and render output | The build prerenders into `<div id="root"></div>` by string match, and the markup must hydrate identically | [Architecture](docs/architecture.md#rendering-strategy) |
 | The contact endpoint | Ordering of the body cap, limiter, validation and honeypot is deliberate | [Architecture](docs/architecture.md#contact-form-request-flow) |
-| `frontend/public/_headers` | Carries both the CSP and every cache rule. `vite preview` ignores it; the browser tests serve the build under it | [Deployment](docs/deployment.md#security-headers-and-csp) |
+| `frontend/public/_headers` | Carries both the CSP and every cache rule. `vite preview` ignores it; the browser tests serve the build under it, and every deploy is checked against it | [Deployment](docs/deployment.md#security-headers-and-csp) |
 
 ---
 

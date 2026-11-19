@@ -212,7 +212,6 @@ Browser origins are allow-listed. The defaults are:
 
 ```text
 http://localhost:5173
-https://syedwaleedahmed.netlify.app
 https://syedwaleedahmed.me
 https://www.syedwaleedahmed.me
 ```
@@ -260,7 +259,7 @@ consumed by a browser on a different origin. The notable headers:
 | `Referrer-Policy` | `no-referrer` |
 | `Cross-Origin-Resource-Policy` | `cross-origin` |
 
-These are the API's own headers. The site served by Netlify has a separate,
+These are the API's own headers. The site served by Cloudflare has a separate,
 stricter set (see [Deployment](deployment.md#security-headers-and-csp)).
 
 ---

@@ -3,7 +3,14 @@ import { defineConfig, devices } from "@playwright/test";
 // Browser tests against the built, prerendered site, served under its real
 // CSP by e2e/serve.mjs. Build first: npm run build, then npm run test:e2e.
 // Chromium only: the suite checks this site's behaviour, not browser support.
+//
+// E2E_BASE_URL points the same suite at a deployed origin instead, with no
+// local server, so it runs under the headers the CDN really sends:
+//   E2E_BASE_URL=https://syedwaleedahmed.me npm run test:e2e
+// That is safe against production, since the suite answers analytics and the
+// backend itself and never sends either a real request.
 const PORT = 4174;
+const REMOTE = process.env.E2E_BASE_URL;
 
 export default defineConfig({
   testDir: "e2e",
@@ -17,14 +24,16 @@ export default defineConfig({
   retries: process.env.CI ? 1 : 0,
   reporter: process.env.CI ? [["list"], ["html", { open: "never" }]] : "list",
   use: {
-    baseURL: `http://127.0.0.1:${PORT}`,
+    baseURL: REMOTE || `http://127.0.0.1:${PORT}`,
     trace: "retain-on-failure",
   },
   projects: [{ name: "chromium", use: { ...devices["Desktop Chrome"] } }],
-  webServer: {
-    command: "node e2e/serve.mjs",
-    url: `http://127.0.0.1:${PORT}`,
-    env: { PORT: String(PORT) },
-    reuseExistingServer: !process.env.CI,
-  },
+  webServer: REMOTE
+    ? undefined
+    : {
+        command: "node e2e/serve.mjs",
+        url: `http://127.0.0.1:${PORT}`,
+        env: { PORT: String(PORT) },
+        reuseExistingServer: !process.env.CI,
+      },
 });

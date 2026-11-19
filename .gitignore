@@ -64,7 +64,7 @@ secrets.json
 .secrets/
 
 # === Deployment / platform artifacts ===
-.netlify/
+.wrangler/
 .render/
 
 # === Test / coverage output ===

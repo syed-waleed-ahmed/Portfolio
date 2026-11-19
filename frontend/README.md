@@ -2,7 +2,9 @@
 
 The site at [syedwaleedahmed.me](https://syedwaleedahmed.me/): React 19 and
 Vite 8, prerendered at build time and hydrated in the browser, styled with
-plain CSS in cascade layers. Deployed by Netlify from this directory.
+plain CSS in cascade layers. Published to Cloudflare Workers from this
+directory by `.github/workflows/deploy.yml`, as static assets (see
+[Deployment](../docs/deployment.md)).
 
 It is one of two independent npm projects in this repository, with its own
 `package.json` and lockfile; the other is [`../backend`](../backend/README.md).
@@ -18,10 +20,11 @@ frontend/
 │   ├── main.jsx      Hydrates the prerendered markup
 │   └── entry-server.jsx   Build-time render entry
 ├── public/           Copied verbatim: fonts, images, favicons, _headers (CSP and caching), 404.html, crawler files, sw.js (a kill-switch)
-├── scripts/          prerender.mjs (build step), fetch-github-activity.mjs (graph snapshot), gen-skill-icons.mjs (skill marks sprite)
+├── scripts/          prerender.mjs (build step), fetch-github-activity.mjs (graph snapshot), gen-skill-icons.mjs (skill marks sprite), verify-deploy.mjs (checks a deployed origin)
 ├── test/             Content tests over src/data
 ├── e2e/              Playwright + axe suite and the server that applies the real CSP
 ├── index.html        Page shell: meta tags, JSON-LD, the hash-pinned analytics snippet, the prerender target
+├── wrangler.jsonc    Cloudflare Workers configuration: dist/ as static assets, 404.html for unknown paths
 └── .size-limit.json  Gzip budgets per chunk
 ```
 
@@ -36,8 +39,9 @@ Run inside this directory, or from the repository root with `--prefix frontend`.
 | `npm test` | Content tests over `src/data/` |
 | `npm run lint` | ESLint |
 | `npm run size` | Gzip budgets, after a build |
-| `npm run test:e2e` | Browser tests against `dist/` under its real CSP, after a build (`npx playwright install chromium` once) |
+| `npm run test:e2e` | Browser tests against `dist/` under its real CSP, after a build (`npx playwright install chromium` once). With `E2E_BASE_URL` set, the same tests against that deployed origin instead |
 | `npm run preview` | Serves `dist/` on :4173, the only way to see the prerendered page by hand; it ignores `public/_headers` |
+| `node scripts/verify-deploy.mjs <origin>` | Checks that a deployed origin serves the build in `dist/`, applies every rule in `_headers` and answers unknown paths with the 404 page. The deploy workflow runs it after publishing |
 
 A build that takes `VITE_API_BASE_URL` from a copied `.env` calls the local
 backend, which the real CSP blocks, so `test:e2e` refuses it and prints the

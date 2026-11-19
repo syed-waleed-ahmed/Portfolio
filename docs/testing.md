@@ -1,20 +1,24 @@
 # Testing
 
-Seven layers, each catching something the others cannot:
+Eight layers, each catching something the others cannot:
 
 | Layer | Tool | Scope | Where it runs |
 |-------|------|-------|---------------|
 | API tests | `node --test` | Backend routing, validation, limits, the honeypot, CORS, the email sent | Locally and in CI |
-| Content tests | `node --test` | Frontend content rules in `src/data/` | Locally, in CI and in Netlify's build |
-| Repository invariants | `node --test` | Files that must agree (the CSP hash, the palette copies, the mirrored form rules, the dates, the versions), and the house style | Locally, in CI and in Netlify's build |
-| Browser tests | Playwright + axe-core | The built page in Chromium under its real CSP | Locally and in CI |
+| Content tests | `node --test` | Frontend content rules in `src/data/` | Locally, in CI and before the build of every deploy |
+| Repository invariants | `node --test` | Files that must agree (the CSP hash, the palette copies, the mirrored form rules, the dates, the versions), and the house style | Locally, in CI and before the build of every deploy |
+| Browser tests | Playwright + axe-core | The built page in Chromium under its real CSP | Locally and in CI, and on demand against a deployed origin |
 | Bundle budgets | Size Limit | Gzipped size of the entry bundle, each lazy chunk, the skill sprite and the project pictures | Locally after a build, and in CI |
+| Deploy check | `node` | A deployed origin: the build it serves, every rule in `_headers`, the 404 page | After every deploy, and on demand |
 | Link check | lychee | Every link in the data modules, `index.html`, `humans.txt` and the docs | Weekly in GitHub Actions, and on demand |
 | Manual / live | Postman | The API against a running server, local or production | On demand |
 
-CI runs on every push to `main` and every pull request against it. Netlify runs
-the lint, content and invariant checks itself before it builds: see
-[Deployment](deployment.md#the-netlify-build-gate).
+CI runs on every push to `main` and every pull request against it, and on
+`main` the frontend is published only once every job has passed. The deploy
+workflow then runs the lint, content and invariant checks itself before it
+builds, which is the only gate for the two deploys that do not pass through CI,
+the weekly snapshot commit and a manual run: see
+[Deployment](deployment.md#the-deploy-gate).
 
 The frontend has no component tests. Its gates are ESLint, the content tests,
 the invariants, a production build and the browser suite. The build compiles and
@@ -98,7 +102,8 @@ npm test --prefix frontend --silent -- --test-name-pattern=density   # a subset 
 
 Fourteen tests in `frontend/test/data.test.js`, on the same built-in runner with
 no dependencies. The data files are plain modules, so they import without a
-bundler. They also run in Netlify's build, through the prebuild gate.
+bundler. They also run before the build of every deploy, through the prebuild
+gate.
 
 | Test | Asserts |
 |------|---------|
@@ -125,7 +130,7 @@ bundler. They also run in Netlify's build, through the prebuild gate.
 npm run test:invariants      # from the repository root
 ```
 
-Nineteen tests in `test/invariants.test.js` at the repository root, on the same
+Twenty tests in `test/invariants.test.js` at the repository root, on the same
 runner with no dependencies. Each pins a coupling that fails silently: two files
 that must agree, where a mismatch breaks nothing a build or a glance would
 catch. They read source files only, never build output, so they run before a
@@ -145,7 +150,8 @@ build as well, and every failure message says what to change.
 | `every hue derives its border and its tint the same way` | For accent, success, warning and danger, `-border` is the hue at 50% and `-subtle` the hue at 10% |
 | `stylesheets take every colour from the tokens` | No stylesheet but `tokens.css` writes a hex value, a colour function, `white` or `black`; mask declarations are exempt, since a mask is painted in alpha |
 | `the three last-modified dates agree` | `dateModified` in `index.html`, `<lastmod>` in `sitemap.xml` and `Last update` in `humans.txt` name the same day |
-| `the Node version is pinned the same way everywhere` | `.nvmrc` and `NODE_VERSION` in `netlify.toml` name the same major, and every `engines.node` admits it |
+| `the Node version is pinned the same way everywhere` | Every `actions/setup-node` step in every workflow reads `.nvmrc` through `node-version-file` and none hardcodes `node-version`, and every `engines.node` admits the major `.nvmrc` pins |
+| `the Cloudflare configuration publishes the build with its headers and 404 page` | `frontend/wrangler.jsonc` publishes `./dist` with `not_found_handling` set to `404-page` and holds no `account_id`, and `public/404.html` and `public/_headers` exist. The canonical URL in `index.html`, `SITE_URL` in `deploy.yml` and the first custom domain in the config name one origin, and `workers_dev` is `false` |
 | `the three manifests and the newest changelog release name one version` | The root, frontend and backend `package.json` versions equal the newest `## [X.Y.Z] - date` heading in `CHANGELOG.md` |
 | `the contact form's fields, email pattern and honeypot match the API` | Field names and caps, `EMAIL_RE` and the honeypot name agree between `Contact.jsx` and `contactRoutes.js` |
 | `the CSP and the DNS hint name the API origin the form calls` | The default origin in `Contact.jsx` is in `connect-src` and is the `dns-prefetch` target |
@@ -171,7 +177,7 @@ Twenty-eight tests in `frontend/e2e/site.spec.js`, on Playwright Test with
 `@axe-core/playwright`, against the built and prerendered site.
 `e2e/serve.mjs` serves `frontend/dist` on `127.0.0.1:4174` with the `/*` headers
 from `dist/_headers`, so the suite runs under the CSP visitors get (which
-`vite preview` ignores), and answers unknown paths with `404.html` as Netlify
+`vite preview` ignores), and answers unknown paths with `404.html` as Cloudflare
 does. Analytics and the backend are answered inside the test with `page.route`,
 so the suite never touches the network and never sends mail.
 
@@ -188,6 +194,22 @@ than letting the contact tests fail with "could not be reached":
 VITE_API_BASE_URL=https://portfolio-backend-kmum.onrender.com npm run build    # bash
 $env:VITE_API_BASE_URL='https://portfolio-backend-kmum.onrender.com'; npm run build   # PowerShell
 ```
+
+**Or run it against a deployed origin.** With `E2E_BASE_URL` set, Playwright
+starts no local server and loads the same suite from that origin, so it runs
+under the headers the host really sends rather than the ones `serve.mjs`
+copies, and needs no build:
+
+```bash
+E2E_BASE_URL=https://syedwaleedahmed.me npm run test:e2e --prefix frontend    # bash
+$env:E2E_BASE_URL='https://syedwaleedahmed.me'; npm run test:e2e --prefix frontend   # PowerShell, for that session
+```
+
+That is safe against production: analytics and the backend are still answered
+inside the test, so neither gets a real request and no mail is sent. Nothing
+runs it automatically; the deploy workflow's own check is the lighter
+[deploy check](#deploy-check). On 2026-11-19 it passed 28 of 28 against the
+Cloudflare deployment.
 
 | Test | Asserts |
 |------|---------|
@@ -261,7 +283,8 @@ the reason in the commit message.
 
 Nothing in CI measures load speed; the size budgets above stand in for it.
 It was measured by hand on 2026-11-14, with PageSpeed Insights on the live
-site and with timed, throttled runs of local builds in Playwright.
+site as hosted at the time, and with timed, throttled runs of local builds in
+Playwright.
 
 | Run | Performance | FCP | LCP | TBT | CLS |
 |---|---|---|---|---|---|
@@ -288,6 +311,35 @@ the LCP; it shipped for the bytes.
 PageSpeed's scores move from run to run by a few points. Its mobile LCP is
 simulated from a trace, so a change that makes the LCP happen earlier in the
 trace also shrinks the set of requests it is simulated over.
+
+---
+
+## Deploy check
+
+```bash
+cd frontend
+npm run build
+node scripts/verify-deploy.mjs https://syedwaleedahmed.me
+```
+
+`frontend/scripts/verify-deploy.mjs` is the one check of the host itself that
+runs unprompted. `vite preview` ignores `_headers`, and in CI the browser suite
+reads the file through `e2e/serve.mjs`, so a host that stopped applying a rule,
+kept serving the previous build or lost its 404 page would pass every layer
+above. The deploy workflow runs it after every publish, against the origin
+named in its `SITE_URL`. It uses Node built-ins only and reads `dist/`, so it
+needs a build but no install.
+
+| Check | Asserts |
+|-------|---------|
+| The build | `/` references the entry script of the build in `dist/`, whose fingerprint changes with every build. Retried for about half a minute, since a CDN can take a few seconds to hand out a new version everywhere |
+| The headers | For each rule in `dist/_headers`, one real URL it matches answers `200` with that rule's headers and the `/*` ones. A `/dir/*` rule is tried on the first file the build put in that directory, so a new rule is covered without an edit |
+| The 404 page | An unknown path answers `404` with the `404.html` page |
+
+It runs after the publish, so a failure does not undo the deploy: it fails the
+run, so that a deploy that went out wrong is seen rather than passing quietly.
+Run by hand, it compares the origin with the local `dist/`, so the first check
+passes only when that is the build that was deployed.
 
 ---
 
@@ -379,9 +431,11 @@ against it:
 | `e2e` | `npm ci`, `npx playwright install --with-deps chromium`, `npm run build --ignore-scripts`, `npm run test:e2e`, and the Playwright report uploaded if it fails |
 | `backend` | `npm ci`, `npm run lint`, `npm test`, `npm audit --omit=dev --audit-level=high` |
 | `secret-scan` | `gitleaks` over full git history |
+| `deploy` | On a push to `main` only, once the four jobs above have passed: `.github/workflows/deploy.yml`, which runs `npm ci`, `npm run build` behind the prebuild gate, `wrangler deploy` and the [deploy check](#deploy-check) |
 
 `--ignore-scripts` skips the prebuild gate, which would repeat the lint, content
-and invariant steps the `frontend` job runs on their own. The link check is a
+and invariant steps the `frontend` job runs on their own. The `deploy` job
+builds without the flag, so the gate runs there once more. The link check is a
 separate weekly workflow, described [above](#link-check).
 
 The audit gate covers **production** dependencies at high severity and above.
@@ -439,14 +493,18 @@ Known and accepted, listed here so nobody has to rediscover them:
   a single weight, which could not be checked against a real Safari from this
   machine.
 - **The weekly snapshot commit starts no CI run.** A push made with
-  `GITHUB_TOKEN` starts no workflows. Netlify still builds it, and its prebuild
-  gate runs the content tests, so a malformed snapshot fails that build and the
-  previous deploy stays live. The browser suite first sees the new snapshot on
-  the next ordinary push.
+  `GITHUB_TOKEN` starts no workflows, so `refresh-activity.yml` calls the deploy
+  workflow itself. Its prebuild gate runs the content tests, so a malformed
+  snapshot fails that build and the previous deploy stays live. The browser
+  suite and the size budgets first see the new snapshot on the next ordinary
+  push.
 - **Render is not gated.** Render deploys every push to `main` whatever CI
   reports, so a backend change that fails `npm test` can still go live. The
-  browser suite and the size budgets do not gate Netlify either: only lint, the
-  content tests, the invariants and the build do.
+  frontend is held back by every CI job on an ordinary push; a manual run of
+  the deploy workflow, like the weekly snapshot, passes only lint, the content
+  tests, the invariants and the build.
+- **The deploy check runs after the publish.** It reports a deploy that went
+  out wrong and does not roll it back.
 - **JSX copy is outside the font-subset check.** The test reads the data
   modules; the hero's text, the section subtitles and the contact panel's text
   follow the same rule by hand.
@@ -462,5 +520,5 @@ Known and accepted, listed here so nobody has to rediscover them:
 
 - [API reference](api.md) - the contract these tests assert
 - [Development](development.md#troubleshooting) - failures you may hit locally
-- [Deployment](deployment.md#continuous-integration) - CI jobs and the Netlify build gate
+- [Deployment](deployment.md#continuous-integration) - CI jobs and the deploy gate
 - [`postman/README.md`](../postman/README.md) - collection usage in detail

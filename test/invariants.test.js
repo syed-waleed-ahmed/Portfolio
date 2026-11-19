@@ -10,7 +10,7 @@
 //
 // The tests read source files only, never build output, so they also run
 // before a build: frontend/package.json's prebuild runs them, which is what
-// keeps Netlify from publishing a commit that breaks one. Each failure message
+// keeps a deploy from publishing a commit that breaks one. Each failure message
 // says what to change.
 import test from "node:test";
 import assert from "node:assert/strict";
@@ -80,7 +80,7 @@ test("the CSP pins the hash of the inline analytics script", () => {
     "frontend/index.html should hold exactly one inline executable <script>, the analytics loader; any other needs its own hash in the CSP"
   );
   // CRLF normalised, as docs/deployment.md computes it: the browser hashes the
-  // LF bytes Netlify serves, whatever a Windows checkout holds.
+  // LF bytes the host serves, whatever a Windows checkout holds.
   const hash = createHash("sha256").update(inline[0].body.replace(/\r\n/g, "\n")).digest("base64");
   const pinned = pick(read("frontend/public/_headers"), /'sha256-([A-Za-z0-9+/=]+)'/, "a sha256 source in the CSP");
   assert.equal(
@@ -180,7 +180,7 @@ test("the globe's WebGL cyan is the accent", () => {
 
 // ----- 4b. The colour system itself -----------------------------------------
 // The browser suite measures contrast on the rendered page. These read only
-// tokens.css and the stylesheets, so they also run in Netlify's build gate,
+// tokens.css and the stylesheets, so they also run in the prebuild gate,
 // and they name the token to change.
 
 const luminance = (hex) => {
@@ -284,13 +284,59 @@ const admitsMajor = (range, major) =>
 
 test("the Node version is pinned the same way everywhere", () => {
   const nvmrc = Number(read(".nvmrc").trim());
-  const netlify = Number(pick(read("netlify.toml"), /NODE_VERSION\s*=\s*"(\d+)"/, "NODE_VERSION in netlify.toml"));
-  assert.equal(netlify, nvmrc, ".nvmrc (read by CI) and NODE_VERSION in netlify.toml (read by Netlify) must name the same Node major");
+  // .nvmrc is the one pin: local work, CI and the deploy all read it. A
+  // workflow that names a version itself would build with another Node and
+  // nothing would say so.
+  for (const file of readdirSync(join(ROOT, ".github/workflows"))) {
+    const workflow = read(`.github/workflows/${file}`);
+    const setups = workflow.split("actions/setup-node@").length - 1;
+    const fromNvmrc = (workflow.match(/node-version-file:\s*"?\.nvmrc"?/g) ?? []).length;
+    const advice = 'use node-version-file: ".nvmrc", as the other workflows do';
+    assert.ok(!/^\s*node-version:/m.test(workflow), `.github/workflows/${file} hardcodes node-version; ${advice}`);
+    assert.equal(fromNvmrc, setups, `.github/workflows/${file} has ${setups} actions/setup-node step(s) and ${fromNvmrc} reading .nvmrc; ${advice}`);
+  }
   for (const file of ["package.json", "frontend/package.json", "backend/package.json"]) {
     const range = JSON.parse(read(file)).engines?.node;
     assert.ok(range, `${file} has no engines.node`);
     assert.ok(admitsMajor(range, nvmrc), `${file} engines.node "${range}" does not admit Node ${nvmrc} from .nvmrc`);
   }
+});
+
+// ----- 6b. The host ---------------------------------------------------------
+
+// Both settings fail quietly when wrong. A mistyped directory is caught by
+// the deploy, but a missing not_found_handling is not: Cloudflare then answers
+// an unknown path with an empty 404 and the site's own page is never shown.
+test("the Cloudflare configuration publishes the build with its headers and 404 page", () => {
+  const config = read("frontend/wrangler.jsonc");
+  assert.equal(
+    pick(config, /"directory":\s*"([^"]+)"/, "assets.directory in frontend/wrangler.jsonc"),
+    "./dist",
+    "frontend/wrangler.jsonc must publish ./dist, the Vite build output"
+  );
+  assert.equal(
+    pick(config, /"not_found_handling":\s*"([^"]+)"/, "assets.not_found_handling in frontend/wrangler.jsonc"),
+    "404-page",
+    'frontend/wrangler.jsonc needs "not_found_handling": "404-page", or unknown paths stop getting public/404.html'
+  );
+  for (const file of ["frontend/public/404.html", "frontend/public/_headers"]) {
+    assert.ok(existsSync(join(ROOT, file)), `${file} is missing: Vite copies it into dist, where Cloudflare reads it`);
+  }
+  // The account is named by a repository variable. Committed here it would be
+  // public, and the config would stop working in a fork.
+  assert.ok(!/"account_id"/.test(config), "keep account_id out of frontend/wrangler.jsonc; the deploy workflow passes it from vars.CLOUDFLARE_ACCOUNT_ID");
+
+  // One origin, named three times: the canonical URL crawlers are given, the
+  // domain Cloudflare attaches the Worker to, and the address the deploy
+  // verifies. If they part, a deploy can pass its check on one host while
+  // visitors are sent to another.
+  const canonical = pick(read("frontend/index.html"), /<link rel="canonical" href="(https:\/\/[^"/]+)\/?"/, 'rel="canonical" in index.html');
+  const siteUrl = pick(read(".github/workflows/deploy.yml"), /^\s*SITE_URL:\s*(\S+)$/m, "SITE_URL in deploy.yml");
+  const domains = [...config.matchAll(/"pattern":\s*"([^"]+)",\s*"custom_domain":\s*true/g)].map((match) => match[1]);
+  const message = "the canonical URL in index.html, SITE_URL in deploy.yml and the first custom domain in frontend/wrangler.jsonc name one origin";
+  assert.equal(siteUrl, canonical, message);
+  assert.equal(`https://${domains[0]}`, canonical, message);
+  assert.match(config, /"workers_dev":\s*false/, "frontend/wrangler.jsonc needs workers_dev: false, or the site is also public at a workers.dev address");
 });
 
 test("the three manifests and the newest changelog release name one version", () => {
@@ -359,7 +405,8 @@ const BINARY = new Set([".png", ".jpg", ".jpeg", ".gif", ".ico", ".webp", ".avif
 const SKIP_DIRS = new Set([".git", "node_modules", "dist", "dist-server", "graphify-out", "playwright-report", "test-results"]);
 
 // Tracked files plus new ones not yet added, so a file is checked before its
-// first commit. Netlify's checkout has git; the walk is only a fallback.
+// first commit. Every checkout that runs this has git; the walk is only a
+// fallback for a copy of the tree without it.
 const repoFiles = () => {
   try {
     const out = execFileSync("git", ["ls-files", "-z", "--cached", "--others", "--exclude-standard"], { cwd: ROOT, encoding: "utf8" });
