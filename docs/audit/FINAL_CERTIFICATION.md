@@ -36,7 +36,7 @@ deployed, and the version deployed now, after the fixes and their live check.
 | Scalability | PASS WITH OBSERVATIONS | PASS WITH OBSERVATIONS | Single instance by design and by plan. Stateless apart from the limiter |
 | Observability | FAIL | FAIL | Clear logs that nothing reads. No alert, no uptime check, and F-01 ran unseen (F-04) |
 | Testing | PASS WITH OBSERVATIONS | PASS | As audited: sound method, but no failure-path tests (F-08). Now: 33 tests, each new one shown to fail without its fix |
-| Deployment and operations | FAIL | PASS WITH OBSERVATIONS | As audited: a backend commit that failed CI was deployed (F-03). Now: Render waits for the commit's checks, and the deploy log shows the Node version CI tests (F-09). The observations: every setting of the service lives only in a dashboard, three of them were documented wrongly (F-19), and the build runs `npm install` |
+| Deployment and operations | FAIL | PASS WITH OBSERVATIONS | As audited: a backend commit that failed CI was deployed (F-03). Now: Render waits for the commit's checks, and the deploy log shows the Node version CI tests (F-09). The observation: every setting of the service lives only in a dashboard, and three of them had been documented wrongly (F-19). They are corrected, the build is now `npm ci --omit=dev` and `NODE_ENV` is set explicitly, but nothing in the repository would notice them drift again |
 | Documentation | PASS WITH OBSERVATIONS | PASS | Thorough and, where testable, accurate, except for one unverified claim repeated in six places (F-10), now corrected |
 
 ## Overall

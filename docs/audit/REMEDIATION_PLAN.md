@@ -25,7 +25,7 @@ also the record of what was changed.
 | F-16 | Informational | Invisible characters pass validation | Confirmed | Recorded |
 | F-17 | Informational | No static typing | Confirmed | Accepted |
 | F-18 | Informational | A legacy option name, two liveness routes, one unused config field | Confirmed | Recorded |
-| [F-19](RELIABILITY_AUDIT.md#f-19-the-documented-render-settings-did-not-match-the-dashboard) | Low | The documented Render settings did not match the dashboard | Confirmed in the dashboard | Fixed in the docs. The build command is the owner's call |
+| [F-19](RELIABILITY_AUDIT.md#f-19-the-documented-render-settings-did-not-match-the-dashboard) | Low | The documented Render settings did not match the dashboard | Confirmed in the dashboard | Fixed: docs corrected, build command and `NODE_ENV` set in the dashboard |
 
 ## Priorities
 
@@ -103,9 +103,11 @@ and `CHANGELOG.md`.
 - **The version.** The entries are under `Unreleased` in the changelog. A
   release is a separate step.
 - **Anything in the Render dashboard**, during the audit. Afterwards, on the
-  owner's instruction, one setting was changed there: Auto-Deploy, to After
-  CI Checks Pass (F-03). `NODE_VERSION` was asked for as well and not set,
-  because the deploy log showed Node 24 already, taken from `.nvmrc` (F-09).
+  owner's instruction, three things were changed there: Auto-Deploy, to After
+  CI Checks Pass (F-03); the build command, to `npm ci --omit=dev`; and
+  `NODE_ENV=production`, added as a variable (both F-19). `NODE_VERSION` was
+  asked for as well and not set, because the deploy log showed Node 24
+  already, taken from `.nvmrc` (F-09).
 
 ## Verification
 
@@ -131,19 +133,19 @@ After the deploys, the same day:
 | Render's Auto-Deploy setting (F-03) | Changed to After CI Checks Pass, and read back after a reload |
 | Render's Node version (F-09) | 24.22.3 in the latest deploy log, read from the repository's `.nvmrc` |
 | Render's other settings against the docs (F-19) | Three differences, corrected in the docs |
+| Render's build command and `NODE_ENV` (F-19) | Set to `npm ci --omit=dev` and `production`. Both deploys came up live: 76 packages installed where there had been 155, and no missing-setting warning at boot |
+| The live API after those two deploys | `/health` `200`; an empty submission `400` |
 
 ## What the owner has to do
 
-In order. Merging, the live check and the Auto-Deploy setting are done.
+In order. Merging, the live check and the Render settings are done.
 
 1. **Run the second-network step** of the check in
    [`docs/deployment.md`](../deployment.md#checking-the-rate-limiters-key):
    one request from a phone on mobile data while this network's counter is
    spent, which must read 4. Submitting the live form from the phone does as
    well, since it sends only if the phone has a counter of its own.
-2. **Decide on the build command** (F-19): `npm ci --omit=dev` instead of
-   `npm install`, and whether to set `NODE_ENV=production` explicitly.
-3. **Choose how to hear about a broken form** (F-04).
+2. **Choose how to hear about a broken form** (F-04).
 
 ## Outstanding risks
 
@@ -151,5 +153,5 @@ In order. Merging, the live check and the Auto-Deploy setting are done.
 |------|-------|
 | The limiter's key is a single fixed proxy address rather than the visitor, which one network cannot tell apart | Step 1. Unlikely: both wrong counts scattered requests over several addresses |
 | The Render service's settings drift from what the docs say, as three already had | A `render.yaml` Blueprint, or a habit of re-reading the dashboard |
-| A failing mailer goes unnoticed | Step 3 |
+| A failing mailer goes unnoticed | Step 2 |
 | Real delivery is unverified by any automated test | Accepted. A manual send after any change to the mailer |

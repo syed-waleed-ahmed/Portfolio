@@ -190,16 +190,17 @@ the repository can check them. The table is what the dashboard held on
 |---------|-------|
 | Branch | `main` |
 | Root directory | `backend` |
-| Build command | `npm install` |
+| Build command | `npm ci --omit=dev` |
 | Start command | `npm start` |
 | Health check path | `/health` |
 | Auto-Deploy | After CI Checks Pass |
 | Region | Frankfurt |
 
-Environment variables, set in the Render dashboard. Only the first three are
-set today; the rest are optional:
+Environment variables, set in the Render dashboard. The first four are set
+today; the rest are optional:
 
 ```text
+NODE_ENV=production
 RESEND_API_KEY=…
 EMAIL_FROM=…
 EMAIL_TO=…
@@ -211,11 +212,11 @@ RESEND_TIMEOUT_MS=… # optional; omit for 10000
 `PORT` is injected by Render and must not be hardcoded. The app reads it from
 the environment and falls back to 5000 locally.
 
-`NODE_ENV` is not in the dashboard. Render runs a Node service with
-`NODE_ENV=production` unless told otherwise, and that default is what keeps
-error detail out of `500` responses: the live API's `500` read
-`Internal server error.` when it was checked. A host without that default
-needs the variable set.
+`NODE_ENV=production` is what keeps error detail out of `500` responses.
+Until 2026-11-20 it was not in the dashboard at all: Render runs a Node
+service with that value unless told otherwise, and the live API's `500` read
+`Internal server error.` on the strength of that default alone. It is set
+explicitly now, so it no longer depends on the platform keeping the default.
 
 The Node version comes from the repository's `.nvmrc`, the file CI reads. The
 build log says so (`Using Node.js version 24.22.3 via
@@ -223,10 +224,14 @@ build log says so (`Using Node.js version 24.22.3 via
 would override the file, and is left unset on purpose, so that there is one
 pin.
 
-The build command is `npm install`, and the build log shows it resolving all
-155 packages, development ones included, so ESLint is on the server though
-nothing there runs it. `npm ci --omit=dev` would install exactly the
-lockfile's production tree instead.
+The build command is `npm ci --omit=dev`, which installs exactly the
+lockfile's production tree and fails if `package.json` has moved ahead of the
+lockfile: 76 packages, by the build log. Until 2026-11-20 it was
+`npm install`, which resolved all 155, development ones included, so ESLint
+sat on the server though nothing there runs it. Saving a new build command in
+the dashboard starts a deploy at once, and so does saving a variable with the
+default button, "Save, rebuild, and deploy": both happen outside the
+Auto-Deploy rule below, which governs commits.
 
 Auto-Deploy has been After CI Checks Pass since 2026-11-20: Render deploys a
 commit only once every check on it has succeeded, and does not deploy a commit
