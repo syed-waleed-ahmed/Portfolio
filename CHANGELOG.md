@@ -41,6 +41,13 @@ than by individual commit.
 
 ### Changed
 
+- **Render deploys the backend only after CI passes.** Its Auto-Deploy
+  setting is now After CI Checks Pass, so a backend commit that fails a check
+  stays undeployed, as a frontend one already did. It is a setting in
+  Render's dashboard, and the docs now carry that dashboard as it was read:
+  the build command is `npm install`, not the `npm ci` they claimed,
+  `NODE_ENV=production` is Render's default and not a variable there, and the
+  Node version comes from the repository's `.nvmrc`.
 - **An address holding a control character or an unpaired surrogate is a
   `400`.** The email pattern only rules out whitespace and a second `@`, so
   both passed; the mailer then turned a control character into a space and

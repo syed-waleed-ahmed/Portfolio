@@ -42,20 +42,23 @@ made the audited version unfit was replaced the same day.
 
 ## Findings
 
-Eighteen: one high, three medium, six low, eight informational.
+Nineteen: one high, three medium, seven low, eight informational. The last,
+F-19, was found after the audit, when the Render dashboard was opened to
+close F-03.
 
 | ID | Severity | Finding | State |
 |----|----------|---------|-------|
 | F-01 | High | The rate limiter counts proxies, not visitors, in production | Fixed, and checked live from one network |
 | F-02 | Medium | A send has no time limit, so a stalled provider holds requests open | Fixed |
-| F-03 | Medium | Render deploys the backend whether or not CI passed | Open: one dashboard setting |
+| F-03 | Medium | Render deploys the backend whether or not CI passed | Fixed: Auto-Deploy set to After CI Checks Pass |
 | F-04 | Medium | Nothing notices when the form stops working | Open |
 | F-05 | Low | A crafted subject or address makes the API answer `500` | Fixed |
 | F-06 | Low | An address holding control characters is accepted, then rewritten | Fixed |
 | F-07 | Low | An allow-list entry no browser can match fails silently | Fixed |
 | F-08 | Low | The failure paths and two silent couplings had no test | Fixed |
-| F-09 | Low | The Node version Render runs may not be the one CI tests | Open: needs a look at a deploy log |
+| F-09 | Low | The Node version Render runs may not be the one CI tests | Closed, not a defect: the deploy log shows 24.22.3, read from `.nvmrc` |
 | F-10 | Low | Four documents and two comments stated the limiter's production behaviour as fact | Fixed |
+| F-19 | Low | The documented Render settings did not match the dashboard | Fixed in the docs. The build command itself is unchanged |
 | F-11 to F-18 | Informational | Accepted trade-offs and small observations | Recorded |
 
 Each has its evidence, reproduction and recommendation in the document for its
@@ -116,8 +119,10 @@ Render's previous instance still answering beside the new one.
    address, would look the same from one place. The second-network step in
    `docs/deployment.md`, one request from a phone on mobile data while this
    network's counter is spent, rules that out and has not been run.
-2. **A backend commit that fails its tests is deployed anyway (F-03).** Render
-   has had an "After CI Checks Pass" setting since May 2025. It is not on.
+2. **The Render service is configured only in its dashboard.** F-03 was
+   closed there on 2026-11-20, and looking found F-19: three statements in
+   the docs about that dashboard were wrong. Nothing in the repository can
+   notice the next drift.
 3. **Nobody is told when the form fails (F-04).** F-01 is the proof: it ran
    unnoticed for the life of the service.
 4. **Real delivery is never exercised automatically.** Whether Resend accepts
@@ -125,15 +130,14 @@ Render's previous instance still answering beside the new one.
 
 ## Next steps
 
-In order, and the first three take minutes:
+In order:
 
 1. Run the second-network step of the check in
    [`docs/deployment.md`](../deployment.md#checking-the-rate-limiters-key).
    Everything before it is done.
-2. In the Render dashboard, set Auto-Deploy to **After CI Checks Pass**.
-3. In the latest Render deploy log, read the Node version. If it is not 24,
-   set `NODE_VERSION=24` on the service.
-4. Decide how the owner hears about a broken form:
+2. Decide whether Render's build command should become `npm ci --omit=dev`
+   ([F-19](RELIABILITY_AUDIT.md#f-19-the-documented-render-settings-did-not-match-the-dashboard)).
+3. Decide how the owner hears about a broken form:
    [RELIABILITY_AUDIT.md](RELIABILITY_AUDIT.md#f-04-nothing-notices-when-the-form-stops-working)
    has two cheap options.
 

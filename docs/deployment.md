@@ -5,7 +5,7 @@ The two projects deploy independently.
 | Part | Platform | URL | Trigger |
 |------|----------|-----|---------|
 | Frontend | Cloudflare Workers | https://syedwaleedahmed.me (see [Domain](#domain)) | Push to `main`, published once every CI job has passed |
-| Backend | Render | https://portfolio-backend-kmum.onrender.com | Push to `main` |
+| Backend | Render | https://portfolio-backend-kmum.onrender.com | Push to `main` that changes `backend/`, deployed once the commit's checks have passed |
 
 Both build from the same repository. Every workflow reads the Node version
 from `.nvmrc`, and the repository invariants fail on one that names a version
@@ -63,7 +63,8 @@ That is frontend lint, the content tests and the repository invariants. A commit
 that fails any of them fails the build before Vite starts, nothing is uploaded,
 and Cloudflare keeps serving the previous version. After CI the gate repeats
 checks that have just passed, which costs seconds. For the other two callers it
-is the only gate there is. Nothing gates Render.
+is the only gate there is. Render waits for the same CI run before it deploys
+the backend, by a setting of its own (see [Backend (Render)](#backend-render)).
 
 `npm run build --ignore-scripts`, run in `frontend/`, skips the gate. CI builds
 that way because it runs the same three checks as separate steps; locally it is
@@ -181,17 +182,24 @@ too.
 
 ## Backend (Render)
 
+These settings live in Render's dashboard, not in a file here, so nothing in
+the repository can check them. The table is what the dashboard held on
+2026-11-20:
+
 | Setting | Value |
 |---------|-------|
+| Branch | `main` |
 | Root directory | `backend` |
-| Build command | `npm ci` |
+| Build command | `npm install` |
 | Start command | `npm start` |
 | Health check path | `/health` |
+| Auto-Deploy | After CI Checks Pass |
+| Region | Frankfurt |
 
-Environment variables, set in the Render dashboard:
+Environment variables, set in the Render dashboard. Only the first three are
+set today; the rest are optional:
 
 ```text
-NODE_ENV=production
 RESEND_API_KEY=…
 EMAIL_FROM=…
 EMAIL_TO=…
@@ -203,8 +211,32 @@ RESEND_TIMEOUT_MS=… # optional; omit for 10000
 `PORT` is injected by Render and must not be hardcoded. The app reads it from
 the environment and falls back to 5000 locally.
 
-With `NODE_ENV=production` set, `npm ci` skips devDependencies, so ESLint never
-reaches the server. Nothing Render runs needs it: the backend is linted in CI.
+`NODE_ENV` is not in the dashboard. Render runs a Node service with
+`NODE_ENV=production` unless told otherwise, and that default is what keeps
+error detail out of `500` responses: the live API's `500` read
+`Internal server error.` when it was checked. A host without that default
+needs the variable set.
+
+The Node version comes from the repository's `.nvmrc`, the file CI reads. The
+build log says so (`Using Node.js version 24.22.3 via
+/opt/render/project/src/.nvmrc`). A `NODE_VERSION` variable in the dashboard
+would override the file, and is left unset on purpose, so that there is one
+pin.
+
+The build command is `npm install`, and the build log shows it resolving all
+155 packages, development ones included, so ESLint is on the server though
+nothing there runs it. `npm ci --omit=dev` would install exactly the
+lockfile's production tree instead.
+
+Auto-Deploy has been After CI Checks Pass since 2026-11-20: Render deploys a
+commit only once every check on it has succeeded, and does not deploy a commit
+that has no checks. Before that it deployed every push, whatever CI reported.
+Two consequences follow. The checks include the frontend's deploy job, so a
+frontend deploy that fails its own check also holds that commit's backend
+back, until a later commit passes or someone deploys it by hand in Render. And
+the weekly snapshot commit, which starts no CI run, is never deployed, which
+is right: it changes nothing under `backend/`, and Render ignores a commit
+that does not.
 
 Two details matter on this platform specifically:
 
@@ -305,10 +337,11 @@ bumps the SHA and the comment together. Every checkout that does not push sets
 later steps to read. `refresh-activity.yml` pushes, so it keeps it.
 
 CI deploys the frontend, and holds the deploy back until every job is green.
-The backend is not held back the same way: Render's auto-deploy is configured
-in its own dashboard and takes every push to `main` whatever CI reports. A red
-CI run on `main` therefore means the frontend was not published, but the
-backend commit may already be live.
+Render holds the backend back as well, by its Auto-Deploy setting (see
+[Backend (Render)](#backend-render)), so a red CI run on `main` means neither
+side was published. The difference is where the rule lives: the frontend's is
+in `ci.yml`, the backend's in Render's dashboard, where a new or reset service
+would deploy every push until it is set again.
 
 ### Weekly snapshot commit
 

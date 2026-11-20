@@ -156,8 +156,9 @@ jobs:
   # on a push to main: a pull request is checked but never published. A newer
   # push cancels this run (see `concurrency` at the top), which is safe at any
   # point, since Cloudflare switches to a new version only when its upload has
-  # finished. The backend is not held back the same way: Render deploys it
-  # from the push itself.
+  # finished. Render deploys the backend separately, and only once every check
+  # on the commit, this job included, has passed: that is its Auto-Deploy
+  # setting, which lives in Render's dashboard.
   deploy:
     name: Deploy
     needs: [frontend, e2e, backend, secret-scan]
