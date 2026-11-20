@@ -46,8 +46,9 @@ export class MailerNotConfiguredError extends Error {
   }
 }
 
-// The send failed: Resend rejected it, or could not be reached at all (the SDK
-// reports network failures the same way) -> route turns this into a 502.
+// The send failed: Resend rejected it, could not be reached at all (the SDK
+// reports network failures the same way), or did not answer within
+// config.resendTimeoutMs -> route turns this into a 502.
 export class EmailDeliveryError extends Error {
   constructor(cause) {
     super("Email delivery failed.");
@@ -58,8 +59,17 @@ export class EmailDeliveryError extends Error {
 
 // Caller validates and trims the fields; here we own escaping, header
 // sanitization, and the actual send.
-export async function sendContactEmail({ name, email, subject, message }) {
+export async function sendContactEmail(fields) {
   if (!resend) throw new MailerNotConfiguredError();
+
+  // An unpaired surrogate is legal in a JavaScript string and in JSON, but has
+  // no UTF-8 form: encodeURIComponent throws on one, which used to turn a
+  // crafted subject into a 500. Each becomes U+FFFD here, once, so nothing
+  // below has to think about it.
+  const name = String(fields.name).toWellFormed();
+  const email = String(fields.email).toWellFormed();
+  const subject = String(fields.subject).toWellFormed();
+  const message = String(fields.message).toWellFormed();
 
   const safeSubject = sanitizeHeader(subject).slice(0, 200);
   const safeReplyTo = sanitizeHeader(email);
@@ -67,16 +77,28 @@ export async function sendContactEmail({ name, email, subject, message }) {
   const html = renderContactEmail({ name, email, subject, message });
   const text = renderContactText({ name, email, subject, message });
 
-  const { data, error } = await resend.emails.send({
-    from: config.emailFrom,
-    to: config.emailTo,
-    replyTo: safeReplyTo,
-    subject: `Portfolio: ${safeSubject}`,
-    html,
-    text,
-  });
+  // The SDK reports an aborted request like any other network failure, so the
+  // signal is kept to tell a timeout apart in the log.
+  const timeout = AbortSignal.timeout(config.resendTimeoutMs);
+  const { data, error } = await resend.emails.send(
+    {
+      from: config.emailFrom,
+      to: config.emailTo,
+      replyTo: safeReplyTo,
+      subject: `Portfolio: ${safeSubject}`,
+      html,
+      text,
+    },
+    { signal: timeout }
+  );
 
-  if (error) throw new EmailDeliveryError(error);
+  if (error) {
+    throw new EmailDeliveryError(
+      timeout.aborted
+        ? { name: "timeout", message: `No answer from Resend within ${config.resendTimeoutMs} ms.` }
+        : error
+    );
+  }
 
   return { id: data?.id };
 }

@@ -4,7 +4,7 @@ Eight layers, each catching something the others cannot:
 
 | Layer | Tool | Scope | Where it runs |
 |-------|------|-------|---------------|
-| API tests | `node --test` | Backend routing, validation, limits, the honeypot, CORS, the email sent | Locally and in CI |
+| API tests | `node --test` | Backend routing, validation, limits, the honeypot, CORS, the email sent, a failing provider, configuration parsing | Locally and in CI |
 | Content tests | `node --test` | Frontend content rules in `src/data/` | Locally, in CI and before the build of every deploy |
 | Repository invariants | `node --test` | Files that must agree (the CSP hash, the palette copies, the mirrored form rules, the dates, the versions), and the house style | Locally, in CI and before the build of every deploy |
 | Browser tests | Playwright + axe-core | The built page in Chromium under its real CSP | Locally and in CI, and on demand against a deployed origin |
@@ -37,12 +37,13 @@ npm test --prefix backend   # equivalent
 cd backend && node --test --test-name-pattern="honeypot"   # a subset by name
 ```
 
-Eighteen tests in two files, using Node's built-in runner with no extra
-dependencies: fourteen in `backend/test/contact.test.js` with the mailer
-unconfigured, and four in `backend/test/delivery.test.js` with it configured
-against a fake Resend (see below). They import the Express app directly and bind
-an ephemeral port, which is why they never collide with a dev server on 5000.
-Each file runs in its own process, so the two configurations never meet.
+Thirty-three tests in three files, using Node's built-in runner with no extra
+dependencies: eighteen in `backend/test/contact.test.js` with the mailer
+unconfigured, eight in `backend/test/delivery.test.js` with it configured
+against a fake Resend, and seven in `backend/test/env.test.js` for the
+configuration (see below). The first two import the Express app directly and
+bind an ephemeral port, which is why they never collide with a dev server on
+5000. Each file runs in its own process, so the two configurations never meet.
 
 | Test | Asserts |
 |------|---------|
@@ -50,15 +51,19 @@ Each file runs in its own process, so the two configurations never meet.
 | `GET / returns running status` | `200` and `status: "ok"` |
 | `POST /api/contact rejects missing fields with 400, naming the first` | `400` with exactly `Missing required field: name.` |
 | `POST /api/contact rejects an invalid email with 400` | `400` with exactly `Invalid email address.` |
+| `POST /api/contact rejects an address no mailbox could have with 400` | `400` with `Invalid email address.` for an address holding a control character and for one holding an unpaired surrogate, both of which the pattern alone admits |
 | `POST /api/contact rejects an over-length field with 400` | `400` with exactly `Field "name" is too long.`, on a 101-character name against the 100 cap |
 | `POST /api/contact rejects a body over the 16kb cap with 413` | `413`, `Payload too large.`, and **no** `RateLimit-Remaining` header, proving the cap runs before the limiter |
+| `the largest submission the field caps allow fits under the body cap` | Every field at its cap in a three-byte script, 16,061 bytes against the 16,384 cap, gets past the parser and validation. The two limits live in different files, and raising one alone would refuse only those visitors |
 | `POST /api/contact rejects malformed JSON with 400, before the limiter` | `400`, `Malformed JSON body.`, and no `RateLimit-Remaining` header, for the same reason |
 | `POST /api/contact reaches the mailer with a valid body, which is unconfigured here` | `503` with `Email service is not configured.` |
 | `POST /api/contact answers a tripped honeypot exactly as a real send` | `200` with exactly the body a delivered message gets, `{ success: true, message: "Message sent successfully." }` |
 | `POST /api/contact gives an invalid body the same 400 with or without the honeypot` | The same status and body as the same request without the field |
 | `POST /api/contact ignores an empty honeypot field` | `503`, proving an empty trap does not count as tripped and the request goes on to the mailer |
 | `CORS answers an allowed origin and stays silent for any other` | An allowed origin, read from `config.allowedOrigins`, gets `Access-Control-Allow-Origin`; a disallowed one gets `200` and no such header |
-| `POST /api/contact rate-limits the sixth request from one address` | Five invalid requests get `400`; the sixth gets `429`, `RateLimit-Remaining: 0` and the limiter's message |
+| `CORS answers the preflight the form's POST depends on` | An `OPTIONS` from an allowed origin gets `204` naming the origin, `POST` and `Content-Type`, and spends no quota; a disallowed origin gets no `Access-Control-Allow-Origin` |
+| `the limiter keys on the address the proxies report, not one the client wrote` | With two proxies trusted, the key is the second `X-Forwarded-For` entry from the right: a different forged first entry or a different last proxy lands on the same counter, and another visitor behind the same proxy gets a counter of their own |
+| `POST /api/contact rate-limits the sixth request from one address` | Five invalid requests get `400`; the sixth gets `429`, `RateLimit-Remaining: 0`, the limiter's message and `RateLimit-Policy: 5;w=900`, which pins the 15-minute window no test waits out |
 | `unknown route returns 404` | `404` with exactly `{ success: false, error: "Not found." }` |
 
 `delivery.test.js` configures the mailer with fake credentials and sets
@@ -72,6 +77,30 @@ sent. So it can compare a real send with a trapped one, and read the email:
 | `the email goes to the owner, with the sender as Reply-To` | `from`, `to`, the Reply-To address, the `Portfolio: ` subject prefix and a UTC timestamp |
 | `the sender's address cannot add parameters to the reply link` | An address with `?bcc=...&subject=...` appears URL-encoded in the `mailto:` links, never raw |
 | `one-line fields cannot forge lines in the plain-text part` | A newline in the name or subject is flattened, so the text part has one `Email:` line |
+| `text that is not well-formed Unicode is repaired and sent, not a 500` | An unpaired surrogate in the name, subject and message gets `200`, and the email holds U+FFFD in its place |
+| `a send Resend refuses is a 502 that repeats nothing Resend said` | A `403` from Resend becomes `502` with exactly `Email delivery failed.`, and none of Resend's message reaches the body |
+| `a Resend that cannot be reached is a 502` | A `fetch` that throws becomes the same `502` |
+| `a Resend that never answers is a 502 once the timeout passes` | With `RESEND_TIMEOUT_MS` at 300, a provider that never answers gets the same `502` in under five seconds instead of hanging |
+
+`env.test.js` calls `loadConfig` and `configWarnings` from `config/env.js`,
+which are pure functions of the environment they are given, so no case reads
+or changes the real one:
+
+| Test | Asserts |
+|------|---------|
+| `an empty environment gets the documented defaults` | Port 5000, two trusted proxies, a 10-second send timeout, the three built-in origins, and a frozen object |
+| `the proxy count and the send timeout are read as whole numbers` | `TRUST_PROXY_HOPS` and `RESEND_TIMEOUT_MS` are parsed, surrounding spaces ignored, and zero proxies is allowed |
+| `a number that cannot be used falls back to the default, and says so` | Words, fractions, negatives and a zero timeout give the default and one warning naming the variable; unset and blank give none |
+| `ALLOWED_ORIGINS replaces the defaults, trimmed` | The list is split on commas, trimmed, and empty entries dropped |
+| `an allow-list entry no browser could send is reported at boot` | A trailing slash, a path, an upper-case host, a wildcard and a bare host are each named in one warning, a valid entry is not, and the entries are used as given |
+| `the built-in origins and a complete environment raise no warning` | No warning for the defaults or for a valid custom list |
+| `missing mail settings are named in one line` | The exact `missing: ...` line the docs quote |
+
+Each of these tests was checked the other way round on 2026-11-20: with its
+fix undone (one trusted proxy, no timeout, no repair, the old address rule, the
+provider's message returned, a 15 KB body cap, `POST` missing from the CORS
+methods, a one-minute window, the origin warning off), the test named for it
+failed, nine of nine.
 
 Three properties of this suite are deliberate:
 
@@ -86,10 +115,11 @@ Three properties of this suite are deliberate:
   `resend.invalid`, which cannot resolve even if its stub ever missed. The suite
   passes identically with or without Resend credentials.
 - **Each test that spends rate-limit quota uses its own client address.** With
-  `trust proxy` set to `1` and the test client on `127.0.0.1`, the limiter keys on
-  the `X-Forwarded-For` each request sends, so the counter that persists for the
-  whole run can never push a later test into a `429`. The rate-limit test sends
-  invalid bodies, so not even a misconfigured run could send mail.
+  two proxies trusted and the test client on `127.0.0.1` standing in for the
+  nearest, the limiter keys on the one-entry `X-Forwarded-For` each request
+  sends, so the counter that persists for the whole run can never push a later
+  test into a `429`. The rate-limit test sends invalid bodies, so not even a
+  misconfigured run could send mail.
 
 ---
 
@@ -505,6 +535,11 @@ Known and accepted, listed here so nobody has to rediscover them:
   snapshot fails that build and the previous deploy stays live. The browser
   suite and the size budgets first see the new snapshot on the next ordinary
   push.
+- **The rate limiter's key is checked by hand.** The tests prove which
+  `X-Forwarded-For` entry the limiter reads; whether that entry is the visitor
+  depends on the host's proxies, which no test here can see. The check is in
+  [Deployment](deployment.md#checking-the-rate-limiters-key), and it found the
+  setting wrong in production on 2026-11-20.
 - **Render is not gated.** Render deploys every push to `main` whatever CI
   reports, so a backend change that fails `npm test` can still go live. The
   frontend is held back by every CI job on an ordinary push; a manual run of

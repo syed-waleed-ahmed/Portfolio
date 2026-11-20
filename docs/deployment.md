@@ -196,6 +196,8 @@ RESEND_API_KEY=…
 EMAIL_FROM=…
 EMAIL_TO=…
 ALLOWED_ORIGINS=…   # optional; omit to use the built-in defaults
+TRUST_PROXY_HOPS=…  # optional; omit for 2. See the check below before changing it
+RESEND_TIMEOUT_MS=… # optional; omit for 10000
 ```
 
 `PORT` is injected by Render and must not be hardcoded. The app reads it from
@@ -206,13 +208,52 @@ reaches the server. Nothing Render runs needs it: the backend is linted in CI.
 
 Two details matter on this platform specifically:
 
-- **`trust proxy` is set to `1`.** Render terminates TLS at its own proxy and
-  forwards the client IP in `X-Forwarded-For`. Trusting exactly one hop is what
-  makes the rate limiter key on the real client rather than on the proxy, while
-  still refusing to believe a spoofed header chain.
+- **`trust proxy` counts the proxies in front of the app.** Render documents
+  two layers in front of a web service, Cloudflare and then its own load
+  balancers, and a proxy appends the address it heard from to
+  `X-Forwarded-For`. Trusting that many entries, `2` unless `TRUST_PROXY_HOPS`
+  says otherwise, is what should make the rate limiter key on the visitor. The
+  header as the app receives it is not documented anywhere, the number is easy
+  to get wrong and nothing in the code can check it, so
+  [check it against the live API](#checking-the-rate-limiters-key) after any
+  change to it or to the host.
 - **Graceful shutdown is wired to `SIGTERM` and `SIGINT`.** Render sends
   `SIGTERM` on redeploy; the server stops accepting connections, finishes
   in-flight requests, and force-exits after 10 seconds if something hangs.
+
+### Checking the rate limiter's key
+
+The limiter cannot be seen from outside, but its `RateLimit-Remaining` header
+can, and it says which counter a request landed on. An empty body fails
+validation with a `400`, so none of these requests can send mail; together they
+spend four of the caller's five submissions for the next 15 minutes.
+
+```bash
+API=https://portfolio-backend-kmum.onrender.com
+remaining() { curl -s -o /dev/null -D - -X POST "$API/api/contact" -H 'Content-Type: application/json' -d '{}' "$@" | grep -i '^ratelimit-remaining'; }
+
+remaining; remaining; remaining            # must read 4, 3, 2
+remaining -H 'X-Forwarded-For: 203.0.113.7'   # must read 1, not 4
+```
+
+| Reading | Meaning | Fix |
+|---------|---------|-----|
+| `4, 3, 2`, then `1` | The key is the caller's address, and a forged header does not change it | None, but see the last step |
+| Numbers that do not count down by one, such as `4, 4, 3` | The key is a proxy's address, one of several, and every visitor shares those counters | Raise `TRUST_PROXY_HOPS` by one |
+| `4, 3, 2`, then `4` | The forged header chose the key, so a new value buys a fresh quota | Lower `TRUST_PROXY_HOPS` by one |
+
+One case passes this from a single network and is still wrong: a count that is
+too low where the proxy seen is always the same one. Rule it out from a second
+network, a phone on mobile data for example: its first request must read `4`
+while the first network's counter is still spent. Submitting the live form from
+that phone does as well, since it sends only if the phone has a counter of its
+own.
+
+This check is how the previous value was found to be wrong. With `1`, on
+2026-11-20, sixteen such requests from one machine, which left through a single
+public address, spread over three counters, each unmoved by the forged header,
+and three of the sixteen were answered `429`: the limiter was keyed on Render's
+proxies, so any visitor could spend the allowance of all the others.
 
 ### Free-tier cold starts
 

@@ -15,6 +15,13 @@ process.env.RESEND_API_KEY = "fake-key-for-tests";
 process.env.EMAIL_FROM = "portfolio@example.com";
 process.env.EMAIL_TO = "owner@example.com";
 process.env.RESEND_BASE_URL = "https://resend.invalid";
+// Short, so the test of a provider that never answers takes a fraction of a
+// second rather than the ten the default allows.
+process.env.RESEND_TIMEOUT_MS = "300";
+
+// What the fake Resend does with the next request. Each test that changes it
+// puts it back.
+let resendAnswers = "accepted";
 
 // Every email the SDK tries to send, as the JSON it would have posted.
 const outbox = [];
@@ -23,6 +30,21 @@ globalThis.fetch = async (input, init) => {
   const url = String(input);
   if (!url.startsWith("https://resend.invalid/")) return realFetch(input, init);
   outbox.push(JSON.parse(init.body));
+
+  if (resendAnswers === "rejected") {
+    // The shape of a real refusal, with detail that must stay in the log.
+    return new Response(
+      JSON.stringify({ statusCode: 403, name: "validation_error", message: "The example.com domain is not verified." }),
+      { status: 403, headers: { "Content-Type": "application/json" } }
+    );
+  }
+  if (resendAnswers === "unreachable") throw new TypeError("fetch failed");
+  if (resendAnswers === "silent") {
+    // Never answers. Like the real fetch, it gives up only when told to.
+    return new Promise((_resolve, reject) => {
+      init.signal?.addEventListener("abort", () => reject(init.signal.reason));
+    });
+  }
   return new Response(JSON.stringify({ id: "re_test_message_id" }), {
     status: 200,
     headers: { "Content-Type": "application/json" },
@@ -104,4 +126,57 @@ test("one-line fields cannot forge lines in the plain-text part", async () => {
   assert.equal(lines.filter((line) => line.startsWith("Email:")).length, 1, "a second Email: line was forged");
   assert.ok(lines.includes("From:    Jane Email: forged@example.com"));
   assert.equal(subject, "Portfolio: Hi Bcc: someone");
+});
+
+test("text that is not well-formed Unicode is repaired and sent, not a 500", async () => {
+  // Half a surrogate pair is legal in JSON, and encodeURIComponent, which
+  // builds the reply link from the subject, throws on one. Built at runtime:
+  // an unpaired surrogate cannot be written into a file.
+  const half = String.fromCharCode(0xd800);
+  const replacement = String.fromCharCode(0xfffd);
+  const res = await postContact({ ...VALID, name: `Ja${half}ne`, subject: `Hi ${half}`, message: `Hello ${half}` });
+  assert.equal(res.status, 200);
+  const { subject, html, text } = outbox.at(-1);
+  assert.equal(subject, `Portfolio: Hi ${replacement}`);
+  for (const part of [html, text]) {
+    assert.ok(part.isWellFormed(), "an unpaired surrogate reached the email");
+    assert.ok(part.includes(`Ja${replacement}ne`));
+  }
+});
+
+// The three ways a send fails. Each must be the same 502 with the same fixed
+// message: what Resend said, or that it said nothing, belongs in the log.
+const DELIVERY_FAILED = { success: false, error: "Email delivery failed." };
+
+async function postWhileResend(answers) {
+  resendAnswers = answers;
+  try {
+    const started = performance.now();
+    const res = await postContact(VALID);
+    return { res, body: await res.text(), ms: performance.now() - started };
+  } finally {
+    resendAnswers = "accepted";
+  }
+}
+
+test("a send Resend refuses is a 502 that repeats nothing Resend said", async () => {
+  const { res, body } = await postWhileResend("rejected");
+  assert.equal(res.status, 502);
+  assert.deepEqual(JSON.parse(body), DELIVERY_FAILED);
+  assert.ok(!/verified|validation_error|example\.com domain/.test(body), "provider detail reached the response");
+});
+
+test("a Resend that cannot be reached is a 502", async () => {
+  const { res, body } = await postWhileResend("unreachable");
+  assert.equal(res.status, 502);
+  assert.deepEqual(JSON.parse(body), DELIVERY_FAILED);
+});
+
+test("a Resend that never answers is a 502 once the timeout passes", async () => {
+  const { res, body, ms } = await postWhileResend("silent");
+  assert.equal(res.status, 502);
+  assert.deepEqual(JSON.parse(body), DELIVERY_FAILED);
+  // RESEND_TIMEOUT_MS is 300 here. Without a timeout this request would hang
+  // until the test runner gave up; the bound is loose so a slow machine passes.
+  assert.ok(ms >= 250 && ms < 5000, `answered after ${Math.round(ms)} ms`);
 });

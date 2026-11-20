@@ -13,7 +13,7 @@ backend/
 ├── config/env.js              The only reader of process.env
 ├── routes/contactRoutes.js    Rate limit, validation, honeypot
 ├── services/mailerService.js  Email templates and Resend delivery
-├── test/                      contact.test.js (routes, validation, honeypot, CORS, rate limit), delivery.test.js (the send path, against a fake Resend)
+├── test/                      contact.test.js (routes, validation, honeypot, CORS, rate limit), delivery.test.js (the send path and its failures, against a fake Resend), env.test.js (configuration parsing and boot warnings)
 └── .env.example               Annotated template for backend/.env
 ```
 

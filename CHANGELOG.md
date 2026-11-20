@@ -15,6 +15,52 @@ than by individual commit.
 
 ## [Unreleased]
 
+### Fixed
+
+- **The contact form's rate limit counted all visitors together.** The API
+  trusted one proxy in front of it, and on Render there are more, so the
+  address the limiter counted was a proxy's. A measurement against the live
+  API on 2026-11-20 showed sixteen requests from one machine spread over three
+  counters, none moved by a forged header, and three answered `429`: a few
+  requests from anyone, a bot filling the honeypot included, could lock the
+  form for everyone for 15 minutes. The count is now `2`, settable as
+  `TRUST_PROXY_HOPS`, and `docs/deployment.md` has the check that tells a
+  right number from a wrong one.
+- **A crafted subject or address could make the API answer `500`.** Half of
+  an emoji's surrogate pair is legal in JSON, and `encodeURIComponent`, which
+  builds the email's reply link, throws on one. Free text is now repaired
+  (U+FFFD in its place) and sent.
+- **A send could wait on Resend for five minutes.** Neither the SDK nor the
+  call set a limit, so a stalled provider held each submission open until the
+  form gave up at 60 seconds, and the server for longer. A send is now
+  abandoned after 10 seconds (`RESEND_TIMEOUT_MS`) and answered `502`, and the
+  log says it was a timeout.
+
+### Changed
+
+- **An address holding a control character or an unpaired surrogate is a
+  `400`.** The email pattern only rules out whitespace and a second `@`, so
+  both passed; the mailer then turned a control character into a space and
+  handed Resend a different, invalid `Reply-To`.
+- **The boot log names configuration that would fail silently.** An
+  `ALLOWED_ORIGINS` entry with a trailing slash, a path, an upper-case host or
+  a wildcard never matches a browser's `Origin`, and the only symptom was a
+  form that stopped working. A proxy count or timeout that is not a usable
+  number is named too, and the default used.
+
+### Added
+
+- **Tests for what could break without one noticing.** A provider that
+  refuses, cannot be reached or never answers; the preflight the form's `POST`
+  depends on; the largest submission the field caps allow against the 16 KB
+  body cap, which it clears by 323 bytes; the limiter's window; which
+  `X-Forwarded-For` entry the limiter reads; and the configuration parser.
+  The backend suite goes from 18 tests to 33, and each new test was confirmed
+  to fail with its fix undone.
+- **An audit of the backend**, in `docs/audit/`: what was inspected and
+  measured, each finding with its evidence, what was fixed here and what is
+  still open.
+
 ## [2.5.0] - 2026-11-19
 
 ### Added

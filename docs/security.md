@@ -21,8 +21,8 @@ or the repository.
 | Body-size cap | `express.json({ limit: "16kb" })`, registered before the router so an oversized payload is rejected with `413` without consuming rate-limit quota |
 | Body parsing errors | Malformed JSON (`400`), an unsupported charset or encoding (`415`) and the cap (`413`) get fixed messages, also before the limiter. They are logged by type only, because the parser's error carries the raw request body, which holds the sender's name, address and message |
 | Rate limiting | `express-rate-limit`: 5 requests per IP per 15 minutes, IPv6 clients keyed by `/56` subnet, standard `RateLimit-*` headers, legacy headers off |
-| Client IP resolution | `trust proxy` set to `1`. The IP is read from the platform proxy hop only, never blindly from a client-supplied header chain |
-| Input validation | Required-field, length (name 100, email 100, subject 200, message 5000) and email-pattern checks, all after trimming |
+| Client IP resolution | `trust proxy` set to the number of proxies in front of the app (`TRUST_PROXY_HOPS`, default `2`: Cloudflare, then Render's load balancer). The IP is the entry those proxies wrote, never one from a client-supplied header chain. The number cannot be checked from the code, so [Deployment](deployment.md#checking-the-rate-limiters-key) has a check against the live API; with `1`, the value before the audit of 2026-11-20, the limiter keyed on a proxy and all visitors shared its counters |
+| Input validation | Required-field, length (name 100, email 100, subject 200, message 5000) and email-pattern checks, all after trimming. An address holding a control character or an unpaired surrogate is refused as well: the pattern alone admits both |
 | Honeypot | A hidden `website` field, checked after validation. A filled trap on a valid body is dropped without sending and answered with exactly the `200` a real send returns; on an invalid body it changes nothing |
 | Method surface | Only `POST` is registered. Every other method falls through to the catch-all `404`, apart from `OPTIONS`: CORS answers a preflight from an allowed origin (or with no `Origin`) with `204`, and for a disallowed origin Express answers `OPTIONS /api/contact` itself with `200` and `Allow: POST`. See [API reference](api.md) |
 
@@ -54,6 +54,8 @@ message, would have no reason to try the published email address instead.
 | Header-injection guard | Control characters, including CR and LF, are replaced with spaces in header-bound fields (`subject`, `Reply-To`) and whitespace is collapsed, so a crafted value cannot inject additional mail headers |
 | Plain-text part | Name, email and subject are flattened the same way there, so a newline in one cannot forge an extra `Email:` or `Subject:` line. The message keeps its own line breaks |
 | `mailto:` links | The submitter's address is URL-encoded (keeping `@`) before it is HTML-escaped into the two `mailto:` links. The email pattern admits `?`, `&` and `=`, which would otherwise let an address add a `bcc` or replace the subject in the owner's reply draft |
+| Well-formed text | An unpaired surrogate in the name, subject or message is replaced with U+FFFD before anything is rendered. `encodeURIComponent`, which builds the reply link, throws on one, and that used to turn a crafted subject into a `500` |
+| Provider timeout | A send is abandoned after 10 seconds (`RESEND_TIMEOUT_MS`) and answered with `502`. The SDK sets no limit and Node's `fetch` waits five minutes, so a stalled provider would otherwise hold every submission open |
 | Subject truncation | Sanitized subjects are capped at 200 characters before being sent |
 | Reply-To | Set to the submitter's address; `From` is always the verified sender the server owns, never user input |
 | Credential isolation | The Resend key exists only in the backend environment. It is never sent to the client and never appears in a response |
@@ -135,8 +137,11 @@ and the honeypot are the controls that actually bound abuse.
   errors verbatim.
 - Resend's message ID is logged, not returned, so a response says nothing about
   the provider.
-- Missing mail configuration is reported once at boot, so a misconfiguration
-  is visible in the deploy log rather than only at the first submission.
+- Configuration that would fail silently is reported once at boot, so it is
+  visible in the deploy log rather than only at the first submission: missing
+  mail settings, an `ALLOWED_ORIGINS` entry no browser could send (a trailing
+  slash, a path, an upper-case host, a wildcard), and a proxy count or timeout
+  that is not a usable number.
   `backend/.env.example` leaves the three mail variables empty for the same
   reason: any non-empty value counts as configured, so a copied placeholder would
   have turned that warning and the `503` into a `502` from a failed send.
