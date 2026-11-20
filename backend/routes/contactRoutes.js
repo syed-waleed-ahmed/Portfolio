@@ -19,13 +19,23 @@ const FIELDS = {
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
+// What EMAIL_RE lets through that no address can hold: control characters,
+// which are not whitespace to a regex, and unpaired surrogates, which JSON can
+// carry and UTF-8 cannot. The other fields are free text and get cleaned by
+// the mailer, but an address cannot be cleaned without becoming a different
+// address, so it is refused here, as the visitor's to correct. Kept apart from
+// EMAIL_RE because that one is mirrored in Contact.jsx and the invariants test
+// compares the two; the form shows this 400's message like any other.
+const EMAIL_UNSENDABLE_RE = /[\p{Cc}\p{Cs}]/u;
+
 // Honeypot: a field the form hides from people but bots tend to fill. Named
 // something a scraper would want to autofill rather than anything suggesting a
 // trap. Must match the input name in Contact.jsx.
 const HONEYPOT_FIELD = "website";
 
-// 5 submissions per IP per 15 min. Keyed on the real client IP thanks to
-// `trust proxy` in server.js.
+// 5 submissions per IP per 15 min. The IP is `req.ip`, which is the visitor's
+// only while `trust proxy` in server.js counts the platform's proxies
+// correctly; see TRUST_PROXY_HOPS in config/env.js.
 const contactLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 5,
@@ -45,7 +55,9 @@ function validateContact(body = {}) {
     values[key] = value;
   }
 
-  if (!EMAIL_RE.test(values.email)) return { error: "Invalid email address." };
+  if (!EMAIL_RE.test(values.email) || EMAIL_UNSENDABLE_RE.test(values.email)) {
+    return { error: "Invalid email address." };
+  }
 
   return { values };
 }

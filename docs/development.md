@@ -187,13 +187,18 @@ reference for what each variable does. The tables below are the summary.
 | `RESEND_API_KEY` | yes | API key from [resend.com](https://resend.com) |
 | `EMAIL_FROM` | yes | Verified sender, or `onboarding@resend.dev` for testing |
 | `EMAIL_TO` | yes | Where submissions are delivered |
-| `ALLOWED_ORIGINS` | no | Comma-separated origin allow-list. Unset uses the built-in defaults (`http://localhost:5173` and the site's live domains). Set, it replaces them rather than adding to them, so list every origin that should keep working |
+| `ALLOWED_ORIGINS` | no | Comma-separated origin allow-list. Unset uses the built-in defaults (`http://localhost:5173` and the site's live domains). Set, it replaces them rather than adding to them, so list every origin that should keep working. Each entry is `scheme://host[:port]` exactly, lower case, with no path or trailing slash |
+| `TRUST_PROXY_HOPS` | no | How many proxies sit in front of the server, which decides whose address the rate limiter counts. Defaults to 2, for Render. Leave it unset locally. On another host, find the right number with the check in [Deployment](deployment.md#checking-the-rate-limiters-key) |
+| `RESEND_TIMEOUT_MS` | no | How long a send waits for Resend before the API answers `502`. Defaults to 10000 |
 
 Missing mail variables are reported once at boot with a `[env] missing: …`
 warning rather than failing the process, so the site stays up if the mail
 provider is misconfigured. Any non-empty value counts as set, which is why the
 template leaves all three empty: a copied placeholder would skip the warning and
-turn the `503` into a `502` from a send that cannot succeed.
+turn the `503` into a `502` from a send that cannot succeed. The same boot log
+names an `ALLOWED_ORIGINS` entry that no browser could match, and a
+`TRUST_PROXY_HOPS` or `RESEND_TIMEOUT_MS` that is not a usable number, in which
+case the default is used.
 
 ### `frontend/.env`
 

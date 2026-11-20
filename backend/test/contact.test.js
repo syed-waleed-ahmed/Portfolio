@@ -10,6 +10,9 @@ import assert from "node:assert/strict";
 // unconfigured: anything that reaches it gets a 503, never a delivery. That is
 // also why the app is imported dynamically, after this runs.
 for (const key of ["RESEND_API_KEY", "EMAIL_FROM", "EMAIL_TO"]) process.env[key] = "";
+// Blank for the same reason: the limiter test below is about the default
+// proxy count, not whatever a local .env was left holding after an experiment.
+process.env.TRUST_PROXY_HOPS = "";
 const { default: app } = await import("../server.js");
 const { config } = await import("../config/env.js");
 
@@ -28,10 +31,11 @@ test.after(() => {
 });
 
 // The rate limiter allows 5 requests per address per 15 minutes and keeps its
-// count in memory for the whole run. With `trust proxy` set to 1 and the
-// client connecting from 127.0.0.1, the address it keys on is the last
-// X-Forwarded-For entry, so each test that spends quota asks for its own and
-// adding a test can never push a later one into a 429.
+// count in memory for the whole run. `trust proxy` counts two proxies, the
+// test client on 127.0.0.1 standing in for the nearest, so a one-entry
+// X-Forwarded-For is the address the limiter keys on. Each test that spends
+// quota asks for its own, and adding a test can never push a later one into
+// a 429.
 let nextClient = 1;
 const newClient = () => `10.0.0.${nextClient++}`;
 
@@ -75,6 +79,18 @@ test("POST /api/contact rejects an invalid email with 400", async () => {
   assert.deepEqual(await res.json(), { success: false, error: "Invalid email address." });
 });
 
+test("POST /api/contact rejects an address no mailbox could have with 400", async () => {
+  // Both pass EMAIL_RE, which only rules out whitespace and a second "@".
+  // Built at runtime: neither character survives being written into a file.
+  const control = `ja${String.fromCharCode(0)}ne@example.com`;
+  const unpairedSurrogate = `ja${String.fromCharCode(0xd800)}ne@example.com`;
+  for (const email of [control, unpairedSurrogate]) {
+    const res = await postContact({ ...VALID, email });
+    assert.equal(res.status, 400);
+    assert.deepEqual(await res.json(), { success: false, error: "Invalid email address." });
+  }
+});
+
 test("POST /api/contact rejects an over-length field with 400", async () => {
   const res = await postContact({ ...VALID, name: "x".repeat(101) });
   assert.equal(res.status, 400);
@@ -88,6 +104,26 @@ test("POST /api/contact rejects a body over the 16kb cap with 413", async () => 
   assert.deepEqual(await res.json(), { success: false, error: "Payload too large." });
   // express.json runs before the router, so this never reaches the limiter.
   assert.equal(res.headers.has("ratelimit-remaining"), false);
+});
+
+test("the largest submission the field caps allow fits under the body cap", async () => {
+  // The two limits are set in different files and nothing else ties them
+  // together. Every field at its cap, in a script that takes three bytes a
+  // character, is the largest body a real visitor can send; raising a cap, or
+  // adding a field, without raising express.json's limit would turn that
+  // visitor's message into a 413 and nobody else's.
+  const wide = String.fromCharCode(0x4e2d);
+  const body = {
+    name: wide.repeat(100),
+    email: `${"a".repeat(88)}@example.com`,
+    subject: wide.repeat(200),
+    message: wide.repeat(5000),
+    website: "",
+  };
+  assert.ok(Buffer.byteLength(JSON.stringify(body)) > 16000, "the test body should sit just under the cap");
+  const res = await postContact(body);
+  // Past the parser and validation, as far as the unconfigured mailer.
+  assert.equal(res.status, 503);
 });
 
 test("POST /api/contact rejects malformed JSON with 400, before the limiter", async () => {
@@ -143,6 +179,49 @@ test("CORS answers an allowed origin and stays silent for any other", async () =
   assert.equal(other.headers.has("access-control-allow-origin"), false);
 });
 
+test("CORS answers the preflight the form's POST depends on", async () => {
+  // The form posts JSON, so a browser asks first, and sends nothing unless
+  // this answer names the origin, the method and the Content-Type header.
+  const preflight = (origin) =>
+    fetch(`${baseUrl}/api/contact`, {
+      method: "OPTIONS",
+      headers: {
+        Origin: origin,
+        "Access-Control-Request-Method": "POST",
+        "Access-Control-Request-Headers": "content-type",
+      },
+    });
+
+  const [allowed] = config.allowedOrigins;
+  const ok = await preflight(allowed);
+  assert.equal(ok.status, 204);
+  assert.equal(ok.headers.get("access-control-allow-origin"), allowed);
+  assert.match(ok.headers.get("access-control-allow-methods"), /\bPOST\b/);
+  assert.match(ok.headers.get("access-control-allow-headers"), /content-type/i);
+  // A preflight is not a submission: it spends no quota.
+  assert.equal(ok.headers.has("ratelimit-remaining"), false);
+
+  const other = await preflight("https://not-allowed.example");
+  assert.equal(other.headers.has("access-control-allow-origin"), false);
+});
+
+test("the limiter keys on the address the proxies report, not one the client wrote", async () => {
+  // What reaches the app in production: whatever the client put in the
+  // header, then the client's address as the outer proxy saw it, then the
+  // outer proxy's address as the inner one saw it. With two proxies trusted,
+  // the key is the second entry from the right.
+  const remaining = async (forwardedFor) =>
+    (await postContact({}, forwardedFor)).headers.get("ratelimit-remaining");
+
+  assert.equal(await remaining("198.51.100.1, 10.20.0.1, 172.16.0.9"), "4");
+  // A different forged first entry buys no fresh quota...
+  assert.equal(await remaining("203.0.113.200, 10.20.0.1, 172.16.0.9"), "3");
+  // ...and a different proxy on the way in is still the same visitor,
+  assert.equal(await remaining("10.20.0.1, 172.16.0.77"), "2");
+  // while another visitor behind the same proxy has a count of their own.
+  assert.equal(await remaining("10.20.0.2, 172.16.0.9"), "4");
+});
+
 test("POST /api/contact rate-limits the sixth request from one address", async () => {
   // Invalid bodies, so not even a misconfigured run could send mail. The
   // limiter counts every request it sees, rejected or not.
@@ -154,6 +233,8 @@ test("POST /api/contact rate-limits the sixth request from one address", async (
   const res = await postContact(invalid, client);
   assert.equal(res.status, 429);
   assert.equal(res.headers.get("ratelimit-remaining"), "0");
+  // Five per 900 seconds: the window, which no test waits out, is pinned here.
+  assert.equal(res.headers.get("ratelimit-policy"), "5;w=900");
   assert.deepEqual(await res.json(), {
     success: false,
     error: "Too many requests. Please try again later.",

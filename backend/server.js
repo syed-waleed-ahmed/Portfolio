@@ -9,9 +9,12 @@ import contactRoutes from "./routes/contactRoutes.js";
 
 const app = express();
 
-// Render / proxies forward the client IP via X-Forwarded-For.
-// "1" means trust the first hop only (the platform proxy).
-app.set("trust proxy", 1);
+// The platform's proxies report the visitor's address in X-Forwarded-For, each
+// appending the address it heard from. Trusting exactly as many entries as
+// there are proxies makes `req.ip` the visitor: one fewer and it is a proxy
+// shared by everyone, one more and it is whatever the client typed. The count
+// and how to check it are in config/env.js and docs/deployment.md.
+app.set("trust proxy", config.trustProxyHops);
 
 // ===== Security headers =====
 app.use(

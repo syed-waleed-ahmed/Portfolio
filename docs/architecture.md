@@ -50,7 +50,8 @@ portfolio/
 │   ├── routes/contactRoutes.js     Rate limit, validation, honeypot
 │   ├── services/mailerService.js   Resend delivery + email templates
 │   ├── test/contact.test.js        API tests with the mailer unconfigured (node --test)
-│   ├── test/delivery.test.js       The send path, against a fake Resend
+│   ├── test/delivery.test.js       The send path and its failures, against a fake Resend
+│   ├── test/env.test.js            Configuration parsing and boot warnings
 │   ├── server.js                   App assembly; exports app, listens when run directly
 │   ├── eslint.config.js            Lint rules for Node
 │   ├── README.md                   The project's layout and commands
@@ -241,9 +242,9 @@ Three layers, so `server.js` stays thin and each concern is testable on its own.
 
 | Module | Responsibility |
 |--------|----------------|
-| `config/env.js` | Reads and normalizes `process.env` into one frozen `config` object; warns at boot about missing mail settings. Nothing else touches `process.env` |
+| `config/env.js` | Reads and normalizes `process.env` into one frozen `config` object; warns at boot about settings that would otherwise fail silently (missing mail settings, an origin no browser could send, an unusable number). Nothing else touches `process.env` |
 | `routes/contactRoutes.js` | Rate limiting, field validation, then the honeypot check. Knows nothing about email |
-| `services/mailerService.js` | HTML escaping, mail-header sanitization, template rendering, Resend delivery. Knows nothing about HTTP |
+| `services/mailerService.js` | Repair of malformed text, HTML escaping, mail-header sanitization, template rendering, Resend delivery with a timeout. Knows nothing about HTTP |
 | `server.js` | Middleware assembly, health routes, 404, centralized error handler, graceful shutdown |
 
 The service layer signals failure with two typed errors, `MailerNotConfiguredError`
@@ -275,20 +276,27 @@ fighting over 5000.
    encoding. This runs **before** the router, so those cost no rate-limit
    quota.
 6. `express-rate-limit` checks the client IP: 5 requests per 15 minutes, with
-   IPv6 clients keyed by `/56` subnet.
+   IPv6 clients keyed by `/56` subnet. The IP is the visitor's only while
+   `trust proxy` counts the host's proxies correctly, which
+   [Deployment](deployment.md#checking-the-rate-limiters-key) says how to check.
 7. Validation enforces presence, length caps and the email pattern, returning
    `400` on the first failure.
 8. The honeypot check runs on the valid body. A filled `website` field returns
    the same `200` a real send produces, logs the sender, and stops.
-9. `mailerService` escapes the values, URL-encodes the address for the
-   `mailto:` links, flattens control characters to spaces in header-bound
-   fields and the plain-text part's one-line fields, renders the HTML and
-   plain-text parts, and sends via Resend with the submitter's address as
-   `Reply-To`.
+9. `mailerService` replaces any unpaired surrogate, escapes the values,
+   URL-encodes the address for the `mailto:` links, flattens control
+   characters to spaces in header-bound fields and the plain-text part's
+   one-line fields, renders the HTML and plain-text parts, and sends via Resend
+   with the submitter's address as `Reply-To`, waiting at most ten seconds.
 10. On success the route logs Resend's message ID and returns the same `200`
-    body as step 8. Failures map to `503` (unconfigured) or `502` (rejected, or
-    Resend unreachable). Anything unexpected reaches the central handler as a
-    `500`.
+    body as step 8. Failures map to `503` (unconfigured) or `502` (rejected,
+    Resend unreachable, or no answer in time). Anything unexpected reaches the
+    central handler as a `500`.
+
+The send is one attempt, made while the visitor waits, and nothing is stored:
+there is no queue, retry or outbox. A message whose send fails exists only in
+the visitor's browser, which is why every failure the form shows offers the
+email address beside it.
 
 Status codes and payloads for each step are documented in the
 [API reference](api.md#post-apicontact).

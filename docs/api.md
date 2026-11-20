@@ -90,7 +90,7 @@ sender's address set as `Reply-To`.
 | Field | Type | Required | Max length | Notes |
 |-------|------|----------|------------|-------|
 | `name` | string | yes | 100 | Shown as the sender in the email |
-| `email` | string | yes | 100 | Must match `/^[^\s@]+@[^\s@]+\.[^\s@]+$/`; becomes the `Reply-To` |
+| `email` | string | yes | 100 | Must match `/^[^\s@]+@[^\s@]+\.[^\s@]+$/` and hold no control character or unpaired surrogate; becomes the `Reply-To` |
 | `subject` | string | yes | 200 | Control characters flattened to spaces before use as a mail header |
 | `message` | string | yes | 5000 | Rendered into both the HTML and plain-text parts |
 | `website` | string | no | - | Honeypot. See below. Real clients leave it empty |
@@ -101,6 +101,13 @@ missing, not a string, or empty after trimming is treated the same way: `400`
 naming the first field that failed. Unknown fields are ignored.
 A body sent with a `Content-Type` other than JSON is not parsed at all, so it
 fails validation as if it were empty.
+
+The two rules treat bad characters differently on purpose. The name, subject
+and message are free text, so they are repaired rather than refused: an
+unpaired surrogate (half of an emoji, which JSON can carry and UTF-8 cannot)
+becomes U+FFFD, and control characters in the one-line fields become spaces.
+An address cannot be repaired without becoming a different address, so one
+holding either is a `400`.
 
 ```bash
 curl -X POST http://localhost:5000/api/contact \
@@ -135,7 +142,7 @@ tell a bot which of its submissions the trap caught.
 | `413` | Request body over 16 KB | `Payload too large.` |
 | `415` | A body in a charset or content encoding the parser does not support | `Unsupported request body.` |
 | `429` | More than 5 requests from one IP in 15 minutes | `Too many requests. Please try again later.` |
-| `502` | Resend rejected the send, or could not be reached | `Email delivery failed.` |
+| `502` | Resend rejected the send, could not be reached, or did not answer within 10 seconds (`RESEND_TIMEOUT_MS`) | `Email delivery failed.` |
 | `503` | `RESEND_API_KEY`, `EMAIL_FROM` or `EMAIL_TO` unset on the server | `Email service is not configured.` |
 | `500` | Anything unhandled | `Internal server error.` |
 
@@ -191,10 +198,18 @@ carry the IETF draft-6 headers (`RateLimit-Policy`, `RateLimit-Limit`,
 `RateLimit-Remaining`, `RateLimit-Reset`), and the legacy `X-RateLimit-*` set
 is disabled. A `429` adds `Retry-After`, in seconds.
 
-The client IP comes from the first proxy hop (`trust proxy` is set to `1`),
-which is what Render forwards in `X-Forwarded-For`. Hops beyond the first are
-not trusted, so a client cannot spoof its way into a fresh quota. IPv6 clients
-are keyed by their `/56` subnet rather than the full address, the default in
+The client IP is `req.ip`, which Express reads from `X-Forwarded-For` by
+trusting a fixed number of proxies: `trust proxy`, set from `TRUST_PROXY_HOPS`,
+`2` by default. Each proxy appends the address it received the request from, so
+with the count right the limiter sees the visitor's address, and anything the
+client wrote into the header itself sits further left and is ignored. The count
+describes the hosting chain, not the code, and it fails silently in both
+directions: too low and every visitor shares a proxy's counter, too high and a
+forged header buys a fresh quota. It was `1` until a measurement against the
+live API, on 2026-11-20, showed requests from one machine spread over three
+counters that other visitors shared. [Deployment](deployment.md#checking-the-rate-limiters-key)
+has the check to run after a change of host or of this number. IPv6 clients are
+keyed by their `/56` subnet rather than the full address, the default in
 `express-rate-limit` 8, since one subscriber is usually handed a whole block and
 could otherwise rotate through it for fresh quota.
 
