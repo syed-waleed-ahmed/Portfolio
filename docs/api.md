@@ -200,14 +200,14 @@ is disabled. A `429` adds `Retry-After`, in seconds.
 
 The client IP is `req.ip`, which Express reads from `X-Forwarded-For` by
 trusting a fixed number of proxies: `trust proxy`, set from `TRUST_PROXY_HOPS`,
-`2` by default. Each proxy appends the address it received the request from, so
+`3` by default. Each proxy appends the address it received the request from, so
 with the count right the limiter sees the visitor's address, and anything the
 client wrote into the header itself sits further left and is ignored. The count
 describes the hosting chain, not the code, and it fails silently in both
 directions: too low and every visitor shares a proxy's counter, too high and a
 forged header buys a fresh quota. It was `1` until a measurement against the
 live API, on 2026-11-20, showed requests from one machine spread over three
-counters that other visitors shared. [Deployment](deployment.md#checking-the-rate-limiters-key)
+counters that other visitors shared; `2` spread them over five. [Deployment](deployment.md#checking-the-rate-limiters-key)
 has the check to run after a change of host or of this number. IPv6 clients are
 keyed by their `/56` subnet rather than the full address, the default in
 `express-rate-limit` 8, since one subscriber is usually handed a whole block and

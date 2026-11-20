@@ -188,7 +188,7 @@ reference for what each variable does. The tables below are the summary.
 | `EMAIL_FROM` | yes | Verified sender, or `onboarding@resend.dev` for testing |
 | `EMAIL_TO` | yes | Where submissions are delivered |
 | `ALLOWED_ORIGINS` | no | Comma-separated origin allow-list. Unset uses the built-in defaults (`http://localhost:5173` and the site's live domains). Set, it replaces them rather than adding to them, so list every origin that should keep working. Each entry is `scheme://host[:port]` exactly, lower case, with no path or trailing slash |
-| `TRUST_PROXY_HOPS` | no | How many proxies sit in front of the server, which decides whose address the rate limiter counts. Defaults to 2, for Render. Leave it unset locally. On another host, find the right number with the check in [Deployment](deployment.md#checking-the-rate-limiters-key) |
+| `TRUST_PROXY_HOPS` | no | How many proxies sit in front of the server, which decides whose address the rate limiter counts. Defaults to 3, for Render. Leave it unset locally. On another host, find the right number with the check in [Deployment](deployment.md#checking-the-rate-limiters-key) |
 | `RESEND_TIMEOUT_MS` | no | How long a send waits for Resend before the API answers `502`. Defaults to 10000 |
 
 Missing mail variables are reported once at boot with a `[env] missing: …`

@@ -62,7 +62,7 @@ bind an ephemeral port, which is why they never collide with a dev server on
 | `POST /api/contact ignores an empty honeypot field` | `503`, proving an empty trap does not count as tripped and the request goes on to the mailer |
 | `CORS answers an allowed origin and stays silent for any other` | An allowed origin, read from `config.allowedOrigins`, gets `Access-Control-Allow-Origin`; a disallowed one gets `200` and no such header |
 | `CORS answers the preflight the form's POST depends on` | An `OPTIONS` from an allowed origin gets `204` naming the origin, `POST` and `Content-Type`, and spends no quota; a disallowed origin gets no `Access-Control-Allow-Origin` |
-| `the limiter keys on the address the proxies report, not one the client wrote` | With two proxies trusted, the key is the second `X-Forwarded-For` entry from the right: a different forged first entry or a different last proxy lands on the same counter, and another visitor behind the same proxy gets a counter of their own |
+| `the limiter keys on the address the proxies report, not one the client wrote` | With three proxies trusted, the key is the third `X-Forwarded-For` entry from the right: a different forged first entry or different proxies land on the same counter, and another visitor behind the same proxies gets a counter of their own |
 | `POST /api/contact rate-limits the sixth request from one address` | Five invalid requests get `400`; the sixth gets `429`, `RateLimit-Remaining: 0`, the limiter's message and `RateLimit-Policy: 5;w=900`, which pins the 15-minute window no test waits out |
 | `unknown route returns 404` | `404` with exactly `{ success: false, error: "Not found." }` |
 
@@ -88,7 +88,7 @@ or changes the real one:
 
 | Test | Asserts |
 |------|---------|
-| `an empty environment gets the documented defaults` | Port 5000, two trusted proxies, a 10-second send timeout, the three built-in origins, and a frozen object |
+| `an empty environment gets the documented defaults` | Port 5000, three trusted proxies, a 10-second send timeout, the three built-in origins, and a frozen object |
 | `the proxy count and the send timeout are read as whole numbers` | `TRUST_PROXY_HOPS` and `RESEND_TIMEOUT_MS` are parsed, surrounding spaces ignored, and zero proxies is allowed |
 | `a number that cannot be used falls back to the default, and says so` | Words, fractions, negatives and a zero timeout give the default and one warning naming the variable; unset and blank give none |
 | `ALLOWED_ORIGINS replaces the defaults, trimmed` | The list is split on commas, trimmed, and empty entries dropped |
@@ -115,7 +115,7 @@ Three properties of this suite are deliberate:
   `resend.invalid`, which cannot resolve even if its stub ever missed. The suite
   passes identically with or without Resend credentials.
 - **Each test that spends rate-limit quota uses its own client address.** With
-  two proxies trusted and the test client on `127.0.0.1` standing in for the
+  three proxies trusted and the test client on `127.0.0.1` standing in for the
   nearest, the limiter keys on the one-entry `X-Forwarded-For` each request
   sends, so the counter that persists for the whole run can never push a later
   test into a `429`. The rate-limit test sends invalid bodies, so not even a
