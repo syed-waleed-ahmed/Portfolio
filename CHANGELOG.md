@@ -15,6 +15,8 @@ than by individual commit.
 
 ## [Unreleased]
 
+## [2.6.1] - 2026-11-20
+
 ### Fixed
 
 - **On Apple devices the dock's Search tooltip stood three lines tall.** There
@@ -1172,7 +1174,8 @@ The redesign that produced the current site.
   and contact sections.
 - MIT licence and first README.
 
-[Unreleased]: https://github.com/syed-waleed-ahmed/Portfolio/compare/v2.6.0...HEAD
+[Unreleased]: https://github.com/syed-waleed-ahmed/Portfolio/compare/v2.6.1...HEAD
+[2.6.1]: https://github.com/syed-waleed-ahmed/Portfolio/compare/v2.6.0...v2.6.1
 [2.6.0]: https://github.com/syed-waleed-ahmed/Portfolio/compare/v2.5.0...v2.6.0
 [2.5.0]: https://github.com/syed-waleed-ahmed/Portfolio/compare/v2.4.4...v2.5.0
 [2.4.4]: https://github.com/syed-waleed-ahmed/Portfolio/compare/v2.4.3...v2.4.4
