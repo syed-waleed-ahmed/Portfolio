@@ -7,7 +7,7 @@ also the record of what was changed.
 
 | ID | Severity | Finding | Status | State |
 |----|----------|---------|--------|-------|
-| [F-01](SECURITY_AUDIT.md#f-01-the-rate-limiter-counts-proxies-not-visitors) | High | The rate limiter counts proxies, not visitors | Confirmed in production | Fixed on the branch. Live check pending |
+| [F-01](SECURITY_AUDIT.md#f-01-the-rate-limiter-counts-proxies-not-visitors) | High | The rate limiter counts proxies, not visitors | Confirmed in production | Fixed, and checked live from one network |
 | [F-02](RELIABILITY_AUDIT.md#f-02-a-send-has-no-time-limit) | Medium | A send has no time limit | Confirmed | Fixed |
 | [F-03](RELIABILITY_AUDIT.md#f-03-render-deploys-the-backend-whether-or-not-ci-passed) | Medium | Render deploys the backend whether or not CI passed | Confirmed from documentation | Open: owner |
 | [F-04](RELIABILITY_AUDIT.md#f-04-nothing-notices-when-the-form-stops-working) | Medium | Nothing notices when the form stops working | Confirmed | Open: owner |
@@ -28,8 +28,9 @@ also the record of what was changed.
 
 ## Priorities
 
-**A. Essential corrections.** F-01, F-02, F-05, F-06. All four are fixed on
-the branch. F-01 is not finished until its live check passes.
+**A. Essential corrections.** F-01, F-02, F-05, F-06. All four are fixed and
+deployed. F-01 passed its live check from one network; the second-network
+step is left.
 
 **B. Important improvements.** F-03, F-04, F-07, F-08, F-09, F-10. Four are
 fixed. F-03 and F-09 are settings in the Render dashboard, and F-04 is a
@@ -47,18 +48,20 @@ Four batches, each with its tests and its documentation.
 
 | File | Change |
 |------|--------|
-| `backend/config/env.js` | `trustProxyHops`, from `TRUST_PROXY_HOPS`, default `2`, with the reasoning and the limit of what is known beside the constant |
+| `backend/config/env.js` | `trustProxyHops`, from `TRUST_PROXY_HOPS`, with the reasoning and the measurements beside the constant. Default `2` in #61, `3` in #62 |
 | `backend/server.js` | `trust proxy` reads the setting instead of the literal `1` |
 | `backend/routes/contactRoutes.js` | The comment no longer claims the key is the real client |
 | `backend/test/contact.test.js` | A test that pins which `X-Forwarded-For` entry is read, and that a forged entry and a different proxy do not change it |
 | `docs/deployment.md` | The check against the live API, with a table for reading its result |
 | `docs/api.md`, `docs/security.md`, `docs/architecture.md`, `CLAUDE.md` | State the assumption and point at the check |
 
-Why `2` and not a measured number: the header as the app receives it cannot
-be seen from outside, and Render does not document it. `1` was measured to be
-too low, Render documents two layers, and two can only be right or still too
-low. Too high is the dangerous direction, since it trusts an entry the client
-wrote, and two cannot be too high.
+The number took two deploys to find. The header as the app receives it cannot
+be seen from outside, and Render does not document it. `1` had been measured
+too low and Render documents two layers, so #61 shipped `2`: it could only be
+right or still too low, and too high is the dangerous direction, since that
+trusts an entry the client wrote. The live check showed `2` was still too
+low. #62 shipped `3` on the same argument, and the check passed. The readings
+are in [SECURITY_AUDIT.md](SECURITY_AUDIT.md#f-01-the-rate-limiter-counts-proxies-not-visitors).
 
 ### 2. The send (F-02, F-05)
 
@@ -111,33 +114,37 @@ and `CHANGELOG.md`.
 | Server booted with bad settings | One warning for each, then serving |
 | Benchmark before and after | No measurable difference |
 
-Not yet done, because each needs a deploy: the live limiter check, and CI on
-the pull request, which also runs the frontend suites this audit did not.
+After the deploys, the same day:
+
+| Check | Result |
+|-------|--------|
+| CI on #61 and #62, including the frontend suites this audit did not run | Green, on the pull requests and on `main` |
+| Frontend deploy check after each merge | Passed |
+| The new build is the one answering | An unsendable address gets `400`; before, `500` |
+| Live limiter check, two proxies trusted (#61) | Failed: four counters for six requests on fresh connections |
+| Live limiter check, three proxies trusted (#62) | Passed: 4, 3, 2 and, with a forged header, 1 from a browser; then 0 and four `429`s from a script on fresh connections |
+| The second-network step of that check | Not run. It needs a second network |
 
 ## What the owner has to do
 
-In order.
+In order. Merging and the live check are done.
 
-1. **Merge the branch.** Merging deploys the backend to Render and, once CI
-   is green, the frontend to Cloudflare. No frontend file changed.
-2. **Run the live check** in
-   [`docs/deployment.md`](../deployment.md#checking-the-rate-limiters-key).
-   It takes four requests and one from a phone. If the readings do not count
-   down, set `TRUST_PROXY_HOPS=3` on the Render service and run it again.
-   Then replace the sentence in `backend/config/env.js` that says the number
-   is "read from its documentation" with the fact.
-3. **Set Auto-Deploy to After CI Checks Pass** on the Render service (F-03),
+1. **Run the second-network step** of the check in
+   [`docs/deployment.md`](../deployment.md#checking-the-rate-limiters-key):
+   one request from a phone on mobile data while this network's counter is
+   spent, which must read 4. Submitting the live form from the phone does as
+   well, since it sends only if the phone has a counter of its own.
+2. **Set Auto-Deploy to After CI Checks Pass** on the Render service (F-03),
    then correct the four places that say Render is ungated.
-4. **Read the Node version in the latest deploy log** (F-09). If it is not
+3. **Read the Node version in the latest deploy log** (F-09). If it is not
    24, set `NODE_VERSION=24`.
-5. **Choose how to hear about a broken form** (F-04).
+4. **Choose how to hear about a broken form** (F-04).
 
 ## Outstanding risks
 
 | Risk | Until |
 |------|-------|
-| The limiter is still shared in production | The branch is deployed and step 2 passes |
-| Two might be too low, leaving the key on a Cloudflare address shared by a region | Step 2, including its second-network step |
-| A backend commit that fails its tests is deployed | Step 3 |
-| A failing mailer goes unnoticed | Step 5 |
+| The limiter's key is a single fixed proxy address rather than the visitor, which one network cannot tell apart | Step 1. Unlikely: both wrong counts scattered requests over several addresses |
+| A backend commit that fails its tests is deployed | Step 2 |
+| A failing mailer goes unnoticed | Step 4 |
 | Real delivery is unverified by any automated test | Accepted. A manual send after any change to the mailer |

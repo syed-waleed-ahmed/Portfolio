@@ -207,7 +207,8 @@ describes the hosting chain, not the code, and it fails silently in both
 directions: too low and every visitor shares a proxy's counter, too high and a
 forged header buys a fresh quota. It was `1` until a measurement against the
 live API, on 2026-11-20, showed requests from one machine spread over three
-counters that other visitors shared; `2` spread them over five. [Deployment](deployment.md#checking-the-rate-limiters-key)
+counters that other visitors shared; `2` spread them over at least four, and
+with `3` they count down one. [Deployment](deployment.md#checking-the-rate-limiters-key)
 has the check to run after a change of host or of this number. IPv6 clients are
 keyed by their `/56` subnet rather than the full address, the default in
 `express-rate-limit` 8, since one subscriber is usually handed a whole block and

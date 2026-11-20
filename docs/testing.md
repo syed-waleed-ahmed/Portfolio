@@ -539,7 +539,8 @@ Known and accepted, listed here so nobody has to rediscover them:
   `X-Forwarded-For` entry the limiter reads; whether that entry is the visitor
   depends on the host's proxies, which no test here can see. The check is in
   [Deployment](deployment.md#checking-the-rate-limiters-key), and it found the
-  setting wrong in production on 2026-11-20.
+  setting wrong in production twice on 2026-11-20, once for the original
+  value and once for the first correction.
 - **Render is not gated.** Render deploys every push to `main` whatever CI
   reports, so a backend change that fails `npm test` can still go live. The
   frontend is held back by every CI job on an ordinary push; a manual run of

@@ -27,7 +27,7 @@ callback.
 | Severity | High. It is the only abuse control and it does not do its job; the impact is on availability alone, so a CVSS-style score would be medium |
 | Status | Confirmed, by measurement against production on 2026-11-20 |
 | Where | `backend/server.js:14`, `backend/routes/contactRoutes.js:27-35` |
-| State | Fixed on the branch. The live check is still to run |
+| State | Fixed in #61 and #62, and checked live from one network |
 
 **What is wrong.** `app.set("trust proxy", 1)` tells Express that exactly one
 proxy stands in front of the process, so `req.ip` is the last
@@ -78,16 +78,32 @@ receives it. Three other public projects found during this audit assert the
 same "one hop" for Render with no measurement.
 
 **Fix applied.** The count is now `config.trustProxyHops`, read from
-`TRUST_PROXY_HOPS` and defaulting to `2`, the number of layers Render
-documents. Two is safe to deploy unverified: `1` was measured to land on a
-proxy, so at least two entries are infrastructure's, and trusting two can
-only be right or still too low, never high enough to trust an entry the
-client wrote. A test pins which entry is read. `docs/deployment.md` gained a
-four-request check that distinguishes a right count from one too low or too
-high.
+`TRUST_PROXY_HOPS`. A test pins which entry is read, and `docs/deployment.md`
+gained a four-request check that distinguishes a right count from one too low
+or too high.
 
-**Still to do.** Run that check after the deploy, including from a second
-network. If the readings still fail to count down, set `TRUST_PROXY_HOPS=3`.
+**What the number turned out to be.** Three, found in two steps.
+
+| Proxies trusted | Deployed | Requests from one machine | Counters they landed on |
+|-----------------|----------|---------------------------|-------------------------|
+| 1 | Before the audit | 16 | 3 |
+| 2 | #61 | 6, on fresh connections | 4 |
+| 3 | #62 | 9 | 1 |
+
+Two came from Render's documentation, which names Cloudflare and its own load
+balancers. It was safe to deploy unverified: one had been measured to land on
+a proxy, so at least two entries were infrastructure's and two could not be
+high enough to trust an entry the client wrote. The check then showed it was
+still too low, on a different pool of addresses. Three followed by
+the same argument, and passed: four requests from a browser read 4, 3, 2 and,
+with a forged header, 1; five more from a script on fresh connections read 0
+and then `429` four times. One counter across two clients and six
+connections.
+
+**Still to do.** The second-network step. From a single network, a count
+that was still too low but landed on one fixed proxy address would read the
+same. Given that both wrong counts scattered requests over several addresses
+that is unlikely, and one request from a phone on mobile data settles it.
 
 ### F-05: A crafted subject or address makes the API answer 500
 

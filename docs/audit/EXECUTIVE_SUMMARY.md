@@ -2,28 +2,28 @@
 
 An independent review of `backend/`, the Express service behind the site's
 contact form, carried out on 2026-11-20 against commit `f07475f` (v2.5.0). Line
-numbers throughout this set refer to that commit. The fixes described here are
-on the branch `audit/backend-production-readiness` and are not deployed.
+numbers throughout this set refer to that commit. The fixes were merged and
+deployed the same day, in pull requests #61 and #62, and what happened when
+they met production is under [After the deploy](#after-the-deploy).
 
 ## Verdict
 
-**As deployed today: not production ready, on one defect.** The rate limiter,
-the only control that bounds abuse of the contact form, does not count
-visitors. It counts Render's proxies, so every visitor shares a few counters
-and a handful of requests from anyone locks the form for everyone for 15
+**As audited, at `f07475f`: not production ready, on one defect.** The rate
+limiter, the only control that bounds abuse of the contact form, did not count
+visitors. It counted Render's proxies, so every visitor shared a few counters
+and a handful of requests from anyone locked the form for everyone for 15
 minutes. This was measured against the live API, not inferred
 ([F-01](SECURITY_AUDIT.md#f-01-the-rate-limiter-counts-proxies-not-visitors)).
 
-**With the branch deployed and its live check passed: production ready with
-accepted risks.** The rest of the service is small, deliberate and largely
-correct. Injection handling, error mapping, the honeypot and the body parsing
-all held up under hostile input, and most of what the existing documentation
-claims was confirmed by test.
+**As deployed now, with the fix checked live: production ready with accepted
+risks.** The rest of the service is small, deliberate and largely correct.
+Injection handling, error mapping, the honeypot and the body parsing all held
+up under hostile input, and most of what the existing documentation claims
+was confirmed by test.
 
 Would I approve it for continued operation? Yes. Nothing here loses or exposes
-data, a visitor who is refused is shown the email address, and the fix is
-written. I would not leave the deployed version running longer than it takes
-to merge and check the branch.
+data, a visitor who is refused is shown the email address, and the defect that
+made the audited version unfit was replaced the same day.
 
 ## What was done
 
@@ -46,7 +46,7 @@ Eighteen: one high, three medium, six low, eight informational.
 
 | ID | Severity | Finding | State |
 |----|----------|---------|-------|
-| F-01 | High | The rate limiter counts proxies, not visitors, in production | Fixed on the branch; live check still to run |
+| F-01 | High | The rate limiter counts proxies, not visitors, in production | Fixed, and checked live from one network |
 | F-02 | Medium | A send has no time limit, so a stalled provider holds requests open | Fixed |
 | F-03 | Medium | Render deploys the backend whether or not CI passed | Open: one dashboard setting |
 | F-04 | Medium | Nothing notices when the form stops working | Open |
@@ -80,16 +80,42 @@ The measurement itself had that effect: for up to 15 minutes after it, around
 08:05 to 08:20 UTC on 2026-11-20, a real visitor could have been told to try
 again later.
 
-The branch trusts two proxies, which is what Render's documentation describes,
-makes the number a setting, and documents a four-request check that tells a
-right number from a wrong one. Two cannot be worse than one. Whether it is
-exactly right is the first thing to confirm after the deploy.
+The fix makes the number a setting and documents a four-request check that
+tells a right number from a wrong one.
+
+## After the deploy
+
+The check earned its place within the hour, against the fix itself.
+
+The first version (#61) trusted two proxies, because Render's documentation
+describes two layers, Cloudflare and its own load balancers. It was safe to
+deploy unverified, since one had been measured too low and two could not be
+too high. Run against the live API, it failed: six requests on fresh
+connections from one machine landed on four counters. A different proxy
+layer, and still not the visitor.
+
+The second version (#62) trusts three. Nine requests, four from a browser and
+five from a script on fresh connections, counted down a single counter, 4, 3,
+2, 1, 0, and the last four were refused. A forged `X-Forwarded-For` changed
+nothing. One counter where there had been three, then four.
+
+Two things are worth keeping from that. The first fix repeated, in a smaller
+way, the mistake it was correcting: it took a number about production from
+documentation. And what caught it was not review or tests but a measurement
+that had been written down as a procedure before the deploy.
+
+One caution learned on the way: the first run of the check, a minute after
+the deploy, read 4, 3, 4, 2, and that alone could not be told apart from
+Render's previous instance still answering beside the new one.
+`docs/deployment.md` now says to wait a few minutes.
 
 ## Risks that remain
 
-1. **The fix for F-01 is unverified in production.** If the live check still
-   shows counters that do not count down, the number is three, and
-   `TRUST_PROXY_HOPS=3` in the Render dashboard corrects it without a deploy.
+1. **The live check has passed from one network only.** A proxy count that
+   was still too low, where the proxy seen happened to be a single fixed
+   address, would look the same from one place. The second-network step in
+   `docs/deployment.md`, one request from a phone on mobile data while this
+   network's counter is spent, rules that out and has not been run.
 2. **A backend commit that fails its tests is deployed anyway (F-03).** Render
    has had an "After CI Checks Pass" setting since May 2025. It is not on.
 3. **Nobody is told when the form fails (F-04).** F-01 is the proof: it ran
@@ -101,9 +127,9 @@ exactly right is the first thing to confirm after the deploy.
 
 In order, and the first three take minutes:
 
-1. Merge the branch, then run the check in
-   [`docs/deployment.md`](../deployment.md#checking-the-rate-limiters-key),
-   including its second-network step.
+1. Run the second-network step of the check in
+   [`docs/deployment.md`](../deployment.md#checking-the-rate-limiters-key).
+   Everything before it is done.
 2. In the Render dashboard, set Auto-Deploy to **After CI Checks Pass**.
 3. In the latest Render deploy log, read the Node version. If it is not 24,
    set `NODE_VERSION=24` on the service.

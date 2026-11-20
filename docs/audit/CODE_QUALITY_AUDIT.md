@@ -62,8 +62,13 @@ checked and what is assumed: its invariants test exists to catch values that
 "fail silently". The proxy count was one of those and was not on the list,
 because it cannot be checked without the platform.
 
-All six now say what is known, name the assumption, and point at the check.
-`docs/testing.md` lists the check under its known gaps.
+All six now say what was measured and point at the check. `docs/testing.md`
+lists the check under its known gaps.
+
+The first fix repeated the mistake on a smaller scale. It took the number two
+from Render's documentation, said so, and shipped with a check instead of a
+claim, and the check showed two was wrong as well. The correct number, three,
+is in none of the documentation this audit could find.
 
 **A note for the rest of the documentation.** The other claims this audit
 could test were accurate: every status code and message in `docs/api.md`, the

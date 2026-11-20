@@ -90,7 +90,7 @@ was undone in turn and the suite run again:
 
 | Change undone | Test that failed |
 |---------------|------------------|
-| One proxy trusted instead of two | `the limiter keys on the address the proxies report, not one the client wrote` |
+| Fewer proxies trusted than the default: one, and after #62 two as well | `the limiter keys on the address the proxies report, not one the client wrote` |
 | No timeout on the Resend call | `a Resend that never answers is a 502 once the timeout passes` (the run had to be killed: the request never completed) |
 | Unpaired surrogates left in the subject | `text that is not well-formed Unicode is repaired and sent, not a 500` |
 | Control characters allowed in the address | `rejects an address no mailbox could have with 400` |
