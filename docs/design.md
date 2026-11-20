@@ -469,9 +469,13 @@ Each crop is as wide as the third number and half as tall.
 
 The files are in `src/assets/projects/` at 480 and 960px wide, as AVIF and
 as WebP (`<image>-480.avif`, `<image>-960.webp` and so on; the RAG one stops at
-its source's 712px and the Research Team's at 900px, since neither is
-upscaled): about 169 KB for the twelve AVIF files and 209 KB for the twelve
-WebP, gzipped as Size Limit counts them. Each card renders a `<picture>` with
+its source's 712px, the Research Team's at 900px and the FastAPI one at 920px,
+since none is upscaled): about 170 KB for the twelve AVIF files and 211 KB for
+the twelve WebP, gzipped as Size Limit counts them. The FastAPI pair was saved
+at 960 until 2026-11-20, about 4% larger than its crop, which nothing checked:
+the file's width is not compared with its source anywhere, so a new picture
+needs that looked at by hand. Cut at its own size the pair is 1.3 kB heavier,
+not lighter, since an enlarged picture is a blurred one and compresses better. Each card renders a `<picture>` with
 the AVIF as its `<source>` and the WebP as its `<img>`, the pattern the hero's
 portrait uses. A browser takes one or the other, never both. The WebP is there
 because a browser that cannot decode AVIF otherwise draws six broken-image

@@ -72,7 +72,6 @@ const isOrigin = (value) => {
 export function loadConfig(env) {
   return Object.freeze({
     port: Number(env.PORT) || 5000,
-    nodeEnv: env.NODE_ENV || "development",
     isProduction: env.NODE_ENV === "production",
     resendApiKey: env.RESEND_API_KEY || "",
     emailFrom: env.EMAIL_FROM || "",

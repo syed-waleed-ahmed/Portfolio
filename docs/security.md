@@ -135,7 +135,7 @@ and the honeypot are the controls that actually bound abuse.
   is a variable in the dashboard since 2026-11-20; before, it rested on the
   platform's default for a Node service.
 - Mailer failures are mapped to specific codes (`503` unconfigured, `502`
-  delivery rejected or the provider unreachable) rather than surfacing provider
+  delivery rejected, the provider unreachable or silent for 10 seconds) rather than surfacing provider
   errors verbatim.
 - Resend's message ID is logged, not returned, so a response says nothing about
   the provider.

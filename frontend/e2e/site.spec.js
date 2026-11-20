@@ -286,6 +286,32 @@ test("the dock's Home link returns to the very top of the page", async ({ page }
   await expect.poll(() => page.evaluate(() => window.scrollY)).toBe(0);
 });
 
+test("on an Apple device the Search tooltip keeps its Command key on the line", async ({ page }) => {
+  // There the tooltip reads "Search (", an icon, "K)". The reset makes every
+  // svg a block, so until the icon was given a display of its own it took a
+  // line to itself and the tooltip stood three lines tall. Nothing ran the
+  // Apple branch, which is how that shipped: this runner is not a Mac, so the
+  // platform is set before the page's scripts read it.
+  await page.addInitScript(() => {
+    Object.defineProperty(Navigator.prototype, "platform", { get: () => "MacIntel" });
+  });
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto("/");
+  await hydrated(page);
+  // The server renders "Ctrl K"; the icon arrives with the client's answer.
+  await expect(page.locator(".dock__tooltip svg")).toBeAttached();
+  const heights = await page.evaluate(() => {
+    const tooltips = [...document.querySelectorAll(".dock__tooltip")];
+    const height = (tooltip) => tooltip.getBoundingClientRect().height;
+    return {
+      search: height(tooltips.find((tooltip) => tooltip.querySelector("svg"))),
+      plain: height(tooltips.find((tooltip) => !tooltip.querySelector("svg"))),
+    };
+  });
+  // One line, like every other tooltip. A second line would double it.
+  expect(heights.search).toBeLessThan(heights.plain * 1.5);
+});
+
 test.describe("contact form", () => {
   const status = (page) => page.locator(".contact-form__status");
 

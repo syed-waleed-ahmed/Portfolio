@@ -2,8 +2,8 @@
   /* The whole section is one panel, with the title as a pill on its top border
      (see .section-header--panel) and the dot band fading down from behind it.
      An isolated stacking context so the band can sit under the content without
-     going under the page. The extra top padding on .section gives the pill
-     room above the border. */
+     going under the page. The margin above the panel gives the pill room above
+     the border. */
   .contact-panel {
     --panel-pad: clamp(var(--space-5), 0.75rem + 3vw, var(--space-10));
     position: relative;
@@ -179,10 +179,6 @@
       border-color var(--duration-fast) ease,
       box-shadow var(--duration-fast) ease;
 
-    &::placeholder {
-      color: var(--color-text-muted);
-    }
-
     &:hover {
       border-color: var(--color-text-muted);
     }
@@ -300,7 +296,8 @@
 
   /* Honeypot. Deliberately not display:none or visibility:hidden - bots skip
      fields the browser reports as hidden, which are exactly the ones we want
-     them to fill. Rendered and hit-testable, but off-screen. */
+     them to fill. Rendered, but clipped to nothing and out of the pointer's
+     reach. */
   .honeypot {
     position: absolute;
     width: 1px;

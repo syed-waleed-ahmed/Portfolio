@@ -27,7 +27,7 @@
     "name": "Project pictures, the WebP fallbacks",
     "path": "dist/assets/*.webp",
     "gzip": true,
-    "limit": "210 kB"
+    "limit": "212 kB"
   },
   {
     "name": "Command palette chunk (cmdk), fetched on intent",

@@ -189,8 +189,11 @@
     translate: -50% 4px;
 
     /* The Command key glyph in "Search", drawn as an icon because the font
-       subset has no U+2318. Sits on the text's baseline like a letter. */
+       subset has no U+2318. Sits on the text's baseline like a letter, which
+       takes a display of its own: the reset makes every svg a block, and a
+       block ignores vertical-align and takes the whole line. */
     & svg {
+      display: inline-block;
       vertical-align: -0.125em;
     }
     pointer-events: none;
