@@ -530,9 +530,10 @@ the last change it covers:
    `npm install --package-lock-only` in `frontend/` and `backend/` so the
    lockfiles agree. The repository invariants fail if any manifest disagrees
    with the newest release heading.
-3. Open the PR, wait for CI, and squash-merge it. Render deploys the merge
-   commit automatically, and the CI run on it publishes the frontend once
-   every job has passed (see [The deploy gate](#the-deploy-gate)).
+3. Open the PR, wait for CI, and squash-merge it. The CI run on the merge
+   commit publishes the frontend once every job has passed (see
+   [The deploy gate](#the-deploy-gate)), and Render deploys the backend once
+   every check on that commit has, since the version bump touches `backend/`.
 4. Verify the deploy. The `deploy` job has already checked the live site
    against the build; load the site as well, then run the Postman collection
    against the production environment (see
