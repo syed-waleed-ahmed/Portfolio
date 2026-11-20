@@ -214,7 +214,7 @@ override `.nvmrc` and become a second pin that nothing keeps in step.
 | Severity | Low |
 | Status | Confirmed on 2026-11-20, by reading the dashboard and a build log |
 | Where | `docs/deployment.md:184-205`, `README.md:396` |
-| State | Fixed in the docs. The build command itself is unchanged |
+| State | Fixed, in the docs and then in the dashboard |
 
 **What was wrong.** Three statements about the Render service were written
 from intention, not from the dashboard:
@@ -236,11 +236,22 @@ responses ([F-12](SECURITY_AUDIT.md#informational)).
 the date, and says plainly that nothing in the repository checks them.
 
 **Recommendation.** Change the build command to `npm ci --omit=dev`, which
-installs exactly the lockfile's production tree, and consider setting
+installs exactly the lockfile's production tree, and set
 `NODE_ENV=production` in the dashboard so that it no longer rests on a
-default. Neither was done: both change how production is built, and neither
-was asked for. A `render.yaml` Blueprint would put all of this in the
-repository, where a test could read it.
+default. A `render.yaml` Blueprint would put all of this in the repository,
+where a test could read it.
+
+**Done, the same day, on the owner's instruction.** Both were set in the
+dashboard and read back after a reload. Each save started a deploy, and both
+came up live:
+
+| Change | Build log |
+|--------|-----------|
+| Build command `npm ci --omit=dev` | `added 76 packages, and audited 77 packages`, against 155 before |
+| `NODE_ENV=production` added | The same build, and no `[env] missing` line at boot, so the three mail settings beside it were left intact |
+
+Afterwards `/health` answered `200`, and an empty submission `400` with four
+of its five left. The Blueprint was not written.
 
 ## Informational
 

@@ -173,7 +173,10 @@ F-01 live the opposite problem applied. No change.
 **F-12: Error detail in a `500` is opt-out.** `server.js:86-91` returns
 `err.message` unless `NODE_ENV` is exactly `production`, so a host that omits
 the variable, or misspells it, discloses messages. Production was verified to
-return the generic text. Making detail opt-in (shown only when `NODE_ENV` is
+return the generic text, at a time when the variable was not set on Render at
+all and the value came from the platform's default
+([F-19](RELIABILITY_AUDIT.md#f-19-the-documented-render-settings-did-not-match-the-dashboard));
+it is set explicitly there now. Making detail opt-in (shown only when `NODE_ENV` is
 `development`) would be the safer default. It was left alone because, with
 F-05 fixed, no input reaches that branch, so a change to it could not be
 covered by a test.

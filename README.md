@@ -393,7 +393,7 @@ Both sides deploy automatically from `main`:
 | Part | Platform | Build |
 |------|----------|-------|
 | Frontend | Cloudflare Workers, as static assets | `npm run build` in `frontend/`, then `wrangler deploy` publishes `frontend/dist`, both run by `.github/workflows/deploy.yml` |
-| Backend | Render | `npm install` then `npm start` in `backend/` |
+| Backend | Render | `npm ci --omit=dev` then `npm start` in `backend/` |
 
 The frontend ships only through that workflow, which CI calls once every job
 has passed on a push to `main`, so a commit that fails lint, a test, the
