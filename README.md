@@ -103,11 +103,11 @@ forking the repository can run it without reading the source.
 
 **Engineering**
 
-- 18 backend API tests, 14 frontend content tests and 20 repository invariants
+- 33 backend API tests, 14 frontend content tests and 20 repository invariants
   on Node's built-in runner, with no test dependencies; the invariants pin the
   couplings between files that would otherwise fail silently, such as the CSP
   hash and the hand-copied palette
-- 28 browser tests in Playwright, with axe-core, against the built site under
+- 29 browser tests in Playwright, with axe-core, against the built site under
   its production CSP
 - Size Limit budgets on the entry JS and CSS, each lazy chunk, the skill
   sprite and the project pictures
@@ -222,7 +222,8 @@ the production API (see [Troubleshooting](#troubleshooting)).
 ## Configuration
 
 `backend/.env`: `RESEND_API_KEY`, `EMAIL_FROM` and `EMAIL_TO` are required for
-delivery; `PORT`, `NODE_ENV` and `ALLOWED_ORIGINS` are optional.
+delivery; `PORT`, `NODE_ENV`, `ALLOWED_ORIGINS`, `TRUST_PROXY_HOPS` and
+`RESEND_TIMEOUT_MS` are optional.
 
 `frontend/.env`: `VITE_API_BASE_URL` only, and it is compiled into the public
 bundle, so never put a secret there.
@@ -303,8 +304,8 @@ curl -X POST http://localhost:5000/api/contact \
 to 5 requests per IP per 15 minutes, caps the body at 16 KB, and returns `400`
 on validation failure or malformed JSON, `413` on an oversized body, `415` on
 an unsupported charset or encoding, `429` when limited, `502` when Resend
-rejects the send or cannot be reached, and `503` when the mailer is
-unconfigured.
+rejects the send, cannot be reached or does not answer within 10 seconds, and
+`503` when the mailer is unconfigured.
 
 Full contract, including the honeypot and CORS behaviour, in
 [`docs/api.md`](docs/api.md). Runnable requests in
@@ -336,22 +337,26 @@ expectations are in [`CONTRIBUTING.md`](CONTRIBUTING.md).
 ## Testing
 
 ```bash
-npm test                             # 18 backend API tests via node --test
+npm test                             # 33 backend API tests via node --test
 npm test --prefix frontend           # 14 content tests over frontend/src/data
 npm run test:invariants              # 20 checks: files that must agree, and the colour system's rules
 npm run size --prefix frontend       # bundle budgets, after a build
-npm run test:e2e --prefix frontend   # 28 browser tests, after a build
+npm run test:e2e --prefix frontend   # 29 browser tests, after a build
 ```
 
-The API suite binds an ephemeral port and covers both health probes, all three
-validation paths, the 16 KB cap, malformed JSON, the honeypot answering exactly
-as a real send, CORS, the rate limiter and the 404 catch-all. A second file
-sends through a fake Resend and checks the mail itself: the owner as recipient,
-the sender as `Reply-To`, a reply link the address cannot add parameters to,
-and a plain-text part no field can add lines to. Neither can send real email,
-whatever `backend/.env` holds: one blanks the mail settings before importing
-the app, the other points the SDK at the reserved `.invalid` domain and
-answers it itself. Importing the app is itself a check that every module loads.
+The API suite is three files. The first binds an ephemeral port and covers
+both health probes, the validation paths, the 16 KB cap, malformed JSON, the
+honeypot answering exactly as a real send, CORS and the preflight the form
+needs, the rate limiter and whose address it counts, and the 404 catch-all.
+The second sends through a fake Resend and checks the mail itself: the owner
+as recipient, the sender as `Reply-To`, a reply link the address cannot add
+parameters to, and a plain-text part no field can add lines to. It also makes
+the fake refuse, fail and stay silent, and expects the same `502` each time.
+The third reads the configuration: its defaults and its boot warnings. None
+can send real email, whatever `backend/.env` holds: the first blanks the mail
+settings before importing the app, the second points the SDK at the reserved
+`.invalid` domain and answers it itself, and the third never builds a mailer.
+Importing the app is itself a check that every module loads.
 
 The frontend content tests keep every About figure traceable to the entry that
 claims it, hold project and experience copy to a shared length range, give
@@ -443,7 +448,7 @@ CSP hash procedure and cache rules are in
 | `npm run build` stops before Vite | The prebuild gate: lint, a content test or an invariant failed, and the output names it |
 | `npm run test:e2e` refuses the build | It was built with `VITE_API_BASE_URL` pointing away from production, as `frontend/.env` does. Rebuild with it set to the production origin; the error prints the command |
 | Contact form returns `503` | `RESEND_API_KEY`, `EMAIL_FROM` or `EMAIL_TO` missing. The boot log names them |
-| Contact form returns `502` | Resend rejected the send or could not be reached, usually an unverified `EMAIL_FROM` |
+| Contact form returns `502` | Resend rejected the send, could not be reached or did not answer within 10 seconds; usually an unverified `EMAIL_FROM` |
 | CORS error in the browser | Your origin is not on the allow-list. Set `ALLOWED_ORIGINS` to include it, along with every default you still need |
 | Works in Postman, not the browser | Same cause: Postman sends no `Origin` header |
 | `429 Too many requests` | 5 per IP per 15 minutes. Restart the backend to clear the counter |

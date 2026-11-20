@@ -17,6 +17,9 @@ export default defineConfig({
     // always print the same footer year. See Footer.jsx.
     __BUILD_YEAR__: JSON.stringify(new Date().getFullYear()),
   },
-  // No explicit build.target: Vite's default (Baseline widely available) is
-  // what the CSS already requires - subgrid, :has(), color-mix(), nesting.
+  // No explicit build.target, so Vite's default applies: Chrome and Edge 111,
+  // Firefox 114, Safari 16.4. The build flattens CSS nesting and adds vendor
+  // prefixes for those. It cannot stand in for subgrid, :has() or color-mix(),
+  // which ship as written, so the browsers that draw the page as designed are
+  // newer than the target: subgrid needs Chrome 117, :has() Firefox 121.
 });

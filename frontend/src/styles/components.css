@@ -138,7 +138,6 @@
      logo would, without a logo file or a third-party image request. */
   .monogram {
     display: grid;
-    flex: none;
     place-items: center;
     width: 2.5rem;
     aspect-ratio: 1;

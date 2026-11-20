@@ -203,7 +203,7 @@ npm run build
 npm run test:e2e
 ```
 
-Twenty-eight tests in `frontend/e2e/site.spec.js`, on Playwright Test with
+Twenty-nine tests in `frontend/e2e/site.spec.js`, on Playwright Test with
 `@axe-core/playwright`, against the built and prerendered site.
 `e2e/serve.mjs` serves `frontend/dist` on `127.0.0.1:4174` with the `/*` headers
 from `dist/_headers`, so the suite runs under the CSP visitors get (which
@@ -238,7 +238,7 @@ $env:E2E_BASE_URL='https://syedwaleedahmed.me'; npm run test:e2e --prefix fronte
 That is safe against production: analytics and the backend are still answered
 inside the test, so neither gets a real request and no mail is sent. Nothing
 runs it automatically; the deploy workflow's own check is the lighter
-[deploy check](#deploy-check). On 2026-11-19 it passed 28 of 28 against the
+[deploy check](#deploy-check). On 2026-11-19 it passed all 28 tests it then held against the
 Cloudflare deployment.
 
 | Test | Asserts |
@@ -255,6 +255,7 @@ Cloudflare deployment.
 | `opens with Ctrl+K, runs a search, and gives focus back on Escape` | The input is focused; "copy email" and Enter announce the copy; Escape closes the dialog |
 | `returns focus to the Search button it was opened from` | Focus is back on the dock's Search button after Escape |
 | `the dock's Home link returns to the very top of the page` | `scrollY` is 0, so the masthead is in view, not just the hero |
+| `on an Apple device the Search tooltip keeps its Command key on the line` | With the platform reported as a Mac, the Search tooltip, which then holds the Command key icon, is no taller than one line of the others. The reset makes every `svg` a block, and the icon took a line to itself until it was given a display of its own; no test had run the Apple branch |
 | `posts rather than gets, and keeps its live region in the accessibility tree` | The prerendered form has `method="post"`; the status region is rendered and not `display: none` while empty |
 | `an empty submit focuses the first field and marks it invalid` | Name has focus and `aria-invalid="true"` |
 | `a successful send is announced in the live region` | A mocked `200` puts the thank-you in the live region and clears the form |
@@ -291,15 +292,18 @@ budgets in `frontend/.size-limit.json`, so it needs a build first.
 | Entry CSS | `index-*.css` | 8 kB |
 | Skill marks sprite, one image request | `skill-icons-*.svg` | 23 kB |
 | Project pictures, the twelve AVIF files, loaded lazily | `*.avif` | 175 kB |
-| Project pictures, the twelve WebP fallbacks | `*.webp` | 210 kB |
+| Project pictures, the twelve WebP fallbacks | `*.webp` | 212 kB |
 | Command palette, `cmdk` | `CommandPalette-*.js` and `.css` | 20 kB |
 | Contribution graph, `react-activity-calendar` | `GitHubActivityCalendar-*.js` and `Tooltip-*.js` | 27 kB |
 | Globe, `cobe` | `index.esm-*.js` | 6.5 kB |
 
 Each limit was set about 5 to 10% above what the build measured at the time.
-Two have since grown into most of that margin: on 2026-11-19 the entry chunk
-measured 85.35 kB against its 87 kB budget, and the WebP fallbacks 209.49 kB
-against 210 kB. The entry budget is the one that matters most: a static import
+Two have since grown into most of that margin: on 2026-11-20 the entry chunk
+measured 85.35 kB against its 87 kB budget, and the WebP fallbacks 210.61 kB
+against 212 kB. That last budget was 210 kB until the same day, when the
+FastAPI picture was re-cut at its source's 920px in place of an enlarged 960:
+the truer file is 1.1 kB heavier, and took the twelve 0.6 kB past the old
+limit. The entry budget is the one that matters most: a static import
 of any of the three lazy libraries moves it into the entry chunk and fails that
 budget. The sprite's budget is there for the same reason from the other side:
 its marks would cost the entry chunk and the prerendered page that much if they
@@ -386,8 +390,9 @@ passes only when that is the build that was deployed.
 every Monday at 05:47 UTC, and on demand from the Actions tab. It checks every
 link in `frontend/src/data/*.js`, `frontend/index.html`,
 `frontend/public/humans.txt`, `README.md`, `CONTRIBUTING.md`, `SECURITY.md`,
-`CODE_OF_CONDUCT.md`, `docs/*.md` and the READMEs in `frontend/`, `backend/`
-and `postman/`, including the relative links between files. A broken link
+`CODE_OF_CONDUCT.md`, every Markdown file under `docs/`, its subfolders
+included, and the READMEs in `frontend/`, `backend/` and `postman/`,
+including the relative links between files. A broken link
 fails the run, and GitHub emails the repository owner. It does not block a
 deploy.
 
@@ -395,7 +400,7 @@ It runs weekly rather than per push because a third-party site having a bad hour
 should not turn a commit red. `lychee.toml` holds the configuration: `429`
 counts as alive, failures are retried three times, `mailto:` addresses are not
 checked, and cookies are kept in `.lychee-cookies.json` (gitignored), because
-Streamlit Community Cloud, where two project demos run, loops a cookie-less
+Streamlit Community Cloud, where one project demo runs, loops a cookie-less
 client through its auth redirect. A few hosts are excluded, with the reason
 beside each: LinkedIn and LeetCode refuse automated clients, the API sleeps and
 has no pages, the analytics loader is not a page, and the docs quote wildcard,
@@ -409,6 +414,7 @@ To run it locally, install lychee and pass the file list from `links.yml`.
 lychee --config lychee.toml --no-progress --root-dir "$PWD/frontend/public" \
   'frontend/src/data/*.js' frontend/index.html frontend/public/humans.txt \
   README.md CONTRIBUTING.md SECURITY.md CODE_OF_CONDUCT.md 'docs/*.md' \
+  'docs/audit/*.md' 'docs/repository-maintenance/*.md' \
   postman/README.md frontend/README.md backend/README.md
 ```
 

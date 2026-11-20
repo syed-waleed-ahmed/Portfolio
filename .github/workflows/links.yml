@@ -39,6 +39,8 @@ jobs:
             SECURITY.md
             CODE_OF_CONDUCT.md
             'docs/*.md'
+            'docs/audit/*.md'
+            'docs/repository-maintenance/*.md'
             postman/README.md
             frontend/README.md
             backend/README.md

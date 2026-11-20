@@ -10,7 +10,8 @@ name: Deploy
 #     publish it.
 #   * workflow_dispatch republishes main by hand, with no new commit.
 #
-# The backend is separate: Render deploys it from the same push on its own.
+# The backend is separate: Render deploys it once every check on the push has
+# passed, by a setting in its own dashboard.
 on:
   workflow_call:
     inputs:

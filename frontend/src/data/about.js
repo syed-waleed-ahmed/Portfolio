@@ -1,4 +1,5 @@
-// Pure content, no JSX - About.jsx renders it.
+// Pure content, no JSX. About.jsx renders it, all but the locations at the end,
+// which the globe in the Contact panel draws.
 
 // This is the one block on the site written with any humour in it, and it is
 // deliberately the only one: Experience, Projects and Skills are scanned for

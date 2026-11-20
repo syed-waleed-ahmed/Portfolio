@@ -24,7 +24,7 @@ also the record of what was changed.
 | F-15 | Informational | Keep-alive timeout is Node's default behind Render's proxy | Requires verification; no symptom seen | Recorded |
 | F-16 | Informational | Invisible characters pass validation | Confirmed | Recorded |
 | F-17 | Informational | No static typing | Confirmed | Accepted |
-| F-18 | Informational | A legacy option name, two liveness routes, one unused config field | Confirmed | Recorded |
+| F-18 | Informational | A legacy option name, two liveness routes, one unused config field | Confirmed | The option name and the unused field were fixed in the later cleanup; the second route is kept |
 | [F-19](RELIABILITY_AUDIT.md#f-19-the-documented-render-settings-did-not-match-the-dashboard) | Low | The documented Render settings did not match the dashboard | Confirmed in the dashboard | Fixed: docs corrected, build command and `NODE_ENV` set in the dashboard |
 
 ## Priorities

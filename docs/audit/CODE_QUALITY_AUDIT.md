@@ -89,13 +89,17 @@ development dependency and no build.
 
 ### Small things
 
-**F-18**, three of them, none changed:
+**F-18**, three of them. The audit left all three; the repository cleanup
+that followed it fixed the first and the last
+([`docs/repository-maintenance/`](../repository-maintenance/CLEANUP_REPORT.md)):
 
-- `rateLimit({ max: 5 })` uses the option's legacy name. The installed
-  version still honours it (`limit: passedOptions.max ?? 5` in its source),
-  and the current name is `limit`.
-- `GET /` and `GET /health` are both liveness probes. One would do.
-- `config.nodeEnv` is defined and never read (`config/env.js:26`).
+- `rateLimit({ max: 5 })` used the option's legacy name. The installed
+  version still honours it (`limit: passedOptions.max ?? 5` in its source,
+  under a comment calling it deprecated), and the current name is `limit`.
+  Now `limit`.
+- `GET /` and `GET /health` are both liveness probes. One would do. Kept:
+  both are documented, tested and in the Postman collection.
+- `config.nodeEnv` was defined and never read (`config/env.js:26`). Removed.
 
 ## Dependencies
 

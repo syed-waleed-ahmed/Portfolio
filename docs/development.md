@@ -258,8 +258,8 @@ first, third and fourth; the second rests on whoever writes the copy:
 
 `commands.js` builds the command palette's entries from the other data
 modules, so new content reaches it without being listed again; only the
-Contact group's entries (copy email, resume and profile links) are written out
-there.
+Home entry and the Contact group's entries (copy email, resume and profile
+links) are written out there.
 
 ### Facts stated twice
 
@@ -325,7 +325,10 @@ Visual changes are governed by the token system: read
 built on ESLint's recommended rules: the frontend adds the React Hooks and
 React Refresh plugins for the browser, and `backend/eslint.config.js` sets Node
 globals. They hold correctness, not formatting; style is held by
-`.editorconfig` and review.
+`.editorconfig` and review. The frontend's rules cover its `.mjs` build scripts
+and test server as well as `.js` and `.jsx`. The two scripts at the repository
+root, `scripts/gen-og-card.mjs` and `test/invariants.test.js`, belong to
+neither project and are linted by neither.
 
 ---
 

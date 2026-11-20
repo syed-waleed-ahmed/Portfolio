@@ -38,7 +38,7 @@ const HONEYPOT_FIELD = "website";
 // correctly; see TRUST_PROXY_HOPS in config/env.js.
 const contactLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 5,
+  limit: 5,
   standardHeaders: true,
   legacyHeaders: false,
   message: { success: false, error: "Too many requests. Please try again later." },

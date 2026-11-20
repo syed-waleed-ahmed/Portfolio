@@ -7,7 +7,10 @@ import { defineConfig, globalIgnores } from 'eslint/config'
 export default defineConfig([
   globalIgnores(['dist', 'dist-server', 'playwright-report', 'test-results']),
   {
-    files: ['**/*.{js,jsx}'],
+    // .mjs too: the build scripts and the test server are modules by
+    // extension, and without it they matched only the globals block below
+    // and were checked by no rule at all.
+    files: ['**/*.{js,jsx,mjs}'],
     extends: [
       js.configs.recommended,
       reactHooks.configs.flat.recommended,

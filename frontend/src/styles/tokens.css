@@ -6,9 +6,9 @@
    test/invariants.test.js at the repository root fails when one drifts. */
 @layer tokens {
   /* ::backdrop as well as :root: a dialog's backdrop only inherits from :root
-     since Chrome 122, Firefox 120 and Safari 17.4, older than the build's
-     browser target, so the command palette's dimmed backdrop needs the tokens
-     defined on it directly. */
+     since Chrome 122, Firefox 120 and Safari 17.4, and the build's browser
+     target is older than all three, so the command palette's dimmed backdrop
+     needs the tokens defined on it directly. */
   :root,
   ::backdrop {
     color-scheme: dark;

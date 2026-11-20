@@ -15,6 +15,40 @@ than by individual commit.
 
 ## [Unreleased]
 
+### Fixed
+
+- **On Apple devices the dock's Search tooltip stood three lines tall.** There
+  it reads "Search (", the Command key drawn as an icon, "K)". The reset makes
+  every `svg` a block, so the icon took a line to itself. It now has a display
+  of its own, and a browser test runs the Apple branch, which none did.
+- **One card picture was larger than its source, against the rule.** The
+  FastAPI picture was a 920px crop saved at 960. It is re-cut at 920, with the
+  settings the others use, and is three times closer to the source's pixels.
+  The truer file is 1.1 kB heavier, since an enlarged picture is a blurred
+  one and compresses better, so the WebP budget moves from 210 to 212 kB.
+
+### Changed
+
+- **ESLint checks the frontend's `.mjs` files.** The rules were scoped to
+  `.js` and `.jsx`, so the four build scripts and the test server matched only
+  a block of globals and were checked by no rule. They pass now that they are.
+- **The weekly link check reads the whole of `docs/`.** Its pattern stopped at
+  the top level, so the audit documents were never checked.
+- **The rate limiter is configured with `limit`**, the current name of the
+  option `express-rate-limit` still accepts as `max`.
+- **Documentation corrected against the code**: the backend test count and
+  file list in the README, the optional environment variables, what a `502`
+  means, the number of demos on Streamlit, and ten comments that described
+  code that had changed or was never there. The record is in
+  `docs/repository-maintenance/`.
+
+### Removed
+
+- **Code that did nothing**, each confirmed before it went: an unused field
+  in the backend's configuration, a placeholder style for form fields that
+  have no placeholder, and two declarations that moved no element at any of
+  four widths.
+
 ## [2.6.0] - 2026-11-20
 
 ### Fixed

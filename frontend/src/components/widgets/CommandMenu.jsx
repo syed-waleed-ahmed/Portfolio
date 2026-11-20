@@ -20,8 +20,8 @@ const serverIsApple = () => false;
 
 // The palette's dock item and its keyboard shortcut. The item hides on phones
 // with dock__item--wide-only, but stays mounted, so the shortcut still works in
-// a narrow window. Rendered inline at the end of the dock, the dialog would
-// inherit the dock's styles, hence the portal; nothing here reaches the portal
+// a narrow window. Rendered inline, inside the dock, the dialog would inherit
+// the dock's styles, hence the portal; nothing here reaches the portal
 // on the server, where `open` is always false.
 const CommandMenu = () => {
   const [open, setOpen] = useState(false);
