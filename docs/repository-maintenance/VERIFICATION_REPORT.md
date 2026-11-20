@@ -21,7 +21,7 @@ this pass's changes, measured before they were committed.
 | Dependency audit | `npm audit`, both projects | CI's gate green on this commit | 0 advisories at any severity, in both. No dependency changed |
 | Lockfiles | `git status` | - | Neither lockfile changed |
 | Whitespace | `git diff --check` | Clean | Clean |
-| CI on the starting commit | GitHub Actions, run for `08395c8` | All five jobs green | Runs on the pull request, after this was written |
+| CI | GitHub Actions | All five jobs green for `08395c8` | Green on the pull request and on `main`: see [After the merge](#after-the-merge) |
 
 ### Sizes
 
@@ -92,6 +92,21 @@ drawn at 960 by 480 in headless Chromium and compared pixel by pixel:
 The stored file was the 920px crop, saved 960 wide. It has since been re-cut
 at 920, on the owner's decision.
 
+## After the merge
+
+The owner chose to commit and merge. Pull request #67 was squash-merged as
+`5f465d1` at 12:57 UTC on 2026-11-20, and these were checked afterwards.
+
+| Check | Result |
+|-------|--------|
+| CI on the pull request | Every job green, on Ubuntu with Node 24, the new browser test and the raised budget included |
+| CI on `main` for `5f465d1` | Green. The frontend was published, and the deploy check passed against the live site |
+| Render | Its deploy of `5f465d1` started in the minute after the last check finished, and went live. Before the Auto-Deploy setting was changed that morning, a deploy started within the merge's own minute |
+| The browser suite against the live site | 29 of 29, run with `E2E_BASE_URL=https://syedwaleedahmed.me` |
+| The picture the site serves | The re-cut file: 23,190 bytes, as built |
+| The live API | `/health` answers `200`. An empty submission answers `400` with the policy `5;w=900`, so the renamed option is in effect |
+| `links.yml`, run by hand on `main` | Success: 339 links checked, 0 errors, with both added folders in its arguments |
+
 ## Remaining failures
 
 None. Every check that exists passes.
@@ -101,15 +116,9 @@ None. Every check that exists passes.
 - **Real Safari or macOS.** The tooltip was reproduced and fixed in Chromium
   with the platform reported as a Mac. It was not looked at on an Apple
   device.
-- **The changed workflows.** `links.yml` and `deploy.yml` were edited and had
-  not been run when this was written. The `deploy.yml` change is a comment.
 - **The Postman collection.** Not run. It needs Postman or Newman, and one of
   its requests sends a real email.
 - **A real email.** None was sent.
 - **`refresh-activity.yml`.** Untouched and not exercised today.
-- **Production.** Nothing here was deployed when this was written. The owner
-  chose to merge it, and two backend files changed, so the backend redeploys
-  after CI passes. What that deploy did is for CI and the deploy check to
-  say, not this report.
 - **CSS that restates a default.** About a dozen declarations were reported as
   redundant and left alone without being measured.

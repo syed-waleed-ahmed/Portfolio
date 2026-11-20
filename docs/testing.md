@@ -238,7 +238,7 @@ $env:E2E_BASE_URL='https://syedwaleedahmed.me'; npm run test:e2e --prefix fronte
 That is safe against production: analytics and the backend are still answered
 inside the test, so neither gets a real request and no mail is sent. Nothing
 runs it automatically; the deploy workflow's own check is the lighter
-[deploy check](#deploy-check). On 2026-11-19 it passed all 28 tests it then held against the
+[deploy check](#deploy-check). On 2026-11-20 it passed 29 of 29 against the
 Cloudflare deployment.
 
 | Test | Asserts |
