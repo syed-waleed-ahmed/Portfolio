@@ -13,6 +13,7 @@ the set. The [README](../README.md) is the overview.
 | [API reference](api.md) | Call `POST /api/contact`: payloads, status codes, rate limiting, CORS |
 | [Deployment](deployment.md) | Ship: Cloudflare Workers and the deploy gate, Render, CI, headers and CSP, caching, releases |
 | [Security controls](security.md) | See what is implemented, why, and what is out of scope |
+| [Backend audit](audit/EXECUTIVE_SUMMARY.md) | Read the 2026-11-20 review of the backend: what was measured, what was wrong, what was fixed and what is still open |
 
 Elsewhere in the repository:
 
