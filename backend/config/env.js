@@ -18,21 +18,20 @@ const DEFAULT_ORIGINS = [
 
 // How many proxies stand between a visitor and this process, which is how
 // many X-Forwarded-For entries, counted from the right, were written by
-// infrastructure rather than by the client. Render documents two layers in
-// front of a web service, Cloudflare and then its own load balancers, hence
-// two. That is read from its documentation, not from a header seen in
-// production, so a deploy that changes this number is finished only when the
-// check in docs/deployment.md has passed against the live API.
+// infrastructure rather than by the client. On Render it is three, and that
+// comes from measuring, not from reading: Render's documentation names
+// Cloudflare and its own load balancers and never shows the header. With 1
+// trusted the limiter's key was one of three addresses, with 2 one of at least
+// five, and in neither case the caller's (docs/audit/), so at least three
+// entries are not the client's and three cannot be too many.
 //
 // The number decides what the rate limiter keys on, and both mistakes are
 // silent. Too low, and the key is a proxy's address, so every visitor shares a
-// handful of counters and a few requests from anyone lock the form for all:
-// that is what `1` did in production until it was measured (docs/audit/).
+// handful of counters and a few requests from anyone lock the form for all.
 // Too high, and the key is an entry the client wrote, so a new header value
-// buys a fresh quota. Two can only be right or too low, never too high: `1`
-// was measured to land on a proxy, so at least two entries are not the
-// client's.
-const DEFAULT_TRUST_PROXY_HOPS = 2;
+// buys a fresh quota. A change to this number, or to the host, is finished
+// only when the check in docs/deployment.md has passed against the live API.
+const DEFAULT_TRUST_PROXY_HOPS = 3;
 
 // How long a send may wait for Resend. The SDK sets no limit of its own, and
 // Node's fetch waits five minutes by default, so without one a stalled

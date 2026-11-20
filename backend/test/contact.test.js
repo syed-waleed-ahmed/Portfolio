@@ -31,7 +31,7 @@ test.after(() => {
 });
 
 // The rate limiter allows 5 requests per address per 15 minutes and keeps its
-// count in memory for the whole run. `trust proxy` counts two proxies, the
+// count in memory for the whole run. `trust proxy` counts three proxies, the
 // test client on 127.0.0.1 standing in for the nearest, so a one-entry
 // X-Forwarded-For is the address the limiter keys on. Each test that spends
 // quota asks for its own, and adding a test can never push a later one into
@@ -207,19 +207,19 @@ test("CORS answers the preflight the form's POST depends on", async () => {
 
 test("the limiter keys on the address the proxies report, not one the client wrote", async () => {
   // What reaches the app in production: whatever the client put in the
-  // header, then the client's address as the outer proxy saw it, then the
-  // outer proxy's address as the inner one saw it. With two proxies trusted,
-  // the key is the second entry from the right.
+  // header, then one entry per proxy, each the address that proxy heard from.
+  // The first of those is the client's address as the outermost proxy saw it,
+  // so with three proxies trusted the key is the third entry from the right.
   const remaining = async (forwardedFor) =>
     (await postContact({}, forwardedFor)).headers.get("ratelimit-remaining");
 
-  assert.equal(await remaining("198.51.100.1, 10.20.0.1, 172.16.0.9"), "4");
+  assert.equal(await remaining("198.51.100.1, 10.20.0.1, 172.16.0.9, 10.30.0.5"), "4");
   // A different forged first entry buys no fresh quota...
-  assert.equal(await remaining("203.0.113.200, 10.20.0.1, 172.16.0.9"), "3");
-  // ...and a different proxy on the way in is still the same visitor,
-  assert.equal(await remaining("10.20.0.1, 172.16.0.77"), "2");
-  // while another visitor behind the same proxy has a count of their own.
-  assert.equal(await remaining("10.20.0.2, 172.16.0.9"), "4");
+  assert.equal(await remaining("203.0.113.200, 10.20.0.1, 172.16.0.9, 10.30.0.5"), "3");
+  // ...and different proxies on the way in are still the same visitor,
+  assert.equal(await remaining("10.20.0.1, 172.16.0.77, 10.30.0.6"), "2");
+  // while another visitor behind the same proxies has a count of their own.
+  assert.equal(await remaining("10.20.0.2, 172.16.0.9, 10.30.0.5"), "4");
 });
 
 test("POST /api/contact rate-limits the sixth request from one address", async () => {

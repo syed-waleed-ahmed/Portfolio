@@ -23,9 +23,11 @@ than by individual commit.
   API on 2026-11-20 showed sixteen requests from one machine spread over three
   counters, none moved by a forged header, and three answered `429`: a few
   requests from anyone, a bot filling the honeypot included, could lock the
-  form for everyone for 15 minutes. The count is now `2`, settable as
+  form for everyone for 15 minutes. The count is now `3`, settable as
   `TRUST_PROXY_HOPS`, and `docs/deployment.md` has the check that tells a
-  right number from a wrong one.
+  right number from a wrong one. That check is also how `3` was reached: `2`,
+  the number Render's documentation suggests, was deployed first and still
+  spread one machine's requests over five counters.
 - **A crafted subject or address could make the API answer `500`.** Half of
   an emoji's surrogate pair is legal in JSON, and `encodeURIComponent`, which
   builds the email's reply link, throws on one. Free text is now repaired

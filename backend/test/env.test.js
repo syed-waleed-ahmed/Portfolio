@@ -11,9 +11,9 @@ test("an empty environment gets the documented defaults", () => {
   const config = loadConfig({});
   assert.equal(config.port, 5000);
   assert.equal(config.isProduction, false);
-  // Two proxies in front of the app, and ten seconds for a send: the reasons
+  // Three proxies in front of the app, and ten seconds for a send: the reasons
   // are beside the constants in config/env.js.
-  assert.equal(config.trustProxyHops, 2);
+  assert.equal(config.trustProxyHops, 3);
   assert.equal(config.resendTimeoutMs, 10_000);
   assert.deepEqual([...config.allowedOrigins], [
     "http://localhost:5173",
@@ -24,8 +24,8 @@ test("an empty environment gets the documented defaults", () => {
 });
 
 test("the proxy count and the send timeout are read as whole numbers", () => {
-  const config = loadConfig({ TRUST_PROXY_HOPS: "3", RESEND_TIMEOUT_MS: " 2500 " });
-  assert.equal(config.trustProxyHops, 3);
+  const config = loadConfig({ TRUST_PROXY_HOPS: "4", RESEND_TIMEOUT_MS: " 2500 " });
+  assert.equal(config.trustProxyHops, 4);
   assert.equal(config.resendTimeoutMs, 2500);
   // Zero proxies is a real setting, for a server reached directly.
   assert.equal(loadConfig({ TRUST_PROXY_HOPS: "0" }).trustProxyHops, 0);
@@ -33,10 +33,10 @@ test("the proxy count and the send timeout are read as whole numbers", () => {
 
 test("a number that cannot be used falls back to the default, and says so", () => {
   for (const bad of ["two", "1.5", "-1", "true", "2 hops"]) {
-    assert.equal(loadConfig({ TRUST_PROXY_HOPS: bad }).trustProxyHops, 2, `TRUST_PROXY_HOPS=${bad}`);
+    assert.equal(loadConfig({ TRUST_PROXY_HOPS: bad }).trustProxyHops, 3, `TRUST_PROXY_HOPS=${bad}`);
     const warnings = configWarnings({ ...MAIL, TRUST_PROXY_HOPS: bad });
     assert.equal(warnings.length, 1);
-    assert.match(warnings[0], /^TRUST_PROXY_HOPS: .* using 2\.$/);
+    assert.match(warnings[0], /^TRUST_PROXY_HOPS: .* using 3\.$/);
   }
   // A timeout of zero would fail every send at once.
   assert.equal(loadConfig({ RESEND_TIMEOUT_MS: "0" }).resendTimeoutMs, 10_000);

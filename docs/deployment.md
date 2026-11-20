@@ -196,7 +196,7 @@ RESEND_API_KEY=…
 EMAIL_FROM=…
 EMAIL_TO=…
 ALLOWED_ORIGINS=…   # optional; omit to use the built-in defaults
-TRUST_PROXY_HOPS=…  # optional; omit for 2. See the check below before changing it
+TRUST_PROXY_HOPS=…  # optional; omit for 3. See the check below before changing it
 RESEND_TIMEOUT_MS=… # optional; omit for 10000
 ```
 
@@ -208,13 +208,13 @@ reaches the server. Nothing Render runs needs it: the backend is linted in CI.
 
 Two details matter on this platform specifically:
 
-- **`trust proxy` counts the proxies in front of the app.** Render documents
-  two layers in front of a web service, Cloudflare and then its own load
-  balancers, and a proxy appends the address it heard from to
-  `X-Forwarded-For`. Trusting that many entries, `2` unless `TRUST_PROXY_HOPS`
-  says otherwise, is what should make the rate limiter key on the visitor. The
-  header as the app receives it is not documented anywhere, the number is easy
-  to get wrong and nothing in the code can check it, so
+- **`trust proxy` counts the proxies in front of the app.** Each proxy appends
+  the address it heard from to `X-Forwarded-For`, so trusting as many entries
+  as there are proxies makes the rate limiter key on the visitor. The count is
+  `3` unless `TRUST_PROXY_HOPS` says otherwise. Render's documentation names
+  two layers, Cloudflare and its own load balancers, and does not show the
+  header as the app receives it; measured, two was still too few. The number
+  is easy to get wrong and nothing in the code can check it, so
   [check it against the live API](#checking-the-rate-limiters-key) after any
   change to it or to the host.
 - **Graceful shutdown is wired to `SIGTERM` and `SIGINT`.** Render sends
@@ -249,11 +249,17 @@ while the first network's counter is still spent. Submitting the live form from
 that phone does as well, since it sends only if the phone has a counter of its
 own.
 
-This check is how the previous value was found to be wrong. With `1`, on
-2026-11-20, sixteen such requests from one machine, which left through a single
-public address, spread over three counters, each unmoved by the forged header,
-and three of the sixteen were answered `429`: the limiter was keyed on Render's
-proxies, so any visitor could spend the allowance of all the others.
+This check is how the number was found, twice, on 2026-11-20. With `1`, sixteen
+such requests from one machine, which left through a single public address,
+spread over three counters, each unmoved by the forged header, and three of the
+sixteen were answered `429`: the limiter was keyed on Render's proxies, so any
+visitor could spend the allowance of all the others. With `2`, the number
+Render's documentation suggests, ten requests spread over at least five
+counters: a different proxy layer, and still not the visitor.
+
+Wait a few minutes after a deploy before running it. Render keeps the previous
+instance serving while the new one takes over, each has its own counters, and
+a reading from the old one looks exactly like a second counter.
 
 ### Free-tier cold starts
 
