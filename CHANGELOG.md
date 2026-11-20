@@ -27,7 +27,8 @@ than by individual commit.
   `TRUST_PROXY_HOPS`, and `docs/deployment.md` has the check that tells a
   right number from a wrong one. That check is also how `3` was reached: `2`,
   the number Render's documentation suggests, was deployed first and still
-  spread one machine's requests over five counters.
+  spread one machine's requests over at least four counters. With `3`, nine
+  requests counted down a single one.
 - **A crafted subject or address could make the API answer `500`.** Half of
   an emoji's surrogate pair is legal in JSON, and `encodeURIComponent`, which
   builds the email's reply link, throws on one. Free text is now repaired

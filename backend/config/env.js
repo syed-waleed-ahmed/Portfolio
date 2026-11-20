@@ -22,8 +22,9 @@ const DEFAULT_ORIGINS = [
 // comes from measuring, not from reading: Render's documentation names
 // Cloudflare and its own load balancers and never shows the header. With 1
 // trusted the limiter's key was one of three addresses, with 2 one of at least
-// five, and in neither case the caller's (docs/audit/), so at least three
-// entries are not the client's and three cannot be too many.
+// four, and in neither case the caller's, so at least three entries are not
+// the client's and three cannot be too many. With 3, nine requests from one
+// machine counted down a single counter (2026-11-20, docs/audit/).
 //
 // The number decides what the rate limiter keys on, and both mistakes are
 // silent. Too low, and the key is a proxy's address, so every visitor shares a

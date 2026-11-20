@@ -254,8 +254,12 @@ such requests from one machine, which left through a single public address,
 spread over three counters, each unmoved by the forged header, and three of the
 sixteen were answered `429`: the limiter was keyed on Render's proxies, so any
 visitor could spend the allowance of all the others. With `2`, the number
-Render's documentation suggests, ten requests spread over at least five
-counters: a different proxy layer, and still not the visitor.
+Render's documentation suggests, six requests on fresh connections spread over
+four counters: a different proxy layer, and still not the visitor. With `3`, nine
+requests, four from a browser and five from a script on fresh connections,
+counted down one counter from 4 to 0 and were then refused, and the forged
+header changed nothing. That is one network's evidence; the second-network
+step above has not been run.
 
 Wait a few minutes after a deploy before running it. Render keeps the previous
 instance serving while the new one takes over, each has its own counters, and
