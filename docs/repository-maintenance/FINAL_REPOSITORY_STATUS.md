@@ -3,7 +3,7 @@
 Part of the [2026-11-20 repository cleanup](CLEANUP_REPORT.md). The state of
 the repository after the pass. The changes were made on the branch
 `chore/repo-cleanup` and left uncommitted, as the brief asked; the owner then
-chose to have them committed and merged.
+chose to have them committed and merged, which was done as pull request #67.
 
 ## How to read the statuses
 
@@ -23,7 +23,7 @@ chose to have them committed and merged.
 | Documentation accuracy | PASS WITH OBSERVATIONS | 28 files reviewed, six stale statements corrected, 0 broken links of 271. The observations: three figures for one past measurement that the repository cannot reconcile, and one dated saving |
 | Git configuration quality | PASS | `.gitignore`, `.gitattributes` and `.editorconfig` each tested against the tree. Every file is stored with LF or is binary, with no trailing whitespace anywhere |
 | Build and test integrity | PASS | Lint, 33 backend tests, 14 content tests, 20 invariants, the production build, 8 size budgets and 29 browser tests all pass. Each change that could alter behaviour has its own proof |
-| Production deployment safety | NOT VERIFIED | Nothing was deployed when this was written, and the changed workflows had not been run. What protects the deploy that follows is already in place: the frontend is published, and the backend redeployed, only after every CI job passes, and a check of the live site runs after the publish |
+| Production deployment safety | PASS | Checked after the merge. CI was green on the pull request and on `main`, the deploy check passed, Render deployed the backend only once the checks had finished, the browser suite passed 29 of 29 against the live site, and the edited link check ran clean ([VERIFICATION_REPORT.md](VERIFICATION_REPORT.md#after-the-merge)) |
 | Remaining technical debt | PASS WITH OBSERVATIONS | Listed below. None blocks anything |
 
 ## Against the acceptance criteria
@@ -39,7 +39,7 @@ chose to have them committed and merged.
 | Markdown links and references valid | Yes: 271 of 271 |
 | Git configuration accurate | Yes |
 | No secret or local artifact introduced | Yes. A search for key shapes finds only a placeholder |
-| All available checks run | Yes, apart from the Postman collection and the workflows themselves |
+| All available checks run | Yes, apart from the Postman collection |
 | No new regression | None found |
 | All changes documented | Yes, in these five reports and the changelog |
 | Git history and existing changes intact | Yes. Nothing was rewritten, and no tag or branch was removed. The pass added a working branch and, on the owner's decision, one commit |
