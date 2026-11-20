@@ -541,9 +541,12 @@ Known and accepted, listed here so nobody has to rediscover them:
   [Deployment](deployment.md#checking-the-rate-limiters-key), and it found the
   setting wrong in production twice on 2026-11-20, once for the original
   value and once for the first correction.
-- **Render is not gated.** Render deploys every push to `main` whatever CI
-  reports, so a backend change that fails `npm test` can still go live. The
-  frontend is held back by every CI job on an ordinary push; a manual run of
+- **Render is gated by a setting, not by the repository.** Since 2026-11-20
+  its Auto-Deploy is After CI Checks Pass, so a backend change that fails
+  `npm test` is not deployed. The setting lives in Render's dashboard, where
+  nothing here can check it: a new or reset service deploys every push until
+  it is set again. The frontend is held back by every CI job on an ordinary
+  push, and by less on the two deploys that skip CI: a manual run of
   the deploy workflow, like the weekly snapshot, passes only lint, the content
   tests, the invariants and the build.
 - **The deploy check runs after the publish.** It reports a deploy that went

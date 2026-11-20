@@ -393,7 +393,7 @@ Both sides deploy automatically from `main`:
 | Part | Platform | Build |
 |------|----------|-------|
 | Frontend | Cloudflare Workers, as static assets | `npm run build` in `frontend/`, then `wrangler deploy` publishes `frontend/dist`, both run by `.github/workflows/deploy.yml` |
-| Backend | Render | `npm ci` then `npm start` in `backend/` |
+| Backend | Render | `npm install` then `npm start` in `backend/` |
 
 The frontend ships only through that workflow, which CI calls once every job
 has passed on a push to `main`, so a commit that fails lint, a test, the
@@ -405,8 +405,8 @@ snapshot commit and a manual run, which do not pass through CI. After
 publishing, the workflow checks that the deployed origin serves that build,
 applies every rule in `_headers`, answers an unknown path with the 404 page,
 and that plain HTTP and `www` redirect to it.
-Render has no such gate: it deploys the backend on every push to `main`,
-whatever CI reports.
+Render waits for the same checks: its Auto-Deploy setting is After CI Checks
+Pass, so a backend commit is deployed only once CI is green.
 
 The domain's DNS zone is on Cloudflare too, and `frontend/wrangler.jsonc`
 attaches `syedwaleedahmed.me` and `www` to the Worker (see

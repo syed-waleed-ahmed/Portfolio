@@ -92,9 +92,9 @@ flight at `SIGTERM` now finishes or fails inside it.
 | Severity | Medium |
 | Status | Confirmed from the repository's documentation and Render's. Not reproduced, since that means deploying a broken commit |
 | Where | `.github/workflows/ci.yml:155-160`, `docs/deployment.md:256-260`, `docs/testing.md:508-512` |
-| State | Open. One setting in the Render dashboard |
+| State | Fixed on 2026-11-20: Auto-Deploy was set to After CI Checks Pass in the Render dashboard, and read back after a reload |
 
-**What is wrong.** The frontend is published only by a workflow that runs
+**What was wrong.** The frontend is published only by a workflow that runs
 after all four CI jobs. The backend is deployed by Render from the push
 itself. The repository documents this as an accepted gap and says "nothing
 gates Render".
@@ -108,9 +108,14 @@ only when the commit's checks succeed, and does not deploy a commit that has
 no checks at all. Every commit that touches `backend/` reaches `main` through
 a pull request and so has checks. The weekly snapshot commit has none, but it
 changes only `frontend/`, which Render already ignores for a service whose
-root directory is `backend`. After switching, the four places that say Render
-is ungated need correcting: `CLAUDE.md`, `docs/deployment.md`,
-`docs/testing.md` and the comment in `ci.yml`.
+root directory is `backend`.
+
+**Done.** The setting was changed, and the places that said Render was
+ungated were corrected with it: `CLAUDE.md`, `README.md`,
+`docs/deployment.md`, `docs/development.md`, `docs/testing.md` and the
+comment in `ci.yml`. One consequence is new and is written down there: the
+checks Render waits for include the frontend's deploy job, so a frontend
+deploy that fails its own check also holds that commit's backend back.
 
 ### F-04: Nothing notices when the form stops working
 
@@ -175,9 +180,9 @@ entries are reported, not repaired: the server still uses what it was given.
 | | |
 |---|---|
 | Severity | Low |
-| Status | Requires verification. It cannot be read from outside |
+| Status | Verified on 2026-11-20 from a deploy log, and not a defect |
 | Where | `.nvmrc`, `backend/package.json:16-18` |
-| State | Open. Needs a look at a deploy log |
+| State | Closed. No change made |
 
 **What is uncertain.** CI and the deploy read Node 24 from `.nvmrc` at the
 repository root. Render's documentation gives its own order: a `NODE_VERSION`
@@ -194,6 +199,48 @@ major would arrive in production untested.
 
 **Recommendation.** Read the Node version at the top of the latest Render
 deploy log. If it is not 24, set `NODE_VERSION=24` on the service.
+
+**What the log said.** `Requesting Node.js version 24`, then
+`Using Node.js version 24.22.3 via /opt/render/project/src/.nvmrc`. Render
+does read the pin at the repository root, although the service's root
+directory is `backend`, so production runs the major that CI tests and takes
+it from the same file. `NODE_VERSION` was therefore not set: it would
+override `.nvmrc` and become a second pin that nothing keeps in step.
+
+### F-19: The documented Render settings did not match the dashboard
+
+| | |
+|---|---|
+| Severity | Low |
+| Status | Confirmed on 2026-11-20, by reading the dashboard and a build log |
+| Where | `docs/deployment.md:184-205`, `README.md:396` |
+| State | Fixed in the docs. The build command itself is unchanged |
+
+**What was wrong.** Three statements about the Render service were written
+from intention, not from the dashboard:
+
+| The docs said | The dashboard and the build log say |
+|---------------|--------------------------------------|
+| Build command `npm ci` | `npm install` |
+| `NODE_ENV=production` is a variable set in the dashboard | It is not there. The service holds three variables, the mail settings. Production does run with `NODE_ENV=production`, as its generic `500` showed, because that is Render's default for a Node service |
+| The install skips devDependencies, so ESLint never reaches the server | `audited 155 packages`: the whole tree, development packages included |
+
+**Impact.** Small today. `npm install` honours the lockfile unless
+`package.json` has moved ahead of it, and CI's own `npm ci` fails in that
+case first. The unneeded packages cost build time and nothing at runtime. The
+real cost is the same as F-10's: a reader who trusts the page is wrong about
+production, and `NODE_ENV` in particular is what keeps error detail out of
+responses ([F-12](SECURITY_AUDIT.md#informational)).
+
+**Fix applied.** `docs/deployment.md` now carries the settings as read, with
+the date, and says plainly that nothing in the repository checks them.
+
+**Recommendation.** Change the build command to `npm ci --omit=dev`, which
+installs exactly the lockfile's production tree, and consider setting
+`NODE_ENV=production` in the dashboard so that it no longer rests on a
+default. Neither was done: both change how production is built, and neither
+was asked for. A `render.yaml` Blueprint would put all of this in the
+repository, where a test could read it.
 
 ## Informational
 

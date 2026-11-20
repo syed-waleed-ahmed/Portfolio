@@ -131,7 +131,9 @@ and the honeypot are the controls that actually bound abuse.
   [Contact endpoint](#contact-endpoint)).
 - In production, `500` responses always read `Internal server error.`. Outside
   production the real message is included to make local debugging possible,
-  which is why `NODE_ENV=production` must be set on Render.
+  which is why the server must run with `NODE_ENV=production`. On Render that
+  is the platform's default for a Node service, not a variable in the
+  dashboard.
 - Mailer failures are mapped to specific codes (`503` unconfigured, `502`
   delivery rejected or the provider unreachable) rather than surfacing provider
   errors verbatim.

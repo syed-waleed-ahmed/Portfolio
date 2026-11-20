@@ -332,9 +332,9 @@ globals. They hold correctness, not formatting; style is held by
 ## Development workflow
 
 1. Branch from `main`, which is what deploys. CI holds the frontend back: it is
-   published only once every job has passed on a push to `main`. Nothing holds
-   the backend back: Render deploys every push to `main` whatever CI reports,
-   so run the checks before merging.
+   published only once every job has passed on a push to `main`. Render holds
+   the backend back the same way, by a setting in its dashboard (Auto-Deploy:
+   After CI Checks Pass). Run the checks before merging all the same.
 2. Make the change, keeping documentation in step with behaviour.
 3. Run the checks that apply:
    ```bash

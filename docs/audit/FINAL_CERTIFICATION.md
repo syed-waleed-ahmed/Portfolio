@@ -36,7 +36,7 @@ deployed, and the version deployed now, after the fixes and their live check.
 | Scalability | PASS WITH OBSERVATIONS | PASS WITH OBSERVATIONS | Single instance by design and by plan. Stateless apart from the limiter |
 | Observability | FAIL | FAIL | Clear logs that nothing reads. No alert, no uptime check, and F-01 ran unseen (F-04) |
 | Testing | PASS WITH OBSERVATIONS | PASS | As audited: sound method, but no failure-path tests (F-08). Now: 33 tests, each new one shown to fail without its fix |
-| Deployment and operations | FAIL | FAIL | A backend commit that fails CI is deployed (F-03). Runtime version unverified (F-09). Service settings live only in a dashboard |
+| Deployment and operations | FAIL | PASS WITH OBSERVATIONS | As audited: a backend commit that failed CI was deployed (F-03). Now: Render waits for the commit's checks, and the deploy log shows the Node version CI tests (F-09). The observations: every setting of the service lives only in a dashboard, three of them were documented wrongly (F-19), and the build runs `npm install` |
 | Documentation | PASS WITH OBSERVATIONS | PASS | Thorough and, where testable, accurate, except for one unverified claim repeated in six places (F-10), now corrected |
 
 ## Overall
@@ -57,9 +57,10 @@ The accepted risks are the ones the project chose and documented: one free
 instance that sleeps, one send attempt with nothing stored, no CAPTCHA, no
 delivery confirmation. They are proportionate to a personal contact form.
 
-Two FAILs remain, and neither is in the code: observability and deployment.
-Each is closed by a setting or a small scheduled check. They did not hold the
-merge, and the service is not finished until they are done.
+One FAIL remains, and it is not in the code: observability. Nothing tells the
+owner when the form stops working, and a small scheduled check would close
+it. The other operational FAIL, deployment, was closed the same day by one
+setting in Render's dashboard.
 
 ## Reasoning
 
@@ -84,8 +85,9 @@ they held.
 
 - One reviewer, one day, one location.
 - No real email was sent, so nothing past Resend's API was observed.
-- The Render dashboard was not inspected. Everything said about its settings
-  comes from the repository's documentation and Render's own.
+- The Render dashboard was not inspected during the audit. It was opened
+  afterwards, to change the Auto-Deploy setting, and what it showed is under
+  F-03, F-09 and F-19.
 - Production was measured with 20 requests before the fixes and 19 more to
   the limiter after, enough to prove F-01 and its correction and nothing
   broader.
