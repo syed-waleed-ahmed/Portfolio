@@ -15,6 +15,8 @@ than by individual commit.
 
 ## [Unreleased]
 
+## [2.6.4] - 2026-11-22
+
 ### Fixed
 
 - **The structured data now validates cleanly.** The schema.org validator
@@ -1212,7 +1214,8 @@ The redesign that produced the current site.
   and contact sections.
 - MIT licence and first README.
 
-[Unreleased]: https://github.com/syed-waleed-ahmed/Portfolio/compare/v2.6.3...HEAD
+[Unreleased]: https://github.com/syed-waleed-ahmed/Portfolio/compare/v2.6.4...HEAD
+[2.6.4]: https://github.com/syed-waleed-ahmed/Portfolio/compare/v2.6.3...v2.6.4
 [2.6.3]: https://github.com/syed-waleed-ahmed/Portfolio/compare/v2.6.2...v2.6.3
 [2.6.2]: https://github.com/syed-waleed-ahmed/Portfolio/compare/v2.6.1...v2.6.2
 [2.6.1]: https://github.com/syed-waleed-ahmed/Portfolio/compare/v2.6.0...v2.6.1
