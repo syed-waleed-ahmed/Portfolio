@@ -277,6 +277,17 @@ needs:
   [Design](design.md#generated-assets)); the card also draws
   `images/Profile.avif`, so a new portrait needs one too
 
+Each project's copy is also repeated outside this repository, where no test
+can see it: the Featured Projects tables in the GitHub profile README
+(`syed-waleed-ahmed/syed-waleed-ahmed`), the Projects section on LinkedIn, the
+resume, and the project repository's own About text and social preview image,
+which each public project repository commits as a `social-preview.png` under
+`docs/`. The
+repository stays the source of truth, so a figure that changes there moves the
+card and these copies together. LinkedIn shows a project's social preview as
+its thumbnail and caches it, so after a new preview, inspect the repository's
+URL once in LinkedIn's Post Inspector to refresh it.
+
 Any user-visible content change also moves three dates together: `dateModified`
 in the `ProfilePage` JSON-LD in `index.html`, `<lastmod>` in
 `public/sitemap.xml` and `Last update` in `public/humans.txt`. The repository
