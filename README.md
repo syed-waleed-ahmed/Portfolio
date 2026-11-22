@@ -85,8 +85,9 @@ forking the repository can run it without reading the source.
   built page runs in CI
 - Responsive from 320px up with no horizontal scroll, and a branded 404 page
 - An error boundary per section
-- SEO: canonical URL, `Person` + `WebSite` + `ProfilePage` JSON-LD, OG and
-  Twitter cards, sitemap, `robots.txt`, `humans.txt`
+- SEO: canonical URL, `Person` + `WebSite` + `ProfilePage` JSON-LD, the
+  projects as a JSON-LD `ItemList` generated at build time from the same data
+  as the cards, OG and Twitter cards, sitemap, `robots.txt`, `humans.txt`
 - One self-hosted variable font with a metric-matched fallback, so no
   third-party request on the critical path and no layout shift on swap
 

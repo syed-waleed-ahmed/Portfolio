@@ -15,6 +15,23 @@ than by individual commit.
 
 ## [Unreleased]
 
+### Added
+
+- **The projects as structured data.** The build generates a JSON-LD list of
+  the six projects from the same data as the cards: those with a public
+  repository as `SoftwareSourceCode` with the repository and the demo,
+  RemindrAI as a plain `CreativeWork`, so its private repository is never
+  named. A browser test keeps the list in step with the cards.
+
+### Changed
+
+- **Search results and link previews name the work and the city.** The title
+  is now "Syed Waleed Ahmed · AI Software Engineer in Bologna, Italy", the
+  description names LLM applications, multi-agent systems, RAG pipelines and
+  the degree, and the Open Graph and Twitter text match. The `Person` data
+  adds the MSc as a credential, the Hugging Face profile and topics the
+  projects show (agentic AI, fine-tuning, Python, TypeScript, FastAPI).
+
 ## [2.6.2] - 2026-11-22
 
 ### Changed

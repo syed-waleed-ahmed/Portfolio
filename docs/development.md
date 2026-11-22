@@ -268,14 +268,23 @@ previews, and nothing compares it with the data modules. A change of name,
 role, degree, headline, contact details, socials or location therefore also
 needs:
 
-- `index.html`: the meta description, the Open Graph and Twitter text, and the
-  `Person` JSON-LD (`jobTitle`, `alumniOf`, `knowsAbout`, `sameAs` and the rest)
+- `index.html`: the `<title>` (it names the city), the meta description, the
+  Open Graph and Twitter text, the `Person` JSON-LD (`jobTitle`, `alumniOf`,
+  `hasCredential`, `knowsAbout`, `sameAs` and the rest) and the `ProfilePage`
+  name and description
 - `frontend/public/humans.txt`, which repeats the name, contact details,
   socials and location
 - for the name, role or headline, the `NAME`, `ROLE` and `BLURB` constants in
   `scripts/gen-og-card.mjs`, and a regenerated card (see
   [Design](design.md#generated-assets)); the card also draws
   `images/Profile.avif`, so a new portrait needs one too
+
+The projects are the exception: their structured data, a JSON-LD `ItemList`,
+is generated from `projects.js` by `scripts/prerender.mjs` at build time, so a
+card change needs nothing in `index.html`. A card with a public repository
+becomes `SoftwareSourceCode` with its `codeRepository`; one with a
+`sourceNote` becomes a plain `CreativeWork`, so a private repository is never
+named. A browser test checks the list against the rendered cards.
 
 Each project's copy is also repeated outside this repository, where no test
 can see it: the Featured Projects tables in the GitHub profile README
