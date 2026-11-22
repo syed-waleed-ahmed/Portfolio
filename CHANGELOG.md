@@ -15,13 +15,15 @@ than by individual commit.
 
 ## [Unreleased]
 
+## [2.6.2] - 2026-11-22
+
 ### Changed
 
 - **The title is now AI Software Engineer everywhere.** The page title, the
   search and link-preview text, the structured data, the social card, the
   MemorAIz entry and the first target role said "AI Engineer"; they now match
-  the resume, LinkedIn and the GitHub profile. The "open to AI and ML
-  engineering roles" lines are unchanged: they name the roles, not the title.
+  the resume and the GitHub profile. The "open to AI and ML engineering roles"
+  lines are unchanged: they name the roles, not the title.
 
 ## [2.6.1] - 2026-11-20
 
@@ -1182,7 +1184,8 @@ The redesign that produced the current site.
   and contact sections.
 - MIT licence and first README.
 
-[Unreleased]: https://github.com/syed-waleed-ahmed/Portfolio/compare/v2.6.1...HEAD
+[Unreleased]: https://github.com/syed-waleed-ahmed/Portfolio/compare/v2.6.2...HEAD
+[2.6.2]: https://github.com/syed-waleed-ahmed/Portfolio/compare/v2.6.1...v2.6.2
 [2.6.1]: https://github.com/syed-waleed-ahmed/Portfolio/compare/v2.6.0...v2.6.1
 [2.6.0]: https://github.com/syed-waleed-ahmed/Portfolio/compare/v2.5.0...v2.6.0
 [2.5.0]: https://github.com/syed-waleed-ahmed/Portfolio/compare/v2.4.4...v2.5.0
