@@ -3,7 +3,7 @@
 
 export const experiences = [
   {
-    title: "AI Engineer · Master's Thesis",
+    title: "AI Software Engineer · Master's Thesis",
     company: "MemorAIz S.r.l.",
     // The internship ran Feb - Jun 2026 and the thesis collaboration through
     // Sep 2026, as the resume and the GitHub profile README put it; the range

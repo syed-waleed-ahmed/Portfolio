@@ -38,7 +38,7 @@ const CYAN = "#22d3ee"; // --color-accent
 const INDIGO = "#6366f1"; // --color-indigo
 
 const NAME = "Syed Waleed Ahmed";
-const ROLE = "AI Engineer";
+const ROLE = "AI Software Engineer";
 const BLURB = ["Multi-agent systems, RAG pipelines,", "and LLM workflow automation."];
 const DOMAIN = "syedwaleedahmed.me";
 

@@ -15,6 +15,14 @@ than by individual commit.
 
 ## [Unreleased]
 
+### Changed
+
+- **The title is now AI Software Engineer everywhere.** The page title, the
+  search and link-preview text, the structured data, the social card, the
+  MemorAIz entry and the first target role said "AI Engineer"; they now match
+  the resume, LinkedIn and the GitHub profile. The "open to AI and ML
+  engineering roles" lines are unchanged: they name the roles, not the title.
+
 ## [2.6.1] - 2026-11-20
 
 ### Fixed
