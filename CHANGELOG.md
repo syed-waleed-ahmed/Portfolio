@@ -15,6 +15,14 @@ than by individual commit.
 
 ## [Unreleased]
 
+### Added
+
+- **The MemorAIz Onboarding Assistant in Experience.** The MemorAIz role gains
+  a bullet for the onboarding agent built there alongside RemindrAI: it
+  interviews new clients, fills a live company profile and answers questions
+  from a pgvector knowledge base. Its repository is private to MemorAIz, so it
+  is a bullet rather than a project card.
+
 ## [2.6.4] - 2026-11-22
 
 ### Fixed

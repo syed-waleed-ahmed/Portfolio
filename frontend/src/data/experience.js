@@ -15,6 +15,10 @@ export const experiences = [
       "Made delivery retry-safe with an atomic database claim, per-channel idempotency, and database-owned backoff; median claim latency stayed near-flat from 1K to 100K due reminders.",
       "Engineered the control plane: per-organization API keys, tenant isolation at four independent depths, plans and quotas as data, and audited GDPR export and erasure.",
       "Shipped EU-pinned on Vercel under 985 tests across three repositories, with H-FARM's Student Assistant as the first production tenant.",
+      // The onboarding assistant's repository is private to MemorAIz, so it
+      // is a bullet here rather than a project card; the copy follows that
+      // repository's README.
+      "Built the MemorAIz Onboarding Assistant, a deployed Mastra agent that interviews new clients, fills a live company profile, and answers questions with RAG over pgvector.",
     ],
   },
   {
