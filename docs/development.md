@@ -298,9 +298,11 @@ its thumbnail and caches it, so after a new preview, inspect the repository's
 URL once in LinkedIn's Post Inspector to refresh it.
 
 Any user-visible content change also moves three dates together: `dateModified`
-in the `ProfilePage` JSON-LD in `index.html`, `<lastmod>` in
-`public/sitemap.xml` and `Last update` in `public/humans.txt`. The repository
-invariants fail if the three disagree, but cannot tell whether they are
+in the `ProfilePage` JSON-LD in `index.html` (a full date-time such as
+`2026-11-22T00:00:00+01:00`, since Google's profile-page markup reports a bare
+date as invalid), `<lastmod>` in `public/sitemap.xml` and `Last update` in
+`public/humans.txt`. The repository invariants fail if the three disagree or
+`dateModified` is a bare date, but cannot tell whether they are
 current, so moving them is still part of the change. The weekly snapshot commit
 does not count as a content change.
 
