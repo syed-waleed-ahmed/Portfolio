@@ -244,6 +244,7 @@ Cloudflare deployment.
 | Test | Asserts |
 |------|---------|
 | `loads under the real CSP with no errors, and analytics and the font load` | No console error (React reports a hydration mismatch there), page error or CSP violation over a full scroll; the analytics loader adds its tag, so its hash in `_headers` is current; Hanken Grotesk loads |
+| `structured data parses, links up, and matches the project cards` | Every JSON-LD block parses, `@id`s are unique and every reference resolves; the generated project `ItemList` names the cards in page order, and its `codeRepository` values are exactly the repositories the cards link, so no private repository is published |
 | `reveals everything that starts below the fold` | No `[data-reveal="pending"]` remains after a scroll through |
 | `every revealed element keeps the reveal's fade` | Every `[data-reveal]` element still transitions `opacity`: a component rule that sets its own `transition` replaces the reveal's, as the project cards once did |
 | `has no horizontal overflow at <width>px`, five tests | No horizontal scroll at 320, 390, 768, 1440 and 1920px, with the lazy graph and globe loaded |

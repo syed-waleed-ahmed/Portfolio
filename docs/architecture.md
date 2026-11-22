@@ -183,7 +183,9 @@ after npm's `prebuild` gate of lint, content tests and repository invariants
 2. `vite build --ssr src/entry-server.jsx --outDir dist-server` compiles the
    app for Node.
 3. `scripts/prerender.mjs` renders `<App />` to HTML once, writes it inside
-   `<div id="root">` in `dist/index.html`, and deletes `dist-server/`.
+   `<div id="root">` in `dist/index.html`, adds the projects' structured data
+   (a JSON-LD `ItemList` generated from `projects.js`) before `</head>`, and
+   deletes `dist-server/`.
 
 The HTML response therefore already contains every heading, paragraph and
 link. Text paints before any JavaScript runs, crawlers and link previews see
