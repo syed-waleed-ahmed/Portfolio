@@ -1,6 +1,6 @@
 # Syed Waleed Ahmed - Portfolio
 
-[![Syed Waleed Ahmed, AI Engineer: multi-agent systems, RAG pipelines and LLM workflow automation](frontend/public/images/og-card.png)](https://syedwaleedahmed.me/)
+[![Syed Waleed Ahmed, AI Software Engineer: multi-agent systems, RAG pipelines and LLM workflow automation](frontend/public/images/og-card.png)](https://syedwaleedahmed.me/)
 
 [![CI](https://github.com/syed-waleed-ahmed/Portfolio/actions/workflows/ci.yml/badge.svg)](https://github.com/syed-waleed-ahmed/Portfolio/actions/workflows/ci.yml)
 [![Link check](https://github.com/syed-waleed-ahmed/Portfolio/actions/workflows/links.yml/badge.svg)](https://github.com/syed-waleed-ahmed/Portfolio/actions/workflows/links.yml)
@@ -9,7 +9,7 @@
 [![Node](https://img.shields.io/badge/node-%5E22.19%20%7C%7C%20%5E24.5%20%7C%7C%20%3E%3D26-brightgreen.svg)](.nvmrc)
 [![Live](https://img.shields.io/badge/live-syedwaleedahmed.me-0a7cff.svg)](https://syedwaleedahmed.me/)
 
-The source of my personal site: an AI engineer's portfolio covering experience,
+The source of my personal site: an AI software engineer's portfolio covering experience,
 projects and skills, with a working contact form. It is built with
 **React 19 + Vite** on the frontend and **Node.js + Express** on the backend,
 and the form delivers email through Resend.

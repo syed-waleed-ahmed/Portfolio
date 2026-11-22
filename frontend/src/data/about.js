@@ -76,7 +76,7 @@ export const locations = [
 // architecture" and so on) that said nothing the rest of the page does not.
 export const targetRoles = [
   {
-    title: "AI Engineer",
+    title: "AI Software Engineer",
     line: "Agents, tool use, and the infrastructure that makes them dependable.",
   },
   {

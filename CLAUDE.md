@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this is
 
-Personal portfolio of Syed Waleed Ahmed, an AI engineer, live at https://syedwaleedahmed.me/. The repo is public and is meant to be read as a work sample, so docs and comments are part of the product.
+Personal portfolio of Syed Waleed Ahmed, an AI software engineer, live at https://syedwaleedahmed.me/. The repo is public and is meant to be read as a work sample, so docs and comments are part of the product.
 
 Two independent npm projects, with no npm workspace linking them. Each has its own `package.json`, lockfile and `node_modules`; the root `package.json` only holds scripts that delegate, plus the dependency-free `test/invariants.test.js`.
 
