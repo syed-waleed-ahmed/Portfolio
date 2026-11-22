@@ -24,8 +24,10 @@ if (!html.includes(ROOT)) {
 // The projects as structured data, built from the module the Projects section
 // renders, so search engines read the same names, descriptions and links as
 // visitors and the two cannot drift. index.html keeps the hand-written Person,
-// WebSite and ProfilePage blocks; its ProfilePage points here through
-// "hasPart". A card with a public repository is SoftwareSourceCode; one without
+// WebSite and ProfilePage blocks. Each item's author is the Person; nothing
+// points from the ProfilePage to the list, because "hasPart" takes only a
+// CreativeWork and the schema.org validator reports an ItemList there as an
+// error. A card with a public repository is SoftwareSourceCode; one without
 // (RemindrAI, a private repository) is a plain CreativeWork, so no private URL
 // is ever published. The demo, where one runs, is the item's url.
 const SITE = "https://syedwaleedahmed.me/";

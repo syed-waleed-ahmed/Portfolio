@@ -106,7 +106,7 @@ Middleware order is deliberate: Helmet, CORS, the 16 KB `express.json` cap, then
 
 - **The analytics hash.** The inline script in `frontend/index.html` is pinned by SHA-256 in the CSP in `frontend/public/_headers`; any edit, including whitespace, would kill analytics with no visible symptom. Recompute with the command in `docs/deployment.md`, which normalizes CRLF.
 - **The prerender target, the portrait preload** (`imagesrcset` and `imagesizes` in `index.html` against the AVIF `<source>` in `Hero.jsx`, or the image downloads twice), **the palette copies, the form mirrors, the 80rem breakpoint** shared by the graph's JS and two stylesheets, **the Node pin** (`.nvmrc`, which every workflow must read and every `engines` range admit), **the Cloudflare configuration** (`frontend/wrangler.jsonc` must publish `./dist` with `not_found_handling: "404-page"` and no `account_id`), and **the API origin**: the default in `Contact.jsx` must be in the CSP's `connect-src` and the `dns-prefetch`.
-- **The hand-kept dates:** `dateModified` in the `ProfilePage` JSON-LD, `<lastmod>` in `public/sitemap.xml` and `Last update` in `public/humans.txt` must agree. The test cannot know when content changed, so moving them is still on you.
+- **The hand-kept dates:** `dateModified` in the `ProfilePage` JSON-LD (a full ISO date-time, which Google's profile-page markup requires), `<lastmod>` in `public/sitemap.xml` and `Last update` in `public/humans.txt` must agree. The test cannot know when content changed, so moving them is still on you.
 - **No em dashes** in any tracked or new file.
 
 ## Things that still fail silently

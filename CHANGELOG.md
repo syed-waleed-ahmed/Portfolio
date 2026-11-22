@@ -15,6 +15,15 @@ than by individual commit.
 
 ## [Unreleased]
 
+### Fixed
+
+- **The structured data now validates cleanly.** The schema.org validator
+  reported one error: the `ProfilePage` pointed at the project list through
+  `hasPart`, which takes only a creative work. That link is gone; each project
+  still names its author. Google's Rich Results Test flagged `dateModified` as
+  an invalid value, because it was a bare date; it is now a full date-time,
+  and the repository invariants require that form.
+
 ## [2.6.3] - 2026-11-22
 
 ### Added

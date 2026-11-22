@@ -262,8 +262,15 @@ test("stylesheets take every colour from the tokens", () => {
 
 // ----- 5. The hand-kept dates -----------------------------------------------
 
+// dateModified must be a full ISO date-time: Google's profile-page markup
+// reports a bare date as an invalid value. Its date part is what the other two
+// are compared with.
 test("the three last-modified dates agree", () => {
-  const modified = pick(read("frontend/index.html"), /"dateModified": "(\d{4}-\d{2}-\d{2})"/, "dateModified in index.html");
+  const modified = pick(
+    read("frontend/index.html"),
+    /"dateModified": "(\d{4}-\d{2}-\d{2})T\d{2}:\d{2}:\d{2}(?:Z|[+-]\d{2}:\d{2})"/,
+    "dateModified in index.html, as a full date-time such as 2026-11-22T00:00:00+01:00,"
+  );
   const lastmod = pick(read("frontend/public/sitemap.xml"), /<lastmod>(\d{4}-\d{2}-\d{2})<\/lastmod>/, "<lastmod> in sitemap.xml");
   const humans = pick(read("frontend/public/humans.txt"), /Last update: (\d{4}\/\d{2}\/\d{2})/, "Last update in humans.txt").replaceAll("/", "-");
   const message = "dateModified (index.html), <lastmod> (public/sitemap.xml) and Last update (public/humans.txt) move together when content changes";
