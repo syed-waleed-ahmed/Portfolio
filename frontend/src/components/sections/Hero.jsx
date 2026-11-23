@@ -1,9 +1,6 @@
-import { FaArrowRight, FaGithub, FaLinkedinIn } from "react-icons/fa";
-import ExternalLink from "@/components/ui/ExternalLink";
 import Reveal from "@/components/ui/Reveal";
-import SectionLink from "@/components/ui/SectionLink";
 import { stats } from "@/data/about";
-import { personalInfo, socialLinks } from "@/data/portfolio";
+import { personalInfo } from "@/data/portfolio";
 import "./Hero.css";
 
 // Keep `sizes` in step with the portrait's rendered width in Hero.css, and the
@@ -12,9 +9,14 @@ const PORTRAIT_SIZES =
   "(min-width: 120rem) 16.6vw, (min-width: 64rem) 320px, (min-width: 40rem) 148px, 64px";
 
 // The first screen answers, in order: is this person available, who are they,
-// what do they build, what makes that credible, and what can I open next.
-// The figures close it, so the proof is on screen before the first scroll and
-// the Projects section they come from is the next thing down.
+// what do they build, and what makes that credible. The figures close it, so
+// the proof is on screen before the first scroll and the Projects section
+// they come from is the next thing down.
+//
+// It holds no buttons. A row of four stood under the lead (View projects,
+// Resume, LinkedIn, GitHub) until 2026-11-23, when it was taken out: the dock
+// at the foot of the same screen already carries all four, and the contact
+// panel carries the last three again.
 const Hero = () => (
   <section id="top" className="hero" aria-labelledby="hero-title" tabIndex={-1}>
     <div className="container hero__inner">
@@ -57,26 +59,6 @@ const Hero = () => (
           and the engineering that turns a working prototype into something a
           team can rely on every day.
         </p>
-
-        <div className="hero__actions">
-          <SectionLink to="projects" className="btn btn--primary">
-            View projects
-            <FaArrowRight aria-hidden="true" />
-          </SectionLink>
-          <ExternalLink href={personalInfo.resumeUrl} className="btn btn--secondary">
-            Resume
-          </ExternalLink>
-          {/* Grouped so the two icons wrap to a new line together rather
-              than leaving one stranded on a narrow phone. */}
-          <span className="hero__social">
-            <ExternalLink href={socialLinks.linkedin} className="btn btn--icon" aria-label="LinkedIn">
-              <FaLinkedinIn aria-hidden="true" />
-            </ExternalLink>
-            <ExternalLink href={socialLinks.github} className="btn btn--icon" aria-label="GitHub">
-              <FaGithub aria-hidden="true" />
-            </ExternalLink>
-          </span>
-        </div>
 
         <p className="hero__note">
           Graduated from the University of Bologna in October 2026 with a

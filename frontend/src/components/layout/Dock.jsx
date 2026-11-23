@@ -87,8 +87,8 @@ const Dock = () => {
               <CommandMenu />
             </li>
 
-            {/* LinkedIn and GitHub drop out on a phone: the hero and the contact
-                section both carry them, and seven items is what fits a thumb. */}
+            {/* LinkedIn and GitHub drop out on a phone: the contact section
+                carries them, and seven items is what fits a thumb. */}
             <li className="dock__item dock__item--wide-only">
               <ExternalLink href={socialLinks.linkedin} className="dock__link" aria-label="LinkedIn">
                 <FaLinkedinIn aria-hidden="true" />

@@ -213,7 +213,7 @@ accent border with a soft halo.
 | Family | At rest | Under the pointer | Other states |
 |--------|---------|-------------------|--------------|
 | Filled: `.btn--primary` | Accent, accent ink | Accent-hover | Busy: 70% opacity, a progress cursor, still focusable |
-| Outlined: `.btn--secondary`, `.btn--icon`, the contact channels | Outline border | Accent border and a 10% accent fill; the label keeps its colour | |
+| Outlined: `.btn--secondary`, the contact channels | Outline border | Accent border and a 10% accent fill; the label keeps its colour | |
 | Text link: `.text-link` | Accent | Accent-hover, underlined | In a status message: the message's colour, underlined |
 | Dock item | Page fill, hairline, muted icon | Raised fill, heading-colour icon | Current section: accent border, tint and icon |
 | Form field | Page fill, field border | Muted border | Focus: accent border and halo. Invalid: error border, at 3.3:1 |
@@ -284,9 +284,8 @@ as the `LuCommand` icon, because U+2318 is outside the subset.
 
 | Class | Use |
 |-------|-----|
-| `.btn--primary` | The one filled action in a group (View projects, Send message) |
-| `.btn--secondary` | Outlined alternative (Resume, Reload page) |
-| `.btn--icon` | Square icon-only control; needs an `aria-label` |
+| `.btn--primary` | The one filled action in a group (Send message) |
+| `.btn--secondary` | Outlined alternative (Reload page) |
 | `.btn--sm` | Compact size for the error fallback's reload button |
 
 `.text-link` is the inline link style: accent colour, underline on hover.
@@ -312,7 +311,7 @@ Off-site links render through `components/ui/ExternalLink.jsx`, which sets
 `target="_blank" rel="noopener noreferrer"` and tells screen-reader users the
 link opens a new tab.
 
-Links to a part of the page (the dock, "View projects", the skip link) render
+Links to a part of the page (the dock and the skip link) render
 through `components/ui/SectionLink.jsx`, which calls `scrollToSection.js`, the
 helper the command palette also uses. It scrolls to the target without writing
 `#section` into the address bar, clears any hash already there, and moves focus
@@ -346,11 +345,15 @@ underneath the dock.
   own height. The masthead above it carries the name, the role and, from a
   tablet up, the city. The hero opens with a status line saying which roles I
   am open to, then the greeting, the headline in the heading colour, the
-  lead, the buttons and the graduation note.
+  lead and the graduation note. It holds no buttons: a row of four (View
+  projects, Resume, LinkedIn, GitHub) stood under the lead until 2026-11-23
+  and was taken out, since the dock at the foot of the same screen carries
+  all four and the contact panel carries the last three again. On a phone the
+  dock drops LinkedIn and GitHub, so there they are in the contact panel
+  only.
 - On a phone the portrait is a 4rem thumbnail beside the status line, so the
-  greeting, the headline and the first button are all inside the first
-  screen; it was 96px on a row of its own, which pushed the buttons to the
-  bottom edge. On a tablet it is 148px beside the copy, and on a desktop 20rem
+  greeting, the headline, the lead and the first two figures are all inside
+  the first screen; it was 96px on a row of its own. On a tablet it is 148px beside the copy, and on a desktop 20rem
   with a second outline set off behind it, down and to the right.
 - **The figures are a strip, not tiles**: each a number set large over the
   line that says what it counts and the entry that backs it, with one rule

@@ -3,8 +3,8 @@
    in components/**. */
 @layer components {
   /* ========= Buttons =========
-     .btn is the shape. --primary is the one filled action in a group,
-     --secondary the outlined alternative, --icon a square icon-only control.
+     .btn is the shape. --primary is the one filled action in a group and
+     --secondary the outlined alternative.
 
      Every control answers the pointer in the language of its family, and
      there are four: a filled control brightens (accent to accent-hover); an
@@ -65,23 +65,6 @@
     color: var(--color-text-strong);
 
     &:hover:not(:disabled, [aria-disabled="true"]) {
-      border-color: var(--color-accent-border);
-      background-color: var(--color-accent-subtle);
-    }
-  }
-
-  .btn--icon {
-    width: var(--tap-target);
-    padding: 0;
-    border-color: var(--color-border-strong);
-    color: var(--color-text-soft);
-
-    & svg {
-      width: 1.125rem;
-      height: 1.125rem;
-    }
-
-    &:hover {
       border-color: var(--color-accent-border);
       background-color: var(--color-accent-subtle);
     }

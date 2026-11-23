@@ -15,8 +15,7 @@
   }
 
   /* Phone: a small portrait beside the status line, then the copy, so the
-     greeting, the headline and the first button are all inside the first
-     screen. Tablet: the copy on the left and a larger portrait on the right,
+     greeting, the headline and the lead are all inside the first screen. Tablet: the copy on the left and a larger portrait on the right,
      with the longer text running the full width under them. Desktop: all the
      copy on the left and the portrait in the right-hand column, centred on
      it; the figures span the full width beneath. There the rows are named:
@@ -225,19 +224,6 @@
     color: var(--color-text-muted);
   }
 
-  .hero__actions {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: var(--space-3);
-    margin-block-start: var(--space-6);
-  }
-
-  .hero__social {
-    display: flex;
-    gap: var(--space-3);
-  }
-
   /* ========= Figures =========
      A strip, not four tiles: each figure is a number set large over the line
      that says what it counts and the entry that backs it, with a rule above
@@ -320,10 +306,6 @@
 
     .hero__body > :nth-child(2) {
       animation-delay: 120ms;
-    }
-
-    .hero__body > :nth-child(3) {
-      animation-delay: 160ms;
     }
   }
 }

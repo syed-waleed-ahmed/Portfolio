@@ -20,7 +20,7 @@ than by individual commit.
 - **The page was redesigned.** A new palette, a new first screen, the
   projects before the narrative, one project featured, and one header for
   every section. No dependency was added, and the entry stylesheet is still
-  under its 8 kB budget (7.98 kB, from 7.89 kB). `docs/design.md` has the
+  under its 8 kB budget (7.92 kB, from 7.89 kB). `docs/design.md` has the
   reasoning for each decision below, and the sources that shaped them.
   - **Palette.** A deeper navy page (`#080e1b`), panels a clear step above it
     (1.15:1, where they were 1.08:1 and the hairline did all the
@@ -42,8 +42,11 @@ than by individual commit.
     numbers rather than four tiles. The masthead names the role and the city
     beside the name.
   - **On a phone** the portrait is a thumbnail beside the status line, so
-    the greeting, the headline and the first button are all inside the first
-    screen; the buttons used to sit at its bottom edge.
+    the greeting, the headline, the lead and the first figures are all
+    inside the first screen.
+  - **The hero's row of buttons is gone** (View projects, Resume, LinkedIn,
+    GitHub). The dock at the foot of the same screen carries all four, and
+    the contact panel carries the last three again.
   - **Projects come first, and one is featured.** The page now runs
     Projects, Experience, About, Skills, Contact. The thesis project opens
     the section across the full width with its picture beside its text; the
