@@ -1,11 +1,4 @@
 [
-  {"date":"2025-11-16","count":0,"level":0},
-  {"date":"2025-11-17","count":47,"level":3},
-  {"date":"2025-11-18","count":3,"level":1},
-  {"date":"2025-11-19","count":0,"level":0},
-  {"date":"2025-11-20","count":9,"level":1},
-  {"date":"2025-11-21","count":0,"level":0},
-  {"date":"2025-11-22","count":0,"level":0},
   {"date":"2025-11-23","count":0,"level":0},
   {"date":"2025-11-24","count":6,"level":1},
   {"date":"2025-11-25","count":0,"level":0},
@@ -364,5 +357,12 @@
   {"date":"2026-11-13","count":98,"level":4},
   {"date":"2026-11-14","count":82,"level":4},
   {"date":"2026-11-15","count":23,"level":2},
-  {"date":"2026-11-16","count":36,"level":2}
+  {"date":"2026-11-16","count":37,"level":2},
+  {"date":"2026-11-17","count":0,"level":0},
+  {"date":"2026-11-18","count":0,"level":0},
+  {"date":"2026-11-19","count":11,"level":1},
+  {"date":"2026-11-20","count":18,"level":1},
+  {"date":"2026-11-21","count":0,"level":0},
+  {"date":"2026-11-22","count":59,"level":3},
+  {"date":"2026-11-23","count":1,"level":1}
 ]
