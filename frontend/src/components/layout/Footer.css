@@ -6,10 +6,6 @@
     text-align: center;
     color: var(--color-text-muted);
 
-    @media print {
-      padding-block-end: var(--space-4);
-    }
-
     /* The source link sits in a line of text, which WCAG's target-size rule
        exempts, but every other tappable thing on a touch screen gets the
        48px floor, so this one does too. */

@@ -36,8 +36,8 @@ const pick = (text, pattern, what) => {
 
 const hexToRgb = (hex) => [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16));
 
-// Screen values only: the print block at the end of tokens.css redefines some
-// tokens for paper, and the first definition of each is the one on screen.
+// Screen values only, the first definition of each. The values for paper are
+// in styles/print.css, which this never reads.
 const tokens = (() => {
   const values = new Map();
   for (const [, name, value] of read("frontend/src/styles/tokens.css").matchAll(/(--color-[\w-]+):\s*(#[0-9a-f]{6});/gi)) {
@@ -213,7 +213,7 @@ test("every text, accent and status colour is 7:1 on the page and on a panel", (
     }
   }
   // The two filled pairs: the primary button, and the inverse chips (the
-  // pills and tooltips), whose tokens alias --color-text-strong and --color-bg.
+  // tooltips), whose tokens alias --color-text-strong and --color-bg.
   for (const [ink, ground] of [["--color-accent-ink", "--color-accent"], ["--color-accent-ink", "--color-accent-hover"], ["--color-bg", "--color-text-strong"]]) {
     const ratio = contrast(token(ink), token(ground));
     assert.ok(ratio >= 7, `${ink} on ${ground} is ${ratio.toFixed(2)}:1, under 7:1`);
@@ -254,10 +254,34 @@ test("stylesheets take every colour from the tokens", () => {
     for (const declaration of css.split(/[;{}]/)) {
       // A mask is painted in alpha, not colour: black there means "show".
       if (/^\s*(?:-webkit-)?mask/.test(declaration)) continue;
+      // The print stylesheet gives the colour tokens their values for paper.
+      // A token's value is the one thing there that may be a literal: a rule
+      // in it that paints with one is still caught.
+      if (path === "frontend/src/styles/print.css" && /^\s*--color-[\w-]+:/.test(declaration)) continue;
       const found = declaration.match(literal);
       assert.ok(!found, `${path} writes the colour "${found?.[0]}" in "${declaration.trim().slice(0, 70)}". Every colour is a token in styles/tokens.css: use one, or add a role there`);
     }
   }
+});
+
+// Paper's rules moved out of the stylesheet every visitor waits for and into
+// one of their own, linked with media="print". A print rule written beside a
+// component still works, which is why nothing would say it had crept back
+// into the render-blocking bundle, at the entry budget's expense.
+test("print rules live in the print stylesheet, and the app links it", () => {
+  const stray = [];
+  const walk = (dir) => {
+    for (const entry of readdirSync(join(ROOT, dir))) {
+      const path = `${dir}/${entry}`;
+      if (statSync(join(ROOT, path)).isDirectory()) walk(path);
+      else if (extname(entry) === ".css" && path !== "frontend/src/styles/print.css" && /@media[^{]*\bprint\b/.test(read(path))) stray.push(path);
+    }
+  };
+  walk("frontend/src");
+  assert.deepEqual(stray, [], "These stylesheets hold an @media print rule. Move it to frontend/src/styles/print.css, in the layer of the rule it overrides.");
+  const app = read("frontend/src/App.jsx");
+  assert.ok(app.includes('import printStyles from "@/styles/print.css?url";'), "App.jsx should import styles/print.css with ?url, so it is a file of its own");
+  assert.ok(app.includes('<link rel="stylesheet" media="print" href={printStyles} />'), 'App.jsx should link the print stylesheet with media="print", or nothing prints as designed');
 });
 
 // ----- 5. The hand-kept dates -----------------------------------------------

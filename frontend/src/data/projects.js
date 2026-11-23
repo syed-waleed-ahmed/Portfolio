@@ -47,10 +47,19 @@
 // key. Campaign Forge stays pinned on the GitHub profile. The same pass
 // re-cut the AI Workflow Assistant's picture from the screenshot that
 // repository retook when it folded reports into analyses.
+//
+// On 2026-11-23 the grid stopped giving every card the same weight.
+// `featured` marks the one project that opens the section as a wide card,
+// with its picture beside its text and its `role` shown above its title; it
+// is the first entry, and a content test holds it to exactly one. The other
+// five no longer print `role`, which read "Independent Project" five times
+// over: the section's subtitle says it once. The field stays on every entry
+// for the command palette's search.
 export const projects = [
   {
     title: "RemindrAI: Embeddable Multi-Tenant Reminder Capability",
     role: "Master's Thesis · MemorAIz S.r.l.",
+    featured: true,
     stack: ["Next.js 16", "TypeScript", "Vercel AI SDK", "Mastra", "Turso / libSQL"],
     // The MemorAIz entry in experience.js carries the build, delivery, tenancy
     // and deployment facts. This card says what the system does and where the

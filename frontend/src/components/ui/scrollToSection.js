@@ -11,9 +11,9 @@ export function scrollToSection(id) {
   const target = document.getElementById(id);
   if (!target) return false;
 
-  // "top" is the hero, but Home means the top of the page: the masthead and
-  // dot band sit above the hero, and scrolling the hero to the edge would cut
-  // them off. window.scrollTo without a behaviour follows the CSS as well.
+  // "top" is the hero, but Home means the top of the page: the masthead
+  // sits above the hero, and scrolling the hero to the edge would cut it
+  // off. window.scrollTo without a behaviour follows the CSS as well.
   if (id === "top") window.scrollTo({ top: 0 });
   else target.scrollIntoView({ block: "start" });
   target.focus({ preventScroll: true });

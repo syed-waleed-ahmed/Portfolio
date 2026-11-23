@@ -6,131 +6,72 @@
     margin-inline: auto;
   }
 
-  .section {
-    padding-block: var(--section-space);
+  /* The sections number themselves, so reordering `sections` in
+     data/portfolio.js renumbers the page. */
+  main {
+    counter-reset: section;
   }
 
-  /* The quiet default: a small left-aligned title, so the content under it
-     carries the section rather than the heading. */
+  .section {
+    padding-block: var(--section-space);
+    counter-increment: section;
+
+    /* Every other section opens on a lift: a hairline and a tone that fades
+       back into the page. It gives the long page a rhythm without giving any
+       section a colour of its own. */
+    &:nth-child(even) {
+      border-block-start: 1px solid var(--color-border);
+      background: linear-gradient(var(--color-band), transparent 22rem);
+    }
+  }
+
+  /* One header for every section: its number over a short rule, the title,
+     and the subtitle. From a desktop up the subtitle moves beside the title,
+     against the right edge, so the header spends the width instead of leaving
+     it empty. Three different headers stood here until November 2026, and the
+     page read as three designs. */
   .section-header {
     display: grid;
-    gap: var(--space-2);
-    margin-block-end: var(--space-6);
+    gap: var(--space-3);
+    margin-block-end: var(--space-8);
+    padding-block-end: var(--space-5);
+    border-block-end: 1px solid var(--color-border);
+
+    /* The number is decoration, so it carries empty alternative text (the
+       part after the slash) and a screen reader hears the heading, not "zero
+       one" before it. A browser too old for that syntax drops the line and
+       shows no number, which loses nothing. */
+    &::before {
+      content: counter(section, decimal-leading-zero) / "";
+      justify-self: start;
+      padding-inline-end: var(--space-8);
+      border-block-end: 1px solid var(--color-accent-border);
+      font-size: var(--text-sm);
+      font-weight: var(--weight-semibold);
+      font-variant-numeric: tabular-nums;
+      color: var(--color-accent);
+    }
+
+    @media (min-width: 64rem) {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 30rem);
+      column-gap: var(--space-16);
+      align-items: baseline;
+
+      &::before {
+        grid-column: 1 / -1;
+      }
+    }
   }
 
   .section-title {
-    font-size: var(--text-title);
+    font-size: var(--text-2xl);
     font-weight: var(--weight-bold);
-    line-height: var(--leading-snug);
-    letter-spacing: var(--tracking-snug);
+    line-height: var(--leading-tight);
+    letter-spacing: var(--tracking-tight);
   }
 
   .section-subtitle {
-    font-size: var(--text-base);
+    max-width: 60ch;
     color: var(--color-text-muted);
-  }
-
-  /* The feature header: a pill on a rule that fades out at both ends, then a
-     larger centred title. It marks where the page changes pace, so it is used
-     sparingly - Projects only; Contact has its own form of it below. */
-  .section-header--feature {
-    justify-items: center;
-    gap: var(--space-3);
-    margin-block-end: var(--space-8);
-    text-align: center;
-
-    & .section-title {
-      font-size: var(--text-2xl);
-      line-height: var(--leading-tight);
-      letter-spacing: var(--tracking-tight);
-    }
-
-    & .section-subtitle {
-      max-width: 54ch;
-    }
-  }
-
-  .section-pill-row {
-    display: flex;
-    align-items: center;
-    width: 100%;
-    margin-block-end: var(--space-1);
-
-    &::before,
-    &::after {
-      content: "";
-      flex: 1;
-      height: 1px;
-    }
-
-    &::before {
-      background: linear-gradient(to right, transparent 5%, var(--color-border-strong) 95%);
-    }
-
-    &::after {
-      background: linear-gradient(to left, transparent 5%, var(--color-border-strong) 95%);
-    }
-  }
-
-  .section-pill,
-  .section-header--panel .section-title {
-    padding: var(--space-1) var(--space-4);
-    border-radius: var(--radius-md);
-    background-color: var(--color-inverse);
-    color: var(--color-inverse-ink);
-    font-size: var(--text-sm);
-    font-weight: var(--weight-medium);
-    line-height: var(--leading-normal);
-    letter-spacing: 0;
-    white-space: nowrap;
-  }
-
-  /* The header of a section that is one bordered panel: the title itself is
-     the pill, sitting astride the panel's top border. It stays in normal flow
-     (a negative margin, not absolute positioning), because a Reveal around the
-     header makes it the containing block mid-transition and an absolutely
-     positioned pill would jump. The panel sets --panel-pad. */
-  .section-header--panel {
-    justify-items: center;
-    gap: var(--space-4);
-    margin-block-end: var(--space-5);
-    text-align: center;
-
-    /* align-self: left to stretch, a grid item with a negative margin grows by
-       that margin and the pill came out 10px too tall. */
-    & .section-title {
-      align-self: start;
-      margin-block-start: calc(-1 * var(--panel-pad));
-      translate: 0 -50%;
-    }
-
-    & .section-subtitle {
-      max-width: 50ch;
-      margin-block-start: calc(-1 * var(--space-2));
-      font-size: var(--text-md);
-      color: var(--color-text-soft);
-    }
-  }
-
-  /* Sections flow across pages, since keeping one whole left half of page one
-     blank. Only the small units stay together: see the rule below. */
-  @media print {
-    .section {
-      padding-block: 1.5rem;
-    }
-
-    .section-pill-row {
-      display: none;
-    }
-
-    .stats,
-    .school,
-    .roles,
-    .skills__row,
-    .project-card,
-    .experience,
-    .section-header {
-      break-inside: avoid;
-    }
   }
 }

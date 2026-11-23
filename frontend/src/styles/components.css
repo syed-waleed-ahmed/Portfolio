@@ -1,4 +1,4 @@
-/* Shared component primitives: buttons, tags, links, the monogram, the dot band
+/* Shared component primitives: buttons, tags, links, the monogram, the dot field
    and the reveal transition. Section-specific styles live next to their JSX
    in components/**. */
 @layer components {
@@ -133,6 +133,15 @@
     color: var(--color-text-soft);
   }
 
+  /* The one variant: a core skill, raised out of the panel where every other
+     tag is cut into it. Still no accent, since a tag is not an action. */
+  .tag--core {
+    border-color: var(--color-border-strong);
+    background-color: var(--color-surface-raised);
+    font-weight: var(--weight-semibold);
+    color: var(--color-text-strong);
+  }
+
   /* ========= Monogram =========
      The ringed circle that opens a role or a school row. Holds the place a
      logo would, without a logo file or a third-party image request. */
@@ -149,6 +158,33 @@
     font-size: var(--text-sm);
     font-weight: var(--weight-semibold);
     line-height: 1;
+  }
+
+  /* ========= Timeline =========
+     A list whose rows each open with a monogram: the roles in Experience and
+     the schools in About. From a tablet up a hairline runs from each monogram
+     to the next, so the list reads as one line through time. Not on a phone,
+     where a role's bullets run the full width under its monogram and the
+     rail would cross them. */
+  .timeline {
+    display: grid;
+    gap: var(--space-6);
+    list-style: none;
+
+    @media (min-width: 40rem) {
+      & > li {
+        position: relative;
+      }
+
+      & > li:not(:last-child)::before {
+        content: "";
+        position: absolute;
+        inset-block: 3rem calc(0.5rem - var(--space-6));
+        inset-inline-start: 1.25rem;
+        width: 1px;
+        background-color: var(--color-border-strong);
+      }
+    }
   }
 
   /* ========= Inline link ========= */
@@ -175,63 +211,24 @@
     }
   }
 
-  /* ========= Dot band =========
-     A field of 2px squares on a 4px pitch that fades out downward, with a
-     slow shimmer. CSS only: the tile sizes of the two overlay layers are all
-     multiples of the pitch, so their squares land exactly on the base grid,
-     and because the sizes share no small multiple the brighter squares read
-     as scattered. Only opacity animates, so it costs the compositor alone.
-     Sits behind its parent's content: the parent must be a stacking context. */
-  .dot-band {
-    --dot: conic-gradient(at 2px 2px, transparent 270deg, var(--color-dot) 0);
+  /* ========= Dot field =========
+     A sparse grid of dots that fades out from one corner: behind the top of
+     the page, where it sits around the portrait, and in the contact panel.
+     The globe at the foot of the page is drawn in dots too, so the same mark
+     opens and closes it. Static: one gradient tile and a mask, nothing for
+     the compositor to animate. Sits behind its parent's content at
+     z-index -1, so the parent must be a stacking context, or the page.
+     --dot-origin is the corner it is brightest in. */
+  .dot-field {
     position: absolute;
     inset: 0 0 auto;
     z-index: -1;
-    height: 6.25rem;
-    overflow: hidden;
+    height: 40rem;
+    max-height: 100%;
     border-radius: inherit;
-    background: var(--dot) 0 0 / 4px 4px;
-    mask-image: linear-gradient(to bottom, #000, transparent);
+    background: radial-gradient(var(--color-dot) 1px, transparent 0) 0 0 / 1.5rem 1.5rem;
+    mask-image: radial-gradient(ellipse 60% 80% at var(--dot-origin, 85% 20%), #000, transparent);
     pointer-events: none;
-
-    &::before,
-    &::after {
-      content: "";
-      position: absolute;
-      inset: 0;
-    }
-
-    &::before {
-      background:
-        var(--dot) 0 0 / 12px 20px,
-        var(--dot) 8px 4px / 20px 28px;
-    }
-
-    &::after {
-      background:
-        var(--dot) 4px 8px / 28px 12px,
-        var(--dot) 16px 12px / 36px 44px;
-    }
-
-    @media (prefers-reduced-motion: no-preference) {
-      &::before {
-        animation: dot-shimmer 5s ease-in-out infinite;
-      }
-
-      &::after {
-        animation: dot-shimmer 7s ease-in-out -3s infinite;
-      }
-    }
-
-    @media print {
-      display: none;
-    }
-  }
-
-  @keyframes dot-shimmer {
-    50% {
-      opacity: 0.2;
-    }
   }
 
   /* ========= Reveal =========
@@ -251,19 +248,6 @@
     filter: blur(var(--reveal-blur));
   }
 
-  /* Printing lays the page out without scrolling it, so anything the visitor
-     had not scrolled to yet would print blank. Paper gets it all, at once. */
-  @media print {
-    [data-reveal] {
-      transition: none;
-    }
-
-    [data-reveal="pending"] {
-      opacity: 1;
-      translate: none;
-      filter: none;
-    }
-  }
 
   /* The hero's one-shot entrance: the same blur and settle as the reveal, but
      never invisible. On a phone the hero's text is the Largest Contentful
@@ -305,12 +289,6 @@
 
     &:focus-visible {
       translate: 0 0;
-    }
-  }
-
-  @media print {
-    .skip-link {
-      display: none;
     }
   }
 }

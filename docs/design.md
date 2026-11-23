@@ -24,7 +24,7 @@ the project lives inside one of these layers:
 | `tokens` | `styles/tokens.css` | Custom properties, and `color-scheme` |
 | `base` | `styles/base.css` | Element defaults: body type, headings, links, focus, selection |
 | `layout` | `styles/layout.css` | `.container`, `.section`, the section header |
-| `components` | `styles/components.css` and the `.css` beside each component | Buttons, tags, the monogram, the dot band, links, reveal, and each component's own styles |
+| `components` | `styles/components.css` and the `.css` beside each component | Buttons, tags, the monogram, the timeline rail, the dot field, links, reveal, and each component's own styles |
 | `utilities` | `styles/utilities.css` | `.visually-hidden` |
 
 A later layer beats an earlier one whatever the selector specificity, so a
@@ -33,12 +33,16 @@ selector. Nothing is unlayered. `main.jsx` imports `index.css` before `App`,
 which is what puts the layer statement ahead of every component stylesheet in
 the bundle.
 
+One stylesheet is not in that bundle: `styles/print.css`, everything the page
+changes for paper, linked on its own with `media="print"`. See [Print](#print).
+
 ### Co-located component styles
 
 Each component imports its own stylesheet (`Hero.jsx` imports `Hero.css`), so
 the styles for a piece of UI sit next to its markup and are deleted with it.
 Shared primitives that several components use (`.btn`, `.tag`, `.monogram`,
-`.dot-band`, `.text-link`) live in `styles/components.css` instead.
+`.timeline`, `.dot-field`, `.text-link`) live in `styles/components.css`
+instead.
 
 Class names follow a light BEM shape: `.project-card`, `.project-card__title`,
 `.btn--primary`. State lives in attributes rather than extra classes:
@@ -56,6 +60,8 @@ CSS selecting on the same thing assistive technology reads.
 | `color-mix()` | Accent tints and translucent surfaces | Derived colours stay tied to their token |
 | Container queries | Contact form | Fields respond to the form's width, not the viewport's |
 | `subgrid` | Project cards | Rows line up across cards; see below |
+| CSS counters | Section headers | Each section's number follows the order of `sections`, with no number written anywhere |
+| Multi-column layout | An open Experience row | Bullets flow down one column and into the next, balanced, with no row to line up across |
 | `:has()` | Project card hover, dock magnification, hiding the dock while a form field has focus on touch | Only cards that contain a link react to hover; an item can respond to its right-hand neighbour being hovered |
 | `::details-content`, `interpolate-size` | Experience rows | The native `<details>` animates open; unsupported browsers just open it at once |
 | Scroll-driven animation | Reading-progress line along the top of the viewport | No JavaScript; unsupported browsers just omit the line |
@@ -77,42 +83,67 @@ status to report.
 
 | Role | Token | Value | Used for | Contrast |
 |------|-------|-------|----------|----------|
-| Page | `--color-bg` | `#0b1221` | The page, and anything cut into a panel: tags, form fields, contact channels, dock items | |
-| Panel | `--color-surface` | `#111a2d` | Project cards, the stats band, the activity panel, the command palette, monograms | 1.08:1 on the page |
-| Raised | `--color-surface-raised` | `#17223a` | A hovered dock item, the portrait's ring, a picture's placeholder, autofilled fields | 1.10:1 on a panel |
+| Page | `--color-bg` | `#080e1b` | The page, and anything cut into a panel: tags, form fields, contact channels, dock items, the well a project picture sits in | |
+| Panel | `--color-surface` | `#121d32` | Project cards, the contact panel, the activity panel, the command palette, monograms | 1.15:1 on the page |
+| Raised | `--color-surface-raised` | `#1c2b45` | A hovered dock item, a core skill, a picture's placeholder, autofilled fields | 1.19:1 on a panel |
 | Floating | `--color-surface-translucent` | panel at 88% | The dock, over whatever scrolls beneath it | |
-| Hairline | `--color-border` | slate at 22% | Card and panel edges, tags, separators | 1.5:1 |
-| Outline | `--color-border-strong` | slate at 42% | Buttons, the dock, the palette, contact channels | 2.3:1 |
-| Field | `--color-border-field` | slate at 56% | Form fields | 3.1:1 |
-| Heading | `--color-text-strong` | `#f5f7fb` | Headings, figures, emphasis | 17.4:1, 16.2:1 |
-| Body | `--color-text` | `#dce3ec` | Body text | 14.5:1, 13.4:1 |
-| Soft | `--color-text-soft` | `#b7c2d0` | Descriptions, long-form copy, tags | 10.4:1, 9.6:1 |
-| Muted | `--color-text-muted` | `#a1adbf` | Metadata, secondary labels | 8.2:1, 7.6:1 |
-| Accent | `--color-accent` | `#22d3ee` | Links, the primary button, focus rings, the current section in the dock | 10.4:1, 9.6:1 |
-| Accent, hovered | `--color-accent-hover` | `#67e8f9` | The same, under the pointer | |
-| Accent ink | `--color-accent-ink` | `#04161c` | Text on the accent | 10.2:1 on the accent |
-| Partner | `--color-indigo` | `#6366f1` | Blended into cyan in the hero name and the reading-progress line, never alone | |
-| Inverse | `--color-inverse`, `--color-inverse-ink` | heading on page, swapped | The section pills and every tooltip | 17.4:1 |
-| Success | `--color-success` | `#86efac` | A sent message | 13.3:1, 12.4:1 |
-| Warning | `--color-warning` | `#fcd34d` | A send that failed through nothing the visitor did | 13.0:1, 12.0:1 |
-| Error | `--color-danger` | `#fca5a5` | An invalid field, a message the server rejected | 9.9:1, 9.1:1 |
-| Decoration | `--color-dot`, `--color-scrim` | slate at 13%, near-black at 60% | The dot band's squares; the dimmed page behind the palette | |
+| Hairline | `--color-border` | slate at 22% | Card and panel edges, tags, separators, the rule under a section header | 1.4:1 |
+| Outline | `--color-border-strong` | slate at 42% | Buttons, the dock, the palette, contact channels, the timeline rail | 2.3:1 |
+| Field | `--color-border-field` | slate at 64% | Form fields | 3.2:1 on the panel, 3.7:1 on the fill |
+| Heading | `--color-text-strong` | `#f8fbff` | Headings, figures, emphasis | 18.5:1, 16.2:1 |
+| Body | `--color-text` | `#d7e3f2` | Body text | 14.8:1, 12.9:1 |
+| Soft | `--color-text-soft` | `#bccadc` | Descriptions, long-form copy, tags | 11.5:1, 10.1:1 |
+| Muted | `--color-text-muted` | `#a3b4ca` | Metadata, secondary labels | 9.1:1, 7.9:1 |
+| Accent | `--color-accent` | `#65e9f5` | Links, the primary button, focus rings, the current section in the dock, the section numbers | 13.3:1, 11.6:1 |
+| Accent, hovered | `--color-accent-hover` | `#9df2fa` | The same, under the pointer | |
+| Accent ink | `--color-accent-ink` | `#071221` | Text on the accent | 13.0:1 on the accent |
+| Partner | `--color-indigo` | `#6366f1` | Blended into cyan in the hero name and the reading-progress line, and the second light behind the page; never alone | |
+| Inverse | `--color-inverse`, `--color-inverse-ink` | heading on page, swapped | Every tooltip | 18.5:1 |
+| Success | `--color-success` | `#a2f2d1` | A sent message, and the availability dot in the hero | 14.8:1, 12.9:1 |
+| Warning | `--color-warning` | `#ffe1a8` | A send that failed through nothing the visitor did | 15.2:1, 13.3:1 |
+| Error | `--color-danger` | `#ffc0c9` | An invalid field, a message the server rejected | 12.5:1, 10.9:1 |
+| Decoration | `--color-dot`, `--color-glow`, `--color-glow-indigo`, `--color-band`, `--color-scrim` | slate at 30%, accent at 9%, indigo at 16%, panel at 55%, near-black at 60% | The dot field; the two lights behind the top of the page; the lift at the top of every other section; the dimmed page behind the palette | |
 
-Where two ratios are given, they are against the page and against a panel.
+Where two ratios are given, they are against the page and against a panel,
+rounded down.
 
 Each hue also has two derived steps, and they are derived the same way for
 all four (accent, success, warning, danger): `-border` is the hue at 50%,
-which holds at least 3.3:1 as an edge, and `-subtle` is the hue at 10%, a tint
-for text of that hue to sit on (at least 8.3:1 on the page). Until November
+which holds at least 3.7:1 as an edge, and `-subtle` is the hue at 10%, a tint
+for text of that hue to sit on (at least 8.8:1, on a panel). Until November
 2026 each status colour had its own hand-picked border and tint, taken from a
 different red and green than its text, at 35% and 40%. That left an invalid
 field with a border of about 1.9:1, fainter than the 3.1:1 of a valid one.
 
+### The palette of November 2026
+
+These values date from the redesign of 2026-11-23. They began as a proposed
+palette, a deeper navy with a lighter cyan and pastel status colours, whose
+contrast ratios were recomputed here and found correct. Three of its values
+were then changed after being looked at on the page:
+
+- **The panel** was proposed at `#1b2940`, 1.32:1 on the page. Six large
+  cards at that step read as slabs on a dashboard. At 1.15:1 a panel is still
+  visible before its border is, and the page stays one navy. Before the
+  redesign page and panel were 1.08:1 apart, and the hairline did all of the
+  separating.
+- **Soft and muted text** were proposed at 12.5:1 and 11.0:1 on the page, so
+  close to body text that four steps read as two. They are 11.5:1 and 9.1:1,
+  which leaves muted text at 7.97:1 on a panel, the tightest pair on the
+  page.
+- **The field border** went from 56% to 64%. It is translucent and the
+  field's own fill runs under it, so on the contact panel, which now has a
+  surface of its own, 56% measured 2.7:1 against the panel outside it.
+
+The indigo was left alone. It is also the header of the contact email
+(`BRAND.accent`), under white text, where a lighter violet would not hold.
+
 Six rules keep it consistent:
 
-1. **One accent.** Cyan marks what you can act on, and where you are in the
-   dock. Technology tags and metadata are deliberately neutral: a tag is
-   information, not an action.
+1. **One accent.** Cyan marks what you can act on, and where you are: the
+   dock's current section and the number each section opens with. Technology
+   tags and metadata are deliberately neutral: a tag is information, not an
+   action.
 2. **Every text colour passes WCAG AAA**, 7:1, on both the page and a panel,
    the status colours on their own tints included. An invariant computes the
    plain pairs from `tokens.css`, and the browser suite runs axe's
@@ -120,16 +151,25 @@ Six rules keep it consistent:
    form, which is where the tints are checked. Edges are held to
    less, by what each has to do: a hairline only separates, an outline marks
    a thing, and a form field's border, the only sign that there is somewhere
-   to type, meets the 3:1 of WCAG 1.4.11.
-3. **A role is named for its job.** The pills and tooltips once used
-   `--color-text-strong` as a background and `--color-bg` as a text colour;
-   they now use the inverse pair, which aliases the same two values. The dock's
-   translucent fill was a one-off `color-mix()` in its stylesheet and is now a
-   token.
+   to type, meets the 3:1 of WCAG 1.4.11 on both sides of the line.
+   Text also sits over the two lights behind the top of the page and over the
+   lift at the top of a section, and axe cannot judge text over a gradient.
+   Those are held by arithmetic: at the brightest point of the cyan light
+   muted text is 7.6:1, at the brightest point of the indigo 7.8:1, and on
+   the lift 8.5:1. The two lights are centred off opposite corners, so they
+   never stack to more than either alone. Raising `--color-glow`,
+   `--color-glow-indigo` or `--color-band` means doing that sum again.
+3. **A role is named for its job.** The tooltips, and the section pills while
+   there were any, once used `--color-text-strong` as a background and
+   `--color-bg` as a text colour; they use the inverse pair, which aliases the
+   same two values. The dock's translucent fill was a one-off `color-mix()` in
+   its stylesheet and is now a token.
 4. **No colour is written outside `tokens.css`.** An invariant scans every
    other stylesheet for a hex, a colour function or a named colour, and names
    the declaration. `color-mix()` of tokens, `transparent`, `currentColor`
-   and the alpha of a mask are fine.
+   and the alpha of a mask are fine. `styles/print.css` gives the tokens
+   their values for paper, so it may write a literal as a token's value and
+   nowhere else.
 5. **Information has no hue.** A neutral note (the form's "still sending")
    uses the text and outline roles. The warning exists because a rate limit,
    a sleeping server and a dropped connection are not the visitor's error,
@@ -145,7 +185,8 @@ Six rules keep it consistent:
      fractions
    - `frontend/public/404.html`, a standalone page with no bundled CSS
    - `<meta name="theme-color">` in both `index.html` and `404.html`
-   - `scripts/gen-og-card.mjs`, which bakes the palette into the social card
+   - `scripts/gen-og-card.mjs`, which bakes the palette into the social card,
+     so the card has to be regenerated as well
    - `BRAND` in `backend/services/mailerService.js`, which colours the
      notification email: its indigo, cyan and ink are `--color-indigo`,
      `--color-accent` and `--color-bg`, and the rest are neutrals of its own,
@@ -176,14 +217,18 @@ accent border with a soft halo.
 | Text link: `.text-link` | Accent | Accent-hover, underlined | In a status message: the message's colour, underlined |
 | Dock item | Page fill, hairline, muted icon | Raised fill, heading-colour icon | Current section: accent border, tint and icon |
 | Form field | Page fill, field border | Muted border | Focus: accent border and halo. Invalid: error border, at 3.3:1 |
-| Project card | Panel, hairline, its picture a step dimmed | The pointer's light, its picture at full strength, and a ring if it holds a link | |
+| Project card | Panel, hairline, its picture a step dimmed in its well | The pointer's light, its picture at full strength, and a ring if it holds a link | |
 
 The three outlined controls each had a hover of their own until November
 2026: one tinted its fill, one coloured its icon, one coloured its label.
 
 A technology tag looks the same wherever it appears: the page colour as its
-fill, a hairline, soft text. Skills shows it a size larger and changes only
-its measurements.
+fill, a hairline, soft text. Skills shows it a size larger, and draws the ten
+core skills (`coreSkills` in `data/skills.js`) raised out of the panel where
+every other tag is cut into it: the raised surface, an outline, and
+heading-colour text at a heavier weight. That is the one variant, `.tag--core`,
+and it still takes no accent. The comment beside `coreSkills` says which
+project or role each one carries; there are no levels and no years.
 
 ---
 
@@ -218,9 +263,10 @@ changes, recompute them rather than copying these.
 
 Sizes are tokens (`--text-2xs` to `--text-display`). The larger steps are
 `clamp()` expressions that scale between a phone and a laptop, so the component
-files have almost no per-breakpoint font-size overrides. The one exception is the
-contact panel's invitation, which takes `--text-title` once it has a column of its
-own.
+files have almost no per-breakpoint font-size overrides. Two sizes are
+written outside the scale, each as a `clamp()` of its own: the hero's
+headline, which sits between `--text-title` and `--text-2xl`, and the figures
+under it.
 
 The font subset covers Latin-1, general punctuation and a few symbols. A
 character outside it (a right arrow, for example) renders in a fallback face,
@@ -287,46 +333,93 @@ underneath the dock.
   the container uses 91% of a 1440px screen and 77% of a 1920px one. A 46rem
   single column was tried first and rejected for leaving too much of a desktop
   screen empty, so wide layouts are a requirement here, not a nicety.
-- Sections spend that width rather than stretching text across it. From 64rem: the
-  hero puts the copy beside a large portrait, About puts the story beside education,
-  Experience bullets and Skills groups run in two columns, and Contact puts the
-  invitation and channels beside the form. Project cards go to three columns at
-  72rem. Lines stay readable because the columns limit them; only the hero's copy
-  and the centred subtitles also carry a max-width.
+- **The order is the one a recruiter reads in**: the hero, Projects,
+  Experience, About, Skills, Contact. `sections` in `data/portfolio.js` sets
+  it for the page, the dock and the palette. About led the page until November
+  2026, which put two screens of narrative between the introduction and the
+  first project.
+- **The hero is the first screen.** On a screen at least 64rem wide and 44rem
+  tall it takes the height of the viewport: the copy in the middle of the
+  space, the four figures along the bottom edge, and the dock under them. The
+  figures used to open About, and on a first screen the dock floated across
+  their labels. A shorter window, a tablet and a phone let the hero take its
+  own height. The masthead above it carries the name, the role and, from a
+  tablet up, the city. The hero opens with a status line saying which roles I
+  am open to, then the greeting, the headline in the heading colour, the
+  lead, the buttons and the graduation note.
+- On a phone the portrait is a 4rem thumbnail beside the status line, so the
+  greeting, the headline and the first button are all inside the first
+  screen; it was 96px on a row of its own, which pushed the buttons to the
+  bottom edge. On a tablet it is 148px beside the copy, and on a desktop 20rem
+  with a second outline set off behind it, down and to the right.
+- **The figures are a strip, not tiles**: each a number set large over the
+  line that says what it counts and the entry that backs it, with one rule
+  above the row. As four tiles on a filled band they read as a dashboard
+  widget. Two across on a phone and four from 48rem, with explicit column
+  counts, so a row is never left one short.
+- Sections spend the width rather than stretching text across it. From 64rem:
+  the hero puts the copy beside the portrait, About puts the story beside
+  education and the target roles, an open Experience row flows its bullets in
+  two columns, Skills groups run in two columns, and Contact puts the channels
+  beside the form. Projects divide six columns by weight: see
+  [Project cards](#project-cards-one-featured-then-two-then-three). Lines stay
+  readable because the columns limit them; only the hero's copy and the
+  section subtitles also carry a max-width.
 - Past 1920px the root font size scales with the viewport, up to 150%. Everything
   is in rem, so the page keeps its shape on a large monitor instead of leaving small
   text in a narrowing strip. Zooming still works, since it shrinks the viewport
   below that query.
-- `.section` carries the vertical rhythm (`--section-space`, fluid). Sections are
-  separated by that space alone, with no rules between them.
-- Section headers come in three forms. The default is a small left-aligned title.
-  Projects uses the feature form, a pill on a rule that fades out at both ends,
-  over a larger centred title. Contact is one bordered panel whose title is itself
-  the pill, astride the top border, centred up to 64rem and at the panel's left edge
-  above it. The heavier two mark where the page changes pace, so adding more of them
-  would cost them that.
-- The dot band is a CSS-only field of 2px squares behind the top of the page and
-  the contact panel. It fades out downward and shimmers slowly, animating opacity
-  only.
-- Experience is a list of `<details>` rows: monogram, role and company, then dates
-  and place in their own column. The most recent role starts open; the rest are
-  a click away, and several can be open at once. The bullets are in the prerendered
-  HTML whichever state a row is in, and a print rule shows them all.
+- `.section` carries the vertical rhythm (`--section-space`, fluid). Every
+  other section (Projects, About, Contact) opens on a lift: a hairline and a
+  tone, `--color-band`, that fades back into the page within 22rem. It gives a
+  long page a rhythm without giving any section a colour of its own.
+- **One section header**, for every section: the section's number over a short
+  accent rule, the title at `--text-2xl`, the subtitle, and a hairline under
+  the lot. From 64rem the subtitle moves beside the title, against the right
+  edge, on the title's baseline. The number is a CSS counter on the sections,
+  so reordering `sections` renumbers the page, and it carries empty
+  alternative text, so a screen reader hears the heading alone. Three headers
+  stood here until November 2026: a small left-aligned title, a pill on a rule
+  over a centred title for Projects, and a pill astride the panel's border for
+  Contact. The page read as three designs.
+- **Two lights and a dot field stand behind the top of the page.** The lights
+  are two radial gradients on the canvas (`html`, screen only): cyan from the
+  right, behind the portrait, and indigo from the left. Over them, under the
+  text, the dot field is a sparse grid of dots on a 1.5rem pitch that fades
+  out from the top right corner. It is static: one gradient tile and a mask.
+  The contact panel has a dot field of its own, brightest in its top left
+  corner, and the globe below it is drawn in dots too, so the same mark opens
+  and closes the page. The dot band it replaced was a 100px strip of 2px
+  squares on a slow shimmer, faint enough that it was easy to miss.
+- Experience and Education are timelines (`.timeline`): each row opens with a
+  monogram, and from 40rem a hairline joins one monogram to the next. Experience
+  is a list of `<details>` rows: monogram, role and company, then dates and
+  place in their own column. The most recent role starts open; the rest are a
+  click away, and several can be open at once. The bullets are in the
+  prerendered HTML whichever state a row is in, and the print stylesheet shows
+  them all. From 64rem an open row's bullets flow in two CSS columns,
+  balanced; as a two-column grid they lined up across rows, which left a gap
+  under every short bullet and the fifth bullet on a row of its own.
 - A role or school opens with a `.monogram`, the initial in a ringed circle. It
   holds the place a logo would, with no logo file or third-party image request.
-- The About figures are two tiles across on phones and four from 48rem, with
-  explicit column counts, so a row is never left with an empty cell showing the
-  band's background.
+- About sets the story beside a second column that holds education and, under
+  it, the target roles, so the two columns run to about the same height;
+  education alone ended half way down. The story's first paragraph is set a
+  size up and in the body colour, as a lede.
 - Skills is a definition list, one group per row, with two groups across from
   64rem. A tag naming a product carries its mark: see
-  [Skill marks](#skill-marks).
+  [Skill marks](#skill-marks). Ten tags are drawn stronger: see
+  [States](#states).
+- Contact is the page's largest panel, on a surface of its own: availability
+  and place as its heading line, the direct channels and the globe on the left
+  over the dot field, and the form on the right.
 
 ### The dock
 
 `components/layout/Dock.jsx` is the page's navigation at every width. It replaced
 a sticky top bar, the mobile menu and a floating back-to-top button, whose job the
-Home item now does: it scrolls to the very top of the page, masthead and dot band
-included, not just to the hero.
+Home item now does: it scrolls to the very top of the page, masthead included,
+not just to the hero.
 
 - The navigation items are real links with accessible names, in the prerendered
   HTML, so they work before hydration; only the Search button needs JavaScript.
@@ -344,7 +437,11 @@ included, not just to the hero.
   Its tooltip reads "Search (Ctrl K)" in the prerendered HTML and switches to
   the Command key on Apple platforms after hydration.
 - The masthead above the hero exists because the greeting uses the first name
-  only, and the full name still has to be on the first screen.
+  only, and the full name still has to be on the first screen. It carries the
+  role beside the name and, from a tablet up, the city.
+- On a desktop first screen the dock sits under the hero's figures, not over
+  them: the hero's bottom padding there is `--dock-clearance`, the same
+  figure `scroll-padding` uses. A browser test holds it at 1440 by 900.
 
 ### Command palette
 
@@ -444,17 +541,39 @@ The mark is decoration, hidden from assistive technology: the tag's text is
 its name. A `<use>` whose sprite failed to load draws nothing and reports
 nothing, so the browser suite checks that every one has a bounding box.
 
-### Project cards line up on shared rows
+### Project cards: one featured, then two, then three
 
-`.project-grid` is one column on phones, two from 44rem and three from 72rem.
-Each card spans seven row tracks with `grid-template-rows: subgrid`: picture,
-context, title, description, highlight, stack and links. A two-line title on
+`.project-grid` is one column on phones, two from 44rem and six from 72rem,
+and the cards divide those columns by weight. The featured project
+(`featured: true` in `data/projects.js`: the first entry, held to exactly one
+by a content test) takes the full width. The next two take three columns each
+and the last three take two each. On a tablet the second card runs across both
+columns, so five cards never leave one alone at the end. Until November 2026
+all six were the same card in two rows of three, and the thesis project
+carried no more weight than any other.
+
+**The featured card** is the same card, with the same parts in the same
+order. From 64rem its picture stands beside its text instead of over it, in a
+well that fills the card's left half with the page's cyan light behind; its
+title is set at `--text-title`, and it shows its `role` above the title. It
+takes one row of the grid and lays out its own rows.
+
+**The other five** each span six row tracks with `grid-template-rows: subgrid`:
+picture, title, description, highlight, stack and links. A two-line title on
 one card therefore pushes its neighbour's description down to match, and every
-band lines up across the row.
+band lines up across the row. They no longer print `role`: it read
+"Independent Project" five times, and the section's subtitle says it once.
+The field stays on every entry for the command palette's search.
 
-**Every card opens with a picture**, a 2:1 crop that bleeds to the card's
-edges. Each is cut from an image in that project's own repository, never a
-mock-up, so it can be checked like the card's figures:
+**Every card opens with a picture in a well.** The `<picture>` is a panel cut
+into the card and filled with the page colour, like a tag or a form field. It
+bleeds to the card's edges, and the 2:1 image stands inside it on its bottom
+edge, set in by the well's padding (`--well`: 1rem, or 2rem in the featured
+card and the two wide ones). Three of the six pictures are light and three are
+dark, and bled to the card's edges they made the grid a checkerboard; set in
+from the same dark mount, each reads as a screenshot of something. Each is cut
+from an image in that project's own repository, never a mock-up, so it can be
+checked like the card's figures:
 
 | Card | Source | Crop (left, top, width) | Shows |
 |------|--------|-------------------------|-------|
@@ -484,11 +603,19 @@ opened in it. A project names its picture in `data/projects.js` and
 `Projects.jsx` resolves the name to Vite's fingerprinted URLs, so the data
 module stays importable by plain Node. They load lazily, since the grid starts
 below the fold at every width, and the `width` and `height` attributes hold
-the 2:1 box until they arrive. Their `sizes`, `PICTURE_SIZES` in
-`Projects.jsx`, follows the picture's rendered width at each breakpoint, so a
-change to the container, the gutter or the grid's columns has to update it;
-the comment there has the derivation. The picture row is shared like the other
-six, so a card without one would show an empty band: a content test requires
+the 2:1 box until they arrive. Their `sizes` come from `PICTURE_SIZES` in
+`Projects.jsx`, which holds three lists because the grid gives the cards three
+widths. Each follows the picture's rendered width at every breakpoint: the
+card's width, less its borders and the well's padding. A change to the
+container, the gutter, the grid's columns or `--well` has to update it; the
+comment there has the derivation, and it was measured within 2px at 22 widths
+from 320 to 2560px. Up to a 1920px screen the widest a picture is drawn is
+about 665px, in the featured card and the two under it, against files that
+stop at 960px or narrower: on a 2x screen those three are drawn at about 1.4 file pixels per
+CSS pixel rather than 2. A wider cut of those three would fix that and
+take the picture budgets with it, and has not been made. The picture row is
+shared like the other five, so a card without one would show an empty band: a
+content test requires
 all four files and an `imageAlt` of 12 to 40 words for every project. They
 were cut by hand with `sharp` (extract, resize, AVIF at quality 55, WebP at
 quality 78); a new card needs the same four files. The AI Workflow
@@ -498,11 +625,13 @@ small text, and at sharp's default 4:4:4 the first pair alone took 63 KB and
 pushed the twelve past their 175 KB budget. At 4:2:0 the two pairs take 40 KB
 and 29 KB with the text still crisp.
 
-The `<picture>` is the card's grid item, and it bleeds past the card's padding
-with negative margins and a width that adds the padding back. That needs
-`max-inline-size: none`: the reset caps a picture at 100% of its container,
-which here is the card's content box, and with the cap it stopped 2.5rem short
-of the card's right edge.
+The `<picture>`, the well, is the card's grid item, and it bleeds past the
+card's padding with negative margins and a width that adds the padding back.
+That needs `max-inline-size: none`: the reset caps a picture at 100% of its
+container, which here is the card's content box, and with the cap it stopped
+2.5rem short of the card's right edge. A browser test checks both: that the
+well reaches the card's edges, and that the image sits in from it by the same
+margin on each side.
 
 Three of the six are light, the LLM-as-Judge and Research Team screenshots
 and the RemindrAI poster, shown as those projects really look, and at full
@@ -538,7 +667,7 @@ listener on the grid that writes `--spot-x` and `--spot-y` to the card under
 the pointer, with no state and so no re-render, and `Projects.css` draws two
 radial gradients there: `::before` under the text at `z-index: -1`, and
 `::after` over the border, masked down to its 1px. In flow, either one would
-be a grid item and take one of the seven rows. The light is off on touch
+be a grid item and take one of the six rows. The light is off on touch
 screens, where a tap would leave `:hover` parked on the last card touched.
 
 Without subgrid support the cards fall back to ordinary columns: content still
@@ -555,17 +684,19 @@ library.
 
 | Motion | Detail |
 |--------|--------|
-| Hero entrance | The copy sharpens from a 6px blur and settles 6px downward, once, 40ms apart. It is never invisible: on a phone the hero's text is the Largest Contentful Paint, and Chrome does not count an element at opacity 0, so the fade from nothing it had until November 2026 held the LCP back by about 150ms on a throttled phone. The portrait, the LCP on a desktop, does not animate, so it paints as soon as it decodes |
+| Hero entrance | The status line and the copy sharpen from a 6px blur and settle 6px downward, once, 40ms apart. It is never invisible: on a phone the hero's text is the Largest Contentful Paint, and Chrome does not count an element at opacity 0, so the fade from nothing it had until November 2026 held the LCP back by about 150ms on a throttled phone. The portrait, the LCP on a desktop, does not animate, so it paints as soon as it decodes |
 | Greeting caret | The cursor after "hi, Waleed here." blinks; it is solid under reduced motion |
-| Scroll reveal | Content that starts below the fold gets the same blur, fade and 6px settle when it enters, over 400ms. Experience rows follow each other 40ms apart, and project cards stagger 50ms along each row, by the column count `Projects.css` knows. See below |
+| Scroll reveal | Content that starts below the fold gets the same blur, fade and 6px settle when it enters, over 400ms. Experience rows follow each other 40ms apart, and project cards stagger 50ms along each row, by the layout `Projects.css` knows. See below |
 | Reading progress | A 2px line along the top of the viewport, driven by `animation-timeline: scroll()` |
 | Dock | Items magnify on hover over 220ms, with a tooltip above. On touch the dock slides away while a contact field has focus. See [The dock](#the-dock) |
 | Experience rows | The row's height animates open and the chevron turns, 220ms |
-| Dot band | Two layers of squares shimmer on 5s and 7s cycles, opacity only |
 | Command palette | Fades in and settles 6px, 220ms, over a fading backdrop |
 | Globe | Sways slowly about its centre on `requestAnimationFrame`, in WebGL, only while on screen |
 | Hover and focus | Colour and border changes, 150ms. Project cards that hold a link gain a soft ring over 220ms and do not lift, because they are not click targets |
 | Pointer light | A project card under a mouse pointer shows a soft wash and a brighter border where the pointer is, fading in over 220ms. It moves only as the pointer does. See [Project cards](#project-cards-line-up-on-shared-rows) |
+
+Nothing in the page's backdrop moves. The two lights and the dot field are
+static, where the dot band they replaced shimmered on 5s and 7s cycles.
 
 `Reveal` only ever hides content that is below the viewport **after**
 hydration, by writing `data-reveal="pending"` to the node. The prerendered HTML
@@ -574,13 +705,14 @@ visitor without JavaScript sees everything. It uses an `IntersectionObserver`
 with threshold 0, because a ratio threshold can never be reached by an element
 taller than the viewport, and reveals on any intersecting entry in a callback,
 since a busy main thread can deliver an older "not intersecting" entry first.
-Printing never waits for it: a print rule shows pending content at full
-opacity (see [Print](#print)).
+Printing never waits for it: the print stylesheet shows pending content at
+full opacity (see [Print](#print)).
 
 Under `prefers-reduced-motion: reduce` the duration tokens drop to 0, a global
 rule shortens any remaining animation to effectively nothing, smooth scrolling
-is turned off, `Reveal` skips hiding content entirely, the dot band holds still,
-the dock does not magnify and the globe draws one still frame.
+is turned off, `Reveal` skips hiding content entirely, the hero's caret stops
+blinking and stays solid, the dock does not magnify and the globe draws one
+still frame.
 
 ---
 
@@ -593,7 +725,10 @@ the dock does not magnify and the globe draws one still frame.
 - One visible `:focus-visible` treatment site-wide, following each control's
   own shape; form fields use a border-and-halo variant
 - Every section is a named landmark (`aria-labelledby` its heading), with one
-  `<h1>` and a strict heading order
+  `<h1>` and a strict heading order. The number above each heading is
+  generated content with empty alternative text, so it is not read out
+- A core skill is told apart by weight and surface as well as brightness, and
+  its tag ends with a visually hidden ", core skill"
 - Dock: every item has an accessible name and the current section is marked with
   `aria-current`; a tooltip repeats the name on hover and on keyboard focus;
   `scroll-padding` keeps a focused control clear of it
@@ -612,8 +747,9 @@ the dock does not magnify and the globe draws one still frame.
   alone keep a mark: the dock's current section and the command palette's
   selected row opt out with `forced-color-adjust: none` and take the system's
   `Highlight` and `HighlightText`. Everything else is left to the theme: text,
-  borders and focus rings stay visible, and the decoration (the dot band, the
-  reading-progress line, the pointer light) simply goes
+  borders and focus rings stay visible, and the decoration (the dot field, the
+  two lights, the availability dot, the reading-progress line, the pointer
+  light) simply goes
 - Tap targets and reduced motion as described above
 
 The browser suite runs an axe-core scan (the WCAG 2.0, 2.1 and 2.2 A and AA
@@ -626,17 +762,31 @@ an invalid field. See [Testing](testing.md#browser-tests).
 
 ## Print
 
-Every component reads the colour tokens, so printing is one block in `tokens.css`
-that swaps them for ink on white, rather than a colour override per component.
-Sections flow across pages, with only small units (a stat band, a project card, a
-role) kept whole. The dock, the dot band, the reading-progress line, the
-contribution graph and the globe are not printed, and a closed Experience row
-prints its bullets anyway.
+Every component reads the colour tokens, so printing swaps them for ink on
+white rather than overriding each component. That swap, and every other rule
+for paper, is one stylesheet: `src/styles/print.css`. `App.jsx` imports it with
+`?url`, so Vite emits it as a file of its own, and links it with
+`media="print"`: a browser fetches it at low priority and it never holds up
+the first paint. Until November 2026 the print rules sat beside each component
+inside the entry stylesheet, about 300 gzipped bytes of its 8 kB budget for
+something most visitors never use.
+
+Each rule there sits in the cascade layer of the rule it overrides, and wins
+by coming later. An invariant fails if an `@media print` rule turns up in any
+other stylesheet, or if the link goes; Size Limit gives the file a budget of
+its own.
+
+Sections flow across pages, with only small units (the figures, a project
+card, a role) kept whole. The dock, the dot field, the two lights, the
+reading-progress line, the contribution graph and the globe are not printed,
+the hero takes its own height, and a closed Experience row prints its bullets
+anyway.
 
 Printing lays the page out without scrolling it, so content `Reveal` was still
-holding back would print blank. A print rule in `components.css` shows every
+holding back would print blank. A rule in the print stylesheet shows every
 `[data-reveal="pending"]` element at full opacity with no blur or offset, and
-turns the reveal transitions off.
+turns the reveal transitions off. A browser test prints the page: content not
+yet scrolled to shows, the dock does not, and the text is ink.
 
 ---
 
@@ -649,7 +799,7 @@ need regenerating rather than editing:
 |-------|--------|-----|
 | `images/og-card.png` | `images/Profile.avif` + the font | `scripts/gen-og-card.mjs` |
 | `src/assets/skill-icons.svg` (in `src/`, not `public/`, so Vite fingerprints it) | `skillIcons` in `src/data/skills.js` + two icon packages | `frontend/scripts/gen-skill-icons.mjs`, see [Skill marks](#skill-marks) |
-| `favicon.ico`, `favicon-96x96.png`, `apple-touch-icon.png` | `favicon.svg`, the hand-drawn crewmate | Rasterized from the SVG; the touch icon bakes in the previous navy `#0a192f`, visually indistinguishable from `--color-bg` |
+| `favicon.ico`, `favicon-96x96.png`, `apple-touch-icon.png` | `favicon.svg`, the hand-drawn crewmate | Rasterized from the SVG; the touch icon bakes in `#0a192f`, the navy of two palettes ago, still close enough to `--color-bg` to read as the same |
 | `images/Profile-840.{avif,webp}` | An 840px square (left 48, top 70) of the 960x1280 studio portrait of November 2026, which is not in the repository | `sharp` extract, unscaled. Requested only past 2048px at 2x, where the portrait renders at 16.6vw |
 | `images/Profile.{avif,webp}` | The same crop at 680px | `sharp` resize. Desktops at 2x and 1x screens past 1920px; the JSON-LD `image` and the `<img>` fallback point here |
 | `images/Profile-320.{avif,webp}` | The same crop at 320px | `sharp` resize. Phones at 3x, tablets at 2x and desktops at 1x, where the portrait renders at 320px |
@@ -690,19 +840,47 @@ workflow rather than by hand: see
 The interaction patterns are adapted from
 [magicuidesign/portfolio](https://github.com/magicuidesign/portfolio) by Dillion
 Verma, MIT licensed, Copyright (c) 2024 Dillion Verma: the floating dock, the
-expandable work rows, the blur-fade entrance, the pill-on-a-rule header and the dot
-band. Its narrow single column was not kept: see [Layout](#layout). The light
-under the pointer on project cards is adapted the same way from the Magic Card
-in the same author's [magicuidesign/magicui](https://github.com/magicuidesign/magicui),
+expandable work rows and the blur-fade entrance. Its narrow single column was
+not kept: see [Layout](#layout). Two more of its patterns came across in
+November 2026 and went again in the redesign later that month: the
+pill-on-a-rule header, replaced by the numbered header every section now
+shares, and the dot band, replaced by the dot field. The light under the
+pointer on project cards is adapted the same way from the Magic Card in the
+same author's [magicuidesign/magicui](https://github.com/magicuidesign/magicui),
 also MIT.
 
 They were rewritten for this codebase rather than copied in. That project is built
 on Next.js, Tailwind, shadcn/ui and Motion, and none of those are dependencies
 here: the blur-fade is a CSS transition, the dock's magnification is `:has()`, the
-accordion is `<details>`, the dot band is CSS gradients where the original
-draws to a canvas, and the pointer light is two gradients and a dozen lines of
-event handler where the original animates motion values. The palette,
+accordion is `<details>`, and the pointer light is two gradients and a dozen
+lines of event handler where the original animates motion values. The palette,
 typeface, copy and content are this site's own.
+
+### The redesign of November 2026
+
+The redesign of 2026-11-23 kept the dock, the palette, the work rows, the
+blur-fade and the pointer light, and recomposed the rest: the palette, the
+hero, the order of the sections, their headers, the project grid and the
+contact panel. It added no dependency. Four published sources shaped
+particular decisions, and each is named here for the idea, not for anything
+copied:
+
+- **Linear's account of its 2026 design refresh**: supporting chrome should
+  not compete for attention it has not earned, and structure should be felt
+  rather than seen. Hence four text steps that are visibly apart, panels a
+  small step off the page rather than a large one, and hairlines kept faint.
+- **Vercel's Web Interface Guidelines**: more contrast under the pointer and
+  under focus than at rest, tabular figures where numbers are compared, no
+  `transition: all`, and nothing animated that does not explain a cause and
+  its effect. The site held these already. The redesign broke none of them
+  and took one animation out, the dot band's shimmer.
+- **Geist's colour documentation**: draw each border once, and tell
+  backgrounds apart sparingly. Hence one hairline under each section header,
+  and a lift on every other section rather than a background for each.
+- **Alexander Horner's notes on his 2026 portfolio**: more character without
+  turning playful, through asymmetry and numbered structure. Hence the
+  numbered headers, the subtitle set against the right edge, and one featured
+  project at full width over smaller ones.
 
 ---
 

@@ -19,10 +19,6 @@
       animation-timeline: scroll(root block);
       pointer-events: none;
     }
-
-    @media print {
-      display: none;
-    }
   }
 
   @keyframes reading-progress {
@@ -49,10 +45,6 @@
       translate var(--duration-base) var(--ease-out),
       opacity var(--duration-base) ease,
       visibility 0s;
-
-    @media print {
-      display: none;
-    }
   }
 
   .dock {

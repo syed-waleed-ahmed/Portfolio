@@ -130,7 +130,7 @@ npm test --prefix frontend
 npm test --prefix frontend --silent -- --test-name-pattern=density   # a subset by name
 ```
 
-Fourteen tests in `frontend/test/data.test.js`, on the same built-in runner with
+Sixteen tests in `frontend/test/data.test.js`, on the same built-in runner with
 no dependencies. The data files are plain modules, so they import without a
 bundler. They also run before the build of every deploy, through the prebuild
 gate.
@@ -140,6 +140,8 @@ gate.
 | `every About figure appears in an entry that names its source` | Every stat in `about.js` appears in an Experience or Projects entry that names its source |
 | `project cards keep a matching density` | Descriptions 32-53 words, highlights 9-26, four or five stack chips |
 | `every project card fills its last row, with a link or a note` | Every card carries exactly one of `github` and `sourceNote` |
+| `exactly one project is featured, and it comes first` | One entry in `projects.js` has `featured`, and it is the first: the grid lays that card out across the full width |
+| `every core skill is one of the skill tags` | `coreSkills` holds six to twelve names, none twice, each a tag in `skillGroups` |
 | `experience bullets stay within the shared length range` | Every bullet 12-26 words |
 | `titles, keys and tags are unique` | Project titles, companies, section ids, stats and skill tags (several are React keys) |
 | `section ids are valid fragment identifiers` | Lowercase ids with a label, and none collides with the hero's `top` |
@@ -160,7 +162,7 @@ gate.
 npm run test:invariants      # from the repository root
 ```
 
-Twenty tests in `test/invariants.test.js` at the repository root, on the same
+Twenty-one tests in `test/invariants.test.js` at the repository root, on the same
 runner with no dependencies. Each pins a coupling that fails silently: two files
 that must agree, where a mismatch breaks nothing a build or a glance would
 catch. They read source files only, never build output, so they run before a
@@ -178,7 +180,8 @@ build as well, and every failure message says what to change.
 | `the globe's WebGL cyan is the accent` | `CYAN` is `--color-accent` as 0-1 fractions |
 | `every text, accent and status colour is 7:1 on the page and on a panel` | The four text tokens, the accent and the three status colours are each at least 7:1 on `--color-bg` and `--color-surface`, as are the accent ink on the accent and on its hover state, and the inverse pair |
 | `every hue derives its border and its tint the same way` | For accent, success, warning and danger, `-border` is the hue at 50% and `-subtle` the hue at 10% |
-| `stylesheets take every colour from the tokens` | No stylesheet but `tokens.css` writes a hex value, a colour function, `white` or `black`; mask declarations are exempt, since a mask is painted in alpha |
+| `stylesheets take every colour from the tokens` | No stylesheet but `tokens.css` writes a hex value, a colour function, `white` or `black`; mask declarations are exempt, since a mask is painted in alpha, and `print.css` may write one only as a colour token's value for paper |
+| `print rules live in the print stylesheet, and the app links it` | No stylesheet but `styles/print.css` holds an `@media print` rule, and `App.jsx` imports that file with `?url` and links it with `media="print"` |
 | `the three last-modified dates agree` | `dateModified` in `index.html`, `<lastmod>` in `sitemap.xml` and `Last update` in `humans.txt` name the same day |
 | `the Node version is pinned the same way everywhere` | Every `actions/setup-node` step in every workflow reads `.nvmrc` through `node-version-file` and none hardcodes `node-version`, and every `engines.node` admits the major `.nvmrc` pins |
 | `the Cloudflare configuration publishes the build with its headers and 404 page` | `frontend/wrangler.jsonc` publishes `./dist` with `not_found_handling` set to `404-page` and holds no `account_id`, and `public/404.html` and `public/_headers` exist. The canonical URL in `index.html`, `SITE_URL` in `deploy.yml` and the first custom domain in the config name one origin, and `workers_dev` is `false` |
@@ -203,7 +206,7 @@ npm run build
 npm run test:e2e
 ```
 
-Twenty-nine tests in `frontend/e2e/site.spec.js`, on Playwright Test with
+Thirty-one tests in `frontend/e2e/site.spec.js`, on Playwright Test with
 `@axe-core/playwright`, against the built and prerendered site.
 `e2e/serve.mjs` serves `frontend/dist` on `127.0.0.1:4174` with the `/*` headers
 from `dist/_headers`, so the suite runs under the CSP visitors get (which
@@ -250,8 +253,8 @@ Cloudflare deployment.
 | `has no horizontal overflow at <width>px`, five tests | No horizontal scroll at 320, 390, 768, 1440 and 1920px, with the lazy graph and globe loaded |
 | `axe finds no WCAG 2.2 A or AA violations on desktop` and `on phone` | No axe violations for the WCAG 2.0 and 2.1 A and AA tags and the 2.2 AA tag (axe has no 2.2 A tag), at 1440 and 390px, under reduced motion so axe reads final colours |
 | `axe finds no violations with the command palette open` | The same scan with the dialog open |
-| `all text meets the 7:1 of WCAG AAA` | axe's `color-contrast-enhanced` rule finds nothing at 1440px. It cannot judge text over the dot band's gradient and reports that as incomplete, not as a pass |
-| `form fields have a border of at least 3:1 against the panel` | The first field's border, flattened over the page colour, is at least 3:1 against it (WCAG 1.4.11, for which axe has no rule) |
+| `all text meets the 7:1 of WCAG AAA` | axe's `color-contrast-enhanced` rule finds nothing at 1440px. It cannot judge text over a gradient (the two lights behind the top of the page, the lift at the top of a section) and reports that as incomplete, not as a pass: those pairs are held by the arithmetic in [Design](design.md#colour-tokens) |
+| `form fields have a border of at least 3:1 against the panel and their fill` | The first field's border, flattened over the field's own fill, which runs under it, is at least 3:1 against the contact panel outside it and against that fill (WCAG 1.4.11, for which axe has no rule). The panel and the fill must differ, or the two checks are one |
 | `under forced colours`: `the dock still marks the current section`, `the palette still marks the selected row` | With `forced-colors: active` emulated, the marked element has opted out of forced colours and its fill is at least 3:1 against the fill of an unmarked one. The computed colours alone are not compared: with the mark lost they were black at 10% and black |
 | `opens with Ctrl+K, runs a search, and gives focus back on Escape` | The input is focused; "copy email" and Enter announce the copy; Escape closes the dialog |
 | `returns focus to the Search button it was opened from` | Focus is back on the dock's Search button after Escape |
@@ -263,10 +266,11 @@ Cloudflare deployment.
 | `a rate-limited send explains the wait and offers email` | A mocked `429` shows the 15-minute message with a `mailto:` link |
 | `every form message has its own tone and keeps 7:1` | The field errors, a `429` as a warning, a `400` as an error and a `200` as a success each show their own class, and axe's enhanced-contrast rule finds nothing in the form in any of the four. Run at 1024px, where the globe never loads |
 | `the contribution graph fits a phone without its own scroller` | At 390px the library's own scroll container has nothing to scroll |
-| `printing shows content the visitor had not scrolled to` | Under print media every `[data-reveal]` element has opacity 1 |
+| `printing shows content the visitor had not scrolled to, without the dock` | Under print media the dock is hidden, every `[data-reveal]` element has opacity 1 and the body text is the ink colour: all three come from `styles/print.css`, so a broken link to it fails here |
+| `on a desktop first screen the figures sit clear of the dock` | At 1440 by 900 the hero's figures are inside the first screen and end at least 8px above the dock |
 | `every skill mark draws from the sprite` | Every `<use>` in a skill tag has a bounding box, so the sprite loaded under the CSP and holds each id: a missing one is an empty box, not an error |
-| `every project picture offers a WebP beside its AVIF, and loads` | Each of the six cards has an AVIF `<source>` and a WebP `<img>` with two widths each, the image has loaded (as AVIF, in this Chromium), and it spans the card edge to edge |
-| `the light under the pointer leaves the project cards' rows aligned` | Hovering a card writes `--spot-x`; each of the first three cards still has seven children, the picture at the card's very top and all seven at the same offsets across the row. An in-flow pseudo-element would take the top row and move the picture down in every card alike |
+| `every project picture offers a WebP beside its AVIF, and loads` | Each of the six cards has an AVIF `<source>` and a WebP `<img>` with two widths each, the image has loaded (as AVIF, in this Chromium), its well reaches the card's edges (across the top, or down the left half of the featured card), and the image sits in from the well by the same margin on both sides at 2:1 |
+| `the light under the pointer leaves the project cards' rows aligned` | Hovering a card writes `--spot-x`; each of the last three cards, which share a row at 1440px, still has six children, the picture at the card's very top and all six at the same offsets across the row. An in-flow pseudo-element would take the top row and move the picture down in every card alike |
 
 The suite runs in Chromium only, with four workers locally and two in CI, where
 a failed test gets one retry. Locally there is none, so a flaky test shows up
@@ -291,11 +295,12 @@ budgets in `frontend/.size-limit.json`, so it needs a build first.
 |--------|-------|-------|
 | Entry JS, which every visitor downloads | `index-*.js` | 87 kB |
 | Entry CSS | `index-*.css` | 8 kB |
+| Print stylesheet, linked with `media="print"`, so it never blocks rendering | `print-*.css` | 1 kB |
 | Skill marks sprite, one image request | `skill-icons-*.svg` | 23 kB |
 | Project pictures, the twelve AVIF files, loaded lazily | `*.avif` | 175 kB |
 | Project pictures, the twelve WebP fallbacks | `*.webp` | 212 kB |
 | Command palette, `cmdk` | `CommandPalette-*.js` and `.css` | 20 kB |
-| Contribution graph, `react-activity-calendar` | `GitHubActivityCalendar-*.js` and `Tooltip-*.js` | 27 kB |
+| Contribution graph, `react-activity-calendar` | `GitHubActivityCalendar-*.js` and `.css`, and `Tooltip-*.js` | 27 kB |
 | Globe, `cobe` | `index.esm-*.js` | 6.5 kB |
 
 Each limit was set about 5 to 10% above what the build measured at the time.

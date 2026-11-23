@@ -30,11 +30,11 @@ const pub = (p) => path.join(root, "frontend/public", p);
 const PORTRAIT = pub("images/Profile.avif");
 const FONT = pub("fonts/hanken-grotesk-latin-wght.woff2");
 
-const BG = "#0b1221"; // --color-bg
-const TEXT = "#f5f7fb"; // --color-text-strong
-const SOFT = "#b7c2d0"; // --color-text-soft
-const MUTED = "#a1adbf"; // --color-text-muted
-const CYAN = "#22d3ee"; // --color-accent
+const BG = "#080e1b"; // --color-bg
+const TEXT = "#f8fbff"; // --color-text-strong
+const SOFT = "#bccadc"; // --color-text-soft
+const MUTED = "#a3b4ca"; // --color-text-muted
+const CYAN = "#65e9f5"; // --color-accent
 const INDIGO = "#6366f1"; // --color-indigo
 
 const NAME = "Syed Waleed Ahmed";

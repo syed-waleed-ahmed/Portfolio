@@ -15,6 +15,71 @@ than by individual commit.
 
 ## [Unreleased]
 
+### Changed
+
+- **The page was redesigned.** A new palette, a new first screen, the
+  projects before the narrative, one project featured, and one header for
+  every section. No dependency was added, and the entry stylesheet is still
+  under its 8 kB budget (7.98 kB, from 7.89 kB). `docs/design.md` has the
+  reasoning for each decision below, and the sources that shaped them.
+  - **Palette.** A deeper navy page (`#080e1b`), panels a clear step above it
+    (1.15:1, where they were 1.08:1 and the hairline did all the
+    separating), a lighter cyan (`#65e9f5`) and softer status colours. Every
+    text, accent and status colour still holds 7:1 on the page and on a
+    panel, and the six hand-kept copies of the palette (the 404 page, the
+    theme colour, the contribution graph, the globe, the social card and the
+    contact email) follow. The social card was regenerated.
+  - **A backdrop with depth.** Two faint lights stand behind the top of the
+    page, cyan behind the portrait and indigo from the left, under a sparse
+    dot field. Both are static CSS, and every other section opens on a
+    hairline and a tone that fades back into the page. They replace the dot
+    band, a faint strip that shimmered.
+  - **The hero is the first screen.** It opens with a line saying which roles
+    I am open to, sets what I build in the heading colour, and on a desktop
+    takes the height of the screen, with the four figures along its bottom
+    edge and the dock under them. The figures moved here from About, where
+    the dock floated across their labels, and are now a strip of large
+    numbers rather than four tiles. The masthead names the role and the city
+    beside the name.
+  - **On a phone** the portrait is a thumbnail beside the status line, so
+    the greeting, the headline and the first button are all inside the first
+    screen; the buttons used to sit at its bottom edge.
+  - **Projects come first, and one is featured.** The page now runs
+    Projects, Experience, About, Skills, Contact. The thesis project opens
+    the section across the full width with its picture beside its text; the
+    next two cards are half the width each and the last three a third. All
+    six used to be the same card.
+  - **Project pictures stand in a well.** Each sits inside a dark mount cut
+    into its card instead of bleeding to the card's edges, where three light
+    screenshots and three dark ones made the grid a checkerboard. The five
+    independent projects no longer each repeat "Independent Project".
+  - **One section header.** Every section opens with its number, its title
+    and its subtitle, the subtitle against the right edge on a desktop. Three
+    different headers stood there before.
+  - **Experience and Education are timelines**, with a rail joining the
+    monograms. An open role's bullets flow in two balanced columns; as a
+    grid they left a gap under every short bullet.
+  - **About fills its second column**: education and the target roles share
+    it, where education alone ended half way down.
+  - **Skills marks what the work is built on.** Ten of the sixty-two tags
+    are drawn stronger, in place, and the comment beside the list says which
+    project or role each carries. No levels and no years.
+  - **Contact is a panel of its own surface**, with availability and place
+    as its heading line.
+- **Print rules are a stylesheet of their own**, linked with
+  `media="print"`, so they no longer sit in the stylesheet every visitor
+  waits for. That took about 300 bytes out of it, which is what let the
+  redesign fit the budget without giving up an interaction.
+- **The form field border is stronger**, 64% of the slate from 56%. On the
+  contact panel's new surface 56% measured 2.7:1 against the panel; it is
+  3.2:1 there now and 3.7:1 against the field's own fill, and the browser
+  test measures both sides instead of the page alone.
+- **The contact email's header keeps its indigo for the first 60%** of the
+  gradient, under the white title, since the lighter cyan cannot carry white
+  text.
+- **`.visually-hidden` no longer uses `!important`.** It sits in the last
+  cascade layer, where it already outranks every other rule.
+
 ### Added
 
 - **The MemorAIz Onboarding Assistant in Experience.** The MemorAIz role gains
@@ -22,6 +87,11 @@ than by individual commit.
   interviews new clients, fills a live company profile and answers questions
   from a pgvector knowledge base. Its repository is private to MemorAIz, so it
   is a bullet rather than a project card.
+- **Tests for the redesign**: that exactly one project is featured and comes
+  first, that every core skill is a real tag, that no stylesheet but
+  `print.css` holds a print rule, and in the browser that the hero's figures
+  sit clear of the dock on a desktop first screen and that a printed page
+  loses the dock.
 
 ## [2.6.4] - 2026-11-22
 

@@ -1,67 +1,48 @@
 @layer components {
-  /* The whole section is one panel, with the title as a pill on its top border
-     (see .section-header--panel) and the dot band fading down from behind it.
-     An isolated stacking context so the band can sit under the content without
-     going under the page. The margin above the panel gives the pill room above
-     the border. */
+  /* The page's last panel, and the one thing on it that is asked of the
+     reader, so it is the largest surface on the page: the direct channels on
+     the left over the dot field and the globe, the form on the right. An
+     isolated stacking context, so the dot field and the globe can sit under
+     the content without going under the page. --dot-origin moves the field's
+     bright corner to the left, behind the channels rather than the form. */
   .contact-panel {
     --panel-pad: clamp(var(--space-5), 0.75rem + 3vw, var(--space-10));
+    --dot-origin: 0% 0%;
     position: relative;
     isolation: isolate;
-    margin-block-start: var(--space-5);
     padding: var(--panel-pad);
     border: 1px solid var(--color-border-strong);
     border-radius: var(--radius-lg);
+    background-color: var(--color-surface);
 
-    /* Desktop: the invitation and the direct channels stacked on the left, the
-       form on the right. Both are about the same height, where a header across
-       the top left a tall empty area under the channels. */
     @media (min-width: 64rem) {
       display: grid;
       grid-template-columns: minmax(0, 1fr) minmax(0, 1.5fr);
-      grid-template-rows: auto 1fr;
       column-gap: var(--space-16);
-
-      & > .section-header {
-        grid-column: 1;
-        grid-row: 1;
-        justify-items: start;
-        text-align: start;
-      }
-
-      & > .section-header .section-subtitle {
-        font-size: var(--text-title);
-        line-height: var(--leading-snug);
-        letter-spacing: var(--tracking-snug);
-      }
     }
   }
 
   /* ========= Direct channels ========= */
   .contact-aside {
     display: grid;
-    justify-items: center;
     align-content: start;
-    gap: var(--space-4);
-    text-align: center;
-
-    @media (min-width: 64rem) {
-      grid-column: 1;
-      grid-row: 2;
-      justify-items: start;
-      text-align: start;
-    }
+    justify-items: start;
+    gap: var(--space-5);
   }
 
+  /* Availability and place, set as the panel's own heading line. */
   .contact-aside__intro {
-    font-size: var(--text-base);
-    color: var(--color-text-muted);
+    max-width: 22ch;
+    font-size: var(--text-title);
+    font-weight: var(--weight-medium);
+    line-height: var(--leading-snug);
+    letter-spacing: var(--tracking-snug);
+    color: var(--color-text-strong);
   }
 
   .contact-channels {
     display: flex;
     flex-wrap: wrap;
-    justify-content: center;
     gap: var(--space-2);
     max-width: 100%;
     list-style: none;
@@ -104,7 +85,7 @@
 
     /* The outlined control's hover, as on .btn--secondary: accent edge, 10%
        accent fill, label unchanged. The fill is a gradient layer because the
-       channel is already filled with the page colour, to keep the dot band
+       channel is already filled with the page colour, to keep the dot field
        from showing through it, and the tint has to sit on top of that. */
     &:hover {
       border-color: var(--color-accent-border);
@@ -118,8 +99,6 @@
     border-block-start: 1px solid var(--color-border);
 
     @media (min-width: 64rem) {
-      grid-column: 2;
-      grid-row: 1 / span 2;
       margin-block-start: 0;
       padding-block-start: 0;
       padding-inline-start: var(--space-16);

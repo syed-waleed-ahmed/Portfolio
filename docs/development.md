@@ -318,7 +318,9 @@ then shows its age in its label.
 A new section needs an entry in `sections` in `portfolio.js`, a component in
 `components/sections/`, and a line in the `SECTION_COMPONENTS` map in
 `App.jsx`, plus an icon in `SECTION_ICONS` in `Dock.jsx` (it falls back to a
-generic one). Its `SectionHeader` id must be `<section id>-title`.
+generic one). Its `SectionHeader` id must be `<section id>-title`. Where the
+entry sits in `sections` is where the section sits on the page, in the dock
+and in the palette, and the headers number themselves from that order.
 
 Visual changes are governed by the token system: read
 [Design](design.md) before touching colours, type sizes or the Projects grid.

@@ -94,6 +94,33 @@ export const skillGroups = [
   },
 ];
 
+// The tags drawn a step stronger than the rest, so a reader sees what the
+// work on this page is built on before reading sixty names. A tag is core
+// only if the Projects or Experience entries show it carrying a system. The
+// list below says where, by hand; the content test only checks that each is
+// a real tag, so a new one needs its line here:
+//   Multi-Agent Systems  the Research Team, the RAG system, RemindrAI's agent
+//   RAG                  the RAG system, the MemorAIz Onboarding Assistant
+//   LLM Evaluation       LLM-as-Judge, the Niche Assistant's eval gate
+//   Mastra               RemindrAI and the Onboarding Assistant
+//   LangGraph            the AI Workflow Assistant's planning agent
+//   Python, FastAPI      five of the six projects
+//   TypeScript, Next.js  RemindrAI, and the front ends of two more
+//   PostgreSQL           the AI Workflow Assistant and the RAG system
+// No levels and no years: the evidence is the entries, not a bar.
+export const coreSkills = [
+  "Multi-Agent Systems",
+  "RAG",
+  "LLM Evaluation",
+  "Mastra",
+  "LangGraph",
+  "Python",
+  "TypeScript",
+  "FastAPI",
+  "Next.js",
+  "PostgreSQL",
+];
+
 // The brand mark drawn beside a tag: tag name to symbol id in
 // src/assets/skill-icons.svg, which scripts/gen-skill-icons.mjs builds from
 // this map. Only products with a published mark are listed. A practice

@@ -153,13 +153,13 @@ const Contact = () => {
 
   return (
     <div className="container">
-      <Reveal className="contact-panel">
-        <div className="dot-band" aria-hidden="true" />
+      <SectionHeader id="contact-title" title="Contact">
+        Whether it&apos;s a role, a question, or a collaboration, send a
+        message. I read every one.
+      </SectionHeader>
 
-        <SectionHeader id="contact-title" title="Contact" variant="panel">
-          Whether it&apos;s a role, a question, or a collaboration, send a
-          message. I read every one.
-        </SectionHeader>
+      <Reveal className="contact-panel">
+        <div className="dot-field" aria-hidden="true" />
 
         <aside className="contact-aside" aria-label="Other ways to reach me">
           <p className="contact-aside__intro">

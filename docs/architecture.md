@@ -140,10 +140,11 @@ its heading, whose id is `${sectionId}-title`.
 
 The section headings are the exception to "one file per section owns its own
 markup": all of them render through `components/ui/SectionHeader`, which takes
-the heading id, the title and the subtitle, plus a `variant` for the heavier
-forms that Projects and Contact use and a `label` for the pill in the Projects
-one. Sharing one component is what stops the headings drifting apart as
-sections are edited independently.
+the heading id, the title and the subtitle and nothing else. There is one
+header, for every section; the number above each title is a CSS counter on the
+sections themselves, so it follows the order of `sections` in
+`data/portfolio.js`. Sharing one component is what stops the headings drifting
+apart as sections are edited independently.
 
 `frontend/test/data.test.js` turns the data layer's conventions into checks:
 every About figure must appear in the Experience or Projects entry it cites,

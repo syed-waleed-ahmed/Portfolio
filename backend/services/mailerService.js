@@ -14,8 +14,10 @@ const resend = isMailerConfigured ? new Resend(config.resendApiKey) : null;
 const BRAND = {
   name: "Syed Waleed Ahmed",
   accent: "#6366f1", // indigo - header + button
-  accent2: "#22d3ee", // cyan - accent stripe
-  ink: "#0b1221", // navy - body text (matches --color-bg on the site)
+  // cyan - the far corner of the header. The gradient holds the indigo for
+  // its first 60%, under the white title: this cyan is too light to carry it.
+  accent2: "#65e9f5",
+  ink: "#080e1b", // navy - body text (matches --color-bg on the site)
   muted: "#6b7280", // labels / footer
   border: "#e5e7eb", // hairlines
   panel: "#f4f5fb", // message box background
@@ -136,7 +138,7 @@ function renderContactEmail({ name, email, subject, message }) {
   <div style="margin:0;padding:24px 12px;background:#eef0f6;font-family:Arial,Helvetica,sans-serif;">
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;margin:0 auto;">
       <tr>
-        <td style="background-color:${BRAND.accent};background:linear-gradient(135deg,${BRAND.accent},${BRAND.accent2});border-radius:14px 14px 0 0;padding:26px 28px;">
+        <td style="background-color:${BRAND.accent};background:linear-gradient(135deg,${BRAND.accent} 60%,${BRAND.accent2});border-radius:14px 14px 0 0;padding:26px 28px;">
           <div style="font:700 11px/1 Arial,sans-serif;letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,.8);">New Contact Message</div>
           <div style="margin-top:8px;font:700 22px/1.25 Arial,sans-serif;color:#ffffff;">${BRAND.name}&rsquo;s Portfolio</div>
         </td>

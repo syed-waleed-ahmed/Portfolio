@@ -10,6 +10,9 @@ import Contact from "@/components/sections/Contact";
 import ErrorBoundary from "@/components/ui/ErrorBoundary";
 import SkipLink from "@/components/ui/SkipLink";
 import { sections } from "@/data/portfolio";
+// The print stylesheet, as the URL of a file of its own rather than rules in
+// the entry stylesheet: see styles/print.css.
+import printStyles from "@/styles/print.css?url";
 
 // Section ids and order come from data/portfolio.js, which the dock reads
 // too, so a section cannot be added to one and forgotten in the other.
@@ -17,9 +20,9 @@ import { sections } from "@/data/portfolio";
 // all of its content is in the HTML before any JavaScript loads, and splitting
 // a few kilobytes of section code into separate chunks would only add requests.
 const SECTION_COMPONENTS = {
-  about: About,
-  experience: Experience,
   projects: Projects,
+  experience: Experience,
+  about: About,
   skills: Skills,
   contact: Contact,
 };
@@ -27,7 +30,14 @@ const SECTION_COMPONENTS = {
 function App() {
   return (
     <>
+      {/* media="print", so it loads at low priority and blocks nothing. No
+          `precedence`: with one, React would manage it as a render-blocking
+          stylesheet, which is what this is here to avoid. */}
+      <link rel="stylesheet" media="print" href={printStyles} />
       <SkipLink />
+      {/* Behind the masthead and the hero, on the page itself: see
+          .dot-field in styles/components.css. */}
+      <div className="dot-field" aria-hidden="true" />
       <Masthead />
       <Dock />
       <main id="main" tabIndex={-1}>

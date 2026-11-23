@@ -19,7 +19,7 @@ import * as commandsModule from "../src/data/commands.js";
 const { stats } = about;
 const { experiences } = experienceModule;
 const { projects } = projectsModule;
-const { skillGroups } = skillsModule;
+const { coreSkills, skillGroups } = skillsModule;
 const { personalInfo, socialLinks, sections } = portfolio;
 const { commandGroups, scoreCommand } = commandsModule;
 
@@ -60,6 +60,29 @@ test("every project card fills its last row, with a link or a note", () => {
         p.github ? "github" : "no github"
       } and ${p.sourceNote ? "sourceNote" : "no sourceNote"}`
     );
+  }
+});
+
+// The grid gives one project the full width and a layout of its own, and the
+// styles for that assume it is the first card: a second one, or one further
+// down, would be laid out as a wide card in the wrong place.
+test("exactly one project is featured, and it comes first", () => {
+  const featured = projects.filter((p) => p.featured);
+  assert.equal(featured.length, 1, `${featured.length} projects are marked featured, expected one`);
+  assert.equal(projects[0], featured[0], `"${featured[0].title}" is featured but is not the first project`);
+});
+
+// A core skill is drawn stronger than the tags around it. One that names no
+// tag is drawn nowhere, and says nothing about it.
+test("every core skill is one of the skill tags", () => {
+  const tags = new Set(skillGroups.flatMap((g) => g.tags));
+  assert.ok(
+    coreSkills.length >= 6 && coreSkills.length <= 12,
+    `${coreSkills.length} core skills: past a dozen the emphasis stops meaning anything`
+  );
+  assert.equal(new Set(coreSkills).size, coreSkills.length, "a core skill is listed twice");
+  for (const skill of coreSkills) {
+    assert.ok(tags.has(skill), `coreSkills lists "${skill}", which is not a skill tag`);
   }
 });
 

@@ -21,49 +21,55 @@
        report. docs/design.md has the table and the contrast of each pair. */
 
     /* ----- Surfaces: three steps of one navy, each lighter than the last -----
-       The page; a panel resting on it (cards, the stats band, the dock, the
-       palette); and something raised on a panel (a hovered dock item, the
-       portrait's ring, a picture's placeholder). Chips and form fields are
-       cut into a panel instead, so they are filled with the page colour. */
-    --color-bg: #0b1221;
-    --color-surface: #111a2d;
-    --color-surface-raised: #17223a;
+       The page; a panel resting on it (cards, the contact panel, the dock,
+       the palette); and something raised on a panel (a hovered dock item, a
+       core skill, a picture's placeholder). Chips, form fields and the well
+       a project picture sits in are cut into a panel instead, so they are
+       filled with the page colour. Each step is 1.15 to 1.2:1 above the last:
+       enough for a panel to read as a panel before its border does, and
+       still one navy. */
+    --color-bg: #080e1b;
+    --color-surface: #121d32;
+    --color-surface-raised: #1c2b45;
     /* The dock floats over whatever scrolls beneath it. */
     --color-surface-translucent: color-mix(in srgb, var(--color-surface) 88%, transparent);
 
     /* ----- Borders: three weights of one slate, by what the line has to do -----
-       A hairline only separates (about 1.5:1 on the page). A control's
+       A hairline only separates (about 1.4:1 on the page). A control's
        outline says "this is a thing" (about 2.3:1). A form field's border is
        the only sign that there is somewhere to type, so it meets the 3:1 that
-       WCAG 1.4.11 asks of an input's boundary. */
+       WCAG 1.4.11 asks of an input's boundary, against the panel outside it
+       (3.2:1) and the page-coloured fill inside it (3.7:1). */
     --color-border: rgb(148 163 184 / 0.22);
     --color-border-strong: rgb(148 163 184 / 0.42);
-    --color-border-field: rgb(148 163 184 / 0.56);
+    --color-border-field: rgb(148 163 184 / 0.64);
 
     /* ----- Text: four steps, all at least 7:1 (WCAG AAA) on bg and surface -----
        Headings and figures; body; descriptions and long copy; metadata. */
-    --color-text-strong: #f5f7fb;
-    --color-text: #dce3ec;
-    --color-text-soft: #b7c2d0;
-    --color-text-muted: #a1adbf;
+    --color-text-strong: #f8fbff;
+    --color-text: #d7e3f2;
+    --color-text-soft: #bccadc;
+    --color-text-muted: #a3b4ca;
 
     /* ----- Accent: the one brand colour -----
        Cyan marks what can be acted on and where you are: links, the primary
-       button, focus rings, the current section in the dock. Indigo is its
-       partner in two gradients (the hero name, the reading-progress line) and
-       is never used alone. The derived steps are the same for every hue in
-       this file: -border is the colour at 50%, enough to hold 3:1 as an edge,
-       and -subtle is the colour at 10%, a tint to sit text of that hue on. */
-    --color-accent: #22d3ee;
-    --color-accent-hover: #67e8f9;
-    --color-accent-ink: #04161c;
+       button, focus rings, the current section in the dock, the number each
+       section opens with. Indigo is its partner in two gradients (the hero
+       name, the reading-progress line) and the second light behind the page,
+       and is never used alone. The derived steps are the same for every hue
+       in this file: -border is the colour at 50%, enough to hold 3:1 as an
+       edge, and -subtle is the colour at 10%, a tint to sit text of that hue
+       on. */
+    --color-accent: #65e9f5;
+    --color-accent-hover: #9df2fa;
+    --color-accent-ink: #071221;
     --color-accent-border: color-mix(in srgb, var(--color-accent) 50%, transparent);
     --color-accent-subtle: color-mix(in srgb, var(--color-accent) 10%, transparent);
     --color-indigo: #6366f1;
 
     /* ----- Inverse: a light chip on the dark page -----
-       The section pills and every tooltip. Named for the job, so that a text
-       colour is never borrowed as a background. */
+       Every tooltip. Named for the job, so that a text colour is never
+       borrowed as a background. */
     --color-inverse: var(--color-text-strong);
     --color-inverse-ink: var(--color-bg);
 
@@ -71,20 +77,25 @@
        Success, a warning (try again later: nothing the visitor did wrong) and
        an error (something to correct). Information has no hue of its own: a
        neutral note uses the text and border roles above. */
-    --color-success: #86efac;
+    --color-success: #a2f2d1;
     --color-success-border: color-mix(in srgb, var(--color-success) 50%, transparent);
     --color-success-subtle: color-mix(in srgb, var(--color-success) 10%, transparent);
-    --color-warning: #fcd34d;
+    --color-warning: #ffe1a8;
     --color-warning-border: color-mix(in srgb, var(--color-warning) 50%, transparent);
     --color-warning-subtle: color-mix(in srgb, var(--color-warning) 10%, transparent);
-    --color-danger: #fca5a5;
+    --color-danger: #ffc0c9;
     --color-danger-border: color-mix(in srgb, var(--color-danger) 50%, transparent);
     --color-danger-subtle: color-mix(in srgb, var(--color-danger) 10%, transparent);
 
     /* ----- Decoration and depth -----
-       The squares of the dot band, never behind text that has to be read at
-       this contrast; and the scrim that dims the page behind the palette. */
-    --color-dot: rgb(148 163 184 / 0.13);
+       The dots of the dot field; the two lights behind the top of the page,
+       kept faint enough that muted text over the brightest point of either
+       still holds 7:1; the lift at the top of every other section; and the
+       scrim that dims the page behind the palette. */
+    --color-dot: rgb(148 163 184 / 0.3);
+    --color-glow: color-mix(in srgb, var(--color-accent) 9%, transparent);
+    --color-glow-indigo: color-mix(in srgb, var(--color-indigo) 16%, transparent);
+    --color-band: color-mix(in srgb, var(--color-surface) 55%, transparent);
     --color-scrim: rgb(2 6 23 / 0.6);
 
     /* ----- Typography ----- */
@@ -178,32 +189,6 @@
       --dock-item: var(--tap-target);
       --dock-pad: 0.375rem;
       --dock-offset: var(--space-2);
-    }
-  }
-
-  /* The dark palette would print as pale grey on white, and every component
-     reads these tokens, so paper is one override here. */
-  @media print {
-    :root {
-      color-scheme: light;
-      --color-bg: #fff;
-      --color-surface: #fff;
-      --color-surface-raised: #fff;
-      --color-border: #d4d8de;
-      --color-border-strong: #b6bcc5;
-      --color-border-field: #8a919c;
-      --color-text-strong: #111;
-      --color-text: #222;
-      --color-text-soft: #333;
-      --color-text-muted: #555;
-      --color-accent: #0b5f70;
-      --color-accent-hover: #0b5f70;
-      --color-accent-border: #b6bcc5;
-      --color-success: #166534;
-      --color-warning: #854d0e;
-      --color-danger: #b91c1c;
-      --shadow-md: none;
-      --shadow-lg: none;
     }
   }
 

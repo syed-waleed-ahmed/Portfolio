@@ -20,7 +20,7 @@ const Experience = () => (
       The roles I&apos;ve held and the systems I built in each one.
     </SectionHeader>
 
-    <ol className="experience-list">
+    <ol className="timeline">
       {experiences.map((role, index) => (
         <Reveal as="li" key={role.company} delay={index * 40}>
           <details className="experience" open={index === 0}>
