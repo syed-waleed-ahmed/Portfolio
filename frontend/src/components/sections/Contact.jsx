@@ -13,7 +13,6 @@ import Reveal from "@/components/ui/Reveal";
 import SectionHeader from "@/components/ui/SectionHeader";
 import LocationGlobe from "@/components/widgets/LocationGlobe";
 import { personalInfo, socialLinks } from "@/data/portfolio";
-import "./Contact.css";
 
 const API_BASE_URL =
   import.meta.env.VITE_API_BASE_URL || "https://portfolio-backend-kmum.onrender.com";
@@ -153,17 +152,19 @@ const Contact = () => {
 
   return (
     <div className="container">
-      <Reveal className="contact-panel">
-        <div className="dot-band" aria-hidden="true" />
+      <SectionHeader id="contact-title" title="Contact">
+        Whether it&apos;s a role, a question, or a collaboration, send a
+        message. I read every one.
+      </SectionHeader>
 
-        <SectionHeader id="contact-title" title="Contact" variant="panel">
-          Whether it&apos;s a role, a question, or a collaboration, send a
-          message. I read every one.
-        </SectionHeader>
+      <Reveal className="contact-panel">
+        <div className="dot-field" aria-hidden="true" />
 
         <aside className="contact-aside" aria-label="Other ways to reach me">
+          {/* Two tones, as the hero's statement is: the offer in the
+              heading colour, the place in the muted one. */}
           <p className="contact-aside__intro">
-            Open to AI and ML engineering roles. Based in {personalInfo.location}.
+            Open to AI and ML engineering roles. <span>Based in {personalInfo.location}.</span>
           </p>
           <ul className="contact-channels">
             <li>

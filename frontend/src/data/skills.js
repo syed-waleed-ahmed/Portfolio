@@ -94,6 +94,28 @@ export const skillGroups = [
   },
 ];
 
+// The skills the work on this page is built on, shown above the full
+// inventory as a block of their own, each with where it was used. A skill is
+// here only if the Projects or Experience entries show it carrying a system,
+// and `proof` names those entries: a project by the part of its title before
+// the colon, the MemorAIz Onboarding Assistant by the name its Experience
+// bullet gives it, or a count of the six projects. A content test checks
+// every name against the entries and every count against the stacks, so a
+// proof cannot outlive the card it points at.
+// No levels and no years: the evidence is the entries, not a bar.
+export const coreSkills = [
+  { name: "Multi-Agent Systems", proof: "Multi-Agent Research Team, Self-Correcting Multi-Agent RAG" },
+  { name: "RAG", proof: "Self-Correcting Multi-Agent RAG, MemorAIz Onboarding Assistant" },
+  { name: "LLM Evaluation", proof: "LLM-as-Judge, FastAPI Niche Assistant" },
+  { name: "Python", proof: "Five of the six projects" },
+  { name: "FastAPI", proof: "Five of the six projects" },
+  { name: "TypeScript", proof: "RemindrAI" },
+  { name: "Next.js", proof: "RemindrAI, AI Workflow Assistant, Self-Correcting Multi-Agent RAG" },
+  { name: "LangGraph", proof: "AI Workflow Assistant" },
+  { name: "Mastra", proof: "RemindrAI, MemorAIz Onboarding Assistant" },
+  { name: "PostgreSQL", proof: "AI Workflow Assistant, Self-Correcting Multi-Agent RAG" },
+];
+
 // The brand mark drawn beside a tag: tag name to symbol id in
 // src/assets/skill-icons.svg, which scripts/gen-skill-icons.mjs builds from
 // this map. Only products with a published mark are listed. A practice

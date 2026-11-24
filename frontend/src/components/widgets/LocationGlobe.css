@@ -24,10 +24,6 @@
       overflow: hidden;
       pointer-events: none;
     }
-
-    @media print {
-      display: none;
-    }
   }
 
   .location-globe__canvas {

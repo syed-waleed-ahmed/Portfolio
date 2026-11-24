@@ -1,10 +1,4 @@
 @layer components {
-  .experience-list {
-    display: grid;
-    gap: var(--space-6);
-    list-style: none;
-  }
-
   /* interpolate-size and ::details-content together animate the row open. A
      browser with neither simply opens it at once, which is still correct. */
   .experience {
@@ -23,9 +17,23 @@
     }
   }
 
-  /* Phone: monogram, then title, company, dates and place stacked beside it,
-     chevron at the far edge. Wider: dates and place take their own column so
-     they line up down the page. */
+  /* The dates lead on a desktop: a column of their own down the left edge,
+     ahead of the monogram, so the list reads as a ledger, when and where,
+     then what. Until 2026-11-24 they sat against the right edge, a full
+     screen's width from the role they dated. --when is that column's width
+     and the rail and the bullets below are set off by it.
+
+     Phone: monogram, then title, company, dates and place stacked beside it,
+     chevron at the far edge. Tablet: dates and place in a column on the
+     right. */
+  .timeline:has(.experience) {
+    --when: 11rem;
+
+    @media (min-width: 64rem) {
+      --rail: calc(var(--when) + var(--space-3) + 1.25rem);
+    }
+  }
+
   .experience__summary {
     display: grid;
     grid-template-columns: auto minmax(0, 1fr) auto;
@@ -50,6 +58,13 @@
       grid-template-areas:
         "logo title period chevron"
         "logo company location chevron";
+    }
+
+    @media (min-width: 64rem) {
+      grid-template-columns: var(--when) auto minmax(0, 1fr) auto;
+      grid-template-areas:
+        "period logo title chevron"
+        "location logo company chevron";
     }
 
     & .monogram {
@@ -81,7 +96,7 @@
     line-height: var(--leading-snug);
     color: var(--color-text-muted);
 
-    @media (min-width: 40rem) {
+    @media (40rem <= width < 64rem) {
       justify-self: end;
       text-align: end;
     }
@@ -129,8 +144,6 @@
   /* Indented to the title's left edge from tablet up, so the bullets read as
      belonging to the row above. The monogram is 2.5rem wide. */
   .experience__bullets {
-    display: grid;
-    gap: var(--space-2);
     padding-block-start: var(--space-3);
     list-style: none;
 
@@ -138,15 +151,25 @@
       padding-inline-start: calc(2.5rem + var(--space-3));
     }
 
-    /* Two columns on a desktop: one would run a bullet past 150 characters. */
     @media (min-width: 64rem) {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: var(--space-3) var(--space-10);
+      padding-inline-start: calc(var(--when) + 2.5rem + 2 * var(--space-3));
+    }
+
+    /* Two columns on a desktop: one would run a bullet past 150 characters.
+       Columns, not a grid: a grid lines its rows up across both, so a short
+       bullet beside a long one left a gap under it, and five bullets left
+       the fifth alone on a row of its own. The text flows down the first
+       column and into the second, balanced, and no bullet is split. */
+    @media (min-width: 64rem) {
+      columns: 2;
+      column-gap: var(--space-12);
     }
 
     & li {
       position: relative;
+      margin-block-end: var(--space-3);
       padding-inline-start: var(--space-4);
+      break-inside: avoid;
       font-size: var(--text-base);
       color: var(--color-text-soft);
       line-height: var(--leading-normal);
@@ -160,18 +183,6 @@
         height: 1px;
         background-color: var(--color-text-muted);
       }
-    }
-  }
-
-  /* A closed row would otherwise drop its bullets from a printed page. */
-  @media print {
-    .experience::details-content {
-      block-size: auto;
-      content-visibility: visible;
-    }
-
-    .experience__chevron {
-      display: none;
     }
   }
 }

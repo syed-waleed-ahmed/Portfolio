@@ -1,4 +1,9 @@
 @layer components {
+  /* One column on a phone, two on a tablet, six on a desktop, which the
+     cards divide by weight: the featured card takes all six, the next two
+     take three each and the last three take two each. On a tablet the second
+     card runs across both columns, so the five never leave one alone at the
+     end. */
   .project-grid {
     display: grid;
     gap: var(--space-3);
@@ -9,31 +14,33 @@
     }
 
     @media (min-width: 72rem) {
-      grid-template-columns: repeat(3, minmax(0, 1fr));
+      grid-template-columns: repeat(6, minmax(0, 1fr));
     }
   }
 
-  /* Seven shared rows: picture, context, title, description, highlight,
-     stack, links.
+  /* Six shared rows: picture, title, description, highlight, stack, links.
      The card is a grid item of .project-grid and a subgrid of its rows, so a
      two-line title on one card pushes its neighbour's description down to
      match. Without subgrid support the card is an ordinary column; content
-     still reads top to bottom, it just stops lining up across the row. */
+     still reads top to bottom, it just stops lining up across the row.
+     --pad is the card's padding and --well the padding round its picture. */
   .project-card {
+    --pad: var(--space-4);
+    --well: var(--space-4);
     display: grid;
-    grid-row: span 7;
+    grid-row: span 6;
     grid-template-rows: subgrid;
     row-gap: var(--space-3);
     align-content: start;
-    padding: var(--space-5);
+    padding: var(--pad);
     background-color: var(--color-surface);
     border: 1px solid var(--color-border);
     border-radius: var(--radius-lg);
     /* The card is also Reveal's element, and this declaration replaces the
        [data-reveal] transition in components.css rather than adding to it, so
        the reveal's three properties are listed here as well. Without them the
-       cards popped in, and the stagger below never ran. Print turns it all
-       off, as components.css does for every other revealed element. */
+       cards popped in, and the stagger below never ran. styles/print.css
+       turns it all off, as it does for every other revealed element. */
     transition:
       border-color var(--duration-base) ease,
       box-shadow var(--duration-base) ease,
@@ -41,8 +48,40 @@
       translate var(--duration-slow) var(--ease-out) var(--reveal-delay, 0ms),
       filter var(--duration-slow) var(--ease-out) var(--reveal-delay, 0ms);
 
-    @media print {
-      transition: none;
+    /* The reveal runs left to right along each row, so its stagger follows
+       the layout. Set here rather than through Reveal's delay prop, because
+       the JSX cannot know how many cards a row holds. */
+    @media (min-width: 44rem) {
+      --pad: var(--space-5);
+    }
+
+    @media (44rem <= width < 72rem) {
+      &:nth-child(2) {
+        grid-column: span 2;
+      }
+
+      &:nth-child(2n + 4) {
+        --reveal-delay: 50ms;
+      }
+    }
+
+    @media (min-width: 72rem) {
+      grid-column: span 2;
+
+      &:nth-child(2),
+      &:nth-child(3) {
+        --well: var(--space-8);
+        grid-column: span 3;
+      }
+
+      &:nth-child(3),
+      &:nth-child(5) {
+        --reveal-delay: 50ms;
+      }
+
+      &:nth-child(6) {
+        --reveal-delay: 100ms;
+      }
     }
 
     /* The card holds a link, so hovering it previews that the card leads
@@ -57,7 +96,7 @@
        the border nearest it, at the --spot-x and --spot-y Projects.jsx
        writes. Both are absolutely positioned, which keeps them out of the
        grid: an in-flow pseudo-element would be a grid item and take one of
-       the seven shared rows. isolation lets the wash sit at z-index -1, over
+       the six shared rows. isolation lets the wash sit at z-index -1, over
        the card's own background and under its text. */
     position: relative;
     isolation: isolate;
@@ -105,80 +144,52 @@
         opacity: 1;
       }
     }
-
-    @media print {
-      &::before,
-      &::after {
-        display: none;
-      }
-    }
-
-    /* The reveal runs left to right along each row, so its stagger follows
-       the column count. Set here rather than through Reveal's delay prop,
-       because the JSX cannot know how many cards a row holds. */
-    @media (44rem <= width < 72rem) {
-      &:nth-child(2n) {
-        --reveal-delay: 50ms;
-      }
-    }
-
-    @media (min-width: 72rem) {
-      &:nth-child(3n + 2) {
-        --reveal-delay: 50ms;
-      }
-
-      &:nth-child(3n) {
-        --reveal-delay: 100ms;
-      }
-    }
   }
 
-  /* The card's first grid item. It bleeds to the card's edges: the negative
-     margins undo the card's padding on three sides, and the width adds that
-     padding back. max-inline-size is lifted because the reset caps every
-     picture at 100% of its container, which here is the card's content box:
-     with the cap, the picture stopped 2.5rem short of the right edge. */
+  /* The card's first grid item, and the well its picture sits in: a panel
+     cut into the card and filled with the page colour, like a tag or a form
+     field, with the picture standing on its bottom edge. Three of the six
+     pictures are light and three are dark, and bled to the card's edges they
+     made the grid a checkerboard; set in from the same dark mount, each
+     reads as a screenshot of something rather than as a patch of the page.
+     The well bleeds to the card's edges: the negative margins undo the
+     card's padding on three sides, and the width adds that padding back.
+     max-inline-size is lifted because the reset caps every picture at 100%
+     of its container, which here is the card's content box: with the cap,
+     the well stopped short of the right edge. */
   .project-card__picture {
     display: block;
-    inline-size: calc(100% + 2 * var(--space-5));
+    inline-size: calc(100% + 2 * var(--pad));
     max-inline-size: none;
-    margin: calc(-1 * var(--space-5)) calc(-1 * var(--space-5)) var(--space-2);
+    margin: calc(-1 * var(--pad)) calc(-1 * var(--pad)) var(--space-2);
+    padding: var(--well) var(--well) 0;
+    border-block-end: 1px solid var(--color-border);
+    border-radius: calc(var(--radius-lg) - 1px) calc(var(--radius-lg) - 1px) 0 0;
+    background-color: var(--color-bg);
   }
 
-  /* The top corners follow the card's, one border-width tighter. Every
-     picture is a 2:1 crop, so the box is the same in every card before any
-     of them has loaded, and the raised surface colour fills it until then. */
+  /* Every picture is a 2:1 crop, so the box is the same in every card before
+     any of them has loaded, and the raised surface colour fills it until
+     then. */
   .project-card__image {
     display: block;
     inline-size: 100%;
     block-size: auto;
     aspect-ratio: 2 / 1;
-    border-radius: calc(var(--radius-lg) - 1px) calc(var(--radius-lg) - 1px) 0 0;
-    border-block-end: 1px solid var(--color-border);
+    border-radius: var(--radius-md) var(--radius-md) 0 0;
     background-color: var(--color-surface-raised);
+    box-shadow: 0 0 0 1px var(--color-border);
     object-fit: cover;
-    /* Three of the six are light (two interface screenshots and the thesis
-       poster), shown as their projects really look, and at full strength
-       each is the brightest thing on the page by a wide margin. All six rest a step dimmer, the
-       same step, so none is singled out, and come up to full strength with
-       the pointer. Not dimmed for print, where there is no glare. */
+    /* At full strength a light picture is still the brightest thing on the
+       page by a wide margin. All six rest a step dimmer, the same step, so
+       none is singled out, and come up to full strength with the pointer. */
     filter: brightness(0.84);
     transition: filter var(--duration-base) ease;
-
-    @media print {
-      filter: none;
-    }
   }
 
   .project-card:hover .project-card__image,
   .project-card:focus-within .project-card__image {
     filter: none;
-  }
-
-  .project-card__context {
-    font-size: var(--text-xs);
-    line-height: var(--leading-snug);
-    color: var(--color-text-muted);
   }
 
   /* pretty rather than the global balance: balancing these long titles broke
@@ -247,5 +258,110 @@
 
   .project-card__links a:hover .project-card__arrow {
     translate: 2px -2px;
+  }
+
+  /* ========= The featured project =========
+     The thesis project opens the section across the full width. It is the
+     same card with the same parts in the same order; from a desktop up its
+     picture stands beside its text instead of over it, in a well that fills
+     the card's left half, and its type is a size larger. It takes one row of
+     the grid and lays its own rows out, since it shares them with no other
+     card. */
+  .project-card--featured {
+    grid-column: 1 / -1;
+    grid-row: auto;
+    grid-template-rows: none;
+
+    & .project-card__title {
+      font-size: var(--text-title);
+      line-height: var(--leading-tight);
+      letter-spacing: var(--tracking-tight);
+    }
+
+    @media (min-width: 64rem) {
+      --pad: var(--space-8);
+      --well: var(--space-8);
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      column-gap: var(--pad);
+      align-content: center;
+
+      & > * {
+        grid-column: 2;
+      }
+
+      /* The well takes the card's left half, top to bottom, with the picture
+         centred in it: lit from above by the page's own cyan light and
+         standing on a floor that lifts toward the raised surface, the way a
+         product shot is staged. */
+      & .project-card__picture {
+        grid-column: 1;
+        grid-row: 1 / span 7;
+        display: grid;
+        align-content: center;
+        inline-size: calc(100% + var(--pad));
+        margin: calc(-1 * var(--pad)) 0 calc(-1 * var(--pad)) calc(-1 * var(--pad));
+        padding: var(--well);
+        border-block-end: 0;
+        border-inline-end: 1px solid var(--color-border);
+        border-radius: calc(var(--radius-lg) - 1px) 0 0 calc(var(--radius-lg) - 1px);
+        background-image:
+          radial-gradient(80% 90% at 50% 0%, var(--color-glow), transparent),
+          linear-gradient(to top, var(--color-surface-raised), transparent 55%);
+      }
+
+      & .project-card__image {
+        border-radius: var(--radius-md);
+        box-shadow:
+          0 0 0 1px var(--color-border-strong),
+          var(--shadow-lg);
+      }
+
+      & .project-card__description,
+      & .project-card__highlight {
+        font-size: var(--text-base);
+      }
+    }
+  }
+
+  /* Three figures under the featured card's highlight, in cells that share
+     their hairlines: the number large, what it counts small under it. */
+  .project-card__facts {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    border-block: 1px solid var(--color-border);
+    list-style: none;
+
+    & li {
+      display: grid;
+      align-content: start;
+      gap: var(--space-1);
+      padding: var(--space-3) var(--space-3) var(--space-3) 0;
+      font-size: var(--text-xs);
+      line-height: var(--leading-snug);
+      color: var(--color-text-muted);
+    }
+
+    & li + li {
+      padding-inline-start: var(--space-3);
+      border-inline-start: 1px solid var(--color-border);
+    }
+
+    & b {
+      font-size: var(--text-title);
+      font-weight: var(--weight-semibold);
+      line-height: 1;
+      letter-spacing: var(--tracking-tight);
+      color: var(--color-text-strong);
+      font-variant-numeric: tabular-nums;
+    }
+  }
+
+  /* The two cards under it are half the width each, so their text is set a
+     size up to keep its lines from running long. */
+  @media (min-width: 72rem) {
+    .project-card:nth-child(2) .project-card__description,
+    .project-card:nth-child(3) .project-card__description {
+      font-size: var(--text-base);
+    }
   }
 }

@@ -91,7 +91,7 @@ development dependency and no build.
 
 **F-18**, three of them. The audit left all three; the repository cleanup
 that followed it fixed the first and the last
-([`docs/repository-maintenance/`](../repository-maintenance/CLEANUP_REPORT.md)):
+([`docs/repository-cleanup.md`](../repository-cleanup.md)):
 
 - `rateLimit({ max: 5 })` used the option's legacy name. The installed
   version still honours it (`limit: passedOptions.max ?? 5` in its source,

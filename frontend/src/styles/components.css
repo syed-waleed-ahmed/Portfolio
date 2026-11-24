@@ -1,10 +1,10 @@
-/* Shared component primitives: buttons, tags, links, the monogram, the dot band
+/* Shared component primitives: buttons, tags, links, the monogram, the dot field
    and the reveal transition. Section-specific styles live next to their JSX
    in components/**. */
 @layer components {
   /* ========= Buttons =========
-     .btn is the shape. --primary is the one filled action in a group,
-     --secondary the outlined alternative, --icon a square icon-only control.
+     .btn is the shape. --primary is the one filled action in a group and
+     --secondary the outlined alternative.
 
      Every control answers the pointer in the language of its family, and
      there are four: a filled control brightens (accent to accent-hover); an
@@ -70,23 +70,6 @@
     }
   }
 
-  .btn--icon {
-    width: var(--tap-target);
-    padding: 0;
-    border-color: var(--color-border-strong);
-    color: var(--color-text-soft);
-
-    & svg {
-      width: 1.125rem;
-      height: 1.125rem;
-    }
-
-    &:hover {
-      border-color: var(--color-accent-border);
-      background-color: var(--color-accent-subtle);
-    }
-  }
-
   .btn--sm {
     min-height: 2.25rem;
     padding-inline: var(--space-4);
@@ -95,6 +78,20 @@
     @media (pointer: coarse) {
       min-height: var(--tap-target);
     }
+  }
+
+  /* ========= Label =========
+     The page's small voice: upper case, spaced out and muted, for what
+     locates a thing rather than says it. The role and the place in the
+     masthead, the entry behind a figure, the context over the featured
+     project, the proof under a core skill. One style, so metadata reads as
+     metadata wherever it turns up. */
+  .label {
+    font-size: var(--text-2xs);
+    font-weight: var(--weight-semibold);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
   }
 
   /* ========= Subhead =========
@@ -151,6 +148,88 @@
     line-height: 1;
   }
 
+  /* ========= Timeline =========
+     A list whose rows each open with a monogram: the roles in Experience and
+     the schools in About. From a tablet up a hairline runs from each monogram
+     to the next, so the list reads as one line through time. Not on a phone,
+     where a role's bullets run the full width under its monogram and the
+     rail would cross them. */
+  .timeline {
+    display: grid;
+    gap: var(--space-6);
+    list-style: none;
+
+    @media (min-width: 40rem) {
+      & > li {
+        position: relative;
+      }
+
+      /* --rail is where the monograms' centre line runs: 1.25rem in, unless
+         a list sets its monograms further along, as Experience does. */
+      & > li:not(:last-child)::before {
+        content: "";
+        position: absolute;
+        inset-block: 3rem calc(0.5rem - var(--space-6));
+        inset-inline-start: var(--rail, 1.25rem);
+        width: 1px;
+        background-color: var(--color-border-strong);
+      }
+    }
+  }
+
+  /* ========= Disclosure for a phone =========
+     A native <details> that a phone shows shut and a wider screen holds
+     open. It wraps what a phone visitor can do without at first glance, a
+     project card's description and the full skills inventory, which between
+     them ran to three and a half screens. The content is in the prerendered
+     HTML either way, find-in-page opens it, and it needs no JavaScript.
+
+     The toggle is a full tap target, with the chevron Experience uses,
+     which turns over when the row is open. From a tablet up there is room,
+     so the toggle goes and the inside is shown regardless: ::details-content
+     is what lets a stylesheet show the inside of a closed <details>, and a
+     browser without it keeps the toggle and behaves as a phone does, which
+     loses nothing. */
+  .more {
+    & summary {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      min-height: var(--tap-target);
+      list-style: none;
+      font-size: var(--text-sm);
+      font-weight: var(--weight-medium);
+      color: var(--color-text-muted);
+      cursor: pointer;
+
+      &::-webkit-details-marker {
+        display: none;
+      }
+    }
+
+    & summary svg {
+      width: 1rem;
+      height: 1rem;
+      transition: rotate var(--duration-base) var(--ease-out);
+    }
+
+    &[open] summary svg {
+      rotate: 180deg;
+    }
+
+    @media (min-width: 44rem) {
+      @supports selector(::details-content) {
+        & summary {
+          display: none;
+        }
+
+        &::details-content {
+          content-visibility: visible;
+        }
+      }
+    }
+  }
+
   /* ========= Inline link ========= */
   .text-link {
     display: inline-flex;
@@ -175,63 +254,24 @@
     }
   }
 
-  /* ========= Dot band =========
-     A field of 2px squares on a 4px pitch that fades out downward, with a
-     slow shimmer. CSS only: the tile sizes of the two overlay layers are all
-     multiples of the pitch, so their squares land exactly on the base grid,
-     and because the sizes share no small multiple the brighter squares read
-     as scattered. Only opacity animates, so it costs the compositor alone.
-     Sits behind its parent's content: the parent must be a stacking context. */
-  .dot-band {
-    --dot: conic-gradient(at 2px 2px, transparent 270deg, var(--color-dot) 0);
+  /* ========= Dot field =========
+     A sparse grid of dots that fades out from one corner: behind the top of
+     the page, where it sits around the portrait, and in the contact panel.
+     The globe at the foot of the page is drawn in dots too, so the same mark
+     opens and closes it. Static: one gradient tile and a mask, nothing for
+     the compositor to animate. Sits behind its parent's content at
+     z-index -1, so the parent must be a stacking context, or the page.
+     --dot-origin is the corner it is brightest in. */
+  .dot-field {
     position: absolute;
     inset: 0 0 auto;
     z-index: -1;
-    height: 6.25rem;
-    overflow: hidden;
+    height: 40rem;
+    max-height: 100%;
     border-radius: inherit;
-    background: var(--dot) 0 0 / 4px 4px;
-    mask-image: linear-gradient(to bottom, #000, transparent);
+    background: radial-gradient(var(--color-dot) 1px, transparent 0) 0 0 / 1.5rem 1.5rem;
+    mask-image: radial-gradient(ellipse 60% 80% at var(--dot-origin, 85% 20%), #000, transparent);
     pointer-events: none;
-
-    &::before,
-    &::after {
-      content: "";
-      position: absolute;
-      inset: 0;
-    }
-
-    &::before {
-      background:
-        var(--dot) 0 0 / 12px 20px,
-        var(--dot) 8px 4px / 20px 28px;
-    }
-
-    &::after {
-      background:
-        var(--dot) 4px 8px / 28px 12px,
-        var(--dot) 16px 12px / 36px 44px;
-    }
-
-    @media (prefers-reduced-motion: no-preference) {
-      &::before {
-        animation: dot-shimmer 5s ease-in-out infinite;
-      }
-
-      &::after {
-        animation: dot-shimmer 7s ease-in-out -3s infinite;
-      }
-    }
-
-    @media print {
-      display: none;
-    }
-  }
-
-  @keyframes dot-shimmer {
-    50% {
-      opacity: 0.2;
-    }
   }
 
   /* ========= Reveal =========
@@ -251,19 +291,6 @@
     filter: blur(var(--reveal-blur));
   }
 
-  /* Printing lays the page out without scrolling it, so anything the visitor
-     had not scrolled to yet would print blank. Paper gets it all, at once. */
-  @media print {
-    [data-reveal] {
-      transition: none;
-    }
-
-    [data-reveal="pending"] {
-      opacity: 1;
-      translate: none;
-      filter: none;
-    }
-  }
 
   /* The hero's one-shot entrance: the same blur and settle as the reveal, but
      never invisible. On a phone the hero's text is the Largest Contentful
@@ -305,12 +332,6 @@
 
     &:focus-visible {
       translate: 0 0;
-    }
-  }
-
-  @media print {
-    .skip-link {
-      display: none;
     }
   }
 }

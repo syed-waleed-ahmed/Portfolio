@@ -1,6 +1,7 @@
 import { memo } from "react";
 import { ActivityCalendar } from "react-activity-calendar";
 import days from "@/data/github-activity.json";
+import "./GitHubActivityCalendar.css";
 
 // The wide size matches the breakpoint and width in GitHubActivity.css, which
 // reserves the height of whichever size is in use.
@@ -16,7 +17,7 @@ const WEEKS_PER_MONTH = 4.35;
 // --color-accent mixed into --color-surface at 25, 50, 75 and 100%, over the
 // raised surface for an empty day. The library takes literal colours, so these
 // need updating with the tokens: see docs/design.md.
-const THEME = { dark: ["#17223a", "#15485d", "#1a778e", "#1ea5be", "#22d3ee"] };
+const THEME = { dark: ["#1c2434", "#294c59", "#40808e", "#57b3c2", "#6ee7f7"] };
 
 const DATE_FORMAT = new Intl.DateTimeFormat("en-GB", {
   day: "numeric",

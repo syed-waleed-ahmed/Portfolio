@@ -47,10 +47,28 @@
 // key. Campaign Forge stays pinned on the GitHub profile. The same pass
 // re-cut the AI Workflow Assistant's picture from the screenshot that
 // repository retook when it folded reports into analyses.
+//
+// On 2026-11-23 the grid stopped giving every card the same weight.
+// `featured` marks the one project that opens the section as a wide card,
+// with its picture beside its text and its `role` shown above its title; it
+// is the first entry, and a content test holds it to exactly one. The other
+// five no longer print `role`, which read "Independent Project" five times
+// over: the section's subtitle says it once. The field stays on every entry
+// for the command palette's search.
 export const projects = [
   {
     title: "RemindrAI: Embeddable Multi-Tenant Reminder Capability",
     role: "Master's Thesis · MemorAIz S.r.l.",
+    featured: true,
+    // Three figures under the highlight on the featured card, each restating
+    // a claim the MemorAIz entry in experience.js already makes: `claim` is
+    // that phrase, and a content test fails if the entry stops saying it.
+    // Nothing here is a new number.
+    facts: [
+      { value: "985", label: "tests across three repositories", claim: "985 tests across three repositories" },
+      { value: "100K", label: "due reminders, claim latency near-flat", claim: "near-flat from 1K to 100K due reminders" },
+      { value: "4", label: "independent depths of tenant isolation", claim: "tenant isolation at four independent depths" },
+    ],
     stack: ["Next.js 16", "TypeScript", "Vercel AI SDK", "Mastra", "Turso / libSQL"],
     // The MemorAIz entry in experience.js carries the build, delivery, tenancy
     // and deployment facts. This card says what the system does and where the
@@ -62,6 +80,9 @@ export const projects = [
       "Its first tenant adopted it with a base URL and a token, holding no scheduler, queue, or provider secret.",
     sourceNote: "Private repository · MemorAIz",
     image: "remindrai",
+    // The featured card draws its picture up to 665px wide, so a 2x screen
+    // wants more than 960: a third cut, from the poster's 1790px crop.
+    imageWidest: 1440,
     imageAlt:
       "From the thesis poster: a chat message asking for a reminder, the task and time the assistant understood, and the same reminder arriving on WhatsApp, Telegram, Discord and Email.",
   },
@@ -74,6 +95,9 @@ export const projects = [
     // one click away once signed in.
     demo: "https://ai-workflow-assistant-app.vercel.app",
     image: "ai-workflow-assistant",
+    // One of the two half-width cards. Its crop is 1120px wide in the
+    // screenshot, so that is the widest it goes, at its own size.
+    imageWidest: 1120,
     imageAlt:
       "A finished report on the bundled sales dataset in dark mode: the question asked, a banner confirming all 16 figures were verified against computed results, a summary and key revenue metrics.",
     description:

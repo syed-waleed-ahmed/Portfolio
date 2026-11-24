@@ -1,6 +1,5 @@
 import ExternalLink from "@/components/ui/ExternalLink";
 import { personalInfo, socialLinks } from "@/data/portfolio";
-import "./Footer.css";
 
 // One line. Email, LinkedIn and GitHub are all in the contact panel directly
 // above it, and the dock below it carries LinkedIn and GitHub on wider

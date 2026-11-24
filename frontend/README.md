@@ -15,7 +15,7 @@ frontend/
 │   ├── components/   layout/ (masthead, dock, footer), sections/ (one per page section), ui/ (primitives), widgets/ (palette, graph and globe, each with its lazy library)
 │   ├── data/         All entries, figures and links, as plain modules with no JSX, plus the activity snapshot
 │   ├── assets/       Files imported by URL: the generated sprite of skill marks, and the project pictures
-│   ├── styles/       Layer order, tokens and global CSS
+│   ├── styles/       Layer order, tokens and global CSS; sections.css lists the styles of everything below the hero, linked after it, and print.css is linked last
 │   ├── App.jsx       The page
 │   ├── main.jsx      Hydrates the prerendered markup
 │   └── entry-server.jsx   Build-time render entry
@@ -41,7 +41,7 @@ Run inside this directory, or from the repository root with `--prefix frontend`.
 | `npm run size` | Gzip budgets, after a build |
 | `npm run test:e2e` | Browser tests against `dist/` under its real CSP, after a build (`npx playwright install chromium` once). With `E2E_BASE_URL` set, the same tests against that deployed origin instead |
 | `npm run preview` | Serves `dist/` on :4173, the only way to see the prerendered page by hand; it ignores `public/_headers` |
-| `node scripts/verify-deploy.mjs <origin>` | Checks that a deployed origin serves the build in `dist/`, applies every rule in `_headers` and answers unknown paths with the 404 page. The deploy workflow runs it after publishing |
+| `node scripts/verify-deploy.mjs <origin>` | Checks that a deployed origin serves the build in `dist/`, applies every rule in `_headers`, answers unknown paths with the 404 page, and that plain HTTP and `www` redirect to it. The deploy workflow runs it after publishing |
 
 A build that takes `VITE_API_BASE_URL` from a copied `.env` calls the local
 backend, which the real CSP blocks, so `test:e2e` refuses it and prints the

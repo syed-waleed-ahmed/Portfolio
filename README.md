@@ -50,9 +50,15 @@ forking the repository can run it without reading the source.
 
 - Prerendered at build time and hydrated on load, so the full page is in the
   HTML response and text paints before any JavaScript runs
-- Lean output: about 8 KB of gzipped CSS and 85 KB of gzipped JS on load, held
-  there by size budgets in CI, with no CSS framework, animation library, UI kit
-  or PWA shell
+- Lean output: about 5.5 KB of gzipped CSS before the first paint and 86 KB of
+  gzipped JS on load, held there by size budgets in CI, with no CSS framework,
+  animation library, UI kit or PWA shell. The styles of everything below the
+  hero are a second stylesheet, linked after it, so the first screen never
+  waits for them
+- A design built around one line: the greeting is sized to fill its column on
+  every screen, the thesis project leads the work as a wide featured card, and
+  Skills opens with the ten skills the projects are built on, each naming the
+  projects that show it
 - A Ctrl/Cmd+K command palette ([cmdk](https://github.com/pacocoursey/cmdk)), a
   GitHub contribution graph
   ([react-activity-calendar](https://github.com/grubersjoe/react-activity-calendar))
@@ -66,9 +72,9 @@ forking the repository can run it without reading the source.
   the token file, every text colour is 7:1 on every surface, and each hue
   derives its border and tint by one formula
 - Modern CSS architecture: cascade layers, design tokens, native nesting,
-  fluid `clamp()` type, container queries, `subgrid`, `:has()`, animated
-  `<details>` and a scroll-driven reading-progress line, with styles co-located
-  beside each component
+  fluid `clamp()` type, container-query units, `subgrid`, `:has()`, CSS
+  counters, animated `<details>` and a scroll-driven reading-progress line,
+  with styles co-located beside each component
 - A floating dock, expandable work rows, a blur-fade entrance and a light that
   follows the pointer across the project cards, adapted from
   [magicuidesign/portfolio](https://github.com/magicuidesign/portfolio) and
@@ -76,14 +82,18 @@ forking the repository can run it without reading the source.
   in plain CSS with no new dependencies
 - A picture on every project card, cropped from an image in that project's own
   repository (the thesis poster for RemindrAI) and loaded lazily as AVIF at two
-  widths, with a WebP fallback for browsers without AVIF
+  widths, or three on the cards drawn largest, with a WebP fallback for
+  browsers without AVIF
 - Data-driven content: entries, figures and links live in `src/data/`, with
   content tests that keep figures traceable and entries consistent
 - Accessibility: skip link, named landmarks, one focus style, an accessible
   dock and form, text at WCAG AAA contrast (7:1), reduced motion honoured,
   48px tap targets on touch screens; an axe-core WCAG 2.2 A/AA scan of the
   built page runs in CI
-- Responsive from 320px up with no horizontal scroll, and a branded 404 page
+- Responsive from 320px up with no horizontal scroll, and designed for a phone
+  rather than shrunk to one: project descriptions and the full skills list are
+  one tap away there, in native `<details>` that a wider screen holds open
+- A branded 404 page
 - An error boundary per section
 - SEO: canonical URL, `Person` + `WebSite` + `ProfilePage` JSON-LD, the
   projects as a JSON-LD `ItemList` generated at build time from the same data
@@ -104,14 +114,14 @@ forking the repository can run it without reading the source.
 
 **Engineering**
 
-- 33 backend API tests, 14 frontend content tests and 20 repository invariants
+- 33 backend API tests, 17 frontend content tests and 22 repository invariants
   on Node's built-in runner, with no test dependencies; the invariants pin the
   couplings between files that would otherwise fail silently, such as the CSP
   hash and the hand-copied palette
-- 29 browser tests in Playwright, with axe-core, against the built site under
+- 41 browser tests in Playwright, with axe-core, against the built site under
   its production CSP
-- Size Limit budgets on the entry JS and CSS, each lazy chunk, the skill
-  sprite and the project pictures
+- Size Limit budgets on the entry JS, each of the three stylesheets, each lazy
+  chunk, the skill sprite and the project pictures
 - Postman collection covering every endpoint: validation, the body cap,
   malformed JSON, the honeypot, the rate limiter, CORS and the 404s
 - CI runs lint, the content tests, the invariants, a build, the size budgets,
@@ -256,6 +266,7 @@ export const projects = [
     demo: "https://…",                // optional, needs github
     image: "project-name",            // stem of four files in src/assets/projects/
     imageAlt: "What the picture shows.",
+    imageWidest: 1440,                // optional: a third, wider cut
   },
   // …
 ];
@@ -271,7 +282,11 @@ command palette also lists as its own entry. `image` names
 fail on a card with neither or both of `github` and `sourceNote`, with a `demo`
 and no `github`, or with a missing picture or `imageAlt`, and hold
 descriptions, highlights and stacks to the same density as the other cards.
-There is no ordering or emphasis flag: array order is page order.
+Array order is page order, and one entry, the first, carries `featured: true`:
+the grid lays it out across the full width with its picture beside its text,
+and its `facts` (three figures under its highlight) must each restate a claim
+an Experience entry or the card already makes. The content tests hold it to
+exactly one featured card, in first place.
 
 The same pattern applies to `experience.js`, `skills.js`, `about.js` and
 `portfolio.js`, and the command palette builds its entries from these files, so
@@ -339,10 +354,10 @@ expectations are in [`CONTRIBUTING.md`](CONTRIBUTING.md).
 
 ```bash
 npm test                             # 33 backend API tests via node --test
-npm test --prefix frontend           # 14 content tests over frontend/src/data
-npm run test:invariants              # 20 checks: files that must agree, and the colour system's rules
+npm test --prefix frontend           # 17 content tests over frontend/src/data
+npm run test:invariants              # 22 checks: files that must agree, and the colour system's rules
 npm run size --prefix frontend       # bundle budgets, after a build
-npm run test:e2e --prefix frontend   # 29 browser tests, after a build
+npm run test:e2e --prefix frontend   # 41 browser tests, after a build
 ```
 
 The API suite is three files. The first binds an ephemeral port and covers
@@ -367,21 +382,26 @@ unique, and fail on any character in the data modules that the self-hosted
 font subset cannot draw. They also check that every project picture exists in
 both formats, that every skill mark has a symbol in the sprite, that every
 command palette entry points somewhere real, that its search finds the right
-entry, and that the activity snapshot is a usable year of days.
+entry, and that the activity snapshot is a usable year of days. Two check the
+redesign's claims against the entries: the featured project's figures must
+each restate a phrase Experience still says, and each core skill's list of
+projects must name entries that really use it.
 
 The repository invariants pin what used to fail silently, among them the CSP
 hash of the inline analytics script, the six hand-copied palettes, the form
 rules mirrored between frontend and backend, the API origin the CSP must
 allow, the hand-kept dates, the Node version, the Cloudflare configuration,
-the release version in all three manifests and the no-em-dash house style. The
-browser suite runs the built
-page in Chromium under its production CSP, with the backend and analytics
-answered inside the test: no console or CSP errors, every section revealed, no
-horizontal scroll from 320px to 1920px, no axe violations, all text at 7:1,
-the dock's current section and the palette's selected row still marked under
-forced colours, and the command palette, the dock's Home link, the contact
-form, the graph's fit on a phone, the skill marks, the project pictures and
-printing each checked in turn.
+the release version in all three manifests, every stylesheet loaded exactly
+once and in the right order, and the no-em-dash house style. The browser suite
+runs the built page in Chromium under its production CSP, with the backend and
+analytics answered inside the test: no console or CSP errors, every section
+revealed, no horizontal scroll from 320px to 1920px, no axe violations, all
+text at 7:1, the dock's current section and the palette's selected row still
+marked under forced colours, the greeting filling its column without leaving
+it at six widths, the first screen clear of the dock in a tall and a short
+window, and the command palette, the dock's Home link, the contact form, the
+phone disclosures, the graph's fit on a phone, the skill marks, the project
+pictures and printing each checked in turn.
 
 Live and manual testing uses the Postman collection in
 [`postman/`](postman/README.md), which runs the same paths against a real
@@ -503,7 +523,8 @@ linked from the site's dock.
 
 MIT; see [LICENSE](LICENSE). You are welcome to fork this for your own
 portfolio: replace the content in `frontend/src/data/`, the hero text in
-`Hero.jsx`, the images in `frontend/public/`, the project pictures in
+`Hero.jsx` (and re-measure the greeting's size factor in `Hero.css` if you
+change its words), the images in `frontend/public/`, the project pictures in
 `frontend/src/assets/projects/` and the copies listed under
 [Facts stated twice](docs/development.md#facts-stated-twice), set
 `githubUsername` in `portfolio.js`, and run

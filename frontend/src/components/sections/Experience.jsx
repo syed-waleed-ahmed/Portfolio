@@ -3,7 +3,6 @@ import Monogram from "@/components/ui/Monogram";
 import Reveal from "@/components/ui/Reveal";
 import SectionHeader from "@/components/ui/SectionHeader";
 import { experiences } from "@/data/experience";
-import "./Experience.css";
 
 // One expandable row per role, so the whole career reads as a timeline at a
 // glance and the detail is a click away. The most recent role starts open, which
@@ -20,7 +19,7 @@ const Experience = () => (
       The roles I&apos;ve held and the systems I built in each one.
     </SectionHeader>
 
-    <ol className="experience-list">
+    <ol className="timeline">
       {experiences.map((role, index) => (
         <Reveal as="li" key={role.company} delay={index * 40}>
           <details className="experience" open={index === 0}>
@@ -28,7 +27,7 @@ const Experience = () => (
               <Monogram name={role.company} />
               <h3 className="experience__title">{role.title}</h3>
               <span className="experience__company">{role.company}</span>
-              <span className="experience__period">{role.period}</span>
+              <span className="label experience__period">{role.period}</span>
               <span className="experience__location">{role.location}</span>
               <LuChevronDown className="experience__chevron" aria-hidden="true" />
             </summary>

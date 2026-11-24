@@ -1,14 +1,31 @@
 @layer components {
   .masthead {
-    position: relative;
-    isolation: isolate;
-    padding-block-start: clamp(var(--space-8), 1.5rem + 2vw, var(--space-12));
+    padding-block-start: clamp(var(--space-6), 1rem + 2vw, var(--space-10));
+  }
+
+  /* Name and role together on the left, the place against the right edge. On
+     a phone the role wraps under the name before anything is squeezed. */
+  .masthead__inner {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0 var(--space-3);
   }
 
   .masthead__name {
-    font-size: var(--text-base);
     font-weight: var(--weight-semibold);
     letter-spacing: var(--tracking-snug);
     color: var(--color-text-strong);
+  }
+
+  /* From a tablet up. On a phone it would wrap to a line of its own, and
+     the contact panel names the city as well. */
+  .masthead__place {
+    display: none;
+
+    @media (min-width: 40rem) {
+      display: block;
+      margin-inline-start: auto;
+    }
   }
 }

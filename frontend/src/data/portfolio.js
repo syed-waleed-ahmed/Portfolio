@@ -3,6 +3,9 @@
 export const personalInfo = {
   name: "Syed Waleed Ahmed",
   shortName: "Waleed", // the name the hero greets with
+  // Beside the name in the masthead. The same title as the page <title> and
+  // jobTitle in index.html: a change of role moves all three.
+  role: "AI Software Engineer",
   location: "Bologna, Italy",
   email: "syedwaleedahmed9@gmail.com",
   resumeUrl:
@@ -21,11 +24,18 @@ export const socialLinks = {
 
 // Page sections below the hero, in order. The single source for the dock's
 // links, the command palette's "Go to" entries, the <section> ids App.jsx
-// renders and the heading each section is labelled by (`${id}-title`).
+// renders, the heading each section is labelled by (`${id}-title`) and the
+// number each one opens with.
+//
+// The order is the one a recruiter reads in: the work, where it was done,
+// then the person and the full list of tools. Projects come first because
+// the thesis project is the strongest thing on the page, and the figures in
+// the hero point at it. About led the page until November 2026, which put
+// two screens of narrative between the introduction and the first project.
 export const sections = [
-  { id: "about", label: "About" },
-  { id: "experience", label: "Experience" },
   { id: "projects", label: "Projects" },
+  { id: "experience", label: "Experience" },
+  { id: "about", label: "About" },
   { id: "skills", label: "Skills" },
   { id: "contact", label: "Contact" },
 ];

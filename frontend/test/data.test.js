@@ -19,7 +19,7 @@ import * as commandsModule from "../src/data/commands.js";
 const { stats } = about;
 const { experiences } = experienceModule;
 const { projects } = projectsModule;
-const { skillGroups } = skillsModule;
+const { coreSkills, skillGroups } = skillsModule;
 const { personalInfo, socialLinks, sections } = portfolio;
 const { commandGroups, scoreCommand } = commandsModule;
 
@@ -60,6 +60,72 @@ test("every project card fills its last row, with a link or a note", () => {
         p.github ? "github" : "no github"
       } and ${p.sourceNote ? "sourceNote" : "no sourceNote"}`
     );
+  }
+});
+
+// The grid gives one project the full width and a layout of its own, and the
+// styles for that assume it is the first card: a second one, or one further
+// down, would be laid out as a wide card in the wrong place.
+test("exactly one project is featured, and it comes first", () => {
+  const featured = projects.filter((p) => p.featured);
+  assert.equal(featured.length, 1, `${featured.length} projects are marked featured, expected one`);
+  assert.equal(projects[0], featured[0], `"${featured[0].title}" is featured but is not the first project`);
+});
+
+// The featured card shows three figures under its highlight. Each restates a
+// claim made elsewhere on the page, and carries the phrase it restates: a
+// figure whose phrase is gone from Experience and from the card's own text
+// is a number with nothing behind it.
+test("the featured project's figures restate claims the entries make", () => {
+  const [featured] = projects.filter((p) => p.featured);
+  assert.ok(featured.facts?.length === 3, "the featured project should carry three facts: the card's row has three cells");
+  const claims = [...experiences.flatMap((e) => e.bullets), featured.description, featured.highlight].join(" ");
+  for (const { value, label, claim } of featured.facts) {
+    assert.ok(value && label, "a fact needs a value and a label");
+    assert.ok(claims.includes(claim), `fact "${value} ${label}" restates "${claim}", which no Experience bullet or card text says any more`);
+  }
+});
+
+// Skills opens with the ten the work is built on, each naming where it was
+// used. That is a claim about the entries above it, so it is checked against
+// them: a proof may name a project (by the part of its title before the
+// colon), the assistant an Experience bullet describes, or a count of the
+// six projects, and the entry it names must show the skill.
+test("every core skill is a tag, and its proof points at entries that show it", () => {
+  const tags = new Set(skillGroups.flatMap((g) => g.tags));
+  assert.ok(
+    coreSkills.length >= 6 && coreSkills.length <= 12,
+    `${coreSkills.length} core skills: past a dozen the emphasis stops meaning anything`
+  );
+  const names = coreSkills.map((skill) => skill.name);
+  assert.equal(new Set(names).size, names.length, "a core skill is listed twice");
+
+  // What shows a skill in an entry: for the three that are practices rather
+  // than products, the word the entries use for it; for a product, its name
+  // in the stack or the text, as a plain substring. Not a pattern built from
+  // the name: "Next.js" and "C++" would need escaping, and a substring needs
+  // none.
+  const SHOWN_BY = { "Multi-Agent Systems": /multi-agent/i, RAG: /\bRAG\b/, "LLM Evaluation": /\beval|judge/i };
+  const shows = (text, name) =>
+    SHOWN_BY[name] ? SHOWN_BY[name].test(text) : text.toLowerCase().includes(name.toLowerCase());
+  const bullets = experiences.flatMap((e) => e.bullets);
+  const COUNTS = ["Zero", "One", "Two", "Three", "Four", "Five", "Six"];
+
+  for (const { name, proof } of coreSkills) {
+    assert.ok(tags.has(name), `coreSkills lists "${name}", which is not a skill tag`);
+    const counted = proof.match(/^(\w+) of the six projects$/);
+    if (counted) {
+      const using = projects.filter((p) => p.stack.some((tech) => shows(tech, name))).length;
+      assert.equal(projects.length, 6, "the proofs say 'of the six projects'");
+      assert.equal(counted[1], COUNTS[using], `${name}: "${proof}", but ${using} project stacks list it`);
+      continue;
+    }
+    for (const entry of proof.split(", ")) {
+      const project = projects.find((p) => p.title.split(":")[0] === entry);
+      const bullet = bullets.find((text) => text.includes(entry));
+      assert.ok(project || bullet, `${name}: the proof names "${entry}", which is neither a project title nor named in an Experience bullet`);
+      assert.ok(shows(project ? entryText(project) : bullet, name), `${name}: "${entry}" does not show it in its stack or text`);
+    }
   }
 });
 
@@ -176,8 +242,14 @@ test("the GitHub activity snapshot is a usable year of days", () => {
 test("every project names a picture that exists, with words for it", () => {
   for (const p of projects) {
     assert.match(p.image ?? "", /^[a-z][a-z0-9-]*$/, `${p.title}: image "${p.image}"`);
+    // A third, wider cut is optional: the cards drawn largest name one when
+    // their source is wide enough. It has to be wider than 960 to be worth a
+    // file, and it needs both formats like the rest.
+    if (p.imageWidest !== undefined) {
+      assert.ok(Number.isInteger(p.imageWidest) && p.imageWidest > 960, `${p.title}: imageWidest is ${p.imageWidest}, expected a width over 960`);
+    }
     for (const format of ["avif", "webp"]) {
-      for (const width of [480, 960]) {
+      for (const width of [480, 960, ...(p.imageWidest ? [p.imageWidest] : [])]) {
         const file = new URL(`../src/assets/projects/${p.image}-${width}.${format}`, import.meta.url);
         assert.ok(existsSync(file), `${p.title}: src/assets/projects/${p.image}-${width}.${format} is missing`);
       }

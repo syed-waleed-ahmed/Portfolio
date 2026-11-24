@@ -14,7 +14,7 @@ the set. The [README](../README.md) is the overview.
 | [Deployment](deployment.md) | Ship: Cloudflare Workers and the deploy gate, Render, CI, headers and CSP, caching, releases |
 | [Security controls](security.md) | See what is implemented, why, and what is out of scope |
 | [Backend audit](audit/EXECUTIVE_SUMMARY.md) | Read the 2026-11-20 review of the backend: what was measured, what was wrong, what was fixed and what is still open |
-| [Repository cleanup](repository-maintenance/CLEANUP_REPORT.md) | Read the 2026-11-20 pass over the whole tree: what was checked for dead code, the little that was removed, what was kept and why |
+| [Repository cleanup](repository-cleanup.md) | Read the 2026-11-20 pass over the whole tree: how dead code was looked for, the little that was removed, what was fixed, what was kept and why |
 
 The last two are dated records of one day's work, not living references. They
 describe the repository as it was then, and are not kept in step with later

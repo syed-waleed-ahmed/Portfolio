@@ -2,7 +2,8 @@
 
 The API behind the site's contact form: Express 5 on Node, sending mail through
 Resend. Its one real endpoint is `POST /api/contact`. Deployed by Render from
-this directory, once CI has passed on `main`.
+this directory, once CI has passed on `main`, and only for a commit that
+changes `backend/`.
 
 It is one of two independent npm projects in this repository, with its own
 `package.json` and lockfile; the other is [`../frontend`](../frontend/README.md).

@@ -6,10 +6,22 @@
     "limit": "87 kB"
   },
   {
-    "name": "Entry CSS",
+    "name": "Entry CSS, the stylesheet the first screen waits for",
     "path": "dist/assets/index-*.css",
     "gzip": true,
-    "limit": "8 kB"
+    "limit": "6 kB"
+  },
+  {
+    "name": "Section styles, linked after the hero, block only what follows",
+    "path": "dist/assets/sections-*.css",
+    "gzip": true,
+    "limit": "4.5 kB"
+  },
+  {
+    "name": "Print stylesheet, media=print, never blocks rendering",
+    "path": "dist/assets/print-*.css",
+    "gzip": true,
+    "limit": "1 kB"
   },
   {
     "name": "Skill marks sprite, one cached image request",
@@ -18,16 +30,16 @@
     "limit": "23 kB"
   },
   {
-    "name": "Project pictures, the twelve AVIF files, loaded lazily",
+    "name": "Project pictures, the fourteen AVIF files, loaded lazily, never all by one screen",
     "path": "dist/assets/*.avif",
     "gzip": true,
-    "limit": "175 kB"
+    "limit": "238 kB"
   },
   {
     "name": "Project pictures, the WebP fallbacks",
     "path": "dist/assets/*.webp",
     "gzip": true,
-    "limit": "212 kB"
+    "limit": "305 kB"
   },
   {
     "name": "Command palette chunk (cmdk), fetched on intent",
@@ -37,7 +49,7 @@
   },
   {
     "name": "Contribution graph chunks (react-activity-calendar), fetched near the viewport",
-    "path": ["dist/assets/GitHubActivityCalendar-*.js", "dist/assets/Tooltip-*.js"],
+    "path": ["dist/assets/GitHubActivityCalendar-*.js", "dist/assets/GitHubActivityCalendar-*.css", "dist/assets/Tooltip-*.js"],
     "gzip": true,
     "limit": "27 kB"
   },

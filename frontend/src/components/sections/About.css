@@ -1,76 +1,31 @@
 @layer components {
-  /* ========= Figures ========= */
-  /* The 1px gap over a border-coloured background draws the dividers between
-     tiles. Column counts are explicit (2, then 4) rather than auto-fit, so a
-     row is never left with empty cells showing that background. Two columns on
-     phones rather than one: four full-width tiles were a screen each. */
-  .stats {
+  /* The story on the left; education and the target roles stacked on the
+     right, which together run to about the story's height. */
+  .about-flow,
+  .about-side {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 1px;
-    list-style: none;
-    margin-block-end: var(--space-10);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-lg);
-    background-color: var(--color-border);
-    overflow: hidden;
-
-    @media (min-width: 48rem) {
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-    }
-  }
-
-  .stat {
-    display: grid;
-    grid-template-rows: auto 1fr auto;
-    gap: var(--space-2);
-    padding: clamp(var(--space-4), 0.75rem + 1vw, var(--space-6));
-    background-color: var(--color-surface);
-  }
-
-  .stat__value {
-    font-size: clamp(1.625rem, 1.25rem + 1.5vw, 2.75rem);
-    font-weight: var(--weight-bold);
-    line-height: 1;
-    letter-spacing: var(--tracking-tight);
-    color: var(--color-text-strong);
-    font-variant-numeric: tabular-nums;
-  }
-
-  .stat__label {
-    font-size: var(--text-sm);
-    line-height: var(--leading-snug);
-    color: var(--color-text-soft);
-  }
-
-  .stat__source {
-    font-size: var(--text-xs);
-    color: var(--color-text-muted);
-  }
-
-  /* ========= Story, education, roles ========= */
-  /* Story and education side by side on a desktop, as they run to about the
-     same height; the target roles span the full width underneath. */
-  .about-flow {
-    display: grid;
+    align-content: start;
     gap: var(--space-10);
+  }
 
+  .about-flow {
     @media (min-width: 64rem) {
       grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
       column-gap: var(--space-16);
     }
   }
 
-  .about-roles {
-    @media (min-width: 64rem) {
-      grid-column: 1 / -1;
-    }
-  }
-
+  /* The first paragraph is the position the other two argue for, so it is
+     set a size up and in the body colour, as a lede. */
   .about-story {
     & p {
       line-height: var(--leading-relaxed);
       color: var(--color-text-soft);
+    }
+
+    & p:first-of-type {
+      font-size: var(--text-lg);
+      color: var(--color-text);
     }
 
     & p + p {
@@ -79,19 +34,13 @@
   }
 
   /* ========= Education ========= */
-  .schools {
-    display: grid;
-    gap: var(--space-5);
-    list-style: none;
-  }
-
   /* Monogram, degree and school, then the dates in their own column on the
-     right. On a phone the dates drop under the school instead. */
+     right. On a phone the dates drop under the school instead. The rail
+     between the monograms comes from .timeline in components.css. */
   .school {
     display: grid;
     grid-template-columns: auto minmax(0, 1fr);
     column-gap: var(--space-3);
-    align-items: center;
 
     @media (min-width: 40rem) {
       grid-template-columns: auto minmax(0, 1fr) auto;
@@ -129,11 +78,6 @@
     display: grid;
     gap: var(--space-4);
 
-    @media (min-width: 40rem) {
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: var(--space-6);
-    }
-
     & dt {
       font-weight: var(--weight-semibold);
       color: var(--color-text-strong);
@@ -146,16 +90,8 @@
     }
   }
 
-  /* Dividers between roles: horizontal when stacked, vertical in a row. */
   .roles__item + .roles__item {
     padding-block-start: var(--space-4);
     border-block-start: 1px solid var(--color-border);
-
-    @media (min-width: 40rem) {
-      padding-block-start: 0;
-      padding-inline-start: var(--space-6);
-      border-block-start: 0;
-      border-inline-start: 1px solid var(--color-border);
-    }
   }
 }

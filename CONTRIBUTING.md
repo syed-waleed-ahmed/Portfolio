@@ -12,11 +12,17 @@ first section before you start.
 - **Documentation fixes.** Anything inaccurate, unclear or out of date.
 - **Tooling and CI improvements** that make the project easier to maintain.
 - **Fork it for your own portfolio.** The MIT licence allows this. Replace the
-  content in `frontend/src/data/`, the images in `frontend/public/`, the
-  project pictures in `frontend/src/assets/projects/` and the contact details,
-  then set `githubUsername` in `portfolio.js` and run
+  content in `frontend/src/data/`, the hero text in `Hero.jsx` (and re-measure
+  the greeting's size factor in `Hero.css` if you change its words), the
+  images in `frontend/public/`, the project pictures in
+  `frontend/src/assets/projects/` and the copies listed under
+  [Facts stated twice](docs/development.md#facts-stated-twice), then set
+  `githubUsername` in `portfolio.js` and run
   `node frontend/scripts/fetch-github-activity.mjs` for your own contribution
-  graph. No attribution is required, though it is appreciated.
+  graph. The licence asks only that its copyright and permission notice stay
+  with the code; credit beyond that is appreciated, not required. The brand
+  marks in `frontend/src/assets/skill-icons.svg` are not covered by it: see
+  the [README](README.md#license).
 
 ## What is not
 
@@ -123,7 +129,8 @@ of these, read the linked document first:
 | The inline script in `frontend/index.html` | Pinned in the CSP by SHA-256 hash; any edit kills analytics on the live site until the hash is recomputed. The repository invariants fail first and print the new value | [Deployment](docs/deployment.md#the-inline-analytics-hash) |
 | Colours, type scale, layout, motion | Cascade layers, a token system and a `subgrid` card layout with load-bearing rules; six files copy the palette by hand, and the invariants check each | [Design](docs/design.md) |
 | Anything `test/invariants.test.js` names | Pairs of files that must agree, where a mismatch breaks nothing a build would catch. Each failure message says what to change | [Testing](docs/testing.md#repository-invariants) |
-| Bundle size | A static import of a lazily loaded library pulls it into the entry chunk and fails the size budget. Change a budget only in the commit that needs it, with the reason | [Testing](docs/testing.md#bundle-size-budgets) |
+| Bundle size | A static import of a lazily loaded library pulls it into the entry chunk and fails the size budget. CSS has three budgets, one per stylesheet, and the one the first screen waits for has the least room. Change a budget only in the commit that needs it, with the reason | [Testing](docs/testing.md#bundle-size-budgets) |
+| Where a stylesheet is loaded | The styles of anything below the hero are listed in `frontend/src/styles/sections.css`, not imported by their component, and print rules live only in `styles/print.css`. An import in the wrong place still works, so the invariants check both | [Design](docs/design.md#three-stylesheets-loaded-in-order) |
 | Copy in `frontend/src/data/` | Figures must stay traceable and entries equally dense; `npm test` in `frontend/` enforces it | [Development](docs/development.md#updating-site-content) |
 | `frontend/src/data/github-activity.json` | Generated, and overwritten by a weekly commit to `main`; hand edits do not survive | [Deployment](docs/deployment.md#weekly-snapshot-commit) |
 | The contribution graph and the globe | Their CSS reserves exact heights and positions at an 80rem breakpoint, so a layout change has to check both | [Design](docs/design.md#github-activity) |

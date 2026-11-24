@@ -185,7 +185,8 @@ covered by a test.
 with a live preflight, and the frontend's default API origin is production.
 A local dev server with no `frontend/.env` therefore sends real mail. CORS is
 not access control and `curl` can do the same, so nothing is exposed. It is a
-convenience with a surprise in it, and `CLAUDE.md` already warns about it.
+convenience with a surprise in it, and
+[`docs/development.md`](../development.md#setup) already warns about it.
 
 **F-16: Invisible characters pass.** A message that is only a zero-width
 space is accepted as non-empty, a bidirectional override in a subject reaches

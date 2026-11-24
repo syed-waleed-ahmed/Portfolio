@@ -186,10 +186,15 @@ test.describe("accessibility", () => {
   });
 
   // A field's border is the only sign there is somewhere to type, and WCAG
-  // 1.4.11 asks 3:1 of it. axe has no rule for this, so it is measured.
-  test("form fields have a border of at least 3:1 against the panel", async ({ page }) => {
+  // 1.4.11 asks 3:1 of it. axe has no rule for this, so it is measured, on
+  // both sides of the line: against the panel outside the field and against
+  // the fill inside it. The border is translucent and the field's own fill
+  // runs under it, so that fill is what it is painted over. Measured against
+  // the page alone, as this was until the panel took a surface of its own,
+  // a border could pass here and sit at 2.9:1 on the panel it is really on.
+  test("form fields have a border of at least 3:1 against the panel and their fill", async ({ page }) => {
     await page.goto("/");
-    const ratio = await page.locator(".field__control").first().evaluate((field) => {
+    const ratios = await page.locator(".field__control").first().evaluate((field) => {
       const canvas = document.createElement("canvas");
       canvas.width = canvas.height = 1;
       const context = canvas.getContext("2d", { willReadFrequently: true });
@@ -206,12 +211,18 @@ test.describe("accessibility", () => {
         const [r, g, b] = rgb.map((v) => (v / 255 <= 0.03928 ? v / 255 / 12.92 : ((v / 255 + 0.055) / 1.055) ** 2.4));
         return 0.2126 * r + 0.7152 * g + 0.0722 * b;
       };
-      const page = getComputedStyle(document.body).backgroundColor;
-      const outside = luminance(flatten(page));
-      const border = luminance(flatten(page, getComputedStyle(field).borderTopColor));
-      return (Math.max(border, outside) + 0.05) / (Math.min(border, outside) + 0.05);
+      const contrast = (a, b) => (Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05);
+      const fill = (element) => getComputedStyle(element).backgroundColor;
+      const page = fill(document.documentElement);
+      const panel = luminance(flatten(page, fill(field.closest(".contact-panel"))));
+      const inside = luminance(flatten(page, fill(field)));
+      const border = luminance(flatten(page, fill(field), getComputedStyle(field).borderTopColor));
+      return { panel: contrast(border, panel), fill: contrast(border, inside), stepped: contrast(panel, inside) };
     });
-    expect(ratio).toBeGreaterThanOrEqual(3);
+    // The panel and the fill must differ, or the two checks are one check.
+    expect(ratios.stepped).toBeGreaterThan(1.1);
+    expect(ratios.panel).toBeGreaterThanOrEqual(3);
+    expect(ratios.fill).toBeGreaterThanOrEqual(3);
   });
 });
 
@@ -449,14 +460,135 @@ test("the contribution graph fits a phone without its own scroller", async ({ pa
   expect(scrollWidth).toBeLessThanOrEqual(clientWidth);
 });
 
-test("printing shows content the visitor had not scrolled to", async ({ page }) => {
+// Paper's rules are a stylesheet of their own, linked with media="print"
+// (styles/print.css). If that link breaks, the page still looks right on
+// screen and prints as the dark screen design, dock and all.
+test("printing shows content the visitor had not scrolled to, without the dock", async ({ page }) => {
   await page.goto("/");
   await expect(page.locator('[data-reveal="pending"]').first()).toBeAttached();
+  await expect(page.locator(".dock-shell")).toBeVisible();
   await page.emulateMedia({ media: "print" });
-  const opacities = await page.locator("[data-reveal]").evaluateAll((elements) =>
-    elements.map((element) => getComputedStyle(element).opacity)
-  );
-  expect(opacities.every((opacity) => opacity === "1")).toBe(true);
+  // The sheet is fetched at low priority, so wait for it rather than assume.
+  await expect(page.locator(".dock-shell")).toBeHidden();
+  // Polled: switching a live page to print media is not what printing does
+  // (a browser prints a static copy), and Firefox fades the pending content
+  // in over the reveal's 400ms here where Chromium shows it at once. What
+  // matters is that none of it stays hidden.
+  const hidden = () =>
+    page.locator("[data-reveal]").evaluateAll((elements) => elements.filter((element) => getComputedStyle(element).opacity !== "1").length);
+  await expect.poll(hidden).toBe(0);
+  // Ink on white: the tokens for paper come from the same sheet.
+  expect(await page.evaluate(() => getComputedStyle(document.body).color)).toBe("rgb(34, 34, 34)");
+});
+
+// On a desktop the hero is the first screen, in one of two ways, and in
+// neither does the dock sit on the figures. Before, it floated across their
+// labels on the first screen every visitor saw.
+test.describe("the desktop first screen", () => {
+  const firstScreen = (page) =>
+    page.evaluate(() => {
+      const box = (selector) => document.querySelector(selector).getBoundingClientRect();
+      const [figures, dock, copy] = [box(".stats"), box(".dock"), box(".hero__body")];
+      return {
+        figuresTop: figures.top,
+        figuresBottom: figures.bottom,
+        dockTop: dock.top,
+        copyBottom: copy.bottom,
+        height: window.innerHeight,
+      };
+    });
+
+  // Tall enough for everything: the figures along the bottom, the dock under.
+  test("holds the figures clear of the dock on a tall window", async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.goto("/");
+    const screen = await firstScreen(page);
+    expect(screen.figuresTop).toBeGreaterThan(0);
+    expect(screen.dockTop - screen.figuresBottom).toBeGreaterThanOrEqual(8);
+  });
+
+  // A laptop window with its toolbars. Left to its own height the hero put
+  // the figures exactly where the dock floats; now the copy has the screen
+  // and the figures begin under the fold.
+  test("gives a short window to the copy, with the figures under the fold", async ({ page }) => {
+    await page.setViewportSize({ width: 1528, height: 651 });
+    await page.goto("/");
+    const screen = await firstScreen(page);
+    expect(screen.dockTop - screen.copyBottom).toBeGreaterThanOrEqual(8);
+    expect(screen.figuresTop).toBeGreaterThanOrEqual(screen.height);
+  });
+});
+
+// The greeting is sized to fill its column and never wraps, so a wrong
+// factor in Hero.css runs it off the side of a phone, which is exactly what
+// the first one did. One line, inside its box, at every width.
+for (const width of [320, 390, 768, 1024, 1440, 1920]) {
+  test(`the greeting fills its column without leaving it at ${width}px`, async ({ page }) => {
+    await page.setViewportSize({ width, height: 900 });
+    await page.goto("/");
+    await page.evaluate(() => document.fonts.ready);
+    const fit = await page.locator(".hero__title").evaluate((title) => {
+      const column = title.parentElement.getBoundingClientRect();
+      const range = document.createRange();
+      range.selectNodeContents(title);
+      const ink = range.getBoundingClientRect();
+      return { share: ink.width / column.width, lines: Math.round(ink.height / parseFloat(getComputedStyle(title).fontSize)) };
+    });
+    expect(fit.lines).toBe(1);
+    expect(fit.share).toBeLessThanOrEqual(1);
+    // Fills it, too: under four fifths, the greeting has stopped being the
+    // widest thing in the hero. The cap on its size only binds past 1920px.
+    expect(fit.share).toBeGreaterThan(0.8);
+  });
+}
+
+// A project card's description is a native <details> on the five ordinary
+// cards. A phone shows the toggle and keeps the description shut; from a
+// tablet up the stylesheet holds it open and hides the toggle, which only
+// ::details-content can do. If that rule stops applying, a desktop visitor
+// gets five cards with their descriptions missing and nothing to click.
+test.describe("a project card's description", () => {
+  const card = (page) => page.locator(".project-card:not(.project-card--featured)").first();
+
+  test("is one tap away on a phone", async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto("/");
+    await hydrated(page);
+    const description = card(page).locator(".project-card__description");
+    await card(page).scrollIntoViewIfNeeded();
+    await expect(description).toBeHidden();
+    await card(page).locator("summary").click();
+    await expect(description).toBeVisible();
+  });
+
+  // The skills inventory sits in the same disclosure, and it is also one of
+  // Reveal's elements: shut, it is never on screen, so Reveal is still
+  // holding it back when the visitor opens it. It has to arrive then, not
+  // stay at opacity 0 behind an open toggle.
+  test("and the skills inventory open on a phone and are shown", async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto("/");
+    await hydrated(page);
+    const inventory = page.locator("#skills .skills");
+    await page.locator("#skills summary").scrollIntoViewIfNeeded();
+    await expect(inventory).toBeHidden();
+    await page.locator("#skills summary").click();
+    await expect(inventory).toBeVisible();
+    await expect.poll(() => inventory.evaluate((node) => getComputedStyle(node).opacity)).toBe("1");
+    await expect(inventory.locator(".tag")).toHaveCount(62);
+  });
+
+  test("is open, with no toggle, on a desktop", async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.goto("/");
+    await card(page).scrollIntoViewIfNeeded();
+    await expect(card(page).locator("summary")).toBeHidden();
+    const description = card(page).locator(".project-card__description");
+    await expect(description).toBeVisible();
+    // Visible to assistive technology as well, not only painted.
+    expect(await description.evaluate((node) => node.checkVisibility({ contentVisibilityAuto: true, visibilityProperty: true }))).toBe(true);
+    await expect(page.locator(".project-card__description")).toHaveCount(6);
+  });
 });
 
 test("every skill mark draws from the sprite", async ({ page }) => {
@@ -483,32 +615,48 @@ test("every project picture offers a WebP beside its AVIF, and loads", async ({ 
       elements.map((picture) => {
         const source = picture.querySelector("source");
         const image = picture.querySelector("img");
-        // Edge to edge inside the card's 1px border. The reset caps a
-        // picture at 100% of the card's content box, which once left it
-        // 2.5rem short of the right edge with every other check passing.
+        // The <picture> is the well the image sits in, and it runs to the
+        // card's edges inside the 1px border: across the top of a card, or
+        // down the left half of the featured one. The reset caps a picture
+        // at 100% of the card's content box, which once left it 2.5rem
+        // short of the right edge with every other check passing.
+        const near = (a, b) => Math.abs(a - b) <= 1.5;
         const card = picture.closest(".project-card").getBoundingClientRect();
+        const well = picture.getBoundingClientRect();
         const box = image.getBoundingClientRect();
         return {
-          avif: source?.type === "image/avif" && source.srcset.split(",").length === 2,
+          // Two widths, or three where the card names a wider cut, and the
+          // same number in each format.
+          avif:
+            source?.type === "image/avif" &&
+            [2, 3].includes(source.srcset.split(",").length) &&
+            source.srcset.split(",").length === image.srcset.split(",").length,
           webp: /\.webp$/.test(image.getAttribute("src")) && image.srcset.split(",").every((candidate) => /\.webp \d+w$/.test(candidate.trim())),
           loaded: image.complete && image.naturalWidth > 0,
           chose: image.currentSrc.split(".").pop(),
-          spans: Math.abs(box.left - card.left) <= 1.5 && Math.abs(card.right - box.right) <= 1.5,
+          spans: near(well.left, card.left) && near(well.top, card.top) && (near(well.right, card.right) || near(well.bottom, card.bottom)),
+          // Set in from the well by the same margin on both sides, and 2:1.
+          mounted: box.left - well.left >= 8 && near(box.left - well.left, well.right - box.right) && near(box.width, box.height * 2),
         };
       })
     );
-  await expect.poll(pictures).toEqual(Array(6).fill({ avif: true, webp: true, loaded: true, chose: "avif", spans: true }));
+  await expect
+    .poll(pictures)
+    .toEqual(Array(6).fill({ avif: true, webp: true, loaded: true, chose: "avif", spans: true, mounted: true }));
 });
 
 test("the light under the pointer leaves the project cards' rows aligned", async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto("/");
   await hydrated(page);
-  const cards = page.locator(".project-card");
-  await cards.first().scrollIntoViewIfNeeded();
+  // The last three cards share a row at this width; the featured card above
+  // them lays out its own.
+  const cards = page.locator(".project-card:not(.project-card--featured)");
+  await expect(cards).toHaveCount(5);
+  await cards.nth(2).scrollIntoViewIfNeeded();
   await expect(async () => {
-    await cards.nth(1).hover();
-    await expect(cards.nth(1)).toHaveCSS("--spot-x", /px$/, { timeout: 1000 });
+    await cards.nth(3).hover();
+    await expect(cards.nth(3)).toHaveCSS("--spot-x", /px$/, { timeout: 1000 });
   }).toPass();
   // The two layers of the light are pseudo-elements of a subgrid. In flow
   // they would be grid items: the first would take the top row and move the
@@ -518,10 +666,11 @@ test("the light under the pointer leaves the project cards' rows aligned", async
   // offsetTop, measured from the card, rather than a bounding box: the cards
   // are still settling from their staggered reveal.
   const rows = await cards.evaluateAll((elements) =>
-    elements.slice(0, 3).map((element) => [...element.children].map((child) => child.offsetTop))
+    elements.slice(2).map((element) => [...element.children].map((child) => child.offsetTop))
   );
+  expect(rows).toHaveLength(3);
   for (const tops of rows) {
-    expect(tops).toHaveLength(7);
+    expect(tops).toHaveLength(6);
     expect(tops[0]).toBe(0);
     expect(tops).toEqual(rows[0]);
   }

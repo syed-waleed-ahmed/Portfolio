@@ -46,5 +46,6 @@ body:
         - label: This is not a content change or a redesign.
           required: true
         - label: >-
-            If it adds a dependency, it loads as a separate chunk on intent and gets a
-            budget in frontend/.size-limit.json (see CONTRIBUTING.md).
+            If it adds a dependency, it loads as a separate chunk on intent or
+            proximity and gets a budget in frontend/.size-limit.json (see
+            CONTRIBUTING.md).
