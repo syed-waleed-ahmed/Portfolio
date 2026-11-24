@@ -130,7 +130,7 @@ npm test --prefix frontend
 npm test --prefix frontend --silent -- --test-name-pattern=density   # a subset by name
 ```
 
-Sixteen tests in `frontend/test/data.test.js`, on the same built-in runner with
+Seventeen tests in `frontend/test/data.test.js`, on the same built-in runner with
 no dependencies. The data files are plain modules, so they import without a
 bundler. They also run before the build of every deploy, through the prebuild
 gate.
@@ -141,7 +141,8 @@ gate.
 | `project cards keep a matching density` | Descriptions 32-53 words, highlights 9-26, four or five stack chips |
 | `every project card fills its last row, with a link or a note` | Every card carries exactly one of `github` and `sourceNote` |
 | `exactly one project is featured, and it comes first` | One entry in `projects.js` has `featured`, and it is the first: the grid lays that card out across the full width |
-| `every core skill is one of the skill tags` | `coreSkills` holds six to twelve names, none twice, each a tag in `skillGroups` |
+| `the featured project's figures restate claims the entries make` | The featured project carries three `facts`, and each one's `claim` is a phrase an Experience bullet or the card's own text still says |
+| `every core skill is a tag, and its proof points at entries that show it` | `coreSkills` holds six to twelve skills, none twice, each a tag. Every name in a `proof` is a project (the part of its title before the colon) or named in an Experience bullet, and that entry shows the skill in its stack or text; a proof of the form "Five of the six projects" matches the number of stacks that list it |
 | `experience bullets stay within the shared length range` | Every bullet 12-26 words |
 | `titles, keys and tags are unique` | Project titles, companies, section ids, stats and skill tags (several are React keys) |
 | `section ids are valid fragment identifiers` | Lowercase ids with a label, and none collides with the hero's `top` |
@@ -162,7 +163,7 @@ gate.
 npm run test:invariants      # from the repository root
 ```
 
-Twenty-one tests in `test/invariants.test.js` at the repository root, on the same
+Twenty-two tests in `test/invariants.test.js` at the repository root, on the same
 runner with no dependencies. Each pins a coupling that fails silently: two files
 that must agree, where a mismatch breaks nothing a build or a glance would
 catch. They read source files only, never build output, so they run before a
@@ -181,7 +182,8 @@ build as well, and every failure message says what to change.
 | `every text, accent and status colour is 7:1 on the page and on a panel` | The four text tokens, the accent and the three status colours are each at least 7:1 on `--color-bg` and `--color-surface`, as are the accent ink on the accent and on its hover state, and the inverse pair |
 | `every hue derives its border and its tint the same way` | For accent, success, warning and danger, `-border` is the hue at 50% and `-subtle` the hue at 10% |
 | `stylesheets take every colour from the tokens` | No stylesheet but `tokens.css` writes a hex value, a colour function, `white` or `black`; mask declarations are exempt, since a mask is painted in alpha, and `print.css` may write one only as a colour token's value for paper |
-| `print rules live in the print stylesheet, and the app links it` | No stylesheet but `styles/print.css` holds an `@media print` rule, and `App.jsx` imports that file with `?url` and links it with `media="print"` |
+| `print rules live in the print stylesheet, and the app links it` | No stylesheet but `styles/print.css` holds an `@media print` rule, and `App.jsx` imports that file with `?url` and links it with `media="print"`, after the sections' stylesheet: its rules override the others from inside the same cascade layers, where the later sheet wins |
+| `every stylesheet is loaded exactly once, and the app links the second one` | Every `.css` file under `src/` is imported by exactly one script or `@import`-ed by exactly one stylesheet, never neither and never both, and `App.jsx` links `styles/sections.css` after the hero and before the sections |
 | `the three last-modified dates agree` | `dateModified` in `index.html`, `<lastmod>` in `sitemap.xml` and `Last update` in `humans.txt` name the same day |
 | `the Node version is pinned the same way everywhere` | Every `actions/setup-node` step in every workflow reads `.nvmrc` through `node-version-file` and none hardcodes `node-version`, and every `engines.node` admits the major `.nvmrc` pins |
 | `the Cloudflare configuration publishes the build with its headers and 404 page` | `frontend/wrangler.jsonc` publishes `./dist` with `not_found_handling` set to `404-page` and holds no `account_id`, and `public/404.html` and `public/_headers` exist. The canonical URL in `index.html`, `SITE_URL` in `deploy.yml` and the first custom domain in the config name one origin, and `workers_dev` is `false` |
@@ -206,7 +208,7 @@ npm run build
 npm run test:e2e
 ```
 
-Thirty-one tests in `frontend/e2e/site.spec.js`, on Playwright Test with
+Forty tests in `frontend/e2e/site.spec.js`, on Playwright Test with
 `@axe-core/playwright`, against the built and prerendered site.
 `e2e/serve.mjs` serves `frontend/dist` on `127.0.0.1:4174` with the `/*` headers
 from `dist/_headers`, so the suite runs under the CSP visitors get (which
@@ -267,7 +269,9 @@ Cloudflare deployment.
 | `every form message has its own tone and keeps 7:1` | The field errors, a `429` as a warning, a `400` as an error and a `200` as a success each show their own class, and axe's enhanced-contrast rule finds nothing in the form in any of the four. Run at 1024px, where the globe never loads |
 | `the contribution graph fits a phone without its own scroller` | At 390px the library's own scroll container has nothing to scroll |
 | `printing shows content the visitor had not scrolled to, without the dock` | Under print media the dock is hidden, every `[data-reveal]` element has opacity 1 and the body text is the ink colour: all three come from `styles/print.css`, so a broken link to it fails here |
-| `on a desktop first screen the figures sit clear of the dock` | At 1440 by 900 the hero's figures are inside the first screen and end at least 8px above the dock |
+| `the desktop first screen`: `holds the figures clear of the dock on a tall window`, `gives a short window to the copy, with the figures under the fold` | At 1440 by 900 the hero's figures are on the first screen and end at least 8px above the dock. At 1528 by 651 the copy ends at least 8px above the dock and the figures start at or under the fold |
+| `the greeting fills its column without leaving it at <width>px`, six tests | At 320, 390, 768, 1024, 1440 and 1920px the greeting is one line, no wider than its column and more than four fifths of it |
+| `a project card's description`: `is one tap away on a phone`, `is open, with no toggle, on a desktop` | At 390px the description of an ordinary card is hidden until its toggle is clicked. At 1440px the toggle is hidden and all six descriptions are visible and rendered, which only `::details-content` makes possible |
 | `every skill mark draws from the sprite` | Every `<use>` in a skill tag has a bounding box, so the sprite loaded under the CSP and holds each id: a missing one is an empty box, not an error |
 | `every project picture offers a WebP beside its AVIF, and loads` | Each of the six cards has an AVIF `<source>` and a WebP `<img>` with two widths each, the image has loaded (as AVIF, in this Chromium), its well reaches the card's edges (across the top, or down the left half of the featured card), and the image sits in from the well by the same margin on both sides at 2:1 |
 | `the light under the pointer leaves the project cards' rows aligned` | Hovering a card writes `--spot-x`; each of the last three cards, which share a row at 1440px, still has six children, the picture at the card's very top and all six at the same offsets across the row. An in-flow pseudo-element would take the top row and move the picture down in every card alike |
@@ -294,7 +298,8 @@ budgets in `frontend/.size-limit.json`, so it needs a build first.
 | Budget | Files | Limit |
 |--------|-------|-------|
 | Entry JS, which every visitor downloads | `index-*.js` | 87 kB |
-| Entry CSS | `index-*.css` | 8 kB |
+| Entry CSS, the stylesheet the first screen waits for | `index-*.css` | 6 kB |
+| Section styles, linked after the hero, so they block only what follows | `sections-*.css` | 4.5 kB |
 | Print stylesheet, linked with `media="print"`, so it never blocks rendering | `print-*.css` | 1 kB |
 | Skill marks sprite, one image request | `skill-icons-*.svg` | 23 kB |
 | Project pictures, the twelve AVIF files, loaded lazily | `*.avif` | 175 kB |

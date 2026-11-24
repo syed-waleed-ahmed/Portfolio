@@ -478,19 +478,97 @@ test("printing shows content the visitor had not scrolled to, without the dock",
   expect(await page.evaluate(() => getComputedStyle(document.body).color)).toBe("rgb(34, 34, 34)");
 });
 
-// On a desktop the hero is the whole first screen, with the figures along
-// its bottom edge and the dock under them. Before, the dock floated across
-// the figures' labels on the first screen every visitor saw.
-test("on a desktop first screen the figures sit clear of the dock", async ({ page }) => {
-  await page.setViewportSize({ width: 1440, height: 900 });
-  await page.goto("/");
-  const gap = await page.evaluate(() => {
-    const figures = document.querySelector(".stats").getBoundingClientRect();
-    const dock = document.querySelector(".dock").getBoundingClientRect();
-    return { clear: dock.top - figures.bottom, inView: figures.top > 0 && figures.bottom < window.innerHeight };
+// On a desktop the hero is the first screen, in one of two ways, and in
+// neither does the dock sit on the figures. Before, it floated across their
+// labels on the first screen every visitor saw.
+test.describe("the desktop first screen", () => {
+  const firstScreen = (page) =>
+    page.evaluate(() => {
+      const box = (selector) => document.querySelector(selector).getBoundingClientRect();
+      const [figures, dock, copy] = [box(".stats"), box(".dock"), box(".hero__body")];
+      return {
+        figuresTop: figures.top,
+        figuresBottom: figures.bottom,
+        dockTop: dock.top,
+        copyBottom: copy.bottom,
+        height: window.innerHeight,
+      };
+    });
+
+  // Tall enough for everything: the figures along the bottom, the dock under.
+  test("holds the figures clear of the dock on a tall window", async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.goto("/");
+    const screen = await firstScreen(page);
+    expect(screen.figuresTop).toBeGreaterThan(0);
+    expect(screen.dockTop - screen.figuresBottom).toBeGreaterThanOrEqual(8);
   });
-  expect(gap.inView).toBe(true);
-  expect(gap.clear).toBeGreaterThanOrEqual(8);
+
+  // A laptop window with its toolbars. Left to its own height the hero put
+  // the figures exactly where the dock floats; now the copy has the screen
+  // and the figures begin under the fold.
+  test("gives a short window to the copy, with the figures under the fold", async ({ page }) => {
+    await page.setViewportSize({ width: 1528, height: 651 });
+    await page.goto("/");
+    const screen = await firstScreen(page);
+    expect(screen.dockTop - screen.copyBottom).toBeGreaterThanOrEqual(8);
+    expect(screen.figuresTop).toBeGreaterThanOrEqual(screen.height);
+  });
+});
+
+// The greeting is sized to fill its column and never wraps, so a wrong
+// factor in Hero.css runs it off the side of a phone, which is exactly what
+// the first one did. One line, inside its box, at every width.
+for (const width of [320, 390, 768, 1024, 1440, 1920]) {
+  test(`the greeting fills its column without leaving it at ${width}px`, async ({ page }) => {
+    await page.setViewportSize({ width, height: 900 });
+    await page.goto("/");
+    await page.evaluate(() => document.fonts.ready);
+    const fit = await page.locator(".hero__title").evaluate((title) => {
+      const column = title.parentElement.getBoundingClientRect();
+      const range = document.createRange();
+      range.selectNodeContents(title);
+      const ink = range.getBoundingClientRect();
+      return { share: ink.width / column.width, lines: Math.round(ink.height / parseFloat(getComputedStyle(title).fontSize)) };
+    });
+    expect(fit.lines).toBe(1);
+    expect(fit.share).toBeLessThanOrEqual(1);
+    // Fills it, too: under four fifths, the greeting has stopped being the
+    // widest thing in the hero. The cap on its size only binds past 1920px.
+    expect(fit.share).toBeGreaterThan(0.8);
+  });
+}
+
+// A project card's description is a native <details> on the five ordinary
+// cards. A phone shows the toggle and keeps the description shut; from a
+// tablet up the stylesheet holds it open and hides the toggle, which only
+// ::details-content can do. If that rule stops applying, a desktop visitor
+// gets five cards with their descriptions missing and nothing to click.
+test.describe("a project card's description", () => {
+  const card = (page) => page.locator(".project-card:not(.project-card--featured)").first();
+
+  test("is one tap away on a phone", async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto("/");
+    await hydrated(page);
+    const description = card(page).locator(".project-card__description");
+    await card(page).scrollIntoViewIfNeeded();
+    await expect(description).toBeHidden();
+    await card(page).locator("summary").click();
+    await expect(description).toBeVisible();
+  });
+
+  test("is open, with no toggle, on a desktop", async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.goto("/");
+    await card(page).scrollIntoViewIfNeeded();
+    await expect(card(page).locator("summary")).toBeHidden();
+    const description = card(page).locator(".project-card__description");
+    await expect(description).toBeVisible();
+    // Visible to assistive technology as well, not only painted.
+    expect(await description.evaluate((node) => node.checkVisibility({ contentVisibilityAuto: true, visibilityProperty: true }))).toBe(true);
+    await expect(page.locator(".project-card__description")).toHaveCount(6);
+  });
 });
 
 test("every skill mark draws from the sprite", async ({ page }) => {

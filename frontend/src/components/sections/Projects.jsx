@@ -1,10 +1,10 @@
 import { FaArrowRight, FaGithub, FaPlay } from "react-icons/fa";
+import { LuChevronDown } from "react-icons/lu";
 import ExternalLink from "@/components/ui/ExternalLink";
 import Reveal from "@/components/ui/Reveal";
 import SectionHeader from "@/components/ui/SectionHeader";
 import GitHubActivity from "@/components/widgets/GitHubActivity";
 import { projects } from "@/data/projects";
-import "./Projects.css";
 
 // Every picture in src/assets/projects, by file name, as the fingerprinted
 // URL Vite gives it. The data modules stay plain data that Node can import,
@@ -102,13 +102,38 @@ const Projects = () => (
           {/* Only the featured card says where it was built. On the other
               five the line read "Independent Project" five times; the
               section's subtitle says it once. */}
-          {project.featured && <p className="project-card__context">{project.role}</p>}
+          {project.featured && <p className="label project-card__context">{project.role}</p>}
           <h3 className="project-card__title">{project.title}</h3>
-          <p className="project-card__description">{project.description}</p>
+          {/* The featured card shows its description. On the other five it
+              sits in a disclosure (.more in components.css): on a phone,
+              where six full cards ran to four and a half screens, a card
+              shows its title and its result and the description is one tap
+              away; from a tablet up it is simply open. */}
+          {project.featured ? (
+            <p className="project-card__description">{project.description}</p>
+          ) : (
+            <details className="more">
+              <summary>
+                How it works
+                <LuChevronDown aria-hidden="true" />
+              </summary>
+              <p className="project-card__description">{project.description}</p>
+            </details>
+          )}
           <p className="project-card__highlight">
             <span className="visually-hidden">Highlight: </span>
             {project.highlight}
           </p>
+          {project.facts && (
+            <ul className="project-card__facts">
+              {project.facts.map((fact) => (
+                <li key={fact.value}>
+                  <b>{fact.value}</b>
+                  {fact.label}
+                </li>
+              ))}
+            </ul>
+          )}
           <ul className="tag-list" aria-label="Technologies">
             {project.stack.map((tech) => (
               <li key={tech} className="tag">

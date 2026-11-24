@@ -60,6 +60,15 @@ export const projects = [
     title: "RemindrAI: Embeddable Multi-Tenant Reminder Capability",
     role: "Master's Thesis · MemorAIz S.r.l.",
     featured: true,
+    // Three figures under the highlight on the featured card, each restating
+    // a claim the MemorAIz entry in experience.js already makes: `claim` is
+    // that phrase, and a content test fails if the entry stops saying it.
+    // Nothing here is a new number.
+    facts: [
+      { value: "985", label: "tests across three repositories", claim: "985 tests across three repositories" },
+      { value: "100K", label: "due reminders, claim latency near-flat", claim: "near-flat from 1K to 100K due reminders" },
+      { value: "4", label: "independent depths of tenant isolation", claim: "tenant isolation at four independent depths" },
+    ],
     stack: ["Next.js 16", "TypeScript", "Vercel AI SDK", "Mastra", "Turso / libSQL"],
     // The MemorAIz entry in experience.js carries the build, delivery, tenancy
     // and deployment facts. This card says what the system does and where the

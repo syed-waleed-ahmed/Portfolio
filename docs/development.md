@@ -320,7 +320,9 @@ A new section needs an entry in `sections` in `portfolio.js`, a component in
 `App.jsx`, plus an icon in `SECTION_ICONS` in `Dock.jsx` (it falls back to a
 generic one). Its `SectionHeader` id must be `<section id>-title`. Where the
 entry sits in `sections` is where the section sits on the page, in the dock
-and in the palette, and the headers number themselves from that order.
+and in the palette, and the headers number themselves from that order. Its
+stylesheet goes beside the component and is listed in `styles/sections.css`,
+not imported by the JSX: see [Design](design.md#three-stylesheets-loaded-in-order).
 
 Visual changes are governed by the token system: read
 [Design](design.md) before touching colours, type sizes or the Projects grid.

@@ -1,6 +1,5 @@
 import { useEffect, useRef } from "react";
 import { locations, locationsCaption } from "@/data/about";
-import "./LocationGlobe.css";
 
 // The drawing buffer, in pixels. About 2.4 times the 19rem (304px) the globe
 // is shown at, so its dots stay sharp on a 2x screen; past 1920px, where the
@@ -19,7 +18,7 @@ const THETA = CENTRE.latitude * DEGREES * 0.55;
 const SWAY = 0.45;
 const SWAY_SPEED = 0.00022;
 
-const CYAN = [0.396, 0.914, 0.961];
+const CYAN = [0.431, 0.906, 0.969];
 
 const pairs = (list) => list.slice(1).map((place, i) => [list[i], place]);
 

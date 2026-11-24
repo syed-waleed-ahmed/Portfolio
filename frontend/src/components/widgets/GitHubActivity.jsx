@@ -3,7 +3,6 @@ import ErrorBoundary from "@/components/ui/ErrorBoundary";
 import ExternalLink from "@/components/ui/ExternalLink";
 import Reveal from "@/components/ui/Reveal";
 import { socialLinks } from "@/data/portfolio";
-import "./GitHubActivity.css";
 
 const GitHubActivityCalendar = lazy(() => import("./GitHubActivityCalendar"));
 

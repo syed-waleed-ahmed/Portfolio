@@ -121,7 +121,7 @@ sections are added.
 | `components/ui/` | Reusable primitives, no domain coupling | `Reveal`, `SectionHeader`, `SectionLink`, `ExternalLink`, `Monogram`, `SkipLink`, `ErrorBoundary`, and `scrollToSection`, the helper `SectionLink` and the palette share |
 | `components/widgets/` | The pieces built on a lazily loaded library, each beside the component that loads it | `CommandMenu` (the dock's Search item) loads `CommandPalette` (`cmdk`), and both use `commandShortcut`, the Ctrl/Cmd+K test; `GitHubActivity` (in Projects) loads `GitHubActivityCalendar` (`react-activity-calendar`); `LocationGlobe` (in Contact) loads `cobe` |
 | `data/` | Pure content, no JSX | `about.js`, `experience.js`, `projects.js`, `skills.js`, `portfolio.js`, `commands.js` (built from the others), `github-activity.json` (generated) |
-| `styles/` | Global CSS in cascade layers | `index.css` (layer order), `tokens.css`, `reset.css`, `base.css`, `layout.css`, `components.css`, `utilities.css` |
+| `styles/` | Global CSS in cascade layers, and the two stylesheets linked apart from the entry one | `index.css` (layer order), `tokens.css`, `reset.css`, `base.css`, `layout.css`, `components.css`, `utilities.css`; `sections.css` (everything below the hero, linked after it) and `print.css` (linked last, `media="print"`) |
 
 ### Data-driven content
 

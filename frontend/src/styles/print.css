@@ -4,10 +4,11 @@
    rules sat beside each component, inside the stylesheet every visitor waits
    for, and took about 300 bytes of its 8 kB budget.
 
-   The layer statement repeats the one in index.css. This sheet is parsed
-   second, so the order is already set; the line is here so that it stays
-   set if that ever changes. Each rule sits in the layer of the rule it
-   overrides, and wins there by coming later.
+   The layer statement repeats the one in index.css, so the order holds
+   whichever sheet a browser parses first. Each rule sits in the layer of the
+   rule it overrides, and wins there by coming later: App.jsx links this
+   sheet last, after the entry stylesheet and after styles/sections.css, and
+   the invariants test holds it there.
 
    When a component gains something paper should not show, or should show
    differently, the rule goes here, not beside the component. */
@@ -50,6 +51,7 @@
     }
 
     .stats,
+    .core,
     .school,
     .roles,
     .skills__row,
@@ -71,6 +73,7 @@
     .experience__chevron,
     .activity,
     .location-globe,
+    .more summary,
     .project-card::before,
     .project-card::after {
       display: none;
@@ -93,7 +96,8 @@
 
     /* The hero is a full screen on a desktop; on paper it is its own
        height, and the name is ink rather than a gradient clipped to text. */
-    .hero {
+    .hero,
+    .hero__stage {
       min-block-size: 0;
       padding-block: 1rem;
     }
@@ -113,8 +117,10 @@
       background-image: none;
     }
 
-    /* A closed row would otherwise drop its bullets from a printed page. */
-    .experience::details-content {
+    /* A closed row would otherwise drop its bullets from a printed page, a
+       project card its description and Skills its inventory. */
+    .experience::details-content,
+    .more::details-content {
       block-size: auto;
       content-visibility: visible;
     }

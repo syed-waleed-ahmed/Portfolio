@@ -94,31 +94,26 @@ export const skillGroups = [
   },
 ];
 
-// The tags drawn a step stronger than the rest, so a reader sees what the
-// work on this page is built on before reading sixty names. A tag is core
-// only if the Projects or Experience entries show it carrying a system. The
-// list below says where, by hand; the content test only checks that each is
-// a real tag, so a new one needs its line here:
-//   Multi-Agent Systems  the Research Team, the RAG system, RemindrAI's agent
-//   RAG                  the RAG system, the MemorAIz Onboarding Assistant
-//   LLM Evaluation       LLM-as-Judge, the Niche Assistant's eval gate
-//   Mastra               RemindrAI and the Onboarding Assistant
-//   LangGraph            the AI Workflow Assistant's planning agent
-//   Python, FastAPI      five of the six projects
-//   TypeScript, Next.js  RemindrAI, and the front ends of two more
-//   PostgreSQL           the AI Workflow Assistant and the RAG system
+// The skills the work on this page is built on, shown above the full
+// inventory as a block of their own, each with where it was used. A skill is
+// here only if the Projects or Experience entries show it carrying a system,
+// and `proof` names those entries: a project by the part of its title before
+// the colon, the MemorAIz Onboarding Assistant by the name its Experience
+// bullet gives it, or a count of the six projects. A content test checks
+// every name against the entries and every count against the stacks, so a
+// proof cannot outlive the card it points at.
 // No levels and no years: the evidence is the entries, not a bar.
 export const coreSkills = [
-  "Multi-Agent Systems",
-  "RAG",
-  "LLM Evaluation",
-  "Mastra",
-  "LangGraph",
-  "Python",
-  "TypeScript",
-  "FastAPI",
-  "Next.js",
-  "PostgreSQL",
+  { name: "Multi-Agent Systems", proof: "Multi-Agent Research Team, Self-Correcting Multi-Agent RAG" },
+  { name: "RAG", proof: "Self-Correcting Multi-Agent RAG, MemorAIz Onboarding Assistant" },
+  { name: "LLM Evaluation", proof: "LLM-as-Judge, FastAPI Niche Assistant" },
+  { name: "Python", proof: "Five of the six projects" },
+  { name: "FastAPI", proof: "Five of the six projects" },
+  { name: "TypeScript", proof: "RemindrAI" },
+  { name: "Next.js", proof: "RemindrAI, AI Workflow Assistant, Self-Correcting Multi-Agent RAG" },
+  { name: "LangGraph", proof: "AI Workflow Assistant" },
+  { name: "Mastra", proof: "RemindrAI, MemorAIz Onboarding Assistant" },
+  { name: "PostgreSQL", proof: "AI Workflow Assistant, Self-Correcting Multi-Agent RAG" },
 ];
 
 // The brand mark drawn beside a tag: tag name to symbol id in

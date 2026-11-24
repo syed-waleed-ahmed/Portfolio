@@ -202,6 +202,8 @@ test("every text, accent and status colour is 7:1 on the page and on a panel", (
     "--color-text-soft",
     "--color-text-muted",
     "--color-accent",
+    // The hero name's gradient starts on it, so it is read as text.
+    "--color-lavender",
     "--color-success",
     "--color-warning",
     "--color-danger",
@@ -281,7 +283,70 @@ test("print rules live in the print stylesheet, and the app links it", () => {
   assert.deepEqual(stray, [], "These stylesheets hold an @media print rule. Move it to frontend/src/styles/print.css, in the layer of the rule it overrides.");
   const app = read("frontend/src/App.jsx");
   assert.ok(app.includes('import printStyles from "@/styles/print.css?url";'), "App.jsx should import styles/print.css with ?url, so it is a file of its own");
-  assert.ok(app.includes('<link rel="stylesheet" media="print" href={printStyles} />'), 'App.jsx should link the print stylesheet with media="print", or nothing prints as designed');
+  const printLink = app.indexOf('<link rel="stylesheet" media="print" href={printStyles} />');
+  assert.ok(printLink !== -1, 'App.jsx should link the print stylesheet with media="print", or nothing prints as designed');
+  // Its rules override rules of the other stylesheets from inside the same
+  // cascade layers, where the later sheet wins. Linked ahead of the sections'
+  // stylesheet it lost to every rule in it, and the cards printed mid-fade.
+  assert.ok(
+    printLink > app.indexOf('<link rel="stylesheet" href={sectionStyles} />'),
+    "App.jsx should link the print stylesheet after the sections stylesheet, last in the page, so its rules win"
+  );
+});
+
+// The page's styles are two stylesheets: the entry one, which a visitor waits
+// for before the first paint, and styles/sections.css, everything below the
+// hero, linked from the body so it holds up only what follows it. A
+// stylesheet reaches a visitor by being imported from a script, or by being
+// @import-ed into one of those two. Imported nowhere, its rules never load
+// and the section it styles renders bare. Imported twice (listed in
+// sections.css and still imported by its component), it ships in both files
+// and the entry budget pays for a section it was split to exclude.
+test("every stylesheet is loaded exactly once, and the app links the second one", () => {
+  const SRC = "frontend/src";
+  const files = [];
+  const walk = (dir) => {
+    for (const entry of readdirSync(join(ROOT, dir))) {
+      const path = `${dir}/${entry}`;
+      if (statSync(join(ROOT, path)).isDirectory()) walk(path);
+      else files.push(path);
+    }
+  };
+  walk(SRC);
+  const loads = new Map(files.filter((path) => extname(path) === ".css").map((path) => [path, []]));
+  const resolve = (from, specifier) =>
+    (specifier.startsWith("@/") ? join(SRC, specifier.slice(2)) : join(dirname(from), specifier)).replaceAll("\\", "/");
+  const note = (from, specifier) => {
+    const target = resolve(from, specifier);
+    assert.ok(loads.has(target), `${from} loads ${specifier}, which is not a stylesheet under ${SRC}`);
+    loads.get(target).push(from);
+  };
+  for (const path of files) {
+    const source = read(path);
+    if (/\.(?:js|jsx)$/.test(path)) {
+      for (const [, specifier] of source.matchAll(/^\s*import\s+(?:\w+\s+from\s+)?"([^"]+\.css)(?:\?url)?";/gm)) note(path, specifier);
+    } else if (extname(path) === ".css") {
+      for (const [, specifier] of source.matchAll(/^\s*@import\s+"([^"]+)";/gm)) note(path, specifier);
+    }
+  }
+  for (const [path, from] of loads) {
+    assert.equal(
+      from.length,
+      1,
+      from.length === 0
+        ? `${path} is loaded by nothing: import it from its component, or list it in styles/sections.css if it styles something below the hero`
+        : `${path} is loaded ${from.length} times (${from.join(", ")}): a stylesheet listed in styles/sections.css must not also be imported by its component`
+    );
+  }
+  const app = read("frontend/src/App.jsx");
+  assert.ok(app.includes('import sectionStyles from "@/styles/sections.css?url";'), "App.jsx should import styles/sections.css with ?url, so it is a file of its own");
+  const hero = app.indexOf("<Hero />");
+  const link = app.indexOf('<link rel="stylesheet" href={sectionStyles} />');
+  const firstSection = app.indexOf("{sections.map(");
+  assert.ok(
+    hero !== -1 && hero < link && link < firstSection,
+    "App.jsx should link the sections stylesheet after <Hero /> and before the sections: before the hero it would hold up the first screen, and after the sections they would render bare first"
+  );
 });
 
 // ----- 5. The hand-kept dates -----------------------------------------------

@@ -1,11 +1,9 @@
 @layer components {
   .masthead {
     padding-block-start: clamp(var(--space-6), 1rem + 2vw, var(--space-10));
-    font-size: var(--text-sm);
-    color: var(--color-text-muted);
   }
 
-  /* Name and role together on the left, the city against the right edge. On
+  /* Name and role together on the left, the place against the right edge. On
      a phone the role wraps under the name before anything is squeezed. */
   .masthead__inner {
     display: flex;
@@ -15,7 +13,6 @@
   }
 
   .masthead__name {
-    font-size: var(--text-base);
     font-weight: var(--weight-semibold);
     letter-spacing: var(--tracking-snug);
     color: var(--color-text-strong);

@@ -17,41 +17,48 @@ than by individual commit.
 
 ### Changed
 
-- **The page was redesigned.** A new palette, a new first screen, the
-  projects before the narrative, one project featured, and one header for
-  every section. No dependency was added, and the entry stylesheet is still
-  under its 8 kB budget (7.92 kB, from 7.89 kB). `docs/design.md` has the
-  reasoning for each decision below, and the sources that shaped them.
-  - **Palette.** A deeper navy page (`#080e1b`), panels a clear step above it
-    (1.15:1, where they were 1.08:1 and the hairline did all the
-    separating), a lighter cyan (`#65e9f5`) and softer status colours. Every
-    text, accent and status colour still holds 7:1 on the page and on a
-    panel, and the six hand-kept copies of the palette (the 404 page, the
-    theme colour, the contribution graph, the globe, the social card and the
-    contact email) follow. The social card was regenerated.
+- **The page was redesigned**, in two passes on 2026-11-23 and 2026-11-24:
+  a new palette, a new first screen, the projects before the narrative, one
+  project featured, one header for every section, and the ten skills that
+  matter set apart from the other fifty-two. No dependency was added.
+  `docs/design.md` has the reasoning for each decision below, the eight sites
+  that were studied first, and the three palettes that were weighed.
+  - **Palette.** A midnight page close to black (`#070a11`) under graphite
+    panels (`#121824`), where both were navy and every section looked like
+    the one before it; a lighter cyan (`#6ee7f7`) with a lavender partner, and
+    softer status colours. Every text, accent and status colour holds 7:1 on
+    the page and on a panel, computed, and the six hand-kept copies of the
+    palette (the 404 page, the theme colour, the contribution graph, the
+    globe, the social card and the contact email) follow. The social card was
+    regenerated.
   - **A backdrop with depth.** Two faint lights stand behind the top of the
     page, cyan behind the portrait and indigo from the left, under a sparse
     dot field. Both are static CSS, and every other section opens on a
     hairline and a tone that fades back into the page. They replace the dot
     band, a faint strip that shimmered.
+  - **The greeting is the design.** "hi, Waleed here." is set as wide as its
+    column on every screen, about 135px on a 1440px desktop and 52px on a
+    phone, light, with the name the one bold word, running from lavender into
+    cyan. Under it the statement runs in two tones and, on a desktop, two
+    columns: what I build, then why it holds up.
   - **The hero is the first screen.** It opens with a line saying which roles
-    I am open to, sets what I build in the heading colour, and on a desktop
-    takes the height of the screen, with the four figures along its bottom
-    edge and the dock under them. The figures moved here from About, where
-    the dock floated across their labels, and are now a strip of large
-    numbers rather than four tiles. The masthead names the role and the city
-    beside the name.
-  - **On a phone** the portrait is a thumbnail beside the status line, so
-    the greeting, the headline, the lead and the first figures are all
-    inside the first screen.
+    I am open to. In a tall desktop window it takes the height of the screen,
+    with the four figures along its bottom edge and the dock under them; in a
+    short one, such as a laptop window with its toolbars, the copy alone
+    takes the first screen and the figures start under the fold, where before
+    the dock sat across them. The figures moved here from About and are a
+    strip of large numbers, not four tiles. The masthead names the role and
+    the place, with its coordinates.
   - **The hero's row of buttons is gone** (View projects, Resume, LinkedIn,
     GitHub). The dock at the foot of the same screen carries all four, and
     the contact panel carries the last three again.
   - **Projects come first, and one is featured.** The page now runs
     Projects, Experience, About, Skills, Contact. The thesis project opens
-    the section across the full width with its picture beside its text; the
-    next two cards are half the width each and the last three a third. All
-    six used to be the same card.
+    the section across the full width, its picture staged beside its text,
+    with three figures under its highlight: 985 tests, 100K due reminders, 4
+    depths of tenant isolation, each restating a claim Experience already
+    makes. The next two cards are half the width each and the last three a
+    third. All six used to be the same card.
   - **Project pictures stand in a well.** Each sits inside a dark mount cut
     into its card instead of bleeding to the card's edges, where three light
     screenshots and three dark ones made the grid a checkerboard. The five
@@ -59,23 +66,33 @@ than by individual commit.
   - **One section header.** Every section opens with its number, its title
     and its subtitle, the subtitle against the right edge on a desktop. Three
     different headers stood there before.
+  - **One voice for metadata.** The role, the place, the entry behind a
+    figure, the context over the featured project and the dates of a role or
+    a degree are small spaced capitals, and nothing else on the page is.
   - **Experience and Education are timelines**, with a rail joining the
     monograms. An open role's bullets flow in two balanced columns; as a
     grid they left a gap under every short bullet.
   - **About fills its second column**: education and the target roles share
     it, where education alone ended half way down.
-  - **Skills marks what the work is built on.** Ten of the sixty-two tags
-    are drawn stronger, in place, and the comment beside the list says which
-    project or role each carries. No levels and no years.
+  - **Skills opens with the ten the work is built on**, each with the
+    projects or the role that show it, checked against those entries by a
+    test. The full inventory of sixty-two follows. No levels and no years.
+  - **A phone shows less at first.** The description on each of the five
+    ordinary project cards, and the skills inventory, are one tap away there
+    and open from a tablet up, as native `<details>` with no JavaScript. The
+    phone page is 9,987px, from 10,771px.
   - **Contact is a panel of its own surface**, with availability and place
     as its heading line.
-- **Print rules are a stylesheet of their own**, linked with
-  `media="print"`, so they no longer sit in the stylesheet every visitor
-  waits for. That took about 300 bytes out of it, which is what let the
-  redesign fit the budget without giving up an interaction.
-- **The form field border is stronger**, 64% of the slate from 56%. On the
+- **The styles of everything below the hero are a stylesheet of their own**,
+  linked in the body after the hero, so the first screen paints without
+  waiting for them. The stylesheet a visitor waits for is 5.4 kB, from
+  7.9 kB; the sections' sheet is 3.8 kB. Two files compress worse than one,
+  so the CSS in all went from 7.9 to 9.2 kB. Each has a budget of its own.
+- **Print rules are a stylesheet of their own** too, linked with
+  `media="print"` and last in the page, so they block nothing.
+- **The form field border is stronger**, 66% of the slate from 56%. On the
   contact panel's new surface 56% measured 2.7:1 against the panel; it is
-  3.2:1 there now and 3.7:1 against the field's own fill, and the browser
+  3.4:1 there now and 3.8:1 against the field's own fill, and the browser
   test measures both sides instead of the page alone.
 - **The contact email's header keeps its indigo for the first 60%** of the
   gradient, under the white title, since the lighter cyan cannot carry white
@@ -90,11 +107,14 @@ than by individual commit.
   interviews new clients, fills a live company profile and answers questions
   from a pgvector knowledge base. Its repository is private to MemorAIz, so it
   is a bullet rather than a project card.
-- **Tests for the redesign**: that exactly one project is featured and comes
-  first, that every core skill is a real tag, that no stylesheet but
-  `print.css` holds a print rule, and in the browser that the hero's figures
-  sit clear of the dock on a desktop first screen and that a printed page
-  loses the dock.
+- **Tests for the redesign.** Content: one project is featured and comes
+  first; its figures restate claims the entries make; every core skill's
+  proof names entries that show it. Invariants: no print rule outside
+  `print.css`; every stylesheet loaded exactly once, in the right order.
+  Browser: the figures clear the dock on a tall window and start under the
+  fold on a short one; the greeting fills its column without leaving it at
+  six widths; a card's description is one tap away on a phone and open on a
+  desktop; a printed page loses the dock.
 
 ## [2.6.4] - 2026-11-22
 

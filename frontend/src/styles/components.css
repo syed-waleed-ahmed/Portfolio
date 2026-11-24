@@ -80,6 +80,20 @@
     }
   }
 
+  /* ========= Label =========
+     The page's small voice: upper case, spaced out and muted, for what
+     locates a thing rather than says it. The role and the place in the
+     masthead, the entry behind a figure, the context over the featured
+     project, the proof under a core skill. One style, so metadata reads as
+     metadata wherever it turns up. */
+  .label {
+    font-size: var(--text-2xs);
+    font-weight: var(--weight-semibold);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+  }
+
   /* ========= Subhead =========
      The h3 inside a section, for blocks that have no card around them. */
   .subhead {
@@ -114,15 +128,6 @@
     font-weight: var(--weight-medium);
     line-height: 1.5;
     color: var(--color-text-soft);
-  }
-
-  /* The one variant: a core skill, raised out of the panel where every other
-     tag is cut into it. Still no accent, since a tag is not an action. */
-  .tag--core {
-    border-color: var(--color-border-strong);
-    background-color: var(--color-surface-raised);
-    font-weight: var(--weight-semibold);
-    color: var(--color-text-strong);
   }
 
   /* ========= Monogram =========
@@ -166,6 +171,59 @@
         inset-inline-start: 1.25rem;
         width: 1px;
         background-color: var(--color-border-strong);
+      }
+    }
+  }
+
+  /* ========= Disclosure for a phone =========
+     A native <details> that a phone shows shut and a wider screen holds
+     open. It wraps what a phone visitor can do without at first glance, a
+     project card's description and the full skills inventory, which between
+     them ran to three and a half screens. The content is in the prerendered
+     HTML either way, find-in-page opens it, and it needs no JavaScript.
+
+     The toggle is a full tap target, with the chevron Experience uses,
+     which turns over when the row is open. From a tablet up there is room,
+     so the toggle goes and the inside is shown regardless: ::details-content
+     is what lets a stylesheet show the inside of a closed <details>, and a
+     browser without it keeps the toggle and behaves as a phone does, which
+     loses nothing. */
+  .more {
+    & summary {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      min-height: var(--tap-target);
+      list-style: none;
+      font-size: var(--text-sm);
+      font-weight: var(--weight-medium);
+      color: var(--color-text-muted);
+      cursor: pointer;
+
+      &::-webkit-details-marker {
+        display: none;
+      }
+    }
+
+    & summary svg {
+      width: 1rem;
+      height: 1rem;
+      transition: rotate var(--duration-base) var(--ease-out);
+    }
+
+    &[open] summary svg {
+      rotate: 180deg;
+    }
+
+    @media (min-width: 44rem) {
+      @supports selector(::details-content) {
+        & summary {
+          display: none;
+        }
+
+        &::details-content {
+          content-visibility: visible;
+        }
       }
     }
   }

@@ -192,12 +192,6 @@
     filter: none;
   }
 
-  .project-card__context {
-    font-size: var(--text-sm);
-    line-height: var(--leading-snug);
-    color: var(--color-text-muted);
-  }
-
   /* pretty rather than the global balance: balancing these long titles broke
      them early, at the hyphen in "Multi-Tenant". */
   .project-card__title {
@@ -296,10 +290,12 @@
       }
 
       /* The well takes the card's left half, top to bottom, with the picture
-         centred in it and the page's own cyan light behind. */
+         centred in it: lit from above by the page's own cyan light and
+         standing on a floor that lifts toward the raised surface, the way a
+         product shot is staged. */
       & .project-card__picture {
         grid-column: 1;
-        grid-row: 1 / span 6;
+        grid-row: 1 / span 7;
         display: grid;
         align-content: center;
         inline-size: calc(100% + var(--pad));
@@ -308,7 +304,9 @@
         border-block-end: 0;
         border-inline-end: 1px solid var(--color-border);
         border-radius: calc(var(--radius-lg) - 1px) 0 0 calc(var(--radius-lg) - 1px);
-        background-image: radial-gradient(80% 90% at 50% 0%, var(--color-glow), transparent);
+        background-image:
+          radial-gradient(80% 90% at 50% 0%, var(--color-glow), transparent),
+          linear-gradient(to top, var(--color-surface-raised), transparent 55%);
       }
 
       & .project-card__image {
@@ -322,6 +320,39 @@
       & .project-card__highlight {
         font-size: var(--text-base);
       }
+    }
+  }
+
+  /* Three figures under the featured card's highlight, in cells that share
+     their hairlines: the number large, what it counts small under it. */
+  .project-card__facts {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    border-block: 1px solid var(--color-border);
+    list-style: none;
+
+    & li {
+      display: grid;
+      align-content: start;
+      gap: var(--space-1);
+      padding: var(--space-3) var(--space-3) var(--space-3) 0;
+      font-size: var(--text-xs);
+      line-height: var(--leading-snug);
+      color: var(--color-text-muted);
+    }
+
+    & li + li {
+      padding-inline-start: var(--space-3);
+      border-inline-start: 1px solid var(--color-border);
+    }
+
+    & b {
+      font-size: var(--text-title);
+      font-weight: var(--weight-semibold);
+      line-height: 1;
+      letter-spacing: var(--tracking-tight);
+      color: var(--color-text-strong);
+      font-variant-numeric: tabular-nums;
     }
   }
 

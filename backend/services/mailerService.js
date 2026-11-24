@@ -16,8 +16,8 @@ const BRAND = {
   accent: "#6366f1", // indigo - header + button
   // cyan - the far corner of the header. The gradient holds the indigo for
   // its first 60%, under the white title: this cyan is too light to carry it.
-  accent2: "#65e9f5",
-  ink: "#080e1b", // navy - body text (matches --color-bg on the site)
+  accent2: "#6ee7f7",
+  ink: "#070a11", // navy - body text (matches --color-bg on the site)
   muted: "#6b7280", // labels / footer
   border: "#e5e7eb", // hairlines
   panel: "#f4f5fb", // message box background

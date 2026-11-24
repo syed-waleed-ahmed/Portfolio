@@ -17,7 +17,7 @@ const WEEKS_PER_MONTH = 4.35;
 // --color-accent mixed into --color-surface at 25, 50, 75 and 100%, over the
 // raised surface for an empty day. The library takes literal colours, so these
 // need updating with the tokens: see docs/design.md.
-const THEME = { dark: ["#1c2b45", "#275063", "#3c8394", "#50b6c4", "#65e9f5"] };
+const THEME = { dark: ["#1c2434", "#294c59", "#40808e", "#57b3c2", "#6ee7f7"] };
 
 const DATE_FORMAT = new Intl.DateTimeFormat("en-GB", {
   day: "numeric",

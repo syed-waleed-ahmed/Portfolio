@@ -1,28 +1,58 @@
 @layer components {
+  /* --hero-pad is the space above the copy, named because the short-window
+     rule below has to subtract it. */
   .hero {
-    padding-block: clamp(var(--space-6), 4vw, var(--space-12)) var(--section-space);
+    --hero-pad: clamp(var(--space-5), 3vw, var(--space-10));
+    padding-block: var(--hero-pad) var(--section-space);
+  }
 
-    /* On a desktop tall enough for it, the hero is the whole first screen:
-       the copy at the top, the figures along the bottom, and the dock under
-       them, where it used to float across the middle of whatever came next.
-       4.1rem is the masthead above. A shorter window, a tablet and a phone
-       let the hero take its own height instead. */
-    @media (min-width: 64rem) and (min-height: 44rem) {
-      display: grid;
-      min-block-size: calc(100svh - 4.1rem);
+  /* On a desktop the hero is the first screen, in one of two ways.
+
+     Tall enough for everything (48rem: at that height the figures clear
+     the dock at every desktop width from 1024 to 1920px, measured): the
+     hero takes the height of the window, the copy sits in the middle of the
+     space, the figures run along the bottom and the dock sits under them.
+     4.1rem is the masthead above.
+
+     Shorter than that, as a laptop window with its toolbars is: the copy
+     alone takes the first screen, clear of the dock, and the figures start
+     just under the fold. Left to its own height there, the hero put the
+     figures exactly where the dock floats, and the first thing a visitor saw
+     of them was the dock across the numbers.
+
+     A tablet and a phone let the hero take its own height. */
+  @media (min-width: 64rem) {
+    .hero__stage {
+      align-content: center;
+      min-block-size: calc(100svh - 4.1rem - var(--hero-pad));
       padding-block-end: var(--dock-clearance);
+    }
+
+    @media (min-height: 48rem) {
+      .hero {
+        display: grid;
+        min-block-size: calc(100svh - 4.1rem);
+        padding-block-end: var(--dock-clearance);
+      }
+
+      .hero__inner {
+        display: grid;
+        grid-template-rows: 1fr auto;
+      }
+
+      .hero__stage {
+        min-block-size: 0;
+        padding-block-end: 0;
+      }
     }
   }
 
-  /* Phone: a small portrait beside the status line, then the copy, so the
-     greeting, the headline and the lead are all inside the first screen. Tablet: the copy on the left and a larger portrait on the right,
-     with the longer text running the full width under them. Desktop: all the
-     copy on the left and the portrait in the right-hand column, centred on
-     it; the figures span the full width beneath. There the rows are named:
-     the first and the fifth share whatever height the screen has left over,
-     so the copy sits in the middle of it and the figures on the bottom
-     edge, on a laptop and on a tall monitor alike. */
-  .hero__inner {
+  /* Phone: a small portrait beside the status line, then the greeting across
+     the full width and the copy under it. Tablet: the greeting on the left
+     and a larger portrait on the right, with the copy running the full width
+     under them. Desktop: the greeting and the copy on the left and the
+     portrait in the right-hand column, centred on them. */
+  .hero__stage {
     display: grid;
     grid-template-columns: auto minmax(0, 1fr);
     gap: var(--space-5) var(--space-4);
@@ -33,24 +63,7 @@
     }
 
     @media (min-width: 64rem) {
-      grid-template-rows: 1fr auto auto auto 1fr;
       column-gap: var(--space-16);
-
-      & > * {
-        grid-row: 4;
-      }
-
-      & > .hero__status {
-        grid-row: 2;
-      }
-
-      & > .hero__intro {
-        grid-row: 3;
-      }
-
-      & > .stats {
-        grid-row: 6;
-      }
     }
   }
 
@@ -89,7 +102,7 @@
        frames the portrait the way a mount frames a print, and gives the
        right-hand column an edge of its own. */
     @media (min-width: 64rem) {
-      grid-row: 2 / span 3;
+      grid-row: 1 / span 3;
       width: 20rem;
       margin-inline-end: var(--space-4);
 
@@ -139,18 +152,15 @@
   }
 
   .hero__intro,
-  .hero__body,
-  .stats {
+  .hero__body {
     grid-column: 1 / -1;
   }
 
-  .hero__body {
-    display: grid;
-    justify-items: start;
-  }
+  /* The size container the greeting measures itself against. */
+  .hero__intro {
+    container-type: inline-size;
 
-  @media (min-width: 40rem) {
-    .hero__intro {
+    @media (min-width: 40rem) {
       grid-column: 1;
     }
   }
@@ -161,18 +171,24 @@
     }
   }
 
-  /* The greeting is set light so the name is the only bold word in the line:
-     the weight contrast gives it presence, not size alone. */
+  /* The greeting fills its column. The line is 6.55 times its font size
+     wide, caret included, so 14.8% of the column's width per em leaves it 3%
+     short of the edge at every screen size: 52px on a phone, 135px on a
+     1440px desktop. The height of the window caps it too, so on a short
+     laptop screen it does not take the whole of it, and it never wraps.
+     Set light, so the name is the only bold word in the line: the weight
+     contrast gives it presence, not size alone. */
   .hero__title {
-    font-size: var(--text-display);
+    font-size: clamp(2.5rem, min(14.8cqi, 20vh), 11rem);
     font-weight: var(--weight-regular);
-    line-height: 1.05;
+    line-height: 1;
     letter-spacing: var(--tracking-tighter);
+    white-space: nowrap;
   }
 
   .hero__name {
     font-weight: var(--weight-bold);
-    background: linear-gradient(135deg, var(--color-indigo), var(--color-accent));
+    background: linear-gradient(100deg, var(--color-lavender), var(--color-accent));
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
@@ -197,13 +213,24 @@
     }
   }
 
-  /* What I build, in the heading colour and a size up from the text under
-     it: after the greeting it is the line a reader takes away. Until
-     November 2026 it was set soft and small, and read as a caption. */
+  /* The statement under the greeting, in two tones and, from a desktop up,
+     two columns: what I build on the left, in the heading colour and a size
+     up; why it holds up on the right, in the soft colour, with the
+     graduation note under it. Side by side they are as wide as the greeting
+     above them and half as tall as they were stacked. */
+  .hero__body {
+    display: grid;
+    gap: var(--space-4);
+
+    @media (min-width: 64rem) {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr);
+      column-gap: var(--space-10);
+    }
+  }
+
   .hero__headline {
-    margin-block-start: var(--space-4);
-    max-width: 36ch;
-    font-size: clamp(1.375rem, 1rem + 1.5vw, 2rem);
+    max-width: 22ch;
+    font-size: clamp(1.375rem, 1rem + 1.3vw, 1.875rem);
     font-weight: var(--weight-medium);
     line-height: 1.2;
     letter-spacing: var(--tracking-tight);
@@ -212,14 +239,13 @@
   }
 
   .hero__lead {
-    max-width: 58ch;
-    font-size: var(--text-lg);
+    max-width: 52ch;
     color: var(--color-text-soft);
   }
 
   .hero__note {
-    max-width: 64ch;
-    margin-block-start: var(--space-5);
+    max-width: 52ch;
+    margin-block-start: var(--space-3);
     font-size: var(--text-sm);
     color: var(--color-text-muted);
   }
@@ -227,23 +253,23 @@
   /* ========= Figures =========
      A strip, not four tiles: each figure is a number set large over the line
      that says what it counts and the entry that backs it, with a rule above
-     the row and none between the figures. As tiles on a filled band they
-     read as a dashboard widget, and the numbers were the smallest thing in
-     their own boxes. Two across on a phone, four from a tablet up, with
-     explicit counts so a row is never left one short. */
+     the row and, from a tablet up, a hairline between one figure and the
+     next. As tiles on a filled band they read as a dashboard widget, and the
+     numbers were the smallest thing in their own boxes. Two across on a
+     phone, four from a tablet up, with explicit counts so a row is never
+     left one short. */
   .stats {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: var(--space-6) var(--space-5);
-    align-self: end;
     margin-block-start: var(--space-5);
-    padding-block-start: var(--space-6);
+    padding-block-start: var(--space-5);
     border-block-start: 1px solid var(--color-border);
     list-style: none;
 
     @media (min-width: 48rem) {
       grid-template-columns: repeat(4, minmax(0, 1fr));
-      column-gap: var(--space-10);
+      column-gap: 0;
     }
   }
 
@@ -251,6 +277,18 @@
     display: grid;
     align-content: start;
     gap: var(--space-2);
+
+    @media (min-width: 48rem) {
+      padding-inline: var(--space-6);
+
+      &:first-child {
+        padding-inline-start: 0;
+      }
+
+      & + & {
+        border-inline-start: 1px solid var(--color-border);
+      }
+    }
   }
 
   .stat__value {
@@ -274,11 +312,10 @@
     display: flex;
     align-items: center;
     gap: var(--space-2);
-    font-size: var(--text-xs);
-    color: var(--color-text-muted);
 
     &::before {
       content: "";
+      flex: none;
       width: var(--space-4);
       height: 1px;
       background-color: var(--color-accent-border);
@@ -291,16 +328,16 @@
      the LCP on a desktop, is left alone so it paints as soon as it decodes. */
   @media (prefers-reduced-motion: no-preference) {
     .hero__status,
-    .hero__intro > *,
+    .hero__title,
     .hero__body > * {
       animation: blur-fade var(--duration-slow) ease-out both;
     }
 
-    .hero__intro > :nth-child(2) {
+    .hero__title {
       animation-delay: 40ms;
     }
 
-    .hero__body > :nth-child(1) {
+    .hero__body > * {
       animation-delay: 80ms;
     }
 

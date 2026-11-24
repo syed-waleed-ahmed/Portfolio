@@ -38,6 +38,10 @@
     line-height: var(--leading-snug);
     letter-spacing: var(--tracking-snug);
     color: var(--color-text-strong);
+
+    & span {
+      color: var(--color-text-muted);
+    }
   }
 
   .contact-channels {

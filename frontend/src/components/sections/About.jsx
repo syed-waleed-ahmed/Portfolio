@@ -2,7 +2,6 @@ import Monogram from "@/components/ui/Monogram";
 import Reveal from "@/components/ui/Reveal";
 import SectionHeader from "@/components/ui/SectionHeader";
 import { approach, education, targetRoles } from "@/data/about";
-import "./About.css";
 
 // The person behind the work above: how I build, where I studied and what I
 // am looking for. The figures that used to open this section are in the hero
@@ -38,7 +37,7 @@ const About = () => (
                   <p className="school__degree">{entry.degree}</p>
                   <p className="school__name">{entry.school}</p>
                 </div>
-                <p className="school__period">{entry.period}</p>
+                <p className="label school__period">{entry.period}</p>
               </li>
             ))}
           </ol>

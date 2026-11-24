@@ -50,7 +50,7 @@ forking the repository can run it without reading the source.
 
 - Prerendered at build time and hydrated on load, so the full page is in the
   HTML response and text paints before any JavaScript runs
-- Lean output: about 8 KB of gzipped CSS and 85 KB of gzipped JS on load, held
+- Lean output: about 5.4 KB of gzipped CSS before the first paint (9.2 KB in all) and 86 KB of gzipped JS on load, held
   there by size budgets in CI, with no CSS framework, animation library, UI kit
   or PWA shell
 - A Ctrl/Cmd+K command palette ([cmdk](https://github.com/pacocoursey/cmdk)), a
