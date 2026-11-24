@@ -100,11 +100,14 @@ test("every core skill is a tag, and its proof points at entries that show it", 
   const names = coreSkills.map((skill) => skill.name);
   assert.equal(new Set(names).size, names.length, "a core skill is listed twice");
 
-  // What shows a skill in an entry: its name in the stack or the text, or
-  // for the three that are practices rather than products, the word the
-  // entries use for it.
+  // What shows a skill in an entry: for the three that are practices rather
+  // than products, the word the entries use for it; for a product, its name
+  // in the stack or the text, as a plain substring. Not a pattern built from
+  // the name: "Next.js" and "C++" would need escaping, and a substring needs
+  // none.
   const SHOWN_BY = { "Multi-Agent Systems": /multi-agent/i, RAG: /\bRAG\b/, "LLM Evaluation": /\beval|judge/i };
-  const shows = (text, name) => (SHOWN_BY[name] ?? new RegExp(name.replace(/[.+]/g, "\\$&"), "i")).test(text);
+  const shows = (text, name) =>
+    SHOWN_BY[name] ? SHOWN_BY[name].test(text) : text.toLowerCase().includes(name.toLowerCase());
   const bullets = experiences.flatMap((e) => e.bullets);
   const COUNTS = ["Zero", "One", "Two", "Three", "Four", "Five", "Six"];
 
