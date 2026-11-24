@@ -118,9 +118,22 @@ The workflow needs two settings in the repository:
 
 ### Domain
 
-`syedwaleedahmed.me` is registered at Namecheap, and Namecheap's only job is
-to name Cloudflare's two nameservers. The DNS zone is in the same Cloudflare
-account as the Worker, on the free plan.
+`syedwaleedahmed.me` is registered at Spaceship (since 2026-11-24), and the
+registrar's only job is to name Cloudflare's two nameservers. The DNS zone is
+in the same Cloudflare account as the Worker, on the free plan.
+
+The registration runs to 2027-12-22, with auto-renew on in the Spaceship
+account. Nothing in this repository watches that date, and a lapsed domain
+takes the site offline however healthy the last deploy was, so it is a thing
+to check by hand each December. The registry's WHOIS (`whois.nic.me`, port 43;
+`.me` has no RDAP service) shows the registrar, the expiry date and the
+nameservers.
+
+During the transfer Spaceship's dashboard warned of a "Risk of DNS downtime"
+and offered to move DNS to its own nameservers. That advice is for a domain
+whose DNS is hosted by the registrar it is leaving. Here the nameservers stay
+Cloudflare's, because the zone, the Worker's routes and the two zone settings
+below all live there.
 
 The domain is attached to the Worker in `frontend/wrangler.jsonc`, not in a
 dashboard:
