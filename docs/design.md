@@ -48,7 +48,7 @@ A stylesheet linked in the body holds up the content after it and not the
 content before it, so the hero paints as soon as the entry stylesheet arrives;
 a browser fetches both at once. Until 2026-11-24 every rule was in the entry
 stylesheet, 7.9 kB that a visitor waited for in full before seeing anything.
-It is 5.4 kB now, and the sections' sheet is 3.8 kB.
+It is 5.5 kB now, and the sections' sheet is 3.9 kB.
 
 The component files stay beside their components. `styles/sections.css` lists
 the eight that belong below the hero with `@import`, and their components no
@@ -306,10 +306,11 @@ written outside the scale: the hero's headline and the figures under it, each
 a `clamp()` of its own, and the greeting.
 
 **The greeting is sized to its column, not to the screen.** "hi, Waleed
-here." is one line, 6.55 times its font size wide with the caret, so
-`14.8cqi`, 14.8% of the column's width per em, leaves it 3% short of the
-column's edge at every size: 41px on a 320px phone, 52px on a 390px one,
-135px on a 1440px desktop and 158px on a 1920px one. It is capped by the
+here." is one line, 6.55 times its font size wide with the caret in
+Chromium and a little wider in Firefox and WebKit, so `14.4cqi`, 14.4% of the
+column's width per em, leaves it 3 to 5% short of the column's edge in all
+three at every size: 40px on a 320px phone, 50px on a 390px one, 131px on a
+1440px desktop and 154px on a 1920px one. It is capped by the
 height of the window as well (`20vh`), so on a short laptop screen it does
 not take the whole of it, and at 11rem. The factor depends on the typeface,
 the weights and the tracking: change any of them and it has to be measured
@@ -470,8 +471,13 @@ underneath the dock.
   squares on a slow shimmer, faint enough that it was easy to miss.
 - Experience and Education are timelines (`.timeline`): each row opens with a
   monogram, and from 40rem a hairline joins one monogram to the next. Experience
-  is a list of `<details>` rows: monogram, role and company, then dates and
-  place in their own column. The most recent role starts open; the rest are a
+  is a list of `<details>` rows. On a desktop the dates lead: a column of
+  their own down the left edge, the period as a label and the place under it,
+  then the monogram, the role and the company, so the list reads as a ledger,
+  when and where and then what. Until 2026-11-24 the dates sat against the
+  right edge, a full screen's width from the role they dated. On a tablet
+  they are still a column on the right, and on a phone they stack under the
+  company. The most recent role starts open; the rest are a
   click away, and several can be open at once. The bullets are in the
   prerendered HTML whichever state a row is in, and the print stylesheet shows
   them all. From 64rem an open row's bullets flow in two CSS columns,
@@ -514,6 +520,9 @@ a sticky top bar, the mobile menu and a floating back-to-top button, whose job t
 Home item now does: it scrolls to the very top of the page, masthead included,
 not just to the hero.
 
+- It floats, and is lit as anything that floats here is: a hairline along its
+  top edge, where light from above would catch it, over the shadow it throws
+  on the page. The command palette has the same two.
 - The navigation items are real links with accessible names, in the prerendered
   HTML, so they work before hydration; only the Search button needs JavaScript.
   LinkedIn and GitHub drop out below 36rem: the hero and contact panel both
@@ -665,6 +674,15 @@ band lines up across the row. They no longer print `role`: it read
 The field stays on every entry for the command palette's search. Their
 description is the `<details>` a phone shows shut: see [Layout](#layout).
 
+**The three largest cards have a wider cut where the source allows.** The
+featured card and the two under it draw their pictures at up to 665px, which
+a 2x screen cannot fill from a 960px file. A project names a third width in
+`imageWidest`: 1440px for RemindrAI, from the poster's 1790px crop, and
+1120px for the AI Workflow Assistant, its crop at its own size. The Research
+Team's crop is 900px wide in its screenshot, so it has none, and stays a
+little soft on a 2x screen. A browser picks by `sizes` and its own density,
+so a 1x screen and a phone never fetch the wider file.
+
 **Every card opens with a picture in a well.** The `<picture>` is a panel cut
 into the card and filled with the page colour, like a tag or a form field. It
 bleeds to the card's edges, and the 2:1 image stands inside it on its bottom
@@ -689,8 +707,9 @@ Each crop is as wide as the third number and half as tall.
 The files are in `src/assets/projects/` at 480 and 960px wide, as AVIF and
 as WebP (`<image>-480.avif`, `<image>-960.webp` and so on; the RAG one stops at
 its source's 712px, the Research Team's at 900px and the FastAPI one at 920px,
-since none is upscaled): about 170 KB for the twelve AVIF files and 211 KB for
-the twelve WebP, gzipped as Size Limit counts them. The FastAPI pair was saved
+since none is upscaled), and the two wider cuts described above: about 231 KB
+for the fourteen AVIF files and 299 KB for the fourteen WebP, gzipped as Size
+Limit counts them, of which the twelve at 480 and 960px are 170 and 211 KB. The FastAPI pair was saved
 at 960 until 2026-11-20, about 4% larger than its crop, which nothing checked:
 the file's width is not compared with its source anywhere, so a new picture
 needs that looked at by hand. Cut at its own size the pair is 1.3 kB heavier,

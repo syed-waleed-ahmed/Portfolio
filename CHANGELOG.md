@@ -37,7 +37,7 @@ than by individual commit.
     hairline and a tone that fades back into the page. They replace the dot
     band, a faint strip that shimmered.
   - **The greeting is the design.** "hi, Waleed here." is set as wide as its
-    column on every screen, about 135px on a 1440px desktop and 52px on a
+    column on every screen, about 131px on a 1440px desktop and 50px on a
     phone, light, with the name the one bold word, running from lavender into
     cyan. Under it the statement runs in two tones and, on a desktop, two
     columns: what I build, then why it holds up.
@@ -59,6 +59,11 @@ than by individual commit.
     depths of tenant isolation, each restating a claim Experience already
     makes. The next two cards are half the width each and the last three a
     third. All six used to be the same card.
+  - **Sharper pictures on the largest cards.** The featured project and
+    the AI Workflow Assistant gain a wider cut (1440 and 1120px), which only
+    a 2x screen wide enough for it downloads. The Research Team's
+    screenshot is 900px wide at its source, so it has none. The picture
+    budgets rise to 238 kB of AVIF and 305 kB of WebP for the two pairs.
   - **Project pictures stand in a well.** Each sits inside a dark mount cut
     into its card instead of bleeding to the card's edges, where three light
     screenshots and three dark ones made the grid a checkerboard. The five
@@ -70,8 +75,10 @@ than by individual commit.
     figure, the context over the featured project and the dates of a role or
     a degree are small spaced capitals, and nothing else on the page is.
   - **Experience and Education are timelines**, with a rail joining the
-    monograms. An open role's bullets flow in two balanced columns; as a
-    grid they left a gap under every short bullet.
+    monograms. On a desktop a role's dates and place lead the row, in a
+    column down the left edge, where they sat a full screen's width from the
+    role they dated. An open role's bullets flow in two balanced columns; as
+    a grid they left a gap under every short bullet.
   - **About fills its second column**: education and the target roles share
     it, where education alone ended half way down.
   - **Skills opens with the ten the work is built on**, each with the
@@ -83,11 +90,13 @@ than by individual commit.
     phone page is 9,987px, from 10,771px.
   - **Contact is a panel of its own surface**, with availability and place
     as its heading line.
+  - **The dock and the command palette catch the light**: a hairline along
+    the top edge of each, over its shadow.
 - **The styles of everything below the hero are a stylesheet of their own**,
   linked in the body after the hero, so the first screen paints without
-  waiting for them. The stylesheet a visitor waits for is 5.4 kB, from
-  7.9 kB; the sections' sheet is 3.8 kB. Two files compress worse than one,
-  so the CSS in all went from 7.9 to 9.2 kB. Each has a budget of its own.
+  waiting for them. The stylesheet a visitor waits for is 5.5 kB, from
+  7.9 kB; the sections' sheet is 3.9 kB. Two files compress worse than one,
+  so the CSS in all went from 7.9 to 9.3 kB. Each has a budget of its own.
 - **Print rules are a stylesheet of their own** too, linked with
   `media="print"` and last in the page, so they block nothing.
 - **The form field border is stronger**, 66% of the slate from 56%. On the

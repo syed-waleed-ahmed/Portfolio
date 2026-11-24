@@ -470,10 +470,13 @@ test("printing shows content the visitor had not scrolled to, without the dock",
   await page.emulateMedia({ media: "print" });
   // The sheet is fetched at low priority, so wait for it rather than assume.
   await expect(page.locator(".dock-shell")).toBeHidden();
-  const opacities = await page.locator("[data-reveal]").evaluateAll((elements) =>
-    elements.map((element) => getComputedStyle(element).opacity)
-  );
-  expect(opacities.every((opacity) => opacity === "1")).toBe(true);
+  // Polled: switching a live page to print media is not what printing does
+  // (a browser prints a static copy), and Firefox fades the pending content
+  // in over the reveal's 400ms here where Chromium shows it at once. What
+  // matters is that none of it stays hidden.
+  const hidden = () =>
+    page.locator("[data-reveal]").evaluateAll((elements) => elements.filter((element) => getComputedStyle(element).opacity !== "1").length);
+  await expect.poll(hidden).toBe(0);
   // Ink on white: the tokens for paper come from the same sheet.
   expect(await page.evaluate(() => getComputedStyle(document.body).color)).toBe("rgb(34, 34, 34)");
 });
@@ -558,6 +561,23 @@ test.describe("a project card's description", () => {
     await expect(description).toBeVisible();
   });
 
+  // The skills inventory sits in the same disclosure, and it is also one of
+  // Reveal's elements: shut, it is never on screen, so Reveal is still
+  // holding it back when the visitor opens it. It has to arrive then, not
+  // stay at opacity 0 behind an open toggle.
+  test("and the skills inventory open on a phone and are shown", async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto("/");
+    await hydrated(page);
+    const inventory = page.locator("#skills .skills");
+    await page.locator("#skills summary").scrollIntoViewIfNeeded();
+    await expect(inventory).toBeHidden();
+    await page.locator("#skills summary").click();
+    await expect(inventory).toBeVisible();
+    await expect.poll(() => inventory.evaluate((node) => getComputedStyle(node).opacity)).toBe("1");
+    await expect(inventory.locator(".tag")).toHaveCount(62);
+  });
+
   test("is open, with no toggle, on a desktop", async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
     await page.goto("/");
@@ -605,7 +625,12 @@ test("every project picture offers a WebP beside its AVIF, and loads", async ({ 
         const well = picture.getBoundingClientRect();
         const box = image.getBoundingClientRect();
         return {
-          avif: source?.type === "image/avif" && source.srcset.split(",").length === 2,
+          // Two widths, or three where the card names a wider cut, and the
+          // same number in each format.
+          avif:
+            source?.type === "image/avif" &&
+            [2, 3].includes(source.srcset.split(",").length) &&
+            source.srcset.split(",").length === image.srcset.split(",").length,
           webp: /\.webp$/.test(image.getAttribute("src")) && image.srcset.split(",").every((candidate) => /\.webp \d+w$/.test(candidate.trim())),
           loaded: image.complete && image.naturalWidth > 0,
           chose: image.currentSrc.split(".").pop(),

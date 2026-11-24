@@ -208,7 +208,7 @@ npm run build
 npm run test:e2e
 ```
 
-Forty tests in `frontend/e2e/site.spec.js`, on Playwright Test with
+Forty-one tests in `frontend/e2e/site.spec.js`, on Playwright Test with
 `@axe-core/playwright`, against the built and prerendered site.
 `e2e/serve.mjs` serves `frontend/dist` on `127.0.0.1:4174` with the `/*` headers
 from `dist/_headers`, so the suite runs under the CSP visitors get (which
@@ -268,10 +268,10 @@ Cloudflare deployment.
 | `a rate-limited send explains the wait and offers email` | A mocked `429` shows the 15-minute message with a `mailto:` link |
 | `every form message has its own tone and keeps 7:1` | The field errors, a `429` as a warning, a `400` as an error and a `200` as a success each show their own class, and axe's enhanced-contrast rule finds nothing in the form in any of the four. Run at 1024px, where the globe never loads |
 | `the contribution graph fits a phone without its own scroller` | At 390px the library's own scroll container has nothing to scroll |
-| `printing shows content the visitor had not scrolled to, without the dock` | Under print media the dock is hidden, every `[data-reveal]` element has opacity 1 and the body text is the ink colour: all three come from `styles/print.css`, so a broken link to it fails here |
+| `printing shows content the visitor had not scrolled to, without the dock` | Under print media the dock is hidden, every `[data-reveal]` element reaches opacity 1 (polled, since Firefox fades them in when a live page is switched to print) and the body text is the ink colour: all three come from `styles/print.css`, so a broken link to it fails here |
 | `the desktop first screen`: `holds the figures clear of the dock on a tall window`, `gives a short window to the copy, with the figures under the fold` | At 1440 by 900 the hero's figures are on the first screen and end at least 8px above the dock. At 1528 by 651 the copy ends at least 8px above the dock and the figures start at or under the fold |
 | `the greeting fills its column without leaving it at <width>px`, six tests | At 320, 390, 768, 1024, 1440 and 1920px the greeting is one line, no wider than its column and more than four fifths of it |
-| `a project card's description`: `is one tap away on a phone`, `is open, with no toggle, on a desktop` | At 390px the description of an ordinary card is hidden until its toggle is clicked. At 1440px the toggle is hidden and all six descriptions are visible and rendered, which only `::details-content` makes possible |
+| `a project card's description`: `is one tap away on a phone`, `and the skills inventory open on a phone and are shown`, `is open, with no toggle, on a desktop` | At 390px the description of an ordinary card is hidden until its toggle is clicked, and so is the skills inventory, which then arrives at full opacity with all 62 tags (it is one of Reveal's elements, held back while shut). At 1440px the toggle is hidden and all six descriptions are visible and rendered, which only `::details-content` makes possible |
 | `every skill mark draws from the sprite` | Every `<use>` in a skill tag has a bounding box, so the sprite loaded under the CSP and holds each id: a missing one is an empty box, not an error |
 | `every project picture offers a WebP beside its AVIF, and loads` | Each of the six cards has an AVIF `<source>` and a WebP `<img>` with two widths each, the image has loaded (as AVIF, in this Chromium), its well reaches the card's edges (across the top, or down the left half of the featured card), and the image sits in from the well by the same margin on both sides at 2:1 |
 | `the light under the pointer leaves the project cards' rows aligned` | Hovering a card writes `--spot-x`; each of the last three cards, which share a row at 1440px, still has six children, the picture at the card's very top and all six at the same offsets across the row. An in-flow pseudo-element would take the top row and move the picture down in every card alike |
@@ -302,8 +302,8 @@ budgets in `frontend/.size-limit.json`, so it needs a build first.
 | Section styles, linked after the hero, so they block only what follows | `sections-*.css` | 4.5 kB |
 | Print stylesheet, linked with `media="print"`, so it never blocks rendering | `print-*.css` | 1 kB |
 | Skill marks sprite, one image request | `skill-icons-*.svg` | 23 kB |
-| Project pictures, the twelve AVIF files, loaded lazily | `*.avif` | 175 kB |
-| Project pictures, the twelve WebP fallbacks | `*.webp` | 212 kB |
+| Project pictures, the fourteen AVIF files, loaded lazily, never all by one screen | `*.avif` | 238 kB |
+| Project pictures, the fourteen WebP fallbacks | `*.webp` | 305 kB |
 | Command palette, `cmdk` | `CommandPalette-*.js` and `.css` | 20 kB |
 | Contribution graph, `react-activity-calendar` | `GitHubActivityCalendar-*.js` and `.css`, and `Tooltip-*.js` | 27 kB |
 | Globe, `cobe` | `index.esm-*.js` | 6.5 kB |
@@ -314,7 +314,9 @@ measured 85.35 kB against its 87 kB budget, and the WebP fallbacks 210.61 kB
 against 212 kB. That last budget was 210 kB until the same day, when the
 FastAPI picture was re-cut at its source's 920px in place of an enlarged 960:
 the truer file is 1.1 kB heavier, and took the twelve 0.6 kB past the old
-limit. The entry budget is the one that matters most: a static import
+limit. On 2026-11-24 both picture budgets rose, to 238 and 305 kB, for the
+two wider cuts the largest cards gained (231.1 and 298.5 kB measured); no
+screen fetches all fourteen of either. The entry budget is the one that matters most: a static import
 of any of the three lazy libraries moves it into the entry chunk and fails that
 budget. The sprite's budget is there for the same reason from the other side:
 its marks would cost the entry chunk and the prerendered page that much if they
@@ -535,9 +537,18 @@ Known and accepted, listed here so nobody has to rediscover them:
   backend.
 - **Browser tests run in Chromium only.** The suite checks this site's
   behaviour, not browser support, so Firefox and WebKit are not run in CI. They
-  were run once by hand, on 2026-11-14. In Firefox 157 the suite passed but for
-  the two palette tests, which ask for a clipboard permission Firefox does not
-  have, and the live site looked and behaved as in Chromium. Playwright's WebKit
+  were run by hand on 2026-11-14 and again on 2026-11-24, after the redesign.
+  In Firefox 157 the suite passed but for the two palette tests, which ask for
+  a clipboard permission Firefox does not have. In Firefox 159 two more fail,
+  the two under forced colours, and they fail the same way against the site as
+  it was before the redesign: that build's emulated `Highlight` is a
+  translucent cyan, `rgba(0, 221, 255, 0.306)`, which is 2.1:1 on its own
+  canvas where the tests ask 3:1 of Chromium's opaque one. It is the
+  emulation's palette, not a contrast theme's, whose highlight is opaque. The
+  redesign itself behaves there as in Chromium: the greeting fills 96% of its
+  column and never leaves it, the phone disclosures open and are held open on a
+  desktop, the cards' rows align, and nothing overflows. Playwright's WebKit
+  (27.2) shows the same, from a server with no CSP. It
   cannot use `e2e/serve.mjs` at all: WebKit applies the CSP's
   `upgrade-insecure-requests` to `http://127.0.0.1`, asks for every asset over
   HTTPS and gets nothing, so the page never hydrates. Point it at the live site,

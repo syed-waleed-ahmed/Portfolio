@@ -239,8 +239,14 @@ test("the GitHub activity snapshot is a usable year of days", () => {
 test("every project names a picture that exists, with words for it", () => {
   for (const p of projects) {
     assert.match(p.image ?? "", /^[a-z][a-z0-9-]*$/, `${p.title}: image "${p.image}"`);
+    // A third, wider cut is optional: the cards drawn largest name one when
+    // their source is wide enough. It has to be wider than 960 to be worth a
+    // file, and it needs both formats like the rest.
+    if (p.imageWidest !== undefined) {
+      assert.ok(Number.isInteger(p.imageWidest) && p.imageWidest > 960, `${p.title}: imageWidest is ${p.imageWidest}, expected a width over 960`);
+    }
     for (const format of ["avif", "webp"]) {
-      for (const width of [480, 960]) {
+      for (const width of [480, 960, ...(p.imageWidest ? [p.imageWidest] : [])]) {
         const file = new URL(`../src/assets/projects/${p.image}-${width}.${format}`, import.meta.url);
         assert.ok(existsSync(file), `${p.title}: src/assets/projects/${p.image}-${width}.${format} is missing`);
       }

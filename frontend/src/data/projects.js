@@ -80,6 +80,9 @@ export const projects = [
       "Its first tenant adopted it with a base URL and a token, holding no scheduler, queue, or provider secret.",
     sourceNote: "Private repository · MemorAIz",
     image: "remindrai",
+    // The featured card draws its picture up to 665px wide, so a 2x screen
+    // wants more than 960: a third cut, from the poster's 1790px crop.
+    imageWidest: 1440,
     imageAlt:
       "From the thesis poster: a chat message asking for a reminder, the task and time the assistant understood, and the same reminder arriving on WhatsApp, Telegram, Discord and Email.",
   },
@@ -92,6 +95,9 @@ export const projects = [
     // one click away once signed in.
     demo: "https://ai-workflow-assistant-app.vercel.app",
     image: "ai-workflow-assistant",
+    // One of the two half-width cards. Its crop is 1120px wide in the
+    // screenshot, so that is the widest it goes, at its own size.
+    imageWidest: 1120,
     imageAlt:
       "A finished report on the bundled sales dataset in dark mode: the question asked, a banner confirming all 16 figures were verified against computed results, a summary and key revenue metrics.",
     description:

@@ -10,8 +10,14 @@ import { projects } from "@/data/projects";
 // URL Vite gives it. The data modules stay plain data that Node can import,
 // so a project names its picture and the files are resolved here.
 const pictures = import.meta.glob("@/assets/projects/*.{avif,webp}", { eager: true, query: "?url", import: "default" });
-const srcSet = (name, format) =>
-  [480, 960].map((width) => `${pictures[`/src/assets/projects/${name}-${width}.${format}`]} ${width}w`).join(", ");
+// Every picture comes 480 and 960px wide. The three largest cards draw theirs
+// at up to 665px, which a 2x screen cannot fill from 960, so a project whose
+// source is wide enough names a third cut (`imageWidest`). Only a screen that
+// needs it downloads it: the browser picks by `sizes` and its own density.
+const srcSet = ({ image, imageWidest }, format) =>
+  [480, 960, ...(imageWidest ? [imageWidest] : [])]
+    .map((width) => `${pictures[`/src/assets/projects/${image}-${width}.${format}`]} ${width}w`)
+    .join(", ");
 
 // A picture's rendered width, which is its card's width less the card's 1px
 // borders and the well's padding on each side (Projects.css). The container
@@ -86,11 +92,11 @@ const Projects = () => (
               on every screen, so lazy, and width and height give the 2:1 box
               before the file arrives. */}
           <picture className="project-card__picture">
-            <source type="image/avif" srcSet={srcSet(project.image, "avif")} sizes={sizesFor(index)} />
+            <source type="image/avif" srcSet={srcSet(project, "avif")} sizes={sizesFor(index)} />
             <img
               className="project-card__image"
               src={pictures[`/src/assets/projects/${project.image}-960.webp`]}
-              srcSet={srcSet(project.image, "webp")}
+              srcSet={srcSet(project, "webp")}
               sizes={sizesFor(index)}
               alt={project.imageAlt}
               width="960"

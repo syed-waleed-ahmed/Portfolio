@@ -172,14 +172,15 @@
   }
 
   /* The greeting fills its column. The line is 6.55 times its font size
-     wide, caret included, so 14.8% of the column's width per em leaves it 3%
-     short of the edge at every screen size: 52px on a phone, 135px on a
-     1440px desktop. The height of the window caps it too, so on a short
+     wide in Chromium, caret included, and a little wider in Firefox and
+     WebKit, where 14.8% of the column per em left it 1% short of the edge.
+     14.4% leaves 5% in Chromium and 3% in the other two, at every screen
+     size: 50px on a phone, 131px on a 1440px desktop. The height of the window caps it too, so on a short
      laptop screen it does not take the whole of it, and it never wraps.
      Set light, so the name is the only bold word in the line: the weight
      contrast gives it presence, not size alone. */
   .hero__title {
-    font-size: clamp(2.5rem, min(14.8cqi, 20vh), 11rem);
+    font-size: clamp(2.5rem, min(14.4cqi, 20vh), 11rem);
     font-weight: var(--weight-regular);
     line-height: 1;
     letter-spacing: var(--tracking-tighter);
