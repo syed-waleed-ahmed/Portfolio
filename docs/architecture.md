@@ -88,6 +88,7 @@ portfolio/
 ├── docs/                           This documentation set, indexed by docs/README.md
 ├── postman/                        Collection + local and production envs, with a README
 ├── scripts/gen-og-card.mjs         Rebuilds the 1200x630 social card
+├── scripts/release-notes.mjs      Prints a changelog section as release notes, one line per paragraph
 ├── test/invariants.test.js         Repository invariants: files that must agree (node --test)
 ├── .editorconfig  .gitattributes  .gitignore  .npmrc  .nvmrc
 ├── lychee.toml                     Link checker configuration

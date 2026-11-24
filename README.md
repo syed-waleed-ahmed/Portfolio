@@ -179,7 +179,7 @@ portfolio/
 ├── frontend/         React app (components, data, styles, scripts, public, tests), with its own README
 ├── docs/             Documentation set, indexed in docs/README.md and below
 ├── postman/          API collection and environments
-├── scripts/          One-off generators (social card)
+├── scripts/          The social card generator and the release-notes formatter
 ├── test/             Repository invariants, across both projects
 └── lychee.toml       Link-check configuration
 ```

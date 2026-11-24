@@ -558,9 +558,18 @@ the last change it covers:
    ```bash
    git switch main && git pull   # HEAD is now the merge commit, unless something landed since
    git tag -a vX.Y.Z -m "X.Y.Z" && git push origin vX.Y.Z
-   awk '/^## \[X.Y.Z\]/{f=1;next} /^## \[/{f=0} f' CHANGELOG.md |
+   node scripts/release-notes.mjs X.Y.Z |
      gh release create vX.Y.Z --title "X.Y.Z" --notes-file - --verify-tag
    ```
+
+   `scripts/release-notes.mjs` prints the version's section with each
+   paragraph and list item joined onto one line. The changelog is wrapped at
+   about 78 columns, which a Markdown file on GitHub joins back up, but
+   release notes keep every line break, so notes taken from it as written
+   came out as ragged lines of a few words. Every release up to 3.0.0 was
+   published that way and rewritten on 2026-11-24, with no word changed.
+   Releases are immutable once published (a repository setting), so the tag
+   and any assets cannot be changed afterwards; the notes can.
 
 Versions follow [Semantic Versioning](https://semver.org/) as applied to a site:
 **major** for a change to the API contract or a redesign (2.0.0 had both),
