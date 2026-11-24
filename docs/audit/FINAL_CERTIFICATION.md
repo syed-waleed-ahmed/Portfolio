@@ -1,4 +1,4 @@
-# Final certification
+# Assessment by category
 
 Part of the [2026-11-20 backend audit](EXECUTIVE_SUMMARY.md). An assessment by
 one reviewer on one day, against commit `f07475f` as it was deployed when the
@@ -16,27 +16,28 @@ Where a category has nothing to assess, because the system has no such part,
 that is said, and the status records that its absence was verified.
 
 Two columns, because the answer differs: the version the audit found
-deployed, and the version deployed now, after the fixes and their live check.
+deployed, and the version deployed at the end of 2026-11-20, after the fixes
+and their live check.
 
 ## By category
 
-| Category | As audited (`f07475f`) | As deployed now | Basis |
+| Category | As audited (`f07475f`) | End of 2026-11-20 | Basis |
 |----------|------------------------|-----------------|-------|
 | Architecture | PASS | PASS | Four modules, one direction, boundaries verified by search and by test |
 | Code quality | PASS WITH OBSERVATIONS | PASS WITH OBSERVATIONS | Clean and small. Observations are minor (F-18) |
 | Type safety | PASS WITH OBSERVATIONS | PASS WITH OBSERVATIONS | No static typing (F-17). Runtime type checks at the one trust boundary, tested with wrong types |
-| Security | FAIL | PASS WITH OBSERVATIONS | F-01: the only abuse control counted proxies. Now it counts the caller, checked live from one network; the second-network step is the observation. Injection, parsing, disclosure and secrets all held under test |
+| Security | FAIL | PASS WITH OBSERVATIONS | F-01: the only abuse control counted proxies. After the fix it counts the caller, checked live from one network; the second-network step is the observation. Injection, parsing, disclosure and secrets all held under test |
 | Authentication and authorization | PASS | PASS | None exists and none is needed: verified that no endpoint returns, stores or changes anything on a caller's behalf |
 | Database integrity | PASS | PASS | No database: verified absent. The only state is the limiter's counters, exact under concurrency |
 | API correctness | PASS WITH OBSERVATIONS | PASS WITH OBSERVATIONS | Every documented status reproduced. As audited: a `500` for malformed text (F-05). Both: `404` where `405` is conventional, by documented choice |
 | Background processing | PASS | PASS | None exists: verified absent. The synchronous send is assessed under external integrations |
-| External integrations | FAIL | PASS WITH OBSERVATIONS | As audited: no timeout on the one outbound call (F-02). Now: bounded, failure modes tested. Real delivery is never exercised automatically |
+| External integrations | FAIL | PASS WITH OBSERVATIONS | As audited: no timeout on the one outbound call (F-02). After: bounded, failure modes tested. Real delivery is never exercised automatically |
 | Error handling | PASS WITH OBSERVATIONS | PASS WITH OBSERVATIONS | Typed errors, fixed messages, no provider detail in any response. Error detail is opt-out, not opt-in (F-12) |
 | Performance | PASS WITH OBSERVATIONS | PASS WITH OBSERVATIONS | Measured locally at thousands of requests a second. Production throughput and provider latency were not measured |
 | Scalability | PASS WITH OBSERVATIONS | PASS WITH OBSERVATIONS | Single instance by design and by plan. Stateless apart from the limiter |
 | Observability | FAIL | FAIL | Clear logs that nothing reads. No alert, no uptime check, and F-01 ran unseen (F-04) |
-| Testing | PASS WITH OBSERVATIONS | PASS | As audited: sound method, but no failure-path tests (F-08). Now: 33 tests, each new one shown to fail without its fix |
-| Deployment and operations | FAIL | PASS WITH OBSERVATIONS | As audited: a backend commit that failed CI was deployed (F-03). Now: Render waits for the commit's checks, and the deploy log shows the Node version CI tests (F-09). The observation: every setting of the service lives only in a dashboard, and three of them had been documented wrongly (F-19). They are corrected, the build is now `npm ci --omit=dev` and `NODE_ENV` is set explicitly, but nothing in the repository would notice them drift again |
+| Testing | PASS WITH OBSERVATIONS | PASS | As audited: sound method, but no failure-path tests (F-08). After: 33 tests, each new one shown to fail without its fix |
+| Deployment and operations | FAIL | PASS WITH OBSERVATIONS | As audited: a backend commit that failed CI was deployed (F-03). After: Render waits for the commit's checks, and the deploy log shows the Node version CI tests (F-09). The observation: every setting of the service lives only in a dashboard, and three of them had been documented wrongly (F-19). They are corrected, the build is now `npm ci --omit=dev` and `NODE_ENV` is set explicitly, but nothing in the repository would notice them drift again |
 | Documentation | PASS WITH OBSERVATIONS | PASS | Thorough and, where testable, accurate, except for one unverified claim repeated in six places (F-10), now corrected |
 
 ## Overall
@@ -47,7 +48,7 @@ One reason carries that: F-01. The control that is supposed to stop one
 client from spending everyone's allowance did the opposite, in production,
 measurably. Two more categories failed on operations rather than code.
 
-**As deployed now: PRODUCTION READY WITH ACCEPTED RISKS.**
+**As deployed at the end of 2026-11-20: PRODUCTION READY WITH ACCEPTED RISKS.**
 
 The fixes are live and the limiter passed its check against production: one
 counter for nine requests where there had been three, and then four. That

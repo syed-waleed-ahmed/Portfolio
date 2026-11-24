@@ -220,29 +220,37 @@ tests refuse: build with the variable set to the production origin before
 ## Updating site content
 
 Entries, figures and links live in `frontend/src/data/`. Components read from
-it and render automatically, so adding a project or a job is a data change. A
-few pieces of prose are tied to one component and live there instead:
+it and render automatically, so adding a job or a skill, or changing a project,
+is a data change. The project grid is composed for six cards: a seventh
+renders, but alone on a row, and the core skills' proofs that count "of the six
+projects" fail their test until recounted (see
+[Architecture](architecture.md#data-driven-content)). A few pieces of prose are
+tied to one component and live there instead:
 
 | Change | File |
 |--------|------|
 | New job or internship | `experience.js` |
-| New project | `projects.js`: array order is page order; each card carries exactly one of `github` or `sourceNote`, plus an optional `demo` URL beside `github`, and an `image` with its `imageAlt`. `image` is the stem of four files in `src/assets/projects/` (`<image>-480` and `<image>-960`, each as `.avif` and `.webp`); see [Design](design.md#project-cards-line-up-on-shared-rows) |
+| New project | `projects.js`: array order is page order, and the first entry, and only it, carries `featured: true` with three `facts` (`value`, `label`, and the `claim` it restates from Experience or the card). Each card carries exactly one of `github` or `sourceNote`, plus an optional `demo` URL beside `github`, and an `image` with its `imageAlt`. `image` is the stem of four files in `src/assets/projects/` (`<image>-480` and `<image>-960`, each as `.avif` and `.webp`), or six with an optional `imageWidest` cut over 960px; see [Design](design.md#project-cards-one-featured-then-two-then-three) |
 | New skill group or tag | `skills.js`; if the tag is a product with a mark, add it to `skillIcons` there and rebuild the sprite, see [Design](design.md#skill-marks) |
-| Approach copy, a stat, a degree, a target role | `about.js` |
-| Name, email, resume link, socials, GitHub username, section order | `portfolio.js` |
-| A place on the globe | `about.js`: `locations` and its caption |
+| A core skill (the ten Skills opens with) | `coreSkills` in `skills.js`: six to twelve `{ name, proof }` entries. A proof names projects by the part of the title before the colon, so renaming a project or changing its stack can fail the content test |
+| Approach copy, a degree, a target role | `about.js` |
+| A figure in the hero's strip | `stats` in `about.js`; the hero renders them |
+| Name, role, location, email, resume link, socials, GitHub username, section order | `portfolio.js`. `role` is shown in the masthead and must match `<title>` and `jobTitle` in `index.html`; `location` also finds the masthead's coordinates in `locations` |
+| A place on the globe | `about.js`: `locations` and its caption. The masthead reads the home city's coordinates from here too, and shows none for a city not listed |
 | GitHub contribution graph | Generated, do not edit: `github-activity.json`, see below |
-| The hero's headline, lead and graduation note | `components/sections/Hero.jsx` |
+| The hero's status line, headline, lead and graduation note | `components/sections/Hero.jsx`. Availability is stated twice, in the status line and in the contact panel's heading line, so change both. If the greeting's words change, re-measure its size factor in `Hero.css` |
 | A section's subtitle | That section's component, passed to `SectionHeader` |
 | The contact panel's text and the form's messages | `components/sections/Contact.jsx` |
 
 Four rules keep the data layer honest. `npm test` in `frontend/` checks the
 first, third and fourth; the second rests on whoever writes the copy:
 
-1. **Stats in `about.js` are aggregates, not new claims.** Every figure there
-   is already stated in `experience.js` or `projects.js`: the 985-test tile,
-   for instance, restates a RemindrAI bullet in the MemorAIz entry. Change
-   one without the other and the test fails rather than the page
+1. **Figures are restatements, not new claims.** Every figure in the hero's
+   strip is already stated in `experience.js` or `projects.js`: the 985 tests,
+   for instance, restate a RemindrAI bullet in the MemorAIz entry. The
+   featured project's `facts` work the same way, each naming the phrase it
+   restates, and each core skill's `proof` names entries that really use it.
+   Change one side without the other and the test fails rather than the page
    contradicting itself.
 2. **Every claim must be checkable.** Project copy is written from the
    project's own repository or report. A figure that cannot be traced to one

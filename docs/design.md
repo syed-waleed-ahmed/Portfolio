@@ -66,8 +66,11 @@ exactly once.
 
 ### Co-located component styles
 
-Each component imports its own stylesheet (`Hero.jsx` imports `Hero.css`), so
+Each component's stylesheet sits beside it (`Hero.css` beside `Hero.jsx`), so
 the styles for a piece of UI sit next to its markup and are deleted with it.
+The hero, the masthead, the dock and the lazy widgets import theirs; the
+sections below the hero are listed in `styles/sections.css` instead, for the
+reason under [Three stylesheets](#three-stylesheets-loaded-in-order).
 Shared primitives that several components use (`.btn`, `.tag`, `.label`,
 `.monogram`, `.timeline`, `.more`, `.dot-field`, `.text-link`) live in
 `styles/components.css` instead.
@@ -181,9 +184,11 @@ Concept A is what the table above holds. What changed from the first pass:
 Six rules keep it consistent:
 
 1. **One accent.** Cyan marks what you can act on, and where you are: the
-   dock's current section and the number each section opens with. Technology
-   tags and metadata are deliberately neutral: a tag is information, not an
-   action.
+   dock's current section and the number each section opens with. Beyond
+   that it draws only a few fine lines of the hero's frame (the caret, the
+   name, the portrait's second outline, the short rule before each figure's
+   source), never a surface or a block of text. Technology tags and metadata
+   are deliberately neutral: a tag is information, not an action.
 2. **Every text colour passes WCAG AAA**, 7:1, on both the page and a panel,
    the status colours on their own tints included. An invariant computes the
    plain pairs from `tokens.css`, and the browser suite runs axe's
@@ -256,7 +261,7 @@ accent border with a soft halo.
 | Outlined: `.btn--secondary`, the contact channels | Outline border | Accent border and a 10% accent fill; the label keeps its colour | |
 | Text link: `.text-link` | Accent | Accent-hover, underlined | In a status message: the message's colour, underlined |
 | Dock item | Page fill, hairline, muted icon | Raised fill, heading-colour icon | Current section: accent border, tint and icon |
-| Form field | Page fill, field border | Muted border | Focus: accent border and halo. Invalid: error border, at 3.3:1 |
+| Form field | Page fill, field border | Muted border | Focus: accent border and halo. Invalid: error border, at 3.4:1 |
 | Project card | Panel, hairline, its picture a step dimmed in its well | The pointer's light, its picture at full strength, and a ring if it holds a link | |
 
 The three outlined controls each had a hover of their own until November
@@ -299,7 +304,7 @@ changes, recompute them rather than copying these.
 
 ### Scale
 
-Sizes are tokens (`--text-2xs` to `--text-display`). The larger steps are
+Sizes are tokens (`--text-2xs` to `--text-2xl`, with `--text-title` between). The larger steps are
 `clamp()` expressions that scale between a phone and a laptop, so the component
 files have almost no per-breakpoint font-size overrides. Three sizes are
 written outside the scale: the hero's headline and the figures under it, each
@@ -317,8 +322,8 @@ the weights and the tracking: change any of them and it has to be measured
 again, and six browser tests fail if the line leaves its column, wraps, or
 stops filling four fifths of it.
 
-**One voice for metadata.** `.label` is upper case, spaced 0.08em, 12px and
-muted: the role and the place in the masthead, the entry behind a figure, the
+**One voice for metadata.** `.label` is upper case, spaced 0.08em, 12px (13px
+for the dates, which sit beside larger type) and muted: the role and the place in the masthead, the entry behind a figure, the
 context over the featured project, the dates of a role or a degree. It says
 where a thing sits, never what it is, and it is the only upper-case text on
 the page. There is still one typeface: the labels are Hanken Grotesk, not a
@@ -427,7 +432,7 @@ underneath the dock.
   alone.
 - On a phone the portrait is a 4rem thumbnail beside the status line, so the
   greeting, the headline, the lead and the first two figures are all inside
-  the first screen; it was 96px on a row of its own. On a tablet it is 148px beside the copy, and on a desktop 20rem
+  the first screen; it was 96px on a row of its own. On a tablet it is 148px beside the status line and the greeting, and on a desktop 20rem
   with a second outline set off behind it, down and to the right.
 - **The figures are a strip, not tiles**: each a number set large over the
   line that says what it counts and the entry that backs it, with one rule
@@ -469,7 +474,7 @@ underneath the dock.
   corner, and the globe below it is drawn in dots too, so the same mark opens
   and closes the page. The dot band it replaced was a 100px strip of 2px
   squares on a slow shimmer, faint enough that it was easy to miss.
-- Experience and Education are timelines (`.timeline`): each row opens with a
+- Experience and Education are timelines (`.timeline`): each row carries a
   monogram, and from 40rem a hairline joins one monogram to the next. Experience
   is a list of `<details>` rows. On a desktop the dates lead: a column of
   their own down the left edge, the period as a label and the place under it,
@@ -483,7 +488,7 @@ underneath the dock.
   them all. From 64rem an open row's bullets flow in two CSS columns,
   balanced; as a two-column grid they lined up across rows, which left a gap
   under every short bullet and the fifth bullet on a row of its own.
-- A role or school opens with a `.monogram`, the initial in a ringed circle. It
+- A role or school carries a `.monogram`, the initial in a ringed circle. It
   holds the place a logo would, with no logo file or third-party image request.
 - About sets the story beside a second column that holds education and, under
   it, the target roles, so the two columns run to about the same height;
@@ -525,8 +530,8 @@ not just to the hero.
   on the page. The command palette has the same two.
 - The navigation items are real links with accessible names, in the prerendered
   HTML, so they work before hydration; only the Search button needs JavaScript.
-  LinkedIn and GitHub drop out below 36rem: the hero and contact panel both
-  carry them, and seven items is what fits a phone.
+  LinkedIn and GitHub drop out below 36rem: the contact panel carries them,
+  and seven items is what fits a phone.
 - Hover magnifies with `--dock-size`: the hovered item grows to 56px and its
   neighbours to 48px, reaching across the divider. Items are bottom-aligned, so
   they grow out of the top of the bar, which keeps its height. This is pointer-only
@@ -622,7 +627,9 @@ trademarks of their owners and are used only to name the tool beside them.
   two differ. Nothing is installed permanently: both icon packages are
   fetched with `npm i --no-save`, as the command at the top of the script
   shows, and the sprite is committed, so a build needs neither.
-- **One ink.** Every mark is drawn in `--color-text-soft`. Brand colours were
+- **One ink.** Every mark is drawn in its tag's own text colour,
+  `--color-text-soft`, or `--color-text-strong` beside a core skill's name.
+  Brand colours were
   not used: several marks are black and would vanish on this background, and
   thirty-five hues in a row would outweigh the names.
 - **Not every tag has one, on purpose.** A practice such as RAG or CI/CD has
@@ -729,13 +736,13 @@ card's width, less its borders and the well's padding. A change to the
 container, the gutter, the grid's columns or `--well` has to update it; the
 comment there has the derivation, and it was measured within 2px at 22 widths
 from 320 to 2560px. Up to a 1920px screen the widest a picture is drawn is
-about 665px, in the featured card and the two under it, against files that
-stop at 960px or narrower: on a 2x screen those three are drawn at about 1.4 file pixels per
-CSS pixel rather than 2. A wider cut of those three would fix that and
-take the picture budgets with it, and has not been made. The picture row is
-shared like the other five, so a card without one would show an empty band: a
-content test requires
-all four files and an `imageAlt` of 12 to 40 words for every project. They
+about 665px, in the featured card and the two under it, which a 960px file
+fills at only 1.4 file pixels per CSS pixel on a 2x screen. Two of those
+three have the wider cut described above; the Research Team's source is too
+narrow for one. The picture row is shared like the other five, so a card
+without one would show an empty band: a content test requires all four files,
+the two wider ones where a project names `imageWidest`, and an `imageAlt` of
+12 to 40 words for every project. They
 were cut by hand with `sharp` (extract, resize, AVIF at quality 55, WebP at
 quality 78); a new card needs the same four files. The AI Workflow
 Assistant's and the Research Team's AVIF files add
@@ -757,7 +764,7 @@ and the RemindrAI poster, shown as those projects really look, and at full
 strength each is the brightest thing on the page by a wide margin. All six
 therefore rest at 84% brightness, the same step, so none is singled out, and
 come up to full strength while the pointer or keyboard focus is in their card.
-Print leaves them alone.
+Print shows them at full strength.
 
 Three details are load-bearing:
 
@@ -812,7 +819,7 @@ library.
 | Command palette | Fades in and settles 6px, 220ms, over a fading backdrop |
 | Globe | Sways slowly about its centre on `requestAnimationFrame`, in WebGL, only while on screen |
 | Hover and focus | Colour and border changes, 150ms. Project cards that hold a link gain a soft ring over 220ms and do not lift, because they are not click targets |
-| Pointer light | A project card under a mouse pointer shows a soft wash and a brighter border where the pointer is, fading in over 220ms. It moves only as the pointer does. See [Project cards](#project-cards-line-up-on-shared-rows) |
+| Pointer light | A project card under a mouse pointer shows a soft wash and a brighter border where the pointer is, fading in over 220ms. It moves only as the pointer does. See [Project cards](#project-cards-one-featured-then-two-then-three) |
 
 Nothing in the page's backdrop moves. The two lights and the dot field are
 static, where the dot band they replaced shimmered on 5s and 7s cycles.
@@ -875,8 +882,8 @@ still frame.
   light) simply goes
 - Tap targets and reduced motion as described above
 
-The browser suite runs an axe-core scan (the WCAG 2.0, 2.1 and 2.2 A and AA
-rules) on the built page at desktop and phone widths, and with the command
+The browser suite runs an axe-core scan (the WCAG 2.0 and 2.1 A and AA rules,
+and the 2.2 AA rules) on the built page at desktop and phone widths, and with the command
 palette open, and fails CI on any violation. It also drives the keyboard paths
 above: the palette's shortcut, search and focus return, and the form's focus on
 an invalid field. See [Testing](testing.md#browser-tests).
@@ -928,8 +935,8 @@ need regenerating rather than editing:
 | `favicon.ico`, `favicon-96x96.png`, `apple-touch-icon.png` | `favicon.svg`, the hand-drawn crewmate | Rasterized from the SVG; the touch icon bakes in `#0a192f`, the navy of two palettes ago, still close enough to `--color-bg` to read as the same |
 | `images/Profile-840.{avif,webp}` | An 840px square (left 48, top 70) of the 960x1280 studio portrait of November 2026, which is not in the repository | `sharp` extract, unscaled. Requested only past 2048px at 2x, where the portrait renders at 16.6vw |
 | `images/Profile.{avif,webp}` | The same crop at 680px | `sharp` resize. Desktops at 2x and 1x screens past 1920px; the JSON-LD `image` and the `<img>` fallback point here |
-| `images/Profile-320.{avif,webp}` | The same crop at 320px | `sharp` resize. Phones at 3x, tablets at 2x and desktops at 1x, where the portrait renders at 320px |
-| `images/Profile-192.{avif,webp}` | The same crop at 192px | `sharp` resize. Phones up to 2x (96px) and tablets at 1x (148px). Added in November 2026, when PageSpeed Insights found phones fetching the 320px file for a 168-pixel slot |
+| `images/Profile-320.{avif,webp}` | The same crop at 320px | `sharp` resize. Tablets at 2x and desktops at 1x, where the portrait renders at 320px |
+| `images/Profile-192.{avif,webp}` | The same crop at 192px | `sharp` resize. Phones up to 3x (a 64px slot since the redesign; it was 96px) and tablets at 1x (148px). Added in November 2026, when PageSpeed Insights found phones fetching the 320px file for a 168-pixel slot |
 
 The four portrait sizes are resized with Lanczos and encoded as AVIF at
 quality 60 (effort 9) and WebP at 82. A new photo needs all eight files
@@ -1008,7 +1015,7 @@ typefaces or layouts are used.
 | Olivier Larose's | An identity statement stacked in display type, with tiny labels in the margins | The masthead's labels beside the greeting | Role at the left edge, place at the right | The display serif, the centred column |
 | Emil Kowalski's | Name and role as a two-tone pair; each project a title and one sentence | Phone project cards | A card shows its title and its result first | The narrow single column, rejected here before |
 | Brittany Chiang's | Upper-case spaced labels for navigation and dates; an experience entry with its dates set apart | Dates as labels in Experience and Education | `.label` on the period | The fixed sidebar |
-| Vercel's Geist | Cells that share their borders; each border drawn once | The figures, the featured card's facts, the core skills | A 1px gap over a border-coloured ground | Its typefaces |
+| Vercel's Geist | Cells that share their borders; each border drawn once | The figures, the featured card's facts, the core skills | A 1px gap over a border-coloured ground for the core skills; a border on every cell but the first for the figures and the facts | Its typefaces |
 
 Three written sources shaped particular decisions as well:
 

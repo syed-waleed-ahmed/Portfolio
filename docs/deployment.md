@@ -24,10 +24,10 @@ static asset request, which Cloudflare serves on its free plan without a quota.
 | Worker name | `portfolio` |
 | Assets directory | `./dist`, the Vite build output |
 | Unknown paths | `not_found_handling: "404-page"`, which answers with `404.html` and a 404 status |
-| Node version, for the build | `24`, from `.nvmrc` |
 
 Cloudflare builds nothing. `.github/workflows/deploy.yml` builds the site on a
-GitHub runner and uploads the result with `wrangler deploy`, so the host has no
+GitHub runner, with the Node version `.nvmrc` pins, and uploads the result with
+`wrangler deploy`, so the host has no
 build minutes or deploy count to run out of. That matters for a site that
 ships about once a day: a host that meters deploys on its free plan can spend
 a month's allowance in two weeks and stop publishing, which is what ended the
@@ -184,12 +184,11 @@ variables are compiled into the client bundle and are therefore public.
 
 A new backend origin also has to be added to `connect-src` in
 `frontend/public/_headers`, or the CSP blocks the form, and should replace the
-`dns-prefetch` hint in `index.html`. `vite preview` does not apply `_headers`,
-and CI builds without the variable, so a missed `connect-src` shows only on the
-live site, where the form reports that the server could not be reached.
-The invariants test checks both against the default origin in `Contact.jsx`,
-not against the variable, so moving the backend means changing that default
-too.
+`dns-prefetch` hint in `index.html`. The invariants test checks both against
+the default origin in `Contact.jsx`, and the browser suite runs under the real
+CSP, so moving the backend means changing that default too, or both fail. The
+one gap is a `VITE_API_BASE_URL` set at build time, which neither sees; the
+deploy never sets one, and `e2e/serve.mjs` refuses a build that does.
 
 ---
 
@@ -209,8 +208,8 @@ the repository can check them. The table is what the dashboard held on
 | Auto-Deploy | After CI Checks Pass |
 | Region | Frankfurt |
 
-Environment variables, set in the Render dashboard. The first four are set
-today; the rest are optional:
+Environment variables, set in the Render dashboard. The first four were set
+as of 2026-11-20; the rest are optional:
 
 ```text
 NODE_ENV=production

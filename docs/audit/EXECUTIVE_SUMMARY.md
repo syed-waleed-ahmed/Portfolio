@@ -1,10 +1,14 @@
 # Backend audit: executive summary
 
-An independent review of `backend/`, the Express service behind the site's
-contact form, carried out on 2026-11-20 against commit `f07475f` (v2.5.0). Line
-numbers throughout this set refer to that commit. The fixes were merged and
-deployed the same day, in pull requests #61 and #62, and what happened when
-they met production is under [After the deploy](#after-the-deploy).
+A review of `backend/`, the Express service behind the site's contact form,
+carried out on 2026-11-20 against commit `f07475f` (v2.5.0). Line numbers
+throughout this set refer to that commit. The fixes were merged and deployed
+the same day, in pull requests #61 and #62, and released as v2.6.0; what
+happened when they met production is under [After the deploy](#after-the-deploy).
+
+This set is a dated record of that day and is not kept up to date. The current
+state of the one check still open on the rate limiter is in
+[`docs/deployment.md`](../deployment.md#checking-the-rate-limiters-key).
 
 ## Verdict
 
@@ -15,14 +19,14 @@ and a handful of requests from anyone locked the form for everyone for 15
 minutes. This was measured against the live API, not inferred
 ([F-01](SECURITY_AUDIT.md#f-01-the-rate-limiter-counts-proxies-not-visitors)).
 
-**As deployed now, with the fix checked live: production ready with accepted
-risks.** The rest of the service is small, deliberate and largely correct.
+**As deployed at the end of 2026-11-20, with the fix checked live: production
+ready with accepted risks.** The rest of the service is small, deliberate and largely correct.
 Injection handling, error mapping, the honeypot and the body parsing all held
 up under hostile input, and most of what the existing documentation claims
 was confirmed by test.
 
-Would I approve it for continued operation? Yes. Nothing here loses or exposes
-data, a visitor who is refused is shown the email address, and the defect that
+Recommendation: approve it for continued operation. Nothing here loses or
+exposes data, a visitor who is refused is shown the email address, and the defect that
 made the audited version unfit was replaced the same day.
 
 ## What was done

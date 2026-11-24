@@ -71,7 +71,7 @@ portfolio/
 │   │   │   ├── ui/                 Reusable primitives
 │   │   │   └── widgets/            The palette, the contribution graph and the globe: each lazy library beside what loads it
 │   │   ├── data/                   Portfolio content, no JSX
-│   │   ├── styles/                 Layer order, tokens, reset, base, layout, shared components
+│   │   ├── styles/                 Layer order, tokens, reset, base, layout, shared components, utilities; sections.css and print.css
 │   │   ├── App.jsx
 │   │   ├── entry-server.jsx        Build-time render entry
 │   │   └── main.jsx                Hydrates the prerendered markup
@@ -79,7 +79,7 @@ portfolio/
 │   ├── e2e/site.spec.js            Browser tests (Playwright + axe)
 │   ├── e2e/serve.mjs               Serves dist/ with its real CSP for those tests
 │   ├── playwright.config.js
-│   ├── .size-limit.json            Gzip budgets: the entry, each lazy chunk, the sprite, the project pictures
+│   ├── .size-limit.json            Gzip budgets: entry JS, each of the three stylesheets, each lazy chunk, the sprite, the project pictures
 │   ├── index.html
 │   ├── vite.config.js
 │   ├── wrangler.jsonc              Cloudflare Workers configuration: dist/ as static assets, 404.html for unknown paths
@@ -117,17 +117,23 @@ sections are added.
 | Layer | What lives here | Examples |
 |-------|-----------------|----------|
 | `components/layout/` | Chrome that frames every page | `Masthead`, `Dock`, `Footer` |
-| `components/sections/` | One file per visible section, with its stylesheet beside it: the hero and each entry in `sections` | `Hero`, `About`, `Experience`, `Projects`, `Skills`, `Contact` |
+| `components/sections/` | One file per visible section, with its stylesheet beside it: the hero and each entry in `sections` | `Hero`, `Projects`, `Experience`, `About`, `Skills`, `Contact` |
 | `components/ui/` | Reusable primitives, no domain coupling | `Reveal`, `SectionHeader`, `SectionLink`, `ExternalLink`, `Monogram`, `SkipLink`, `ErrorBoundary`, and `scrollToSection`, the helper `SectionLink` and the palette share |
 | `components/widgets/` | The pieces built on a lazily loaded library, each beside the component that loads it | `CommandMenu` (the dock's Search item) loads `CommandPalette` (`cmdk`), and both use `commandShortcut`, the Ctrl/Cmd+K test; `GitHubActivity` (in Projects) loads `GitHubActivityCalendar` (`react-activity-calendar`); `LocationGlobe` (in Contact) loads `cobe` |
-| `data/` | Pure content, no JSX | `about.js`, `experience.js`, `projects.js`, `skills.js`, `portfolio.js`, `commands.js` (built from the others), `github-activity.json` (generated) |
+| `data/` | Pure content, no JSX | `projects.js`, `experience.js`, `about.js`, `skills.js`, `portfolio.js`, `commands.js` (built from the others), `github-activity.json` (generated) |
 | `styles/` | Global CSS in cascade layers, and the two stylesheets linked apart from the entry one | `index.css` (layer order), `tokens.css`, `reset.css`, `base.css`, `layout.css`, `components.css`, `utilities.css`; `sections.css` (everything below the hero, linked after it) and `print.css` (linked last, `media="print"`) |
 
 ### Data-driven content
 
-Entries, figures and links live in `src/data/`, so adding a project, a role or
-a skill is a data edit rather than a JSX edit. The exceptions are prose tied to
-one component: the hero's headline, lead and graduation note in `Hero.jsx`,
+Entries, figures and links live in `src/data/`, so adding a role or a skill,
+or changing a project, is a data edit rather than a JSX edit. The project grid
+is the one place laid out for a count: it is composed for six cards (one
+featured, then two, then three), with spans and the reveal stagger set by
+position in `Projects.css` and picture sizes chosen by position in
+`Projects.jsx`, and the core skills' proofs count "of the six projects". A
+seventh card still renders, alone on a row of its own, and the content tests
+fail until those proofs are recounted. The exceptions are prose tied to
+one component: the hero's status line, headline, lead and graduation note in `Hero.jsx`,
 each section's subtitle passed to `SectionHeader`, and the contact panel's text
 in `Contact.jsx`. See [Development](development.md#updating-site-content) for
 the per-file guide.
@@ -147,7 +153,10 @@ sections themselves, so it follows the order of `sections` in
 apart as sections are edited independently.
 
 `frontend/test/data.test.js` turns the data layer's conventions into checks:
-every About figure must appear in the Experience or Projects entry it cites,
+every figure in the hero's strip (`stats` in `about.js`) must appear in the
+Experience or Projects entry it cites, exactly one project is `featured` and
+it comes first, each of its `facts` restates a phrase an Experience bullet or
+the card still says, every core skill's `proof` names entries that use it,
 project and experience copy stay within shared length ranges, each project
 card carries exactly one of `github` or `sourceNote` and names a picture that
 exists, links are absolute `https`, no export of a data module uses a

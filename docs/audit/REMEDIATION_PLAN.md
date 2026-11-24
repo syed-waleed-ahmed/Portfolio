@@ -100,8 +100,9 @@ and `CHANGELOG.md`.
   pattern still matches the route's, which the invariants test compares, and
   the server's `400` is shown to the visitor as it is.
 - **The Postman collection.** No endpoint, field or status code was added.
-- **The version.** The entries are under `Unreleased` in the changelog. A
-  release is a separate step.
+- **The version.** The entries went under `Unreleased` in the changelog, and
+  the release was left as a separate step. They were released as v2.6.0 the
+  same day.
 - **Anything in the Render dashboard**, during the audit. Afterwards, on the
   owner's instruction, three things were changed there: Auto-Deploy, to After
   CI Checks Pass (F-03); the build command, to `npm ci --omit=dev`; and

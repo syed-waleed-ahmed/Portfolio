@@ -166,4 +166,5 @@ The docs are maintained and detailed, so read the relevant one rather than the w
 | Running the Postman collection, including the rate-limit check | `postman/README.md` |
 | Security controls and non-goals | `docs/security.md` |
 | The 2026-11-20 backend audit: findings, evidence, what was fixed and what is still open | `docs/audit/` |
+| The 2026-11-20 repository cleanup: how dead code was looked for, what was removed, what was kept and why | `docs/repository-cleanup.md` |
 | Contribution scope and PR workflow | `CONTRIBUTING.md` |

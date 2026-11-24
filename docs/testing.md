@@ -8,7 +8,7 @@ Eight layers, each catching something the others cannot:
 | Content tests | `node --test` | Frontend content rules in `src/data/` | Locally, in CI and before the build of every deploy |
 | Repository invariants | `node --test` | Files that must agree (the CSP hash, the palette copies, the mirrored form rules, the dates, the versions), and the house style | Locally, in CI and before the build of every deploy |
 | Browser tests | Playwright + axe-core | The built page in Chromium under its real CSP | Locally and in CI, and on demand against a deployed origin |
-| Bundle budgets | Size Limit | Gzipped size of the entry bundle, each lazy chunk, the skill sprite and the project pictures | Locally after a build, and in CI |
+| Bundle budgets | Size Limit | Gzipped size of the entry JS, each of the three stylesheets, each lazy chunk, the skill sprite and the project pictures | Locally after a build, and in CI |
 | Deploy check | `node` | A deployed origin: the build it serves, every rule in `_headers`, the 404 page, the redirects from HTTP and `www` | After every deploy, and on demand |
 | Link check | lychee | Every link in the data modules, `index.html`, `humans.txt` and the docs | Weekly in GitHub Actions, and on demand |
 | Manual / live | Postman | The API against a running server, local or production | On demand |
@@ -151,7 +151,7 @@ gate.
 | `command palette ids and labels are unique` | Entry ids and labels are unique |
 | `command palette search finds what was asked for` | Searches land on the right entry (a technology on the project's source before its demo), and nonsense matches nothing |
 | `the GitHub activity snapshot is a usable year of days` | At least 300 valid days, in date order |
-| `every project names a picture that exists, with words for it` | Every project has an `image` whose 480 and 960px files, AVIF and WebP, are in `src/assets/projects/`, no two share one, and its `imageAlt` runs 12-40 words |
+| `every project names a picture that exists, with words for it` | Every project has an `image` whose 480 and 960px files, AVIF and WebP, are in `src/assets/projects/`, plus the pair at `imageWidest` where it names one (a whole number over 960); no two share one, and its `imageAlt` runs 12-40 words |
 | `every skill mark names a real tag and a symbol in the sprite` | Every key of `skillIcons` is a skill tag, and the symbols in `src/assets/skill-icons.svg` are exactly the ids it names, so a stale sprite fails with the command that rebuilds it |
 | `all copy is drawable by the self-hosted font subset` | No export of any data module uses a character outside the font's `unicode-range` |
 
@@ -179,7 +179,7 @@ build as well, and every failure message says what to change.
 | `the contact email's BRAND copies the token palette` | `accent`, `accent2` and `ink` equal `--color-indigo`, `--color-accent` and `--color-bg` |
 | `the contribution graph's scale is the accent mixed into the surface` | `THEME` is `--color-surface-raised`, the accent over `--color-surface` at 25, 50 and 75%, then the accent |
 | `the globe's WebGL cyan is the accent` | `CYAN` is `--color-accent` as 0-1 fractions |
-| `every text, accent and status colour is 7:1 on the page and on a panel` | The four text tokens, the accent and the three status colours are each at least 7:1 on `--color-bg` and `--color-surface`, as are the accent ink on the accent and on its hover state, and the inverse pair |
+| `every text, accent and status colour is 7:1 on the page and on a panel` | The four text tokens, the accent, `--color-lavender` and the three status colours are each at least 7:1 on `--color-bg` and `--color-surface`, as are the accent ink on the accent and on its hover state, and the inverse pair |
 | `every hue derives its border and its tint the same way` | For accent, success, warning and danger, `-border` is the hue at 50% and `-subtle` the hue at 10% |
 | `stylesheets take every colour from the tokens` | No stylesheet but `tokens.css` writes a hex value, a colour function, `white` or `black`; mask declarations are exempt, since a mask is painted in alpha, and `print.css` may write one only as a colour token's value for paper |
 | `print rules live in the print stylesheet, and the app links it` | No stylesheet but `styles/print.css` holds an `@media print` rule, and `App.jsx` imports that file with `?url` and links it with `media="print"`, after the sections' stylesheet: its rules override the others from inside the same cascade layers, where the later sheet wins |
@@ -271,9 +271,9 @@ Cloudflare deployment.
 | `printing shows content the visitor had not scrolled to, without the dock` | Under print media the dock is hidden, every `[data-reveal]` element reaches opacity 1 (polled, since Firefox fades them in when a live page is switched to print) and the body text is the ink colour: all three come from `styles/print.css`, so a broken link to it fails here |
 | `the desktop first screen`: `holds the figures clear of the dock on a tall window`, `gives a short window to the copy, with the figures under the fold` | At 1440 by 900 the hero's figures are on the first screen and end at least 8px above the dock. At 1528 by 651 the copy ends at least 8px above the dock and the figures start at or under the fold |
 | `the greeting fills its column without leaving it at <width>px`, six tests | At 320, 390, 768, 1024, 1440 and 1920px the greeting is one line, no wider than its column and more than four fifths of it |
-| `a project card's description`: `is one tap away on a phone`, `and the skills inventory open on a phone and are shown`, `is open, with no toggle, on a desktop` | At 390px the description of an ordinary card is hidden until its toggle is clicked, and so is the skills inventory, which then arrives at full opacity with all 62 tags (it is one of Reveal's elements, held back while shut). At 1440px the toggle is hidden and all six descriptions are visible and rendered, which only `::details-content` makes possible |
+| `a project card's description`: `is one tap away on a phone`, `and the skills inventory open on a phone and are shown`, `is open, with no toggle, on a desktop` | At 390px the description of an ordinary card is hidden until its toggle is clicked, and so is the skills inventory, which then arrives at full opacity with all 62 tags (it is one of Reveal's elements, held back while shut). At 1440px the first ordinary card's toggle is hidden and its description is visible and rendered, which only `::details-content` makes possible, and all six descriptions are in the page |
 | `every skill mark draws from the sprite` | Every `<use>` in a skill tag has a bounding box, so the sprite loaded under the CSP and holds each id: a missing one is an empty box, not an error |
-| `every project picture offers a WebP beside its AVIF, and loads` | Each of the six cards has an AVIF `<source>` and a WebP `<img>` with two widths each, the image has loaded (as AVIF, in this Chromium), its well reaches the card's edges (across the top, or down the left half of the featured card), and the image sits in from the well by the same margin on both sides at 2:1 |
+| `every project picture offers a WebP beside its AVIF, and loads` | Each of the six cards has an AVIF `<source>` and a WebP `<img>` with two widths each, or three where the card names a wider cut, the same number in both, the image has loaded (as AVIF, in this Chromium), its well reaches the card's edges (across the top, or down the left half of the featured card), and the image sits in from the well by the same margin on both sides at 2:1 |
 | `the light under the pointer leaves the project cards' rows aligned` | Hovering a card writes `--spot-x`; each of the last three cards, which share a row at 1440px, still has six children, the picture at the card's very top and all six at the same offsets across the row. An in-flow pseudo-element would take the top row and move the picture down in every card alike |
 
 The suite runs in Chromium only, with four workers locally and two in CI, where
@@ -427,7 +427,7 @@ To run it locally, install lychee and pass the file list from `links.yml`.
 lychee --config lychee.toml --no-progress --root-dir "$PWD/frontend/public" \
   'frontend/src/data/*.js' frontend/index.html frontend/public/humans.txt \
   README.md CONTRIBUTING.md SECURITY.md CODE_OF_CONDUCT.md 'docs/*.md' \
-  'docs/audit/*.md' 'docs/repository-maintenance/*.md' \
+  'docs/audit/*.md' \
   postman/README.md frontend/README.md backend/README.md
 ```
 

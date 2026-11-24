@@ -122,8 +122,8 @@ than by individual commit.
   `print.css`; every stylesheet loaded exactly once, in the right order.
   Browser: the figures clear the dock on a tall window and start under the
   fold on a short one; the greeting fills its column without leaving it at
-  six widths; a card's description is one tap away on a phone and open on a
-  desktop; a printed page loses the dock.
+  six widths; a card's description and the skills inventory are one tap
+  away on a phone and open on a desktop; a printed page loses the dock.
 
 ## [2.6.4] - 2026-11-22
 
@@ -192,7 +192,8 @@ than by individual commit.
   file list in the README, the optional environment variables, what a `502`
   means, the number of demos on Streamlit, and ten comments that described
   code that had changed or was never there. The record is in
-  `docs/repository-maintenance/`.
+  `docs/repository-maintenance/`, since merged into
+  [`docs/repository-cleanup.md`](docs/repository-cleanup.md).
 
 ### Removed
 

@@ -44,8 +44,7 @@ idle spin-down clears, and the lines the process writes to the platform's log.
 
 The dependency graph is a straight line with no cycle: `server` imports
 `routes` and `config`, `routes` imports `services`, `services` imports
-`config`. Graphify was available and was not used: four modules can be read
-whole, and were.
+`config`. All four modules were read whole.
 
 ## What was found sound
 
@@ -96,7 +95,9 @@ Two couplings had no such check:
   frontend only after CI. A change to the request contract is therefore live
   on one side for a few minutes before the other. With one client and one
   repository the answer is to make contract changes backward compatible, not
-  to add versioning. Recorded, not changed.
+  to add versioning. Recorded, not changed. Since F-03 was fixed the same
+  day, Render also waits for CI, so neither side goes live before the checks
+  pass; the two deploys still land minutes apart, and the advice stands.
 
 ## Recommendations
 
