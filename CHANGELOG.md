@@ -15,6 +15,17 @@ than by individual commit.
 
 ## [Unreleased]
 
+### Changed
+
+- **The issue chooser no longer lists the security report twice.** GitHub
+  adds its own entry when private vulnerability reporting is on, so the
+  repository's copy of the same link is gone.
+- **Release notes read as paragraphs.** GitHub keeps every line break in
+  release notes, so notes taken from the wrapped changelog came out as
+  ragged lines. `scripts/release-notes.mjs` joins them for each new release,
+  and the notes of every earlier release were rewritten the same way, with no
+  word changed.
+
 ## [3.0.0] - 2026-11-24
 
 ### Changed

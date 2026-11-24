@@ -159,17 +159,25 @@ and the honeypot are the controls that actually bound abuse.
 | Dependency alerts | Dependabot alerts and security updates are on, so an advisory gets its own pull request outside the weekly schedule when a patched version fits the dependents' ranges, transitive dependencies included. When none does, the fix is an npm `overrides` entry (see [Development](development.md#dependencies)) |
 | Dependency audit | `npm audit --omit=dev --audit-level=high` on both projects; CI fails on a high or critical production advisory |
 | Dependency updates | Dependabot opens grouped weekly PRs (npm minor and patch; GitHub Actions including majors), each release at least seven days old. The cooldown does not delay security updates |
-| Pinned actions | Every GitHub Action is pinned to a full commit SHA, which cannot be moved to other code the way a tag can. Wrangler, which the deploy workflow installs on demand, is pinned to an exact version |
+| Pinned actions | Every GitHub Action is pinned to a full commit SHA, which cannot be moved to other code the way a tag can, and the repository's Actions setting requires it: a workflow that names an action by tag or branch does not run. Wrangler, which the deploy workflow installs on demand, is pinned to an exact version |
+| Branch and merge rules | A ruleset on `main` refuses a force push and a deletion, so published history cannot be rewritten. Pull requests merge by squash only, with the PR's title and description as the commit. A required review or required checks are not set, because the weekly snapshot commit pushes to `main` directly; the deploy waits for CI instead |
+| Releases | Release immutability is on: once a release is published, its tag and assets cannot be moved or replaced |
+| Dependency alerts, beyond advisories | Malware alerts are on as well, and security updates are grouped into one pull request per package manager and directory, like the weekly updates |
 | Least-privilege CI | `permissions: contents: read` at workflow level in CI, the deploy workflow and the link check. `refresh-activity.yml` alone asks for `contents: write`, to commit its snapshot. Every checkout that does not push sets `persist-credentials: false` |
-| Deploy credentials | The frontend is published with `CLOUDFLARE_API_TOKEN`, a repository secret scoped to Workers on one account. The account ID is a repository variable, being an identifier rather than a credential, and the repository invariants keep it out of `frontend/wrangler.jsonc`. The deploy job runs only on a push to `main` once every CI job has passed, after the weekly snapshot commit, or by hand: a pull request is checked but never published. Each deploy is recorded under a GitHub environment named `production` |
+| Deploy credentials | The frontend is published with `CLOUDFLARE_API_TOKEN`, a repository secret scoped to Workers on one account. The account ID is a repository variable, being an identifier rather than a credential, and the repository invariants keep it out of `frontend/wrangler.jsonc`. The deploy job runs only on a push to `main` once every CI job has passed, after the weekly snapshot commit, or by hand: a pull request is checked but never published. The `production` environment it deploys to accepts deployments from `main` only. Each deploy is recorded under a GitHub environment named `production` |
 | Third-party data | The weekly snapshot job reads a community API for contribution counts, validates every day in the response before writing it, and commits the result as data. Visitors' browsers never call that API |
 | Secret hygiene | `.env` files are gitignored while `.env.example` templates are tracked; keys, certificates and keystores are ignored by extension |
 | Runtime pinning | One Node major, pinned in `.nvmrc` and read from there by every workflow, the deploy included; the repository invariants fail on a workflow that hardcodes a version. `engine-strict=true` refuses a mismatched local install through `npm run install:all`; installs inside `frontend/` or `backend/`, and so CI, the deploy workflow and Render, only warn |
 
 Private vulnerability reporting is on too, and is the route
 [`SECURITY.md`](../SECURITY.md) prefers. GitHub's secret scanning, code
-scanning, Dependabot alerts and security updates, and private reporting are
-repository settings rather than tracked files, so a fork does not inherit them.
+scanning, Dependabot alerts and security updates, private reporting, the
+ruleset on `main`, the merge settings, release immutability, required SHA
+pinning and the environment's branch rule are repository settings rather
+than tracked files, so a fork does not inherit them. Secret scanning's
+non-provider patterns and validity checks are not on: GitHub offers them only
+with its paid Secret Protection. Comments on individual commits are off, as
+a channel this project has no use for.
 
 ---
 

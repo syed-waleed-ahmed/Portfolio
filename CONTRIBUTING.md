@@ -173,9 +173,9 @@ what CI enforces. Then:
   over full history. GitHub's CodeQL code scanning runs on the PR as well.
 - Expect review comments. `CODEOWNERS` requests the maintainer's review on
   every PR; this is a small project and review is usually quick.
-- PRs are squash-merged, so the branch history does not need to be tidy, but
-  the PR title does, because it becomes the commit message. A single-commit PR
-  takes that commit's message instead, so it should follow the same format.
+- PRs are squash-merged, the only merge the repository allows, so the branch
+  history does not need to be tidy, but the PR title and description do: the
+  title becomes the commit's subject and the description its body.
 
 Dependabot's PRs, grouped weekly version updates and a security update
 whenever an advisory has a compatible fix, are handled by the maintainer.
