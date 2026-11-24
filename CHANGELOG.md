@@ -15,6 +15,8 @@ than by individual commit.
 
 ## [Unreleased]
 
+## [3.0.0] - 2026-11-24
+
 ### Changed
 
 - **The page was redesigned**, in two passes on 2026-11-23 and 2026-11-24:
@@ -1325,7 +1327,8 @@ The redesign that produced the current site.
   and contact sections.
 - MIT licence and first README.
 
-[Unreleased]: https://github.com/syed-waleed-ahmed/Portfolio/compare/v2.6.4...HEAD
+[Unreleased]: https://github.com/syed-waleed-ahmed/Portfolio/compare/v3.0.0...HEAD
+[3.0.0]: https://github.com/syed-waleed-ahmed/Portfolio/compare/v2.6.4...v3.0.0
 [2.6.4]: https://github.com/syed-waleed-ahmed/Portfolio/compare/v2.6.3...v2.6.4
 [2.6.3]: https://github.com/syed-waleed-ahmed/Portfolio/compare/v2.6.2...v2.6.3
 [2.6.2]: https://github.com/syed-waleed-ahmed/Portfolio/compare/v2.6.1...v2.6.2
