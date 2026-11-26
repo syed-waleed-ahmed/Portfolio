@@ -1,6 +1,6 @@
 {
   "name": "portfolio",
-  "version": "4.0.0",
+  "version": "4.1.0",
   "private": true,
   "description": "Portfolio of Syed Waleed Ahmed: a prerendered React and TypeScript site with engineering case studies, and a Cloudflare Worker for the contact form.",
   "type": "module",
