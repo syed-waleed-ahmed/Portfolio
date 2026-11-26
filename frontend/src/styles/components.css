@@ -1,337 +1,191 @@
-/* Shared component primitives: buttons, tags, links, the monogram, the dot field
-   and the reveal transition. Section-specific styles live next to their JSX
-   in components/**. */
+/* Small pieces used on more than one page. */
 @layer components {
-  /* ========= Buttons =========
-     .btn is the shape. --primary is the one filled action in a group and
-     --secondary the outlined alternative.
+  /* Metadata voice: monospace, muted. The only small-caps-like text. */
+  .meta {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    line-height: var(--leading-snug);
+    color: var(--color-ink-muted);
+    letter-spacing: 0;
+  }
 
-     Every control answers the pointer in the language of its family, and
-     there are four: a filled control brightens (accent to accent-hover); an
-     outlined one, here or the contact channels, takes the accent on its edge
-     and a 10% accent fill, and its label keeps its colour; a text link
-     brightens and underlines; a dock item lifts to the raised surface.
-     Keyboard focus is the same 2px accent ring on all of them. */
-  .btn {
+  .skip-link {
+    position: absolute;
+    top: var(--space-2);
+    left: var(--space-2);
+    z-index: 100;
+    padding: var(--space-2) var(--space-4);
+    background-color: var(--color-ink-strong);
+    color: var(--color-bg);
+    border-radius: var(--radius-sm);
+    translate: 0 -200%;
+
+    &:focus {
+      translate: 0;
+    }
+  }
+
+  /* ===== Buttons ===== */
+  .button {
     display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: var(--space-2);
     min-height: var(--tap-target);
-    padding: var(--space-2) var(--space-5);
-    border: 1px solid transparent;
-    border-radius: var(--radius-md);
-    font-size: var(--text-base);
-    font-weight: var(--weight-semibold);
-    line-height: 1.2;
-    white-space: nowrap;
-    cursor: pointer;
-    transition:
-      background-color var(--duration-fast) ease,
-      border-color var(--duration-fast) ease,
-      color var(--duration-fast) ease,
-      transform var(--duration-fast) ease;
-
-    & svg {
-      flex-shrink: 0;
-      width: 1em;
-      height: 1em;
-    }
-
-    &:active:not(:disabled, [aria-disabled="true"]) {
-      transform: translateY(1px);
-    }
-
-    /* aria-disabled as well as disabled: a busy submit button stays focusable
-       (see Contact.jsx), so a keyboard user keeps their place while it works. */
-    &:disabled,
-    &[aria-disabled="true"] {
-      cursor: progress;
-      opacity: 0.7;
-    }
-  }
-
-  .btn--primary {
+    padding-inline: var(--space-5);
+    border: 1px solid var(--color-accent);
+    border-radius: var(--radius-sm);
     background-color: var(--color-accent);
     color: var(--color-accent-ink);
-
-    &:hover:not(:disabled, [aria-disabled="true"]) {
-      background-color: var(--color-accent-hover);
-    }
-  }
-
-  .btn--secondary {
-    border-color: var(--color-border-strong);
-    color: var(--color-text-strong);
-
-    &:hover:not(:disabled, [aria-disabled="true"]) {
-      border-color: var(--color-accent-border);
-      background-color: var(--color-accent-subtle);
-    }
-  }
-
-  .btn--sm {
-    min-height: 2.25rem;
-    padding-inline: var(--space-4);
     font-size: var(--text-sm);
+    font-weight: var(--weight-semibold);
+    text-decoration: none;
+    transition: background-color var(--duration) var(--ease), border-color var(--duration) var(--ease);
+
+    &:hover {
+      background-color: var(--color-accent-hover);
+      border-color: var(--color-accent-hover);
+      color: var(--color-accent-ink);
+    }
+
+    &[aria-disabled="true"] {
+      cursor: progress;
+      opacity: 0.75;
+    }
+  }
+
+  .button--quiet {
+    background-color: transparent;
+    border-color: var(--color-rule-strong);
+    color: var(--color-ink);
+
+    &:hover {
+      background-color: var(--color-sunk);
+      border-color: var(--color-ink-muted);
+      color: var(--color-ink-strong);
+    }
+  }
+
+  .button--compact {
+    min-height: 2.25rem;
+    padding-inline: var(--space-3);
 
     @media (pointer: coarse) {
       min-height: var(--tap-target);
     }
   }
 
-  /* ========= Label =========
-     The page's small voice: upper case, spaced out and muted, for what
-     locates a thing rather than says it. The role and the place in the
-     masthead, the entry behind a figure, the context over the featured
-     project, the proof under a core skill. One style, so metadata reads as
-     metadata wherever it turns up. */
-  .label {
-    font-size: var(--text-2xs);
-    font-weight: var(--weight-semibold);
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--color-text-muted);
+  /* An inline icon sits on the text line. */
+  .icon {
+    display: inline-block;
+    flex: none;
+    width: 1em;
+    height: 1em;
+    vertical-align: -0.125em;
   }
 
-  /* ========= Subhead =========
-     The h3 inside a section, for blocks that have no card around them. */
-  .subhead {
-    margin-block-end: var(--space-4);
-    font-size: var(--text-md);
-    font-weight: var(--weight-semibold);
-    letter-spacing: var(--tracking-snug);
-  }
-
-  /* ========= Tags =========
-     Neutral on purpose: a technology name is information, not an action, so it
-     does not borrow the accent colour that marks links and buttons. One look
-     wherever a tag appears: a chip cut into its panel, so filled with the
-     page colour like a form field, with a hairline edge. Skills only makes
-     it larger. */
-  .tag-list {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-1);
-    list-style: none;
-  }
-
-  .tag {
+  .kbd {
     display: inline-flex;
     align-items: center;
-    max-width: 100%;
-    padding: 0.125rem 0.5rem;
-    border: 1px solid var(--color-border);
+    gap: 0.15em;
+    padding: 0.05em 0.4em;
+    border: 1px solid var(--color-rule-strong);
     border-radius: var(--radius-sm);
-    background-color: var(--color-bg);
-    font-size: var(--text-2xs);
-    font-weight: var(--weight-medium);
-    line-height: 1.5;
-    color: var(--color-text-soft);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    line-height: 1.3;
+    color: var(--color-ink-muted);
   }
 
-  /* ========= Monogram =========
-     The ringed circle that opens a role or a school row. Holds the place a
-     logo would, without a logo file or a third-party image request. */
-  .monogram {
-    display: grid;
-    place-items: center;
-    width: 2.5rem;
-    aspect-ratio: 1;
-    border: 1px solid var(--color-border-strong);
-    border-radius: var(--radius-full);
-    background-color: var(--color-surface);
-    box-shadow: 0 0 0 2px var(--color-border);
-    color: var(--color-text-soft);
-    font-size: var(--text-sm);
-    font-weight: var(--weight-semibold);
-    line-height: 1;
-  }
-
-  /* ========= Timeline =========
-     A list whose rows each open with a monogram: the roles in Experience and
-     the schools in About. From a tablet up a hairline runs from each monogram
-     to the next, so the list reads as one line through time. Not on a phone,
-     where a role's bullets run the full width under its monogram and the
-     rail would cross them. */
-  .timeline {
-    display: grid;
-    gap: var(--space-6);
+  /* ===== Pipeline strip =====
+     A project's core flow as an ordered list: boxes in a row joined by
+     rules on a wide screen, wrapping onto further lines on a narrow one. */
+  .pipeline {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2) 0;
     list-style: none;
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    line-height: var(--leading-snug);
+    counter-reset: step;
+  }
 
-    @media (min-width: 40rem) {
-      & > li {
-        position: relative;
-      }
+  .pipeline__step {
+    display: flex;
+    align-items: center;
 
-      /* --rail is where the monograms' centre line runs: 1.25rem in, unless
-         a list sets its monograms further along, as Experience does. */
-      & > li:not(:last-child)::before {
-        content: "";
-        position: absolute;
-        inset-block: 3rem calc(0.5rem - var(--space-6));
-        inset-inline-start: var(--rail, 1.25rem);
-        width: 1px;
-        background-color: var(--color-border-strong);
-      }
+    & span {
+      padding: 0.3em 0.6em;
+      border: 1px solid var(--color-rule-strong);
+      border-radius: var(--radius-sm);
+      background-color: var(--color-surface);
+      color: var(--color-ink);
+    }
+
+    & + &::before {
+      content: "" / "";
+      display: block;
+      width: var(--space-4);
+      height: 1px;
+      background-color: var(--color-rule-strong);
     }
   }
 
-  /* ========= Disclosure for a phone =========
-     A native <details> that a phone shows shut and a wider screen holds
-     open. It wraps what a phone visitor can do without at first glance, a
-     project card's description and the full skills inventory, which between
-     them ran to three and a half screens. The content is in the prerendered
-     HTML either way, find-in-page opens it, and it needs no JavaScript.
+  /* ===== Tags ===== */
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: var(--space-2);
+    list-style: none;
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--color-ink-soft);
 
-     The toggle is a full tap target, with the chevron Experience uses,
-     which turns over when the row is open. From a tablet up there is room,
-     so the toggle goes and the inside is shown regardless: ::details-content
-     is what lets a stylesheet show the inside of a closed <details>, and a
-     browser without it keeps the toggle and behaves as a phone does, which
-     loses nothing. */
-  .more {
-    & summary {
-      display: flex;
+    & li {
+      padding: 0.15em 0.55em;
+      border-radius: var(--radius-sm);
+      background-color: var(--color-sunk);
+    }
+  }
+
+  /* ===== Link rows ===== */
+  .link-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2) var(--space-6);
+    list-style: none;
+    font-size: var(--text-sm);
+    font-weight: var(--weight-medium);
+
+    & a {
+      display: inline-flex;
       align-items: center;
       gap: var(--space-2);
       min-height: var(--tap-target);
-      list-style: none;
-      font-size: var(--text-sm);
-      font-weight: var(--weight-medium);
-      color: var(--color-text-muted);
-      cursor: pointer;
-
-      &::-webkit-details-marker {
-        display: none;
-      }
-    }
-
-    & summary svg {
-      width: 1rem;
-      height: 1rem;
-      transition: rotate var(--duration-base) var(--ease-out);
-    }
-
-    &[open] summary svg {
-      rotate: 180deg;
-    }
-
-    @media (min-width: 44rem) {
-      @supports selector(::details-content) {
-        & summary {
-          display: none;
-        }
-
-        &::details-content {
-          content-visibility: visible;
-        }
-      }
     }
   }
 
-  /* ========= Inline link ========= */
-  .text-link {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--space-2);
-    color: var(--color-accent);
-    font-weight: var(--weight-medium);
-    text-decoration: underline;
-    text-decoration-color: transparent;
-    text-underline-offset: 0.25em;
-    transition: text-decoration-color var(--duration-fast) ease, color var(--duration-fast) ease;
-
-    & svg {
-      flex-shrink: 0;
-      width: 0.9em;
-      height: 0.9em;
-    }
-
-    &:hover {
-      color: var(--color-accent-hover);
-      text-decoration-color: currentColor;
-    }
-  }
-
-  /* ========= Dot field =========
-     A sparse grid of dots that fades out from one corner: behind the top of
-     the page, where it sits around the portrait, and in the contact panel.
-     The globe at the foot of the page is drawn in dots too, so the same mark
-     opens and closes it. Static: one gradient tile and a mask, nothing for
-     the compositor to animate. Sits behind its parent's content at
-     z-index -1, so the parent must be a stacking context, or the page.
-     --dot-origin is the corner it is brightest in. */
-  .dot-field {
-    position: absolute;
-    inset: 0 0 auto;
-    z-index: -1;
-    height: 40rem;
-    max-height: 100%;
-    border-radius: inherit;
-    background: radial-gradient(var(--color-dot) 1px, transparent 0) 0 0 / 1.5rem 1.5rem;
-    mask-image: radial-gradient(ellipse 60% 80% at var(--dot-origin, 85% 20%), #000, transparent);
-    pointer-events: none;
-  }
-
-  /* ========= Reveal =========
-     Reveal.jsx sets data-reveal only on content that starts below the fold,
-     after hydration, so prerendered HTML is always fully visible and nothing
-     above the fold ever animates. Blur, fade and a small settle downward. */
-  [data-reveal] {
-    transition:
-      opacity var(--duration-slow) var(--ease-out) var(--reveal-delay, 0ms),
-      translate var(--duration-slow) var(--ease-out) var(--reveal-delay, 0ms),
-      filter var(--duration-slow) var(--ease-out) var(--reveal-delay, 0ms);
-  }
-
-  [data-reveal="pending"] {
-    opacity: 0;
-    translate: 0 var(--reveal-shift);
-    filter: blur(var(--reveal-blur));
-  }
-
-
-  /* The hero's one-shot entrance: the same blur and settle as the reveal, but
-     never invisible. On a phone the hero's text is the Largest Contentful
-     Paint, and Chrome does not count an element at opacity 0, so a fade from
-     nothing held the LCP back until the fade was under way: 168ms later on a
-     throttled phone than the first paint it could have been. Starting
-     visible and blurred, the copy sharpens into place instead, and the LCP
-     is the first paint. */
-  @keyframes blur-fade {
-    from {
-      translate: 0 var(--reveal-shift);
-      filter: blur(var(--reveal-blur));
-    }
-  }
-
-  /* ========= Error boundary fallback ========= */
   .error-fallback {
-    display: grid;
-    justify-items: start;
-    gap: var(--space-3);
-    color: var(--color-text-muted);
-  }
-
-  /* ========= Skip link ========= */
-  .skip-link {
-    position: fixed;
-    inset-block-start: var(--space-3);
-    inset-inline-start: var(--space-3);
-    z-index: var(--z-skip-link);
-    display: inline-flex;
-    align-items: center;
-    min-height: var(--tap-target);
-    padding: var(--space-2) var(--space-4);
+    padding: var(--space-6);
+    border: 1px solid var(--color-danger);
     border-radius: var(--radius-md);
-    background-color: var(--color-accent);
-    color: var(--color-accent-ink);
-    font-weight: var(--weight-semibold);
-    translate: 0 calc(-100% - var(--space-6));
+    color: var(--color-ink);
+  }
+}
 
-    &:focus-visible {
-      translate: 0 0;
-    }
+@layer utilities {
+  .visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border: 0;
   }
 }

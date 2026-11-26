@@ -1,0 +1,32 @@
+{
+  // One project for the app, its tests, the build scripts and the Worker's
+  // shared modules. Type-checked by `npm run typecheck`, never emitted: Vite
+  // compiles the app, and Node runs the tests and scripts by stripping types,
+  // which is why only erasable syntax is allowed and imports keep their .ts
+  // extensions.
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["ES2024", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "jsx": "react-jsx",
+    "types": ["vite/client", "node"],
+    "paths": { "@/*": ["./src/*"] },
+
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "noImplicitOverride": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+
+    "verbatimModuleSyntax": true,
+    "erasableSyntaxOnly": true,
+    "allowImportingTsExtensions": true,
+    "isolatedModules": true,
+    "resolveJsonModule": true,
+    "noEmit": true,
+    "skipLibCheck": true
+  },
+  "include": ["src", "test", "e2e", "scripts", "worker", "vite.config.ts", "playwright.config.ts"]
+}

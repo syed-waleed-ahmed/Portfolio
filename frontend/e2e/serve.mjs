@@ -1,14 +1,15 @@
-// Serves the built site the way Cloudflare does, for the Playwright suite.
+// Serves the built site the way Cloudflare does, for the browser tests.
 //
-// vite preview ignores public/_headers, so a CSP that blocks the analytics
-// snippet, the font or a lazy chunk looks fine there and breaks only in
-// production. This server sends the "/*" block of dist/_headers (the CSP and
-// the other security headers) with every response, so the suite runs under
-// the policy visitors actually get. Unknown paths get 404.html with a 404, as
-// on Cloudflare. Node built-ins only.
+// `vite preview` ignores public/_headers, so a CSP that blocks a script or a
+// stylesheet looks fine there and breaks only in production. This server
+// sends the "/*" block of dist/_headers with every response, so the suite
+// runs under the policy visitors get. Like Cloudflare it serves a directory's
+// index.html, redirects /work/x to /work/x/, and answers unknown paths with
+// 404.html and a 404. The contact API is not served here: the tests answer
+// it themselves. Node built-ins only.
 import { createServer } from "node:http";
+import { existsSync, statSync } from "node:fs";
 import { readFile } from "node:fs/promises";
-import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { extname, join, normalize } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -17,25 +18,6 @@ const PORT = Number(process.env.PORT) || 4174;
 
 if (!existsSync(join(DIST, "index.html"))) {
   console.error("e2e/serve.mjs: frontend/dist is missing. Run npm run build first.");
-  process.exit(1);
-}
-
-// A build made with VITE_API_BASE_URL set, as frontend/.env does for work on
-// the contact form, calls that origin instead, and the real CSP rightly blocks
-// it. Vite inlines the value, so such a build no longer contains the default
-// origin from Contact.jsx. Refused here with the fix, rather than failing the
-// contact tests with "could not be reached".
-const contact = readFileSync(fileURLToPath(new URL("../src/components/sections/Contact.jsx", import.meta.url)), "utf8");
-const apiOrigin = contact.match(/VITE_API_BASE_URL \|\| "(https:\/\/[^"]+)"/)?.[1];
-const entry = readdirSync(join(DIST, "assets")).find((name) => /^index-.*\.js$/.test(name));
-if (apiOrigin && entry && !readFileSync(join(DIST, "assets", entry), "utf8").includes(apiOrigin)) {
-  console.error(
-    `e2e/serve.mjs: frontend/dist was built with VITE_API_BASE_URL set, so it does not call ${apiOrigin}.\n` +
-      `Rebuild pointing it at that origin, which works in any shell:\n` +
-      `  bash:       VITE_API_BASE_URL=${apiOrigin} npm run build\n` +
-      `  PowerShell: $env:VITE_API_BASE_URL='${apiOrigin}'; npm run build\n` +
-      "CI builds without frontend/.env, so it needs neither."
-  );
   process.exit(1);
 }
 
@@ -54,14 +36,12 @@ const TYPES = {
   ".xml": "application/xml; charset=utf-8",
 };
 
-// The indented "Name: value" lines under the "/*" path, up to the next path
-// or comment. Only that block applies to every response; the per-path blocks
-// below it are cache rules, which a test run has no use for.
+// The indented "Name: value" lines under "/*", up to the next path.
 const globalHeaders = (text) => {
   const headers = {};
   let inBlock = false;
-  for (const line of text.split("\n")) {
-    if (!line.trim()) continue;
+  for (const line of text.split(/\r?\n/)) {
+    if (!line.trim() || line.trim().startsWith("#")) continue;
     if (!/^\s/.test(line)) {
       inBlock = line.trim() === "/*";
       continue;
@@ -74,11 +54,23 @@ const globalHeaders = (text) => {
 };
 
 const HEADERS = globalHeaders(await readFile(join(DIST, "_headers"), "utf8"));
+// Playwright's WebKit upgrades http://127.0.0.1 to https under this directive
+// and then cannot load anything, so a WebKit run can ask for it to be dropped.
+if (process.env.E2E_NO_UPGRADE) HEADERS["Content-Security-Policy"] = HEADERS["Content-Security-Policy"].replace(/;\s*upgrade-insecure-requests/, "");
 
 createServer(async (req, res) => {
   const { pathname } = new URL(req.url, "http://localhost");
-  const path = pathname === "/" ? "/index.html" : decodeURIComponent(pathname);
-  const file = normalize(join(DIST, path));
+  let file = normalize(join(DIST, decodeURIComponent(pathname)));
+
+  // A directory without its trailing slash is redirected, as Cloudflare does.
+  if (file.startsWith(DIST) && existsSync(file) && statSync(file).isDirectory()) {
+    if (!pathname.endsWith("/")) {
+      res.writeHead(307, { ...HEADERS, Location: `${pathname}/` });
+      res.end();
+      return;
+    }
+    file = join(file, "index.html");
+  }
 
   let status = 200;
   let body;
@@ -88,14 +80,12 @@ createServer(async (req, res) => {
     body = await readFile(file);
   } catch {
     status = 404;
-    body = await readFile(join(DIST, "404.html"));
+    file = join(DIST, "404.html");
+    body = await readFile(file);
   }
 
-  res.writeHead(status, {
-    ...HEADERS,
-    "Content-Type": TYPES[status === 404 ? ".html" : extname(file)] ?? "application/octet-stream",
-  });
+  res.writeHead(status, { ...HEADERS, "Content-Type": TYPES[extname(file)] ?? "application/octet-stream" });
   res.end(body);
 }).listen(PORT, "127.0.0.1", () => {
-  console.log(`e2e/serve.mjs: serving frontend/dist with its CSP on http://127.0.0.1:${PORT}`);
+  console.log(`e2e/serve.mjs: serving frontend/dist with its headers on http://127.0.0.1:${PORT}`);
 });

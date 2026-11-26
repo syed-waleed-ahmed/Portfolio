@@ -1,76 +1,43 @@
-// Prerenders the app into dist/index.html, the last step of `npm run build`.
+// Prerenders every page into dist/, the last step of `npm run build`.
 //
-// The client build (dist/) and the SSR build of src/entry-server.jsx
-// (dist-server/) run first. This script renders the page once with the server
-// bundle, places the markup inside <div id="root">, and removes dist-server/.
-// main.jsx then hydrates that markup instead of building the page from an
-// empty root, so content, headings and links are in the HTML response itself.
-import { readFile, rm, writeFile } from "node:fs/promises";
-import { projects } from "../src/data/projects.js";
+// The client build (dist/) and the SSR build of src/entry-server.tsx
+// (dist-server/) run first. Each page in the route table gets its own HTML
+// file: the template from dist/index.html with that page's <head> and markup
+// in place of the two placeholders. The sitemap is written from the same list,
+// and dist-server/ is removed.
+import { mkdir, readFile, rm, writeFile } from "node:fs/promises";
+import { dirname } from "node:path";
+import { fileURLToPath } from "node:url";
 
-const distIndex = new URL("../dist/index.html", import.meta.url);
-const serverDir = new URL("../dist-server/", import.meta.url);
-const serverEntry = new URL("entry-server.js", serverDir);
+const DIST = new URL("../dist/", import.meta.url);
+const SERVER = new URL("../dist-server/", import.meta.url);
+const HEAD = "<!--app-head-->";
+const ROOT = "<!--app-html-->";
 
-const ROOT = '<div id="root"></div>';
-
-const { render } = await import(serverEntry.href);
-const html = await readFile(distIndex, "utf8");
-
-if (!html.includes(ROOT)) {
-  throw new Error(`prerender: ${ROOT} not found in dist/index.html`);
+const { pages, SITE } = await import(new URL("entry-server.js", SERVER).href);
+const template = await readFile(new URL("index.html", DIST), "utf8");
+for (const marker of [HEAD, ROOT]) {
+  if (!template.includes(marker)) throw new Error(`prerender: ${marker} is missing from dist/index.html`);
 }
 
-// The projects as structured data, built from the module the Projects section
-// renders, so search engines read the same names, descriptions and links as
-// visitors and the two cannot drift. index.html keeps the hand-written Person,
-// WebSite and ProfilePage blocks. Each item's author is the Person; nothing
-// points from the ProfilePage to the list, because "hasPart" takes only a
-// CreativeWork and the schema.org validator reports an ItemList there as an
-// error. A card with a public repository is SoftwareSourceCode; one without
-// (RemindrAI, a private repository) is a plain CreativeWork, so no private URL
-// is ever published. The demo, where one runs, is the item's url.
-const SITE = "https://syedwaleedahmed.me/";
-const LANGUAGES = new Set(["Python", "TypeScript", "JavaScript"]);
-const projectsLd = {
-  "@context": "https://schema.org",
-  "@type": "ItemList",
-  "@id": `${SITE}#projects`,
-  name: "Selected projects by Syed Waleed Ahmed",
-  numberOfItems: projects.length,
-  itemListElement: projects.map((project, index) => ({
-    "@type": "ListItem",
-    position: index + 1,
-    item: {
-      "@type": project.github ? "SoftwareSourceCode" : "CreativeWork",
-      name: project.title,
-      description: project.description,
-      author: { "@id": `${SITE}#person` },
-      keywords: project.stack.join(", "),
-      ...(project.github && {
-        codeRepository: project.github,
-        programmingLanguage: project.stack.filter((tech) => LANGUAGES.has(tech)),
-      }),
-      url: project.demo ?? project.github ?? `${SITE}#projects`,
-    },
-  })),
-};
-// "<" is escaped so no string in the data can close the script element early.
-const projectsScript = `<script type="application/ld+json">${JSON.stringify(projectsLd).replace(/</g, "\\u003c")}</script>`;
+// "/" and "/work/x/" are directories served by their index.html; "/404"
+// becomes 404.html, which the host serves for unknown paths.
+const fileFor = (path) => (path.endsWith("/") ? `${path}index.html` : `${path}.html`).slice(1);
 
-if (!html.includes("</head>")) {
-  throw new Error("prerender: </head> not found in dist/index.html");
+for (const page of pages) {
+  const file = new URL(fileFor(page.path), DIST);
+  await mkdir(dirname(fileURLToPath(file)), { recursive: true });
+  // Function replacements, so a "$" in the markup is inserted as written.
+  await writeFile(file, template.replace(HEAD, () => page.head).replace(ROOT, () => page.html));
 }
 
-const appHtml = render();
-// Function replacements, so a "$" in the rendered markup or the data is
-// inserted as-is rather than read as a replacement pattern.
+const urls = pages
+  .filter((page) => page.indexable)
+  .map((page) => `  <url>\n    <loc>${SITE.url}${page.path}</loc>\n    <lastmod>${SITE.updated}</lastmod>\n  </url>`);
 await writeFile(
-  distIndex,
-  html
-    .replace("</head>", () => `${projectsScript}\n  </head>`)
-    .replace(ROOT, () => `<div id="root">${appHtml}</div>`),
+  new URL("sitemap.xml", DIST),
+  `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls.join("\n")}\n</urlset>\n`
 );
-await rm(serverDir, { recursive: true, force: true });
 
-console.log(`prerender: wrote ${(appHtml.length / 1024).toFixed(1)} KB of markup into dist/index.html`);
+await rm(SERVER, { recursive: true, force: true });
+console.log(`prerender: wrote ${pages.length} pages and a sitemap of ${urls.length} URLs`);
