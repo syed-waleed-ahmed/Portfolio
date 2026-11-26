@@ -20,7 +20,10 @@ const scriptsOf = (page) => {
 
 export default [
   { name: "Home page scripts (entry and preloads)", path: scriptsOf("index.html"), gzip: true, limit: "87 kB" },
-  { name: "Case study page scripts, before its own chunk", path: scriptsOf("work/remindrai/index.html"), gzip: true, limit: "87 kB" },
+  // Counts the case study's own chunk, which the page now preloads. It
+  // replaces 87 kB before the chunk plus 8 kB for the chunk (95 kB in all,
+  // 92.96 kB used), so 92 kB is tighter than either.
+  { name: "Case study page scripts, its own chunk included", path: scriptsOf("work/remindrai/index.html"), gzip: true, limit: "92 kB" },
   {
     name: "Largest case study chunk",
     path: "dist/assets/remindrai-*.js",

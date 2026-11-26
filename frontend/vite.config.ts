@@ -13,6 +13,12 @@ export default defineConfig({
   server: {
     proxy: { "/api": "http://127.0.0.1:8787" },
   },
+  build: {
+    // Maps each source module to its chunk and the chunks it imports, so the
+    // prerender can preload exactly what a page will load. Read and deleted
+    // by scripts/prerender.mjs; never deployed.
+    manifest: true,
+  },
   define: {
     // Fixed at build time so the prerendered HTML and the hydrating client
     // print the same year.

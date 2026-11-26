@@ -62,10 +62,11 @@ createServer(async (req, res) => {
   const { pathname } = new URL(req.url, "http://localhost");
   let file = normalize(join(DIST, decodeURIComponent(pathname)));
 
-  // A directory without its trailing slash is redirected, as Cloudflare does.
+  // A directory without its trailing slash is redirected permanently, as
+  // dist/_redirects asks the host to.
   if (file.startsWith(DIST) && existsSync(file) && statSync(file).isDirectory()) {
     if (!pathname.endsWith("/")) {
-      res.writeHead(307, { ...HEADERS, Location: `${pathname}/` });
+      res.writeHead(301, { ...HEADERS, Location: `${pathname}/` });
       res.end();
       return;
     }

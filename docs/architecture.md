@@ -43,11 +43,18 @@ docs/              This file, development, deployment, design
    every entry in `PAGES` (from `routes.ts`) to HTML, with its `<head>`.
 3. `scripts/prerender.mjs` writes each page into `dist/` (`/` to
    `index.html`, `/work/remindrai/` to `work/remindrai/index.html`, the 404
-   page to `404.html`) and generates `sitemap.xml` from the same list.
+   page to `404.html`) and generates `sitemap.xml` from the same list. From
+   Vite's manifest it adds a `modulepreload` link for each chunk the page will
+   load beyond the entry's, then deletes the manifest. It also writes
+   `_redirects`, a permanent redirect for each page asked for without its
+   trailing slash; the host's own is a 307.
 
-In the browser, `main.tsx` matches the URL to a route, loads that page's case
-study chunk if it has one, and hydrates. Navigation between pages is ordinary
-links: there is no client-side router, because every page is already a file.
+In the browser, `main.tsx` matches the URL to a route, loads that page's body,
+which is a chunk of its own (the home page, each case study, privacy, 404), and
+hydrates. A page never downloads another page's code, and because the chunk is
+preloaded the wait costs no extra round trip. Navigation between pages is
+ordinary links: there is no client-side router, because every page is already
+a file.
 
 Everything is readable without JavaScript. Scripts add the command palette,
 the form's inline validation and status messages, and closing the phone menu
