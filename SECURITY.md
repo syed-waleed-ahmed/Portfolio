@@ -9,6 +9,8 @@ Please report privately, not in a public issue:
 - **Preferred:** GitHub's [private vulnerability report](https://github.com/syed-waleed-ahmed/Portfolio/security/advisories/new).
 - **Or email** [syedwaleedahmed9@gmail.com](mailto:syedwaleedahmed9@gmail.com) with the subject `Security: <summary>`.
 
+The site states both at [/.well-known/security.txt](https://syedwaleedahmed.me/.well-known/security.txt) (RFC 9116), written at build time.
+
 Include what you found, how to reproduce it, and its impact. I will acknowledge a report within 72 hours and aim
 to fix a high-severity issue within 14 days.
 

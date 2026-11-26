@@ -100,7 +100,8 @@ jobs:
         run: npm run build --ignore-scripts
 
       # Served by e2e/serve.mjs with the headers from public/_headers, so the
-      # suite runs under the production CSP. Firefox and WebKit are run by hand.
+      # suite runs under the production CSP. Firefox and WebKit run in the
+      # job below.
       - name: Browser tests
         run: npm run test:e2e -- --project=chromium
 
@@ -109,6 +110,59 @@ jobs:
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: playwright-report
+          path: frontend/playwright-report/
+          retention-days: 14
+
+  # The same suite in the engines behind Firefox and Safari, one job each so a
+  # failure names its engine.
+  e2e-engines:
+    name: Browser tests (${{ matrix.browser }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - browser: firefox
+            no-upgrade: ""
+          # Playwright's WebKit applies upgrade-insecure-requests to the local
+          # http server and then loads nothing; serve.mjs drops the directive
+          # when E2E_NO_UPGRADE is set.
+          - browser: webkit
+            no-upgrade: "1"
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Use Node.js from .nvmrc
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: ".nvmrc"
+          cache: "npm"
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install ${{ matrix.browser }}
+        run: npx playwright install --with-deps ${{ matrix.browser }}
+
+      - name: Build
+        run: npm run build --ignore-scripts
+
+      - name: Browser tests
+        run: npm run test:e2e -- --project=${{ matrix.browser }}
+        env:
+          E2E_NO_UPGRADE: ${{ matrix.no-upgrade }}
+
+      - name: Upload the Playwright report
+        if: failure()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: playwright-report-${{ matrix.browser }}
           path: frontend/playwright-report/
           retention-days: 14
 
@@ -133,7 +187,7 @@ jobs:
   # finished.
   deploy:
     name: Deploy
-    needs: [frontend, e2e, secret-scan]
+    needs: [frontend, e2e, e2e-engines, secret-scan]
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     uses: ./.github/workflows/deploy.yml
     secrets:

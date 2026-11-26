@@ -23,7 +23,7 @@ export default defineConfig({
   },
   projects: [
     { name: "chromium", use: { ...devices["Desktop Chrome"] } },
-    // Run by hand; CI runs Chromium only. WebKit needs E2E_NO_UPGRADE=1 (see e2e/serve.mjs).
+    // CI runs all three. WebKit needs E2E_NO_UPGRADE=1 (see e2e/serve.mjs).
     { name: "firefox", use: { ...devices["Desktop Firefox"] } },
     { name: "webkit", use: { ...devices["Desktop Safari"] } },
   ],

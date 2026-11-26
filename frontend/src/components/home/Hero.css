@@ -90,12 +90,6 @@
     color: var(--color-ink-soft);
   }
 
-  .hero__cta {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-3);
-  }
-
   .hero__portrait {
     grid-row: 1;
     grid-column: 2;
@@ -135,8 +129,7 @@
     }
 
     .hero__title,
-    .hero__lead,
-    .hero__cta {
+    .hero__lead {
       grid-column: 1 / -1;
     }
   }

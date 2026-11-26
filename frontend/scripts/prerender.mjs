@@ -14,7 +14,7 @@ const SERVER = new URL("../dist-server/", import.meta.url);
 const HEAD = "<!--app-head-->";
 const ROOT = "<!--app-html-->";
 
-const { pages, SITE } = await import(new URL("entry-server.js", SERVER).href);
+const { pages, PERSON, SITE } = await import(new URL("entry-server.js", SERVER).href);
 const template = await readFile(new URL("index.html", DIST), "utf8");
 for (const marker of [HEAD, ROOT]) {
   if (!template.includes(marker)) throw new Error(`prerender: ${marker} is missing from dist/index.html`);
@@ -39,5 +39,22 @@ await writeFile(
   `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls.join("\n")}\n</urlset>\n`
 );
 
+// RFC 9116. Expires is required and must not be more than a year away, so it
+// is set from the build: every deploy moves it forward.
+const expires = new Date(Date.now() + 364 * 24 * 60 * 60 * 1000).toISOString().replace(/\.\d+Z$/, "Z");
+await mkdir(new URL(".well-known/", DIST), { recursive: true });
+await writeFile(
+  new URL(".well-known/security.txt", DIST),
+  [
+    `Contact: ${SITE.repository}/security/advisories/new`,
+    `Contact: mailto:${PERSON.email}`,
+    `Expires: ${expires}`,
+    "Preferred-Languages: en",
+    `Canonical: ${SITE.url}/.well-known/security.txt`,
+    `Policy: ${SITE.repository}/blob/main/SECURITY.md`,
+    "",
+  ].join("\n")
+);
+
 await rm(SERVER, { recursive: true, force: true });
-console.log(`prerender: wrote ${pages.length} pages and a sitemap of ${urls.length} URLs`);
+console.log(`prerender: wrote ${pages.length} pages, a sitemap of ${urls.length} URLs and security.txt`);
