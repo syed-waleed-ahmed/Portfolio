@@ -42,9 +42,9 @@ const RETRIEVAL = [
 
 const BOOTSTRAP = [
   { metric: "Recall@5", delta: "+0.025", ci: "0.000 to +0.067", split: "2 better, 0 worse" },
-  { metric: "MRR@5", delta: "+0.023", ci: "-0.010 to +0.062", split: "4 better, 2 worse" },
-  { metric: "nDCG@5", delta: "+0.026", ci: "-0.003 to +0.060", split: "5 better, 2 worse" },
-  { metric: "MRR@3", delta: "+0.019", ci: "-0.017 to +0.058", split: "3 better, 1 worse" },
+  { metric: "MRR@5", delta: "+0.023", ci: "-0.010 to +0.061", split: "4 better, 2 worse" },
+  { metric: "nDCG@5", delta: "+0.026", ci: "-0.003 to +0.059", split: "5 better, 2 worse" },
+  { metric: "MRR@3", delta: "+0.019", ci: "-0.014 to +0.056", split: "3 better, 1 worse" },
 ];
 
 const ANSWERS = [

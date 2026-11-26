@@ -5,9 +5,9 @@ import { projectBySlug } from "@/content/projects.ts";
 
 // Sources: the repository's README, MODEL_CARD.md, docs/architecture
 // (DECISIONS.md, REQUEST_LIFECYCLE.md, MODEL_PIPELINE.md), evaluation.py,
-// eval/baseline.json at three commits, and the release artifact of training
-// run 43622001406 for the base model's per-item scores. The paired bootstrap
-// intervals were computed from those per-item scores on 2026-11-25.
+// eval/baseline.json at three commits, and the Gate 1 per-item reports of
+// training run 43622001406, from which the paired bootstrap intervals are
+// computed (scripts/paired_bootstrap.py in that repository).
 const project = projectBySlug("fastapi-niche-assistant")!;
 
 const pipeline: DiagramSpec = {
@@ -45,7 +45,7 @@ const COMPARISONS = [
 
 const COMPONENTS = [
   { metric: "Keyword recall", ft: "0.711", base: "0.622", ci: "+0.090 (0.022 to 0.161)" },
-  { metric: "Code that parses", ft: "0.856", base: "0.721", ci: "" },
+  { metric: "Code that parses", ft: "0.856", base: "0.721", ci: "+0.135 (0.039 to 0.231)" },
   { metric: "ROUGE-L", ft: "0.455", base: "0.345", ci: "+0.110 (0.091 to 0.129)" },
 ];
 
@@ -234,7 +234,7 @@ export default function FastApiNicheAssistantCaseStudy() {
                         <th scope="row">{row.metric}</th>
                         <td className="num">{row.ft}</td>
                         <td className="num">{row.base}</td>
-                        <td className="num">{row.ci || "not computed"}</td>
+                        <td className="num">{row.ci}</td>
                       </tr>
                     ))}
                   </tbody>
