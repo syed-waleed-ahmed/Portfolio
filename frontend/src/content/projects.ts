@@ -19,6 +19,8 @@ export interface Project {
   // What it is, in a phrase.
   subtitle: string;
   context: "Master's thesis, MemorAIz S.r.l." | "Independent project";
+  // When it was worked on, from its repository's history: most projects began
+  // as smaller versions and were rebuilt into deployed services in Nov 2026.
   period: string;
   // Two sentences at most: the problem and the approach.
   summary: string;
@@ -48,7 +50,7 @@ export const projects: Project[] = [
     decision:
       "Identity never travels in an argument the model controls: the tenant comes from the API key and the user from the host app's session, so a prompt injection cannot reach another user's reminders.",
     evidence:
-      "A 92-case evaluation of the agent caught real regressions, among them a prompt edit that dropped one model from 17 to 12 of 18 scheduling cases. In a local benchmark the median claim of 100 due reminders took 7.5 ms at 1K pending and 11.1 ms at 100K.",
+      "A 92-case evaluation of the agent caught real regressions, among them a prompt edit that dropped one model from 17 to 12 of 18 conversation and correction runs. In a local benchmark the median claim of 100 due reminders took 7.5 ms at 1K pending and 11.1 ms at 100K.",
     stack: ["TypeScript", "Next.js", "Vercel AI SDK", "Mastra", "Turso / libSQL", "Upstash QStash"],
     languages: ["TypeScript"],
     source: { kind: "private", note: "Private repository, property of MemorAIz S.r.l." },
@@ -58,14 +60,14 @@ export const projects: Project[] = [
     title: "Self-Correcting RAG",
     subtitle: "hybrid retrieval with a relevance filter and a grounding check",
     context: "Independent project",
-    period: "Nov 2025 - Nov 2026",
+    period: "Nov 2025; rebuilt Nov 2026",
     summary:
       "A question-answering service that combines BM25 and vector search, drops off-topic passages with an LLM filter, and grades each answer against its sources before returning it, allowing one correction when the grade is low.",
     pipeline: ["Question", "BM25 + vector search", "Rank fusion", "Relevance filter", "Answer", "Grounding check", "One correction"],
     decision:
-      "Embeddings run on ONNX instead of torch: half the image size (211 against 428 MB) and a quarter of the query time (3.0 against 12.3 ms) with identical vectors, which is what fits a free-tier container.",
+      "Embeddings run on ONNX instead of torch: half the peak memory (211 against 428 MB) and a quarter of the query time (3.0 against 12.3 ms), with identical vectors. The service peaks at 210 MB in a 512 MB free-tier container.",
     evidence:
-      "Hybrid search lifted recall@5 from 0.967 to 0.992 on 60 author-written questions, but that is two questions, and a paired bootstrap interval for the gain (0.000 to 0.067) does not exclude zero. On the answers it judged, self-correction changed no outcome and cost about 2.6 times the tokens.",
+      "Load-tested to 300 simulated users with no failures (model stubbed), and hybrid search was never worse than dense on recall. On 60 author-written questions, though, its gain is two questions with an interval that includes zero, and self-correction changed no outcome at 2.6 times the tokens.",
     stack: ["Python", "FastAPI", "PostgreSQL / pgvector", "Next.js", "Prometheus"],
     languages: ["Python", "TypeScript"],
     source: { kind: "public", repository: "https://github.com/syed-waleed-ahmed/Self-Correcting-RAG" },
@@ -76,14 +78,14 @@ export const projects: Project[] = [
     title: "LLM-as-Judge",
     subtitle: "an evaluation library for LLM outputs",
     context: "Independent project",
-    period: "Nov 2025 - Nov 2026",
+    period: "Nov 2025; rebuilt Nov 2026",
     summary:
       "A Python library, CLI, REST API and dashboard that grade LLM outputs with an LLM judge: pairwise, pointwise, reference-based, ranking, RAG faithfulness and agent trajectories.",
     pipeline: ["Outputs to compare", "Judge prompt, both orders", "Parsed scores", "Bias heuristics", "Report, API or dashboard"],
     decision:
       "A pair can be judged in both orders, in parallel, and a winner that changes with the order is flagged, because LLM judges favour whichever answer they read first. The numbers in a verdict always override the judge's prose.",
     evidence:
-      "Published on PyPI with 98% line coverage of the library in CI. It has not been validated against human labels, its bundled benchmarks are 49 synthetic rows, and its bias flags are heuristics such as a 2x length ratio.",
+      "Published on PyPI with 98% line coverage of the library in CI. It is not yet validated against human labels, and apart from the order check its bias flags are heuristics, such as a 2x length ratio.",
     stack: ["Python", "Pydantic", "FastAPI", "Streamlit", "Groq / Ollama"],
     languages: ["Python"],
     source: { kind: "public", repository: "https://github.com/syed-waleed-ahmed/LLM-as-Judge" },
@@ -94,7 +96,7 @@ export const projects: Project[] = [
     title: "FastAPI Niche Assistant",
     subtitle: "a fine-tuned small model served on CPU",
     context: "Independent project",
-    period: "Nov 2025 - Nov 2026",
+    period: "Nov 2025 to Jul 2026; rebuilt Nov 2026",
     summary:
       "Qwen2.5-Coder-1.5B fine-tuned with LoRA to answer FastAPI questions, quantized to a 1 GB GGUF and served by llama.cpp on CPU behind an OpenAI-compatible streaming API, with a Cloudflare Worker in front.",
     pipeline: ["Q&A pairs", "LoRA fine-tune", "Merge", "GGUF quantization", "llama.cpp on Cloud Run", "Worker at the edge"],
@@ -112,14 +114,14 @@ export const projects: Project[] = [
     title: "AI Workflow Assistant",
     subtitle: "a data analyst for spreadsheets",
     context: "Independent project",
-    period: "Nov 2025 - Nov 2026",
+    period: "Nov 2025; rebuilt Nov 2026",
     summary:
       "Upload a CSV or Excel file, ask a question in plain language, and get a report with metrics, charts and findings. A LangGraph agent plans the analysis and calls deterministic pandas tools; nothing the model writes is executed as code.",
     pipeline: ["Spreadsheet", "Profile", "Agent plans", "pandas tools", "Draft report", "Number check", "Report"],
     decision:
       "The model never writes code that runs. It chooses among fixed, tested pandas tools, and every number in the report's findings is checked against the values those tools computed.",
     evidence:
-      "A figure that matches no computed value triggers one regeneration, then is flagged in the report. The check covers numbers, not wording, and its accuracy has not yet been measured on a test set.",
+      "Another user's data answers 404 across 17 tested routes, and calculated columns accept arithmetic only, tested against about 30 injection payloads. Every figure in a report is traced to a computed value; how often the reports are right has not been measured.",
     stack: ["Python", "LangGraph", "FastAPI", "Next.js", "PostgreSQL"],
     languages: ["Python", "TypeScript"],
     source: { kind: "public", repository: "https://github.com/syed-waleed-ahmed/AI-Workflow-Assistant" },
@@ -130,14 +132,14 @@ export const projects: Project[] = [
     title: "Multi-Agent Research Team",
     subtitle: "a three-stage research pipeline with live progress",
     context: "Independent project",
-    period: "Nov 2025 - Nov 2026",
+    period: "Nov 2025 to Jul 2026; rebuilt Nov 2026",
     summary:
       "Three CrewAI agents research a topic on the web, write code examples and assemble a cited Markdown report, while the browser streams every search, retry and provider fallback as it happens.",
     pipeline: ["Topic", "Research agent", "Coding agent", "Manager agent", "Link check", "Cited report"],
     decision:
       "A fixed three-stage pipeline instead of agents delegating to each other: web search is the only tool, so cost and behaviour stay bounded, and each stage can re-run on a fallback model when a provider rate-limits.",
     evidence:
-      "Report quality has not been measured. Links are checked against the URLs the search returned, code examples are parsed but never run, and a job interrupted mid-run is marked failed rather than resumed.",
+      "Each stage survives a provider's rate limit by backing off and then re-running on a fallback model, and every report link must be a URL the search returned. Report quality has not been measured, and code examples are parsed, not run.",
     stack: ["Python", "CrewAI", "LiteLLM", "FastAPI", "React"],
     languages: ["Python", "TypeScript"],
     source: { kind: "public", repository: "https://github.com/syed-waleed-ahmed/Multi-Agent-Research-Team" },

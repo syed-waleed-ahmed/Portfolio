@@ -5,9 +5,6 @@ name: Deploy
 #
 #   * ci.yml calls it once every check has passed on a push to main, so a
 #     commit that fails lint, a test, a size budget or the audit never ships.
-#   * refresh-activity.yml calls it after its weekly commit. That commit is
-#     pushed with GITHUB_TOKEN, which starts no CI run, so nothing else would
-#     publish it.
 #   * workflow_dispatch republishes main by hand, with no new commit.
 #
 # The Worker that serves the contact API ships in the same deploy. Its mail

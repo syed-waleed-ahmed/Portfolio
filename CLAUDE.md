@@ -45,7 +45,7 @@ suite; a new dependency or a change to what the entry imports needs `npm run siz
 - A case study is `src/case-studies/<slug>.tsx` using `components/case-study/CaseStudy.tsx`; its diagrams are
   `DiagramSpec` data drawn by `Diagram.tsx`. Adding a project means a `projects.ts` entry and that file; the route,
   sitemap, structured data and palette entry follow.
-- The contact API (`worker/contact.ts`): parse, rate-limit, validate, honeypot, send, in that order. Its rules come
+- The contact API (`worker/contact.ts`): parse, validate, rate-limit, honeypot, send, in that order. Its rules come
   from `src/shared/contact.ts`, which the form imports too. The limiter is a Durable Object (`worker/limiter.ts`).
   Logs carry event names only, never what a visitor typed.
 - The command palette ranks entries with `rankCommands` in `src/commands.ts` and renders them in that order with

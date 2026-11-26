@@ -101,8 +101,10 @@ its diagrams as data (`components/case-study/Diagram.tsx` draws them).
 `GET /api/health` answers `{ status: "ok", mailer: "configured" | "missing" }`
 and is what the deploy verification reads.
 
-The order is parse, limit, validate, honeypot, send: a body that cannot be
-parsed costs no quota. The limiter is a Durable Object per client holding only
+The order is parse, validate, limit, honeypot, send: a body that cannot be
+parsed or does not validate costs no quota, so a visitor fixing a typo is never
+locked out. If the limiter cannot answer, the API answers 503 and sends
+nothing. The limiter is a Durable Object per client holding only
 the times of recent submissions, deleted by an alarm when the window passes.
 Logs record events (`contact.sent`, `contact.rate_limited`), never what a
 visitor typed.

@@ -25,6 +25,13 @@ A rebuild of the site's content, design and contact service, following an indepe
 - The frontend is strict TypeScript, type-checked in CI.
 - The content security policy allows no inline script or style.
 - The issue chooser no longer lists the security report twice, and release notes read as paragraphs.
+- Tables and diagrams that scroll sideways on a phone can be reached and scrolled from the keyboard, are named for screen readers, and show a shadow at the edge that has more.
+- The contact API checks a message before counting it against the rate limit, so fixing a typo never locks anyone out, and it sends nothing if the limiter cannot answer. Without JavaScript the browser checks the fields first, and an error page points back to the form.
+- A project's title on the home page is no longer a second link to its case study.
+
+### Fixed
+
+- Case-study wording a second review found loose: the ONNX memory comparison in Self-Correcting RAG, which question's labelling favours dense retrieval, how RemindrAI's evaluation cases are scored, and each project's real dates.
 
 ### Removed
 

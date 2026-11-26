@@ -1,6 +1,8 @@
-// POST /api/contact. The order is deliberate: a body that cannot be parsed is
-// refused before it costs the sender any quota; then the rate limit, then
-// validation, then the honeypot, then the send.
+// POST /api/contact. The order is deliberate: a body that cannot be parsed or
+// does not validate is refused before it costs the sender any quota, so a
+// visitor correcting a typo is never locked out; then the rate limit, then the
+// honeypot, then the send.
+import { PERSON } from "../src/content/site.ts";
 import { CONTACT_ENDPOINT, HONEYPOT, validateContact, type ContactResponse, type ContactValues, type FieldName } from "../src/shared/contact.ts";
 import { mailerConfigured, type Env } from "./env.ts";
 import { clientKey, type Verdict } from "./limiter.ts";
@@ -25,7 +27,7 @@ export const defaultDeps: Deps = {
   log: (event) => console.log(JSON.stringify(event)),
 };
 
-const API_HEADERS = {
+export const API_HEADERS = {
   "Cache-Control": "no-store",
   "X-Content-Type-Options": "nosniff",
   "Referrer-Policy": "no-referrer",
@@ -33,13 +35,16 @@ const API_HEADERS = {
 };
 
 // Without JavaScript the form posts itself, and the visitor gets a plain page
-// back instead of JSON, with a way home.
-const page = (status: number, title: string, text: string, headers: Record<string, string> = {}) =>
+// back instead of JSON, with a way home. Every string here is the site's own;
+// nothing the visitor typed is echoed.
+const page = (status: number, title: string, paragraphs: string[], headers: Record<string, string> = {}) =>
   new Response(
     `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>${title}</title></head>` +
-      `<body><h1>${title}</h1><p>${text}</p><p><a href="/#contact">Back to the site</a></p></body></html>`,
+      `<body><h1>${title}</h1>${paragraphs.map((text) => `<p>${text}</p>`).join("")}<p><a href="/#contact">Back to the site</a></p></body></html>`,
     { status, headers: { ...API_HEADERS, ...headers, "Content-Type": "text/html; charset=utf-8" } }
   );
+
+const EMAIL_LINK = `<a href="mailto:${PERSON.email}">${PERSON.email}</a>`;
 
 const json = (status: number, body: ContactResponse, headers: Record<string, string> = {}) =>
   Response.json(body, { status, headers: { ...API_HEADERS, ...headers } });
@@ -50,8 +55,17 @@ export async function handleContact(request: Request, env: Env, deps: Deps = def
   const answer = (status: number, body: ContactResponse, headers: Record<string, string> = {}) =>
     isForm
       ? body.ok
-        ? page(status, "Message sent", "Thanks, your message is on its way. I will reply by email.", headers)
-        : page(status, "Message not sent", `${body.error} You can also email me directly.`, headers)
+        ? page(status, "Message sent", ["Thanks, your message is on its way. I will reply by email."], headers)
+        : page(
+            status,
+            "Message not sent",
+            [
+              body.error,
+              "Your browser's Back button returns to the form, which usually still holds what you wrote.",
+              `You can also email me at ${EMAIL_LINK}.`,
+            ],
+            headers
+          )
       : json(status, body, headers);
 
   if (request.method !== "POST") return json(405, { ok: false, error: "Use POST." }, { Allow: "POST" });
@@ -78,14 +92,22 @@ export async function handleContact(request: Request, env: Env, deps: Deps = def
     }
   }
 
-  const verdict = await deps.limit(clientKey(request), env);
+  const result = validateContact(body);
+  if (!result.ok) return answer(400, { ok: false, error: result.error, field: result.field as FieldName });
+
+  // If the limiter cannot answer, nothing is sent: without it the form would
+  // be an open relay into one inbox.
+  let verdict: Verdict;
+  try {
+    verdict = await deps.limit(clientKey(request), env);
+  } catch (error) {
+    deps.log({ event: "contact.limiter_error", reason: error instanceof Error ? error.name : "unknown" });
+    return answer(503, { ok: false, error: "The contact form is not available right now." });
+  }
   if (!verdict.allowed) {
     deps.log({ event: "contact.rate_limited" });
     return answer(429, { ok: false, error: "Too many messages from this network. Please try again in 15 minutes." }, { "Retry-After": String(verdict.retryAfter ?? 900) });
   }
-
-  const result = validateContact(body);
-  if (!result.ok) return answer(400, { ok: false, error: result.error, field: result.field as FieldName });
 
   // Filled only by bots that complete every input. The answer is the one a
   // real send gets, so a bot learns nothing, and nothing is sent.

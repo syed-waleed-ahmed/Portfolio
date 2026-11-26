@@ -1,4 +1,5 @@
 import CaseStudy from "@/components/case-study/CaseStudy";
+import DataTable from "@/components/case-study/DataTable";
 import Diagram, { type DiagramSpec } from "@/components/case-study/Diagram";
 import Figure, { Screenshot } from "@/components/case-study/Figure";
 import { projectBySlug } from "@/content/projects.ts";
@@ -119,34 +120,32 @@ export default function LlmAsJudgeCaseStudy() {
           content: (
             <>
               <p>The names suggest more than the code does, so here is exactly what each one computes:</p>
-              <div className="table-scroll">
-                <table className="data-table">
-                  <thead>
-                    <tr>
-                      <th scope="col">Check</th>
-                      <th scope="col">How it decides</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <th scope="row">Position</th>
-                      <td>The winner differs between the two orders. Only when order swapping is on, which it is not by default.</td>
-                    </tr>
-                    <tr>
-                      <th scope="row">Verbosity</th>
-                      <td>The longer output won and is at least twice as long, by word count.</td>
-                    </tr>
-                    <tr>
-                      <th scope="row">Self-preference</th>
-                      <td>The judge&apos;s model family name matches a candidate&apos;s, when the caller supplies the candidates&apos; model names.</td>
-                    </tr>
-                    <tr>
-                      <th scope="row">Injection</th>
-                      <td>One of six regular expressions matches, such as text telling the judge to ignore its instructions or to award a score.</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
+              <DataTable caption="What each bias check computes">
+                <thead>
+                  <tr>
+                    <th scope="col">Check</th>
+                    <th scope="col">How it decides</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <th scope="row">Position</th>
+                    <td>The winner differs between the two orders. Only when order swapping is on, which it is not by default.</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">Verbosity</th>
+                    <td>The longer output won and is at least twice as long, by word count.</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">Self-preference</th>
+                    <td>The judge&apos;s model family name matches a candidate&apos;s, when the caller supplies the candidates&apos; model names.</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">Injection</th>
+                    <td>One of six regular expressions matches, such as text telling the judge to ignore its instructions or to award a score.</td>
+                  </tr>
+                </tbody>
+              </DataTable>
               <p>
                 Only the position check measures the judge&apos;s behaviour. The other three are heuristics that point a reader
                 at results worth a second look; they cannot confirm a bias, and a determined injection that avoids the

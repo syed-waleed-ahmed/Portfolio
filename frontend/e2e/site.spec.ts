@@ -137,6 +137,29 @@ test.describe("case studies", () => {
       expect(JSON.parse(ld!)["@type"]).toBe("TechArticle");
     });
   }
+
+  for (const project of projects) {
+    test(`${project.title} on a phone: what scrolls sideways is a named tab stop, and axe passes`, async ({ page }) => {
+      await page.setViewportSize({ width: 390, height: 844 });
+      await page.goto(`/work/${project.slug}/`);
+      await hydrated(page);
+      let scrolling = 0;
+      for (const scroller of await page.locator(".table-scroll, .diagram__scroll").all()) {
+        if (!(await scroller.evaluate((element) => element.scrollWidth > element.clientWidth))) continue;
+        scrolling += 1;
+        await expect(scroller).toHaveAttribute("tabindex", "0");
+        await expect(scroller).toHaveRole("region");
+        // Read from the attributes: in Firefox, axe after toHaveAccessibleName
+        // crashes the page (Playwright 1.65).
+        const name = await scroller.evaluate(
+          (element) => element.getAttribute("aria-label") ?? document.getElementById(element.getAttribute("aria-labelledby") ?? "")?.textContent ?? ""
+        );
+        expect(name.trim()).not.toBe("");
+      }
+      expect(scrolling, "a diagram is wider than a phone").toBeGreaterThan(0);
+      expect(violations(await axe(page).analyze())).toEqual([]);
+    });
+  }
 });
 
 test.describe("command palette", () => {

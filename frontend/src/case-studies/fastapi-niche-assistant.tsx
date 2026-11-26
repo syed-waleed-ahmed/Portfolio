@@ -1,4 +1,5 @@
 import CaseStudy from "@/components/case-study/CaseStudy";
+import DataTable from "@/components/case-study/DataTable";
 import Diagram, { type DiagramSpec } from "@/components/case-study/Diagram";
 import Figure, { Screenshot } from "@/components/case-study/Figure";
 import { projectBySlug } from "@/content/projects.ts";
@@ -7,7 +8,7 @@ import { projectBySlug } from "@/content/projects.ts";
 // (DECISIONS.md, REQUEST_LIFECYCLE.md, MODEL_PIPELINE.md), evaluation.py,
 // eval/baseline.json at three commits, and the Gate 1 per-item reports of
 // training run 43622001406, from which the paired bootstrap intervals are
-// computed (scripts/paired_bootstrap.py in that repository).
+// computed.
 const project = projectBySlug("fastapi-niche-assistant")!;
 
 const pipeline: DiagramSpec = {
@@ -170,76 +171,70 @@ export default function FastApiNicheAssistantCaseStudy() {
               </p>
 
               <h3>Results</h3>
-              <div className="table-scroll">
-                <table className="data-table">
-                  <caption>Composite score on the 108 held-out items, with paired bootstrap intervals (10,000 resamples)</caption>
-                  <thead>
-                    <tr>
-                      <th scope="col">Comparison</th>
-                      <th scope="col">Backend</th>
-                      <th scope="col" className="num">
-                        First
-                      </th>
-                      <th scope="col" className="num">
-                        Second
-                      </th>
-                      <th scope="col" className="num">
-                        Difference (95% CI)
-                      </th>
-                      <th scope="col">Items</th>
+              <DataTable caption="Composite score on the 108 held-out items, with paired bootstrap intervals (10,000 resamples)">
+                <thead>
+                  <tr>
+                    <th scope="col">Comparison</th>
+                    <th scope="col">Backend</th>
+                    <th scope="col" className="num">
+                      First
+                    </th>
+                    <th scope="col" className="num">
+                      Second
+                    </th>
+                    <th scope="col" className="num">
+                      Difference (95% CI)
+                    </th>
+                    <th scope="col">Items</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {COMPARISONS.map((row) => (
+                    <tr key={row.what}>
+                      <th scope="row">{row.what}</th>
+                      <td>{row.backend}</td>
+                      <td className="num">{row.a}</td>
+                      <td className="num">{row.b}</td>
+                      <td className="num">
+                        {row.delta} ({row.ci})
+                      </td>
+                      <td>{row.items}</td>
                     </tr>
-                  </thead>
-                  <tbody>
-                    {COMPARISONS.map((row) => (
-                      <tr key={row.what}>
-                        <th scope="row">{row.what}</th>
-                        <td>{row.backend}</td>
-                        <td className="num">{row.a}</td>
-                        <td className="num">{row.b}</td>
-                        <td className="num">
-                          {row.delta} ({row.ci})
-                        </td>
-                        <td>{row.items}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+                  ))}
+                </tbody>
+              </DataTable>
               <p>
                 The first row is the one that says whether fine-tuning helped: same base model, same backend, same items. The
                 second is the comparison the deployed releases were judged on, and it mixes three changes at once (a stronger
                 base model, 151 more training rows and LoRA on the MLP layers), so it cannot be credited to any one of them.
                 The third is a negative result: adding retrieval to the base TinyLlama made no measurable difference.
               </p>
-              <div className="table-scroll">
-                <table className="data-table">
-                  <caption>The fine-tune against its base, by component (transformers fp16)</caption>
-                  <thead>
-                    <tr>
-                      <th scope="col">Component</th>
-                      <th scope="col" className="num">
-                        Fine-tune
-                      </th>
-                      <th scope="col" className="num">
-                        Base
-                      </th>
-                      <th scope="col" className="num">
-                        Difference (95% CI)
-                      </th>
+              <DataTable caption="The fine-tune against its base, by component (transformers fp16)">
+                <thead>
+                  <tr>
+                    <th scope="col">Component</th>
+                    <th scope="col" className="num">
+                      Fine-tune
+                    </th>
+                    <th scope="col" className="num">
+                      Base
+                    </th>
+                    <th scope="col" className="num">
+                      Difference (95% CI)
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {COMPONENTS.map((row) => (
+                    <tr key={row.metric}>
+                      <th scope="row">{row.metric}</th>
+                      <td className="num">{row.ft}</td>
+                      <td className="num">{row.base}</td>
+                      <td className="num">{row.ci}</td>
                     </tr>
-                  </thead>
-                  <tbody>
-                    {COMPONENTS.map((row) => (
-                      <tr key={row.metric}>
-                        <th scope="row">{row.metric}</th>
-                        <td className="num">{row.ft}</td>
-                        <td className="num">{row.base}</td>
-                        <td className="num">{row.ci}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+                  ))}
+                </tbody>
+              </DataTable>
               <p>
                 Quantization cost nothing measurable: the 4-bit model on llama.cpp scored 0.005 below the fp16 model, with an
                 interval from -0.046 to +0.035, though the two ran on different hardware. The intervals cover sampling of the

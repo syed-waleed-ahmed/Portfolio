@@ -52,7 +52,7 @@ export default function Work() {
           {featured.context} · {featured.period}
         </p>
         <h3 id="feature-title" className="feature__title">
-          <a href={caseStudyPath(featured.slug)}>{featured.title}</a>
+          {featured.title}
           <span className="feature__subtitle">{featured.subtitle}</span>
         </h3>
         <p className="feature__summary">{featured.summary}</p>
@@ -76,7 +76,7 @@ export default function Work() {
             <div className="project__head">
               <p className="meta">{project.period}</p>
               <h3 className="project__title">
-                <a href={caseStudyPath(project.slug)}>{project.title}</a>
+                {project.title}
               </h3>
               <p className="project__subtitle">{project.subtitle}</p>
               <ProjectLinks project={project} />

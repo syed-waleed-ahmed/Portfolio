@@ -1,4 +1,5 @@
 import CaseStudy from "@/components/case-study/CaseStudy";
+import DataTable from "@/components/case-study/DataTable";
 import Diagram, { type DiagramSpec } from "@/components/case-study/Diagram";
 import Figure, { Screenshot } from "@/components/case-study/Figure";
 import { projectBySlug } from "@/content/projects.ts";
@@ -76,7 +77,7 @@ export default function RemindrAICaseStudy() {
         },
         {
           label: "Agent evaluation",
-          value: "92 author-written cases with 12 automated checks each. Two models over three repeat runs passed 96.2 to 97.8% of case-runs, and every security check passed.",
+          value: "92 author-written cases, each scored by the automated checks its expected outcome names. Two models over three repeat runs passed 96.2 to 97.8% of case-runs, and every security check passed.",
         },
         {
           label: "Claim benchmark",
@@ -214,39 +215,37 @@ export default function RemindrAICaseStudy() {
                 reach them.
               </p>
               <p>Tenant isolation is checked at four independent depths, so a mistake at one is caught by the next:</p>
-              <div className="table-scroll">
-                <table className="data-table">
-                  <thead>
-                    <tr>
-                      <th scope="col">Depth</th>
-                      <th scope="col">What it checks</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <th scope="row">Credential</th>
-                      <td>The API key&apos;s tenant is authoritative; a payload naming another tenant is rejected.</td>
-                    </tr>
-                    <tr>
-                      <th scope="row">Object</th>
-                      <td>Every user-addressed operation verifies ownership; a mismatch is a 404, so it reveals nothing.</td>
-                    </tr>
-                    <tr>
-                      <th scope="row">Query</th>
-                      <td>The tenant predicate is in the SQL itself, and no route takes a tenant as a parameter.</td>
-                    </tr>
-                    <tr>
-                      <th scope="row">Policy</th>
-                      <td>Suspension, subscription state and overrides apply before any work is done.</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
+              <DataTable caption="Where tenant isolation is checked">
+                <thead>
+                  <tr>
+                    <th scope="col">Depth</th>
+                    <th scope="col">What it checks</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <th scope="row">Credential</th>
+                    <td>The API key&apos;s tenant is authoritative; a payload naming another tenant is rejected.</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">Object</th>
+                    <td>Every user-addressed operation verifies ownership; a mismatch is a 404, so it reveals nothing.</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">Query</th>
+                    <td>The tenant predicate is in the SQL itself, and no route takes a tenant as a parameter.</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">Policy</th>
+                    <td>Suspension, subscription state and overrides apply before any work is done.</td>
+                  </tr>
+                </tbody>
+              </DataTable>
               <p>
                 API keys are per organisation, scoped to data or administration, stored only as hashes, shown once, and can
                 expire or be revoked from the operator console, whose own sessions are encrypted cookies behind a
                 per-request content security policy. Data-subject export and erasure live in the API: erasure removes a
-                user&apos;s rows from eleven tables, child rows first, is safe to repeat, and leaves an audit trail with the
+                user&apos;s data across the tables that hold it, child rows first, is safe to repeat, and leaves an audit trail with the
                 person pseudonymised. The thesis claims no legal compliance; it describes the mechanism.
               </p>
             </>
@@ -258,54 +257,52 @@ export default function RemindrAICaseStudy() {
           content: (
             <>
               <p>Each decision is recorded in the thesis with what it costs.</p>
-              <div className="table-scroll">
-                <table className="data-table">
-                  <thead>
-                    <tr>
-                      <th scope="col">Decision</th>
-                      <th scope="col">Instead of</th>
-                      <th scope="col">Accepted cost</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td>Retry state in the database</td>
-                      <td>The queue&apos;s own retries</td>
-                      <td>The scheduler owns backoff logic</td>
-                    </tr>
-                    <tr>
-                      <td>Two claims, per batch and per worker</td>
-                      <td>Trusting the queue to deliver once</td>
-                      <td>One extra write per send</td>
-                    </tr>
-                    <tr>
-                      <td>External minute tick, with a health check that fails when it stops</td>
-                      <td>The platform&apos;s daily cron</td>
-                      <td>A second service on the critical path</td>
-                    </tr>
-                    <tr>
-                      <td>Tenant derived from the credential</td>
-                      <td>Tenant asserted in the request</td>
-                      <td>Every route resolves identity first</td>
-                    </tr>
-                    <tr>
-                      <td>Raw SQL</td>
-                      <td>An ORM</td>
-                      <td>Hand-kept queries, but the claim is explicit and reviewable</td>
-                    </tr>
-                    <tr>
-                      <td>A three-field memory document per user</td>
-                      <td>Retrieval over past conversations</td>
-                      <td>No recall of arbitrary history; what a reminder agent needs is small and structured</td>
-                    </tr>
-                    <tr>
-                      <td>No metrics stack in the thesis scope</td>
-                      <td>Instrumenting from the start</td>
-                      <td>Rates and latencies need log queries</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
+              <DataTable caption="Each decision, what it replaced, and what it costs">
+                <thead>
+                  <tr>
+                    <th scope="col">Decision</th>
+                    <th scope="col">Instead of</th>
+                    <th scope="col">Accepted cost</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Retry state in the database</td>
+                    <td>The queue&apos;s own retries</td>
+                    <td>The scheduler owns backoff logic</td>
+                  </tr>
+                  <tr>
+                    <td>Two claims, per batch and per worker</td>
+                    <td>Trusting the queue to deliver once</td>
+                    <td>One extra write per send</td>
+                  </tr>
+                  <tr>
+                    <td>External minute tick, with a health check that fails when it stops</td>
+                    <td>The platform&apos;s daily cron</td>
+                    <td>A second service on the critical path</td>
+                  </tr>
+                  <tr>
+                    <td>Tenant derived from the credential</td>
+                    <td>Tenant asserted in the request</td>
+                    <td>Every route resolves identity first</td>
+                  </tr>
+                  <tr>
+                    <td>Raw SQL</td>
+                    <td>An ORM</td>
+                    <td>Hand-kept queries, but the claim is explicit and reviewable</td>
+                  </tr>
+                  <tr>
+                    <td>A three-field memory document per user</td>
+                    <td>Retrieval over past conversations</td>
+                    <td>No recall of arbitrary history; what a reminder agent needs is small and structured</td>
+                  </tr>
+                  <tr>
+                    <td>No metrics stack in the thesis scope</td>
+                    <td>Instrumenting from the start</td>
+                    <td>Rates and latencies need log queries</td>
+                  </tr>
+                </tbody>
+              </DataTable>
             </>
           ),
         },
@@ -320,35 +317,32 @@ export default function RemindrAICaseStudy() {
                 boundaries, month and year ends, leap days, impossible and past times, corrections and cancellations over
                 several turns, unsupported channels, malformed input, provider failures, and a security group with forged
                 identities, injected instructions, malicious arguments and attempts to reach another tenant. Each case runs
-                against recorders in place of the real tools, with the clock frozen, and passes only if all 12 automated
-                checks pass. Every run records a hash of the exact system prompt and tool schemas, so two runs are known to
+                against recorders in place of the real tools, with the clock frozen. There are 12 kinds of automated check;
+                each case names the ones that apply to it and passes only if every one of them passes. Every run records a hash of the exact system prompt and tool schemas, so two runs are known to
                 have tested the same system.
               </p>
-              <div className="table-scroll">
-                <table className="data-table">
-                  <caption>Case-runs passed, same prompt and tools in every run</caption>
-                  <thead>
-                    <tr>
-                      <th scope="col">Run</th>
-                      <th scope="col" className="num">
-                        gpt-5.6
-                      </th>
-                      <th scope="col" className="num">
-                        gpt-5.5
-                      </th>
+              <DataTable caption="Case-runs passed, same prompt and tools in every run">
+                <thead>
+                  <tr>
+                    <th scope="col">Run</th>
+                    <th scope="col" className="num">
+                      gpt-5.6
+                    </th>
+                    <th scope="col" className="num">
+                      gpt-5.5
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {RUNS.map((row) => (
+                    <tr key={row.run}>
+                      <th scope="row">{row.run}</th>
+                      <td className="num">{row.a}</td>
+                      <td className="num">{row.b}</td>
                     </tr>
-                  </thead>
-                  <tbody>
-                    {RUNS.map((row) => (
-                      <tr key={row.run}>
-                        <th scope="row">{row.run}</th>
-                        <td className="num">{row.a}</td>
-                        <td className="num">{row.b}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+                  ))}
+                </tbody>
+              </DataTable>
               <p>
                 The ranges overlap, so these runs do not separate the two models, and the thesis says so rather than naming a
                 winner. What did reproduce was the shape of the failures: in the three-pass run all eight of one model&apos;s
@@ -375,35 +369,32 @@ export default function RemindrAICaseStudy() {
               </p>
 
               <h3>The scheduler: claim latency as the backlog grows</h3>
-              <div className="table-scroll">
-                <table className="data-table">
-                  <caption>Claiming batches of 100 due reminders, local libSQL file, 8 tenants, 7 repeats</caption>
-                  <thead>
-                    <tr>
-                      <th scope="col">Due reminders</th>
-                      <th scope="col" className="num">
-                        Median (ms)
-                      </th>
-                      <th scope="col" className="num">
-                        p95 (ms)
-                      </th>
-                      <th scope="col" className="num">
-                        Drain rate (rows/s)
-                      </th>
+              <DataTable caption="Claiming batches of 100 until every due reminder is claimed, local libSQL file, 8 tenants">
+                <thead>
+                  <tr>
+                    <th scope="col">Due reminders</th>
+                    <th scope="col" className="num">
+                      Median (ms)
+                    </th>
+                    <th scope="col" className="num">
+                      p95 (ms)
+                    </th>
+                    <th scope="col" className="num">
+                      Drain rate (rows/s)
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {BENCH.map((row) => (
+                    <tr key={row.size}>
+                      <th scope="row">{row.size}</th>
+                      <td className="num">{row.p50}</td>
+                      <td className="num">{row.p95}</td>
+                      <td className="num">{row.rate}</td>
                     </tr>
-                  </thead>
-                  <tbody>
-                    {BENCH.map((row) => (
-                      <tr key={row.size}>
-                        <th scope="row">{row.size}</th>
-                        <td className="num">{row.p50}</td>
-                        <td className="num">{row.p95}</td>
-                        <td className="num">{row.rate}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+                  ))}
+                </tbody>
+              </DataTable>
               <p>
                 The median barely moves across two orders of magnitude, which is the partial index doing its job; the tail at
                 100K does not, and the drain rate falls by more than half. The benchmark excludes the queue and the providers,
@@ -433,7 +424,7 @@ export default function RemindrAICaseStudy() {
                   One pilot consumer, H-FARM&apos;s Student Assistant, integrated through the portable adapter, and 22 sends in
                   production during the pilot: far too few to say anything about reliability in the field.
                 </li>
-                <li>Plan entitlements are partly advisory rather than enforced.</li>
+                <li>Plan entitlements are defined but their enforcement is not switched on, so no request is refused by plan.</li>
                 <li>An author-written evaluation set, one model provider, no user study and no penetration test.</li>
               </ul>
               <p>

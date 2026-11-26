@@ -64,12 +64,13 @@ test("a tripped honeypot gets the same answer and nothing is sent", async () => 
   assert.ok(h.events.some((event) => event.event === "contact.honeypot"));
 });
 
-test("invalid input is a 400 naming the field, before anything is sent", async () => {
+test("invalid input is a 400 naming the field, and costs no quota", async () => {
   const h = harness();
   const response = await handleContact(post({ ...VALID, email: "not-an-email" }), configured, h.deps);
   assert.equal(response.status, 400);
   assert.deepEqual(await response.json(), { ok: false, error: "Enter a valid email address, like name@example.com.", field: "email" });
   assert.equal(h.sent.length, 0);
+  assert.equal(h.keys.length, 0, "the limiter was not consulted");
 });
 
 test("malformed JSON is a 400 and costs no quota", async () => {
@@ -100,6 +101,19 @@ test("a refused limiter is a 429 with Retry-After, and nothing is sent", async (
   assert.equal(response.status, 429);
   assert.equal(response.headers.get("Retry-After"), "120");
   assert.equal(h.sent.length, 0);
+});
+
+test("a limiter that fails is a 503, and nothing is sent", async () => {
+  const h = harness({
+    limit: async () => {
+      throw new Error("Durable Object unavailable");
+    },
+  });
+  const response = await handleContact(post(VALID), configured, h.deps);
+  assert.equal(response.status, 503);
+  assert.doesNotMatch(await response.text(), /Durable/);
+  assert.equal(h.sent.length, 0);
+  assert.ok(h.events.some((event) => event.event === "contact.limiter_error"));
 });
 
 test("another site's form is refused; a request with no Origin is not", async () => {
@@ -154,6 +168,17 @@ test("a plain form post, as before the script loads, gets a page back", async ()
   assert.match(response.headers.get("Content-Type") ?? "", /text\/html/);
   assert.match(await response.text(), /Message sent/);
   assert.equal(h.sent.length, 1);
+});
+
+test("a plain form post that does not validate gets a page with a way back", async () => {
+  const h = harness();
+  const form = new URLSearchParams({ ...VALID, email: "<b>nope</b>", website: "" }).toString();
+  const response = await handleContact(post(form, { "Content-Type": "application/x-www-form-urlencoded" }), configured, h.deps);
+  assert.equal(response.status, 400);
+  const html = await response.text();
+  assert.match(html, /Message not sent/);
+  assert.match(html, /Back button/);
+  assert.doesNotMatch(html, /<b>nope/, "nothing the visitor typed is echoed");
 });
 
 test("the log records events, never what the visitor typed", async () => {

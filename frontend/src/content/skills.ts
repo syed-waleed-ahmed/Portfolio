@@ -30,8 +30,8 @@ export const shownSkills: SkillGroup[] = [
   },
   {
     name: "Frameworks",
-    skills: ["Vercel AI SDK", "Mastra", "LangGraph", "CrewAI", "Hugging Face Transformers and PEFT", "llama.cpp", "FastAPI", "Next.js", "React", "Node.js"],
-    shownIn: "Named in each case study's stack",
+    skills: ["Vercel AI SDK", "Mastra", "LangGraph", "CrewAI", "PyTorch, Transformers and PEFT", "llama.cpp", "FastAPI", "Next.js", "React", "Node.js"],
+    shownIn: "Named in each case study's stack; PyTorch through the fine-tune's training",
   },
   {
     name: "Data",
@@ -46,11 +46,9 @@ export const shownSkills: SkillGroup[] = [
 ];
 
 export const familiarSkills: string[] = [
-  "JavaScript",
   "C# and ASP.NET Core (trainee)",
   "PHP and MySQL (trainee)",
   "SQL Server, SSRS and Power BI (trainee)",
-  "PyTorch and NumPy (coursework)",
-  "OpenCV (coursework)",
+  "NumPy and OpenCV (coursework)",
   "ROS 2, Gazebo and Nav2 (coursework)",
 ];

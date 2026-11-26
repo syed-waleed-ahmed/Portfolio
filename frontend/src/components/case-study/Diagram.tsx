@@ -69,7 +69,9 @@ export default function Diagram({ spec, title, description }: { spec: DiagramSpe
   const nodes = new Map(spec.nodes.map((node) => [node.id, node]));
 
   return (
-    <div className="diagram__scroll">
+    // Focusable and named, because on a phone it scrolls sideways and a
+    // keyboard user has to be able to reach and scroll it.
+    <div className="diagram__scroll" tabIndex={0} role="region" aria-label={title}>
       <svg
         className="diagram"
         viewBox={`0 0 ${spec.width} ${spec.height}`}

@@ -15,16 +15,6 @@
     gap: var(--space-1);
     font-size: var(--text-xl);
     line-height: var(--leading-tight);
-
-    & a {
-      color: var(--color-ink-strong);
-      text-decoration: none;
-
-      &:hover {
-        color: var(--color-accent);
-        text-decoration: underline;
-      }
-    }
   }
 
   .feature__subtitle {
@@ -102,16 +92,6 @@
   .project__title {
     font-size: var(--text-lg);
     line-height: var(--leading-snug);
-
-    & a {
-      color: var(--color-ink-strong);
-      text-decoration: none;
-
-      &:hover {
-        color: var(--color-accent);
-        text-decoration: underline;
-      }
-    }
   }
 
   .project__subtitle {

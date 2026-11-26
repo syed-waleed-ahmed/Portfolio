@@ -127,7 +127,7 @@ test("titles and descriptions are unique and a sensible length", () => {
   assert.equal(new Set(metas.map((meta) => meta.title)).size, metas.length, "duplicate title");
   for (const meta of metas.filter((m) => m.indexable)) {
     assert.ok(meta.title.length <= 90, `${meta.path}: title is ${meta.title.length} characters`);
-    assert.ok(meta.description.length >= 70 && meta.description.length <= 300, `${meta.path}: description is ${meta.description.length} characters`);
+    assert.ok(meta.description.length >= 70 && meta.description.length <= 200, `${meta.path}: description is ${meta.description.length} characters`);
   }
 });
 

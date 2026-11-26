@@ -70,7 +70,7 @@ export function metaFor(route: Route): PageMeta {
     case "case-study":
       return {
         title: `${route.project.title} · case study by ${PERSON.name}`,
-        description: route.project.summary,
+        description: `Case study: ${route.project.title}, ${route.project.subtitle}. Its architecture, how it was evaluated, and its limits.`,
         path: caseStudyPath(route.project.slug),
         type: "article",
         indexable: true,

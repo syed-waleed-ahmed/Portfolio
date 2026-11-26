@@ -34,6 +34,12 @@ export default function Contact() {
   const [slow, setSlow] = useState(false);
   const formRef = useRef<HTMLFormElement>(null);
 
+  // Before the script loads the browser validates natively (required,
+  // email, length caps); once it has, the form shows its own messages.
+  useEffect(() => {
+    if (formRef.current) formRef.current.noValidate = true;
+  }, []);
+
   useEffect(() => {
     if (status !== "sending") return;
     const timer = setTimeout(() => setSlow(true), SLOW_NOTICE_MS);
@@ -144,7 +150,7 @@ export default function Contact() {
 
         {/* method and action make it work before the script loads: the API
             answers a plain form post as well, with a page of its own. */}
-        <form ref={formRef} className="contact-form" method="post" action={CONTACT_ENDPOINT} noValidate onSubmit={onSubmit}>
+        <form ref={formRef} className="contact-form" method="post" action={CONTACT_ENDPOINT} onSubmit={onSubmit}>
           <p className="meta">All fields are required. What happens to your message is set out on the <a href="/privacy/">privacy page</a>.</p>
 
           {/* A trap for bots that fill every input: off screen, out of the

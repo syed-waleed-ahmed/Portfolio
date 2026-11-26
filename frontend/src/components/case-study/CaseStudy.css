@@ -200,6 +200,20 @@
     max-width: 100%;
   }
 
+  /* A shadow at each edge that has more to scroll to. The covers scroll with
+     the content and hide a shadow once its edge is reached, so a table or
+     diagram that fits shows none. */
+  .table-scroll,
+  .diagram__scroll {
+    --scroll-cover: var(--color-bg);
+    background:
+      linear-gradient(to right, var(--scroll-cover) 40%, transparent) left / 2.5rem 100% no-repeat local,
+      linear-gradient(to left, var(--scroll-cover) 40%, transparent) right / 2.5rem 100% no-repeat local,
+      radial-gradient(farthest-side at 0 50%, var(--color-rule-strong), transparent) left / 0.875rem 100% no-repeat scroll,
+      radial-gradient(farthest-side at 100% 50%, var(--color-rule-strong), transparent) right / 0.875rem 100% no-repeat scroll;
+    background-color: var(--scroll-cover);
+  }
+
   .data-table {
     width: 100%;
     border-collapse: collapse;
@@ -262,7 +276,7 @@
     padding: var(--space-4);
     border: 1px solid var(--color-rule);
     border-radius: var(--radius-md);
-    background-color: var(--color-surface);
+    --scroll-cover: var(--color-surface);
   }
 
   .diagram {

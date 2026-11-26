@@ -1,4 +1,5 @@
 import CaseStudy from "@/components/case-study/CaseStudy";
+import DataTable from "@/components/case-study/DataTable";
 import Diagram, { type DiagramSpec } from "@/components/case-study/Diagram";
 import Figure, { Screenshot } from "@/components/case-study/Figure";
 import { projectBySlug } from "@/content/projects.ts";
@@ -62,7 +63,7 @@ export default function SelfCorrectingRagCaseStudy() {
       glance={[
         {
           label: "Retrieval",
-          value: "Hybrid search is never worse than dense on the 60-question set and better on two questions. A paired bootstrap does not separate the two.",
+          value: "Hybrid search is never worse than dense on recall over the 60-question set and better on two questions. A paired bootstrap does not separate the two.",
         },
         {
           label: "Self-correction",
@@ -142,9 +143,9 @@ export default function SelfCorrectingRagCaseStudy() {
               <p>The repository records eleven architecture decisions. The ones with measured evidence behind them:</p>
               <ul>
                 <li>
-                  <strong>ONNX embeddings instead of torch.</strong> The same MiniLM model through fastembed made a 211 MB image
-                  instead of 428 MB and answered in 3.0 ms instead of 12.3 ms per query, with identical vectors. On a free tier
-                  the image size is the deploy time.
+                  <strong>ONNX embeddings instead of torch.</strong> The same MiniLM model through fastembed peaked at 211 MB
+                  of memory instead of 428 MB and answered in 3.0 ms instead of 12.3 ms per query, with identical vectors. In
+                  CI the deployed 296 MB image peaks at 210 MB inside the free tier&apos;s 512 MB.
                 </li>
                 <li>
                   <strong>An exact scan per session instead of an HNSW index.</strong> An approximate index can silently return
@@ -174,77 +175,72 @@ export default function SelfCorrectingRagCaseStudy() {
                 labelled per document. The documents and the questions were written for this project by the same author, which
                 the repository states as its main limitation: the absolute numbers are optimistic.
               </p>
-              <div className="table-scroll">
-                <table className="data-table">
-                  <caption>One deterministic run; re-running it on 2026-11-25 reproduced every figure</caption>
-                  <thead>
-                    <tr>
-                      <th scope="col">k</th>
-                      <th scope="col">Mode</th>
-                      <th scope="col" className="num">
-                        Recall
-                      </th>
-                      <th scope="col" className="num">
-                        Hit rate
-                      </th>
-                      <th scope="col" className="num">
-                        MRR
-                      </th>
-                      <th scope="col" className="num">
-                        nDCG
-                      </th>
+              <DataTable caption="One deterministic run; re-running it on 2026-11-25 reproduced every figure">
+                <thead>
+                  <tr>
+                    <th scope="col">k</th>
+                    <th scope="col">Mode</th>
+                    <th scope="col" className="num">
+                      Recall
+                    </th>
+                    <th scope="col" className="num">
+                      Hit rate
+                    </th>
+                    <th scope="col" className="num">
+                      MRR
+                    </th>
+                    <th scope="col" className="num">
+                      nDCG
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {RETRIEVAL.map((row) => (
+                    <tr key={row.k + row.mode}>
+                      <td>{row.k}</td>
+                      <td>{row.mode}</td>
+                      <td className="num">{row.recall}</td>
+                      <td className="num">{row.hit}</td>
+                      <td className="num">{row.mrr}</td>
+                      <td className="num">{row.ndcg}</td>
                     </tr>
-                  </thead>
-                  <tbody>
-                    {RETRIEVAL.map((row) => (
-                      <tr key={row.k + row.mode}>
-                        <td>{row.k}</td>
-                        <td>{row.mode}</td>
-                        <td className="num">{row.recall}</td>
-                        <td className="num">{row.hit}</td>
-                        <td className="num">{row.mrr}</td>
-                        <td className="num">{row.ndcg}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+                  ))}
+                </tbody>
+              </DataTable>
               <p>
                 Read as averages, hybrid wins at k=5. Read per question, the picture is smaller. A paired bootstrap over the 60
                 questions (10,000 resamples) gives these differences, hybrid minus dense:
               </p>
-              <div className="table-scroll">
-                <table className="data-table">
-                  <caption>Hybrid minus dense, with 95% bootstrap intervals</caption>
-                  <thead>
-                    <tr>
-                      <th scope="col">Metric</th>
-                      <th scope="col" className="num">
-                        Difference
-                      </th>
-                      <th scope="col" className="num">
-                        95% interval
-                      </th>
-                      <th scope="col">Questions</th>
+              <DataTable caption="Hybrid minus dense, with 95% bootstrap intervals">
+                <thead>
+                  <tr>
+                    <th scope="col">Metric</th>
+                    <th scope="col" className="num">
+                      Difference
+                    </th>
+                    <th scope="col" className="num">
+                      95% interval
+                    </th>
+                    <th scope="col">Questions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {BOOTSTRAP.map((row) => (
+                    <tr key={row.metric}>
+                      <th scope="row">{row.metric}</th>
+                      <td className="num">{row.delta}</td>
+                      <td className="num">{row.ci}</td>
+                      <td>{row.split}</td>
                     </tr>
-                  </thead>
-                  <tbody>
-                    {BOOTSTRAP.map((row) => (
-                      <tr key={row.metric}>
-                        <th scope="row">{row.metric}</th>
-                        <td className="num">{row.delta}</td>
-                        <td className="num">{row.ci}</td>
-                        <td>{row.split}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+                  ))}
+                </tbody>
+              </DataTable>
               <p className="callout">
-                Every estimate favours hybrid, but no interval excludes zero, and the recall gain is two questions. One of the
-                two is partly an artefact: labels are per document, and at k=5 dense retrieval gets credit for a chunk from the
-                right document that does not contain the answer. The honest claim is that hybrid search never did worse here
-                and helped on lexical questions; the set is too small to say more.
+                Every estimate favours hybrid, but no interval excludes zero, and the recall gain is two questions; on MRR and
+                nDCG hybrid was worse on two questions as well as better on others. Labels are per document, which flatters
+                dense retrieval on one question: at k=5 it gets credit for a chunk from the right document that does not
+                contain the answer. The honest claim is that hybrid never did worse on recall and helped on lexical
+                questions; the set is too small to say more.
               </p>
 
               <h3>Answers and self-correction</h3>
@@ -252,31 +248,28 @@ export default function SelfCorrectingRagCaseStudy() {
                 Eight answerable questions were run through each mode at k=3. Every mode passed all eight, with a judge score of
                 1.00 and full keyword coverage, so the comparison comes down to cost:
               </p>
-              <div className="table-scroll">
-                <table className="data-table">
-                  <caption>Mean per answer, eight questions, Groq</caption>
-                  <thead>
-                    <tr>
-                      <th scope="col">Mode</th>
-                      <th scope="col" className="num">
-                        Tokens
-                      </th>
-                      <th scope="col" className="num">
-                        Latency (ms)
-                      </th>
+              <DataTable caption="Mean per answer, eight questions, Groq">
+                <thead>
+                  <tr>
+                    <th scope="col">Mode</th>
+                    <th scope="col" className="num">
+                      Tokens
+                    </th>
+                    <th scope="col" className="num">
+                      Latency (ms)
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {ANSWERS.map((row) => (
+                    <tr key={row.mode}>
+                      <th scope="row">{row.mode}</th>
+                      <td className="num">{row.tokens}</td>
+                      <td className="num">{row.latency}</td>
                     </tr>
-                  </thead>
-                  <tbody>
-                    {ANSWERS.map((row) => (
-                      <tr key={row.mode}>
-                        <th scope="row">{row.mode}</th>
-                        <td className="num">{row.tokens}</td>
-                        <td className="num">{row.latency}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+                  ))}
+                </tbody>
+              </DataTable>
               <ul>
                 <li>
                   Self-correction never changed an outcome: the first attempt always passed, so it bought a checked grounding
