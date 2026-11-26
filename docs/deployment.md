@@ -35,7 +35,7 @@ signed in to the account that owns the site:
 
 ```bash
 npx wrangler secret put RESEND_API_KEY
-npx wrangler secret put EMAIL_FROM     # a sender Resend accepts for the account
+npx wrangler secret put EMAIL_FROM     # Portfolio contact form <contact@syedwaleedahmed.me>
 npx wrangler secret put EMAIL_TO       # the inbox that receives messages
 ```
 
@@ -43,6 +43,14 @@ The same can be done in the dashboard under the Worker's Settings, Variables
 and Secrets. Until they are set, `/api/health` reports `"mailer": "missing"`,
 the form answers 503 and offers the email address, and the deploy
 verification fails, which is the intended signal.
+
+The sender's domain is verified in Resend (region Ireland). That rests on
+four records in the Cloudflare zone, all DNS only: the DKIM key
+`resend._domainkey` (TXT), `send` and `rsend` (CNAMEs to Resend's servers),
+and `_dmarc` (TXT, `v=DMARC1; p=none;`, which only monitors). Removing any of
+them stops delivery, and nothing in this repository would notice; Resend's
+Domains page shows the status. The domain has no MX record, because nothing
+receives mail there.
 
 The first deploy with the Worker also creates the `ContactLimiter` Durable
 Object class (the `v1` migration in `wrangler.jsonc`). SQLite-backed Durable
@@ -112,10 +120,3 @@ node scripts/release-notes.mjs X.Y.Z | gh release create vX.Y.Z --title "X.Y.Z" 
 `release-notes.mjs` joins each wrapped changelog paragraph onto one line,
 because GitHub keeps line breaks in release notes. Releases are immutable once
 published.
-
-## Retiring the old backend
-
-Until 3.0.0 the form posted to an Express service on Render
-(`portfolio-backend-kmum.onrender.com`). Once the Worker's secrets are set and
-a deploy verifies, that service has no callers and can be suspended or
-deleted in Render's dashboard, together with its environment variables.
