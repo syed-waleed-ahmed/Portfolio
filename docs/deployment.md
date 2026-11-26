@@ -23,6 +23,10 @@ configured in `frontend/wrangler.jsonc` and published by
 `deploy.yml` can also be run by hand (`workflow_dispatch`) to republish `main`.
 That path skips CI but not the prebuild gate.
 
+Between deploys, `health.yml` reads `/api/health` once a day and fails, which
+emails the owner, if the Worker is down or its mail secrets are missing. A
+weekly `links.yml` checks every link in the content and the docs.
+
 ## One-time setup: the Worker's secrets
 
 The contact API needs three values. They are Worker secrets, so they survive
