@@ -8,7 +8,7 @@
 # using the file list in links.yml.
 
 # Plain-text extraction for the data modules, alongside the usual formats.
-extensions = ["md", "html", "txt", "js"]
+extensions = ["md", "html", "txt", "ts", "tsx"]
 
 # A few sites answer a burst of checks with 429; that is "slow down", not
 # "gone".
@@ -37,11 +37,8 @@ exclude = [
   # LeetCode with a bot challenge), so a check would fail on a live profile.
   '^https://(www\.)?linkedin\.com',
   '^https://(www\.)?leetcode\.com',
-  # The API, not a page: it sleeps on the free tier and has no page at its
-  # paths. Postman and the e2e suite cover it.
-  '^https://portfolio-backend-kmum\.onrender\.com',
-  # The analytics loader, named in the CSP and the inline snippet.
-  '^https://www\.googletagmanager\.com',
+  # Resend's API endpoint, named in the Worker; it is not a page.
+  '^https://api\.resend\.com',
   # Wildcard hosts quoted from the CSP in the docs, and placeholder domains.
   '^https://\*\.',
   '^https?://([a-z0-9-]+\.)*example\.(com|org)',

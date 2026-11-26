@@ -1,1342 +1,481 @@
 # Changelog
 
-All notable changes to this project are documented here.
-
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
-and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
-
-The site deploys continuously from `main`, so a version heading marks a
-documented milestone rather than a build artifact. Each version is tagged
-`vX.Y.Z` and published as a GitHub Release with its section below as the
-notes; the tags for versions before 2.0.0 were added on 2026-11-10, on the
-last commit of each version's date. Entries dated before this file existed
-were reconstructed from the git history and group the work by milestone rather
-than by individual commit.
+Notable changes, newest first, in the [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) format, with [semantic versions](https://semver.org/spec/v2.0.0.html). The site deploys continuously from `main`; a version marks a milestone, tagged `vX.Y.Z` with a GitHub Release. Entries before 3.0.0 are condensed to their summary lines; the full notes are in each GitHub Release.
 
 ## [Unreleased]
 
+A rebuild of the site's content, design and contact service, following an independent audit of 3.0.0.
+
+### Added
+
+- A case study for each project at `/work/<slug>/`: the problem, an architecture diagram, decisions and their costs, the evaluation with its limits, and next steps, each a prerendered page with its own metadata.
+- Paired bootstrap intervals for the retrieval comparison in Self-Correcting RAG and the fine-tuning comparison in FastAPI Niche Assistant, computed from each project's per-item results.
+- A privacy page that describes what the site does with data.
+- A light theme beside the dark one, chosen by the system setting.
+- Work authorisation and language levels on the first screen, as the CVs state them.
+
 ### Changed
 
-- **The issue chooser no longer lists the security report twice.** GitHub
-  adds its own entry when private vulnerability reporting is on, so the
-  repository's copy of the same link is gone.
-- **Release notes read as paragraphs.** GitHub keeps every line break in
-  release notes, so notes taken from the wrapped changelog came out as
-  ragged lines. `scripts/release-notes.mjs` joins them for each new release,
-  and the notes of every earlier release were rewritten the same way, with no
-  word changed.
+- A new design: an editorial layout with text navigation, numbered sections and no text under 14px, replacing the template-derived dock, blur-fade reveal, pointer light and dot field. The greeting stays as the opening line; the heading now says what the work is.
+- Experience follows the current CVs: the thesis role is an internship, Fruugle covers seven chains and was part-time, and H-FARM's assistant is a pilot tenant.
+- Project results carry their caveats: a recall gain that rests on two questions, a fine-tuning gain measured against the untuned base model, author-written evaluation sets, and no human-label validation for the judge. Test counts no longer headline a project.
+- Skills are split into those the work shows and those familiar from coursework or a traineeship; tools no CV supports are gone.
+- The command palette ranks results itself. cmdk 1.1.1 could not reorder its groups, so a search for "rag" selected a section instead of the project.
+- The contact form posts to the site's own origin, a Cloudflare Worker with an exact per-client rate limit in a Durable Object, and works without JavaScript. There is no cold start, no CORS and no second host.
+- The frontend is strict TypeScript, type-checked in CI.
+- The content security policy allows no inline script or style.
+- The issue chooser no longer lists the security report twice, and release notes read as paragraphs.
+
+### Removed
+
+- Google Analytics, and with it every cookie and third-party request.
+- The Express backend on Render and its Postman collection.
+- The globe, the contribution graph with its weekly snapshot commit, and the skill-mark sprite.
+- The ten-document backend audit and its self-issued certification. Its lasting finding, a rate limiter that counted proxies, does not apply on the Worker.
+- `humans.txt`, the code of conduct, the pull-request template and two issue forms.
 
 ## [3.0.0] - 2026-11-24
 
 ### Changed
 
-- **The page was redesigned**, in two passes on 2026-11-23 and 2026-11-24:
-  a new palette, a new first screen, the projects before the narrative, one
-  project featured, one header for every section, and the ten skills that
-  matter set apart from the other fifty-two. No dependency was added.
-  `docs/design.md` has the reasoning for each decision below, the eight sites
-  that were studied first, and the three palettes that were weighed.
-  - **Palette.** A midnight page close to black (`#070a11`) under graphite
-    panels (`#121824`), where both were navy and every section looked like
-    the one before it; a lighter cyan (`#6ee7f7`) with a lavender partner, and
-    softer status colours. Every text, accent and status colour holds 7:1 on
-    the page and on a panel, computed, and the six hand-kept copies of the
-    palette (the 404 page, the theme colour, the contribution graph, the
-    globe, the social card and the contact email) follow. The social card was
-    regenerated.
-  - **A backdrop with depth.** Two faint lights stand behind the top of the
-    page, cyan behind the portrait and indigo from the left, under a sparse
-    dot field. Both are static CSS, and every other section opens on a
-    hairline and a tone that fades back into the page. They replace the dot
-    band, a faint strip that shimmered.
-  - **The greeting is the design.** "hi, Waleed here." is set as wide as its
-    column on every screen, about 131px on a 1440px desktop and 50px on a
-    phone, light, with the name the one bold word, running from lavender into
-    cyan. Under it the statement runs in two tones and, on a desktop, two
-    columns: what I build, then why it holds up.
-  - **The hero is the first screen.** It opens with a line saying which roles
-    I am open to. In a tall desktop window it takes the height of the screen,
-    with the four figures along its bottom edge and the dock under them; in a
-    short one, such as a laptop window with its toolbars, the copy alone
-    takes the first screen and the figures start under the fold, where before
-    the dock sat across them. The figures moved here from About and are a
-    strip of large numbers, not four tiles. The masthead names the role and
-    the place, with its coordinates.
-  - **The hero's row of buttons is gone** (View projects, Resume, LinkedIn,
-    GitHub). The dock at the foot of the same screen carries all four, and
-    the contact panel carries the last three again.
-  - **Projects come first, and one is featured.** The page now runs
-    Projects, Experience, About, Skills, Contact. The thesis project opens
-    the section across the full width, its picture staged beside its text,
-    with three figures under its highlight: 985 tests, 100K due reminders, 4
-    depths of tenant isolation, each restating a claim Experience already
-    makes. The next two cards are half the width each and the last three a
-    third. All six used to be the same card.
-  - **Sharper pictures on the largest cards.** The featured project and
-    the AI Workflow Assistant gain a wider cut (1440 and 1120px), which only
-    a 2x screen wide enough for it downloads. The Research Team's
-    screenshot is 900px wide at its source, so it has none. The picture
-    budgets rise to 238 kB of AVIF and 305 kB of WebP for the two pairs.
-  - **Project pictures stand in a well.** Each sits inside a dark mount cut
-    into its card instead of bleeding to the card's edges, where three light
-    screenshots and three dark ones made the grid a checkerboard. The five
-    independent projects no longer each repeat "Independent Project".
-  - **One section header.** Every section opens with its number, its title
-    and its subtitle, the subtitle against the right edge on a desktop. Three
-    different headers stood there before.
-  - **One voice for metadata.** The role, the place, the entry behind a
-    figure, the context over the featured project and the dates of a role or
-    a degree are small spaced capitals, and nothing else on the page is.
-  - **Experience and Education are timelines**, with a rail joining the
-    monograms. On a desktop a role's dates and place lead the row, in a
-    column down the left edge, where they sat a full screen's width from the
-    role they dated. An open role's bullets flow in two balanced columns; as
-    a grid they left a gap under every short bullet.
-  - **About fills its second column**: education and the target roles share
-    it, where education alone ended half way down.
-  - **Skills opens with the ten the work is built on**, each with the
-    projects or the role that show it, checked against those entries by a
-    test. The full inventory of sixty-two follows. No levels and no years.
-  - **A phone shows less at first.** The description on each of the five
-    ordinary project cards, and the skills inventory, are one tap away there
-    and open from a tablet up, as native `<details>` with no JavaScript. The
-    phone page is 9,987px, from 10,771px.
-  - **Contact is a panel of its own surface**, with availability and place
-    as its heading line.
-  - **The dock and the command palette catch the light**: a hairline along
-    the top edge of each, over its shadow.
-- **The styles of everything below the hero are a stylesheet of their own**,
-  linked in the body after the hero, so the first screen paints without
-  waiting for them. The stylesheet a visitor waits for is 5.5 kB, from
-  7.9 kB; the sections' sheet is 3.9 kB. Two files compress worse than one,
-  so the CSS in all went from 7.9 to 9.3 kB. Each has a budget of its own.
-- **Print rules are a stylesheet of their own** too, linked with
-  `media="print"` and last in the page, so they block nothing.
-- **The form field border is stronger**, 66% of the slate from 56%. On the
-  contact panel's new surface 56% measured 2.7:1 against the panel; it is
-  3.4:1 there now and 3.8:1 against the field's own fill, and the browser
-  test measures both sides instead of the page alone.
-- **The contact email's header keeps its indigo for the first 60%** of the
-  gradient, under the white title, since the lighter cyan cannot carry white
-  text.
-- **`.visually-hidden` no longer uses `!important`.** It sits in the last
-  cascade layer, where it already outranks every other rule.
+- The page was redesigned.
+- The styles of everything below the hero are a stylesheet of their own.
+- Print rules are a stylesheet of their own.
+- The form field border is stronger.
+- The contact email's header keeps its indigo for the first 60%.
+- `.visually-hidden` no longer uses `!important`.
 
 ### Added
 
-- **The MemorAIz Onboarding Assistant in Experience.** The MemorAIz role gains
-  a bullet for the onboarding agent built there alongside RemindrAI: it
-  interviews new clients, fills a live company profile and answers questions
-  from a pgvector knowledge base. Its repository is private to MemorAIz, so it
-  is a bullet rather than a project card.
-- **Tests for the redesign.** Content: one project is featured and comes
-  first; its figures restate claims the entries make; every core skill's
-  proof names entries that show it. Invariants: no print rule outside
-  `print.css`; every stylesheet loaded exactly once, in the right order.
-  Browser: the figures clear the dock on a tall window and start under the
-  fold on a short one; the greeting fills its column without leaving it at
-  six widths; a card's description and the skills inventory are one tap
-  away on a phone and open on a desktop; a printed page loses the dock.
+- The MemorAIz Onboarding Assistant in Experience.
+- Tests for the redesign.
 
 ## [2.6.4] - 2026-11-22
 
 ### Fixed
 
-- **The structured data now validates cleanly.** The schema.org validator
-  reported one error: the `ProfilePage` pointed at the project list through
-  `hasPart`, which takes only a creative work. That link is gone; each project
-  still names its author. Google's Rich Results Test flagged `dateModified` as
-  an invalid value, because it was a bare date; it is now a full date-time,
-  and the repository invariants require that form.
+- The structured data now validates cleanly.
 
 ## [2.6.3] - 2026-11-22
 
 ### Added
 
-- **The projects as structured data.** The build generates a JSON-LD list of
-  the six projects from the same data as the cards: those with a public
-  repository as `SoftwareSourceCode` with the repository and the demo,
-  RemindrAI as a plain `CreativeWork`, so its private repository is never
-  named. A browser test keeps the list in step with the cards.
+- The projects as structured data.
 
 ### Changed
 
-- **Search results and link previews name the work and the city.** The title
-  is now "Syed Waleed Ahmed · AI Software Engineer in Bologna, Italy", the
-  description names LLM applications, multi-agent systems, RAG pipelines and
-  the degree, and the Open Graph and Twitter text match. The `Person` data
-  adds the MSc as a credential, the Hugging Face profile and topics the
-  projects show (agentic AI, fine-tuning, Python, TypeScript, FastAPI).
+- Search results and link previews name the work and the city.
 
 ## [2.6.2] - 2026-11-22
 
 ### Changed
 
-- **The title is now AI Software Engineer everywhere.** The page title, the
-  search and link-preview text, the structured data, the social card, the
-  MemorAIz entry and the first target role said "AI Engineer"; they now match
-  the resume and the GitHub profile. The "open to AI and ML engineering roles"
-  lines are unchanged: they name the roles, not the title.
+- The title is now AI Software Engineer everywhere.
 
 ## [2.6.1] - 2026-11-20
 
 ### Fixed
 
-- **On Apple devices the dock's Search tooltip stood three lines tall.** There
-  it reads "Search (", the Command key drawn as an icon, "K)". The reset makes
-  every `svg` a block, so the icon took a line to itself. It now has a display
-  of its own, and a browser test runs the Apple branch, which none did.
-- **One card picture was larger than its source, against the rule.** The
-  FastAPI picture was a 920px crop saved at 960. It is re-cut at 920, with the
-  settings the others use, and is three times closer to the source's pixels.
-  The truer file is 1.1 kB heavier, since an enlarged picture is a blurred
-  one and compresses better, so the WebP budget moves from 210 to 212 kB.
+- On Apple devices the dock's Search tooltip stood three lines tall.
+- One card picture was larger than its source, against the rule.
 
 ### Changed
 
-- **ESLint checks the frontend's `.mjs` files.** The rules were scoped to
-  `.js` and `.jsx`, so the four build scripts and the test server matched only
-  a block of globals and were checked by no rule. They pass now that they are.
-- **The weekly link check reads the whole of `docs/`.** Its pattern stopped at
-  the top level, so the audit documents were never checked.
-- **The rate limiter is configured with `limit`**, the current name of the
-  option `express-rate-limit` still accepts as `max`.
-- **Documentation corrected against the code**: the backend test count and
-  file list in the README, the optional environment variables, what a `502`
-  means, the number of demos on Streamlit, and ten comments that described
-  code that had changed or was never there. The record is in
-  `docs/repository-maintenance/`, since merged into
-  [`docs/repository-cleanup.md`](docs/repository-cleanup.md).
+- ESLint checks the frontend's `.mjs` files.
+- The weekly link check reads the whole of `docs/`.
+- The rate limiter is configured with `limit`.
+- Documentation corrected against the code.
 
 ### Removed
 
-- **Code that did nothing**, each confirmed before it went: an unused field
-  in the backend's configuration, a placeholder style for form fields that
-  have no placeholder, and two declarations that moved no element at any of
-  four widths.
+- Code that did nothing.
 
 ## [2.6.0] - 2026-11-20
 
 ### Fixed
 
-- **The contact form's rate limit counted all visitors together.** The API
-  trusted one proxy in front of it, and on Render there are more, so the
-  address the limiter counted was a proxy's. A measurement against the live
-  API on 2026-11-20 showed sixteen requests from one machine spread over three
-  counters, none moved by a forged header, and three answered `429`: a few
-  requests from anyone, a bot filling the honeypot included, could lock the
-  form for everyone for 15 minutes. The count is now `3`, settable as
-  `TRUST_PROXY_HOPS`, and `docs/deployment.md` has the check that tells a
-  right number from a wrong one. That check is also how `3` was reached: `2`,
-  the number Render's documentation suggests, was deployed first and still
-  spread one machine's requests over at least four counters. With `3`, nine
-  requests counted down a single one.
-- **A crafted subject or address could make the API answer `500`.** Half of
-  an emoji's surrogate pair is legal in JSON, and `encodeURIComponent`, which
-  builds the email's reply link, throws on one. Free text is now repaired
-  (U+FFFD in its place) and sent.
-- **A send could wait on Resend for five minutes.** Neither the SDK nor the
-  call set a limit, so a stalled provider held each submission open until the
-  form gave up at 60 seconds, and the server for longer. A send is now
-  abandoned after 10 seconds (`RESEND_TIMEOUT_MS`) and answered `502`, and the
-  log says it was a timeout.
+- The contact form's rate limit counted all visitors together.
+- A crafted subject or address could make the API answer `500`.
+- A send could wait on Resend for five minutes.
 
 ### Changed
 
-- **Render deploys the backend only after CI passes.** Its Auto-Deploy
-  setting is now After CI Checks Pass, so a backend commit that fails a check
-  stays undeployed, as a frontend one already did. It is a setting in
-  Render's dashboard, and the docs now carry that dashboard as it was read.
-  Reading it showed the docs wrong in three places: the build command was
-  `npm install`, not the `npm ci` they claimed, it installed development
-  packages, and `NODE_ENV=production` was Render's default, not a variable
-  there. The Node version does come from the repository's `.nvmrc`.
-- **The backend's build installs production packages only.** Render's build
-  command is now `npm ci --omit=dev`: 76 packages straight from the lockfile
-  where `npm install` had resolved 155, and a lockfile out of step with
-  `package.json` fails the build. `NODE_ENV=production` is set explicitly in
-  the dashboard as well, so that keeping error detail out of responses no
-  longer rests on a platform default.
-- **An address holding a control character or an unpaired surrogate is a
-  `400`.** The email pattern only rules out whitespace and a second `@`, so
-  both passed; the mailer then turned a control character into a space and
-  handed Resend a different, invalid `Reply-To`.
-- **The boot log names configuration that would fail silently.** An
-  `ALLOWED_ORIGINS` entry with a trailing slash, a path, an upper-case host or
-  a wildcard never matches a browser's `Origin`, and the only symptom was a
-  form that stopped working. A proxy count or timeout that is not a usable
-  number is named too, and the default used.
+- Render deploys the backend only after CI passes.
+- The backend's build installs production packages only.
+- **An address holding a control character or an unpaired surrogate is
+- The boot log names configuration that would fail silently.
 
 ### Added
 
-- **Tests for what could break without one noticing.** A provider that
-  refuses, cannot be reached or never answers; the preflight the form's `POST`
-  depends on; the largest submission the field caps allow against the 16 KB
-  body cap, which it clears by 323 bytes; the limiter's window; which
-  `X-Forwarded-For` entry the limiter reads; and the configuration parser.
-  The backend suite goes from 18 tests to 33, and each new test was confirmed
-  to fail with its fix undone.
-- **An audit of the backend**, in `docs/audit/`: what was inspected and
-  measured, each finding with its evidence, what was fixed here and what is
-  still open.
+- Tests for what could break without one noticing.
+- An audit of the backend.
 
 ## [2.5.0] - 2026-11-19
 
 ### Added
 
-- **CrewAI and LiteLLM in Skills**, both backed by the Multi-Agent Research
-  Team. CrewAI carries its mark; neither icon set has one for LiteLLM, so it
-  stays text.
-- **An 840px portrait for high-density wide screens.** Above 2048px at 2x
-  the portrait renders at about 850 device pixels, beyond the previous 680px
-  maximum. No other screen downloads it.
-- **A check of the live site after every deploy.**
-  `frontend/scripts/verify-deploy.mjs` confirms the origin serves the build
-  that was just published, applies every rule in `_headers`, answers an
-  unknown path with the 404 page, and that plain HTTP and `www` redirect to
-  it, and fails the deploy if not. It retries for about a minute, since a new
-  version reaches the edge over a few seconds. Nothing looked at the host
-  itself before.
-- **The browser suite can run against a deployed origin.**
-  `E2E_BASE_URL=https://...` points it at a live site instead of the local
-  build, under the headers the CDN really sends.
+- CrewAI and LiteLLM in Skills.
+- An 840px portrait for high-density wide screens.
+- A check of the live site after every deploy.
+- The browser suite can run against a deployed origin.
 
 ### Changed
 
-- **The frontend deploys to Cloudflare Workers, and only after CI passes.**
-  The previous host's free plan pays for about twenty production deploys a
-  month, and on 2026-11-19 it ran out with the site frozen at its last
-  deploy. The site is now a Worker with static assets
-  (`frontend/wrangler.jsonc`), built on a GitHub runner and published by
-  `.github/workflows/deploy.yml`, so the host counts no builds or deploys.
-  CI calls that workflow once every job is green: a commit that fails a
-  test, a size budget or an audit is no longer published, where the
-  previous host built every push whatever CI reported. The weekly snapshot
-  commit deploys through the same workflow. `_headers` is unchanged apart
-  from two rules Cloudflare can never apply, and `.nvmrc` is now the only
-  Node pin, the host's own config file having gone. The domain's DNS zone
-  moved to Cloudflare with it, and `routes` in `frontend/wrangler.jsonc`
-  attaches `syedwaleedahmed.me` and `www` to the Worker.
-- **Multi-Agent Research Team takes Campaign Forge's place in Projects.**
-  The platform went live on 2026-11-16: three CrewAI agents search the web,
-  write code examples and deliver a cited report, with every step streamed
-  to the browser and each link checked against the URLs the search
-  retrieved. Its public demo runs real agents, where Campaign Forge's
-  answered with a simulated responder. The card shows a crop of a real run
-  from the repository, and its 259 tests were counted from a checkout. The
-  grid stays at two rows of three; Campaign Forge stays pinned on the GitHub
-  profile.
-- **A new portrait.** A studio headshot replaces the canal photo in the
-  hero, the social card and the JSON-LD, cropped to head and shoulders for
-  the circular frame. The plain backdrop compresses far better: the 320px
-  file desktops load first is 6 KB (was 19 KB), the phone file 3 KB (was
-  9 KB), and the regenerated social card 72 KB (was 107 KB).
-- **The AI Workflow Assistant's picture is re-cut** from the screenshot that
-  repository retook when it folded reports into analyses, so the card again
-  matches its source. The 508-test figure was re-counted and still holds.
+- The frontend deploys to Cloudflare Workers, and only after CI passes.
+- Multi-Agent Research Team takes Campaign Forge's place in Projects.
+- A new portrait.
+- The AI Workflow Assistant's picture is re-cut.
 
 ### Fixed
 
-- **HTTPS is enforced again after the host move.** The previous host
-  redirected plain HTTP to HTTPS, sent `www` to the apex and added HSTS by
-  itself; on Cloudflare none of the three is a default, and for an hour the
-  site answered over plain HTTP and served a second copy at `www`. "Always
-  Use HTTPS" and a redirect rule are now set in the zone, both checked after
-  every deploy, and `Strict-Transport-Security` is a line in `_headers`.
-- **Project pictures are chosen for their real width.** The `sizes` hint
-  now follows the card's rendered width at every breakpoint. A 1024px screen
-  no longer downloads the 960px file for a 461px slot, and a 2560px screen,
-  where cards are 642px wide, no longer stretches the 480px one.
-- **The Projects subtitle no longer mentions university or robotics work.**
-  No card has shown either since TIAGo was removed on 2026-11-15; it now
-  names what the six cover: agents, retrieval, evaluation and fine-tuning.
+- HTTPS is enforced again after the host move.
+- Project pictures are chosen for their real width.
+- The Projects subtitle no longer mentions university or robotics work.
 
 ### Removed
 
-- **The previous host's default address is no longer an allowed API
-  origin.** That site is deleted, which frees its name for anyone to
-  claim, so it left the default CORS origins in `backend/config/env.js`. The
-  site's own two hostnames are unchanged.
+- **The previous host's default address is no longer an allowed
 
 ## [2.4.4] - 2026-11-15
 
 ### Changed
 
-- **AI Workflow Assistant takes the TIAGo card's place in Projects.** The
-  data-analysis agent is deployed and public (LangGraph, FastAPI, Next.js,
-  PostgreSQL), and its card shows a crop of its own dark-mode report
-  screenshot. The grid stays at two rows of three; TIAGo remains on the
-  GitHub profile.
-- **The FastAPI Niche Assistant card follows its Qwen release.** The live
-  model is now a LoRA fine-tune of Qwen2.5-Coder-1.5B (a 1 GB GGUF), which
-  scored 0.666 against 0.546 for the TinyLlama release it replaced. Its
-  picture is re-cut from the repository's new screenshot, which shows that
-  version.
-- **Self-Correcting RAG's test count is 347**, up from 341.
+- AI Workflow Assistant takes the TIAGo card's place in Projects.
+- The FastAPI Niche Assistant card follows its Qwen release.
+- Self-Correcting RAG's test count is 347.
 
 ## [2.4.3] - 2026-11-14
 
 ### Changed
 
-- **Skills add llama.cpp, Google Cloud Run and Cloudflare Workers.** The
-  FastAPI Niche Assistant now serves its fine-tuned model with llama.cpp
-  from Google Cloud Run behind a Cloudflare Worker, so each is backed by a
-  deployed project. Cloudflare Workers carries its mark from Simple Icons;
-  neither icon set has one for llama.cpp or Cloud Run, so those two stay
-  text. The resume and the GitHub profile README name the same three.
+- Skills add llama.cpp, Google Cloud Run and Cloudflare Workers.
 
 ## [2.4.2] - 2026-11-14
 
 ### Fixed
 
-- **The hero's text is the first paint on a phone, not a fade later.**
-  PageSpeed Insights scored the live site 97 on mobile with a Largest
-  Contentful Paint of 2.6 s, just past the 2.5 s it counts as good, and named
-  the hero's heading as the LCP element. Its entrance faded it in from
-  opacity 0, which Chrome does not count as painted, so the LCP waited for
-  the fade. The entrance now starts visible and sharpens from the same blur:
-  on a throttled phone profile the LCP moved from 1100 ms to 968 ms, equal to
-  first paint. Desktop, where the portrait is the LCP, is unchanged.
-- **Phones fetch a portrait their size.** It renders at 96 CSS pixels, and
-  phones were given the 320px file. A 192px version (9.4 KB as AVIF, against
-  19.3 KB) is now first in the `srcset` and the preload.
+- The hero's text is the first paint on a phone, not a fade later.
+- Phones fetch a portrait their size.
 
 ### Changed
 
-- **Checked in the owner's own Chrome and with PageSpeed Insights.** No
-  console error, no failed request, the globe drawn on the real GPU.
-  Accessibility, Best Practices and SEO were 100 on mobile and desktop, and
-  the computed accessibility tree has one `h1`, no skipped heading level, a
-  name for every control and an announcement on every link that opens a new
-  tab. `docs/testing.md` records the figures, and the two fixes tried and
-  not taken.
+- Checked in the owner's own Chrome and with PageSpeed Insights.
 
 ## [2.4.1] - 2026-11-14
 
 ### Fixed
 
-- **Project pictures no longer break in a browser without AVIF.** They were
-  AVIF only, so such a browser drew six broken-image icons, while the hero's
-  portrait beside them fell back to WebP. Each card now renders a `<picture>`
-  with a WebP fallback at the same two widths. Found by opening the live site
-  in WebKit's Windows build, which cannot decode AVIF.
-- **A Windows contrast theme no longer hides the two selected states.** Under
-  forced colours the browser replaces every author colour, and the tint that
-  marked the dock's current section and the command palette's selected row
-  went with them: every dock item and every palette row looked the same. Both
-  now take the system's own selection colours.
+- Project pictures no longer break in a browser without AVIF.
+- A Windows contrast theme no longer hides the two selected states.
 
 ### Changed
 
-- **The site was checked outside Chromium for the first time.** Firefox 157
-  renders and behaves as Chromium does. WebKit agrees on everything but the
-  pictures above. `docs/testing.md` records how, and why Playwright's WebKit
-  cannot use the project's own test server.
-- **Load speed since 2.1.4 was measured, not assumed.** The skill marks, card
-  pictures and colour work of 2.2.0 to 2.4.0 left First and Largest Contentful
-  Paint where they were: on a throttled phone profile (slow 4G, 4x CPU), a
-  median Largest Contentful Paint of 1212 ms against 1184 ms for 2.1.4, the
-  ranges overlapping, with no layout shift in either. The page downloads 24 kB
-  more before it settles, most of it the sprite of skill marks. Both builds
-  were served locally with gzip and no analytics, so the figures compare the
-  two and do not describe the live site.
+- The site was checked outside Chromium for the first time.
+- Load speed since 2.1.4 was measured, not assumed.
 
 ## [2.4.0] - 2026-11-14
 
 ### Changed
 
-- **The colours are one system of named roles.** A rendered audit of the page,
-  its states and the 404 page found every paint already came from a token, but
-  several tokens were doing jobs they were not named for, and similar things
-  were coloured differently. `tokens.css` is now grouped by role (surface,
-  border, text, accent, inverse, status), and three invariants hold it: no
-  stylesheet but the token file may write a colour, every text, accent and
-  status colour is 7:1 on the page and on a panel, and every hue derives its
-  border (50%) and tint (10%) by one formula.
-- **A technology tag looks the same everywhere.** On a project card it was an
-  outline with soft text; in Skills it had a fill, a second ring and brighter
-  text. Both are now one chip, filled with the page colour like a form field,
-  and Skills only makes it larger. The ring's token, `--color-halo`, is gone.
-- **Outlined controls share one hover.** The secondary button tinted its fill,
-  the icon buttons coloured their icon and the contact channels coloured their
-  label. All three now take the accent on their edge and a 10% accent fill.
-- **Project pictures rest a step dimmer.** Two of the six are screenshots of
-  light interfaces and were the brightest things on the page. All six sit at
-  84% brightness and come up to full strength with the pointer or focus.
-- **Pills and tooltips use an inverse pair of tokens** instead of borrowing a
-  text colour as a background, and the dock's translucent fill is a token.
+- The colours are one system of named roles.
+- A technology tag looks the same everywhere.
+- Outlined controls share one hover.
+- Project pictures rest a step dimmer.
+- Pills and tooltips use an inverse pair of tokens.
 
 ### Added
 
-- **A warning colour, for failures that are not the visitor's.** A rate
-  limit, a server that is down and a dropped connection were shown in the
-  error red, as if the form had been filled in wrongly. They are now amber;
-  only a `400` and an invalid field are red. A link inside a status message
-  takes the message's colour and stays underlined, where it was accent cyan
-  in the middle of red text.
+- A warning colour, for failures that are not the visitor's.
 
 ### Fixed
 
-- **An invalid field's border is easier to see than a valid one's, not
-  harder.** The error border was a separate red at 40%, about 1.9:1 against
-  the page, beside the 3.1:1 of an ordinary field. Status borders are now
-  their own hue at 50%: 3.3:1 for an error.
+- **An invalid field's border is easier to see than a valid one's,
 
 ## [2.3.1] - 2026-11-14
 
 ### Changed
 
-- **Stronger colour contrast across the page.** Text already passed WCAG AA;
-  what read as dark on dark was the edges. Card and panel borders were slate
-  at 14%, about 1.2:1 against the page, and are now 22% (about 1.5:1);
-  control outlines go from 28% to 42% (about 2.3:1). Muted text, the dimmest
-  on the page, goes from `#8c99ad` (6.0:1 on a card) to `#a1adbf` (7.6:1),
-  so every text colour now meets WCAG AAA on every surface, and a browser
-  test runs axe's enhanced-contrast rule to keep it there: it found 21
-  failing elements before the change and none after. The social card's
-  domain line uses the same colour and was regenerated.
+- Stronger colour contrast across the page.
 
 ### Fixed
 
-- **Contact form fields have a visible boundary.** Their border was about
-  1.7:1 against the panel, below the 3:1 that WCAG 1.4.11 asks of an input's
-  edge, which no automated check had flagged. A new `--color-border-field`
-  token meets 3:1, and a browser test measures it.
+- Contact form fields have a visible boundary.
 
 ## [2.3.0] - 2026-11-14
 
 ### Added
 
-- **A picture on every project card.** Each card opens with a 2:1 crop that
-  bleeds to its edges, cut from an image in that project's own repository
-  (for RemindrAI, whose repository is private, from the thesis poster), so a
-  picture can be checked against its source like the figures beside it;
-  `docs/design.md` lists each one. They are AVIF at two widths, about 159 KB
-  for all twelve files, loaded lazily with their box reserved, and held by a
-  new 175 kB size budget. The card grid's shared rows go from six to seven, a
-  content test requires every project to name a picture that exists and to
-  describe it, and the entry JavaScript grew by 0.9 KB.
+- A picture on every project card.
 
 ### Changed
 
-- **The FastAPI Niche Assistant replaces the connecting-rod card.** A
-  TinyLlama 1.1B model fine-tuned with LoRA on FastAPI questions, quantized to
-  a 0.7 GB GGUF and served by llama.cpp behind an OpenAI-compatible API, with
-  a Cloudflare Worker in front of Google Cloud Run and a public demo. Its
-  figures are the repository README's: 0.546 against the base model's 0.402
-  on the 108-item held-out set, both scored in one run of the CI eval gate.
-  The card names only what the live deployment runs, so the Worker's optional
-  answer cache and its undeployed backup origins are left out. The
-  connecting-rod course project remains on GitHub.
+- The FastAPI Niche Assistant replaces the connecting-rod card.
 
 ## [2.2.0] - 2026-11-13
 
 ### Added
 
-- **Brand marks on the skill tags.** A tag that names a product now shows its
-  mark before the name, 34 tags in all, from
-  [Simple Icons](https://github.com/simple-icons/simple-icons) (CC0-1.0) and,
-  for Mastra, OpenAI and Groq, [Lobe Icons](https://github.com/lobehub/lobe-icons)
-  (MIT). They are drawn in one ink rather than brand colours, several of which
-  are black and would vanish on the page. The marks ship as a single SVG
-  sprite of 20.5 KB gzipped, fetched once as an image and cached like the
-  rest of `/assets/`; the entry JavaScript grew by 0.5 KB and the CSS by
-  0.2 KB. Neither package is a dependency: `frontend/scripts/gen-skill-icons.mjs`
-  builds the sprite from `skillIcons` in `data/skills.js`, a content test
-  fails when the two differ, and a browser test fails when a mark does not
-  draw. Practices such as RAG have no mark, seven tools are in neither set,
-  and AWS, MySQL and ASP.NET Core were tried and left as text, because each
-  mark is its own name in letters too small to read.
-- **A light under the pointer on project cards.** On a screen with a mouse, a
-  card shows a soft cyan wash where the pointer is and a brighter arc on the
-  nearest stretch of its border, adapted from the Magic Card in
-  [magicuidesign/magicui](https://github.com/magicuidesign/magicui) (MIT) as
-  two CSS gradients and one event listener, with no dependency. It is off on
-  touch screens and absent from print.
+- Brand marks on the skill tags.
+- A light under the pointer on project cards.
 
 ### Fixed
 
-- **Skill tags align on their text.** With a mark in front, a tag took its
-  baseline from the mark's bottom edge, which set the tag and its group's
-  name 3px below the rows beside them.
+- Skill tags align on their text.
 
 ## [2.1.4] - 2026-11-12
 
 ### Changed
 
-- **Every Markdown document was reviewed against the code.** Versions, test
-  counts, size figures, commands, links and anchors were checked and
-  corrected where they had drifted, and wording and formatting were made
-  consistent across the README, the community files and `docs/`. Among the
-  corrections: `docs/security.md` said GitHub's security features were off
-  (they are on), the release process now matches how releases are cut, and
-  both architecture diagrams show the browser calling Render directly.
+- Every Markdown document was reviewed against the code.
 
 ### Fixed
 
-- **The frontend's `engines` range matches Size Limit's.** It read
-  `^22.19.0 || >=24.5.0`, which admits Node 25; Size Limit 14 requires
-  `^22.19.0 || ^24.5.0 || >=26.0.0`, and the range is now exactly that.
+- The frontend's `engines` range matches Size Limit's.
 
 ## [2.1.3] - 2026-11-12
 
 ### Changed
 
-- **The GitHub activity snapshot is refreshed by hand** to 2026-11-11 (1,008
-  contributions), ahead of Monday's scheduled run.
+- The GitHub activity snapshot is refreshed by hand.
 
 ### Fixed
 
-- **The footer's source link meets the touch-target floor.** On a touch
-  screen it was 22px tall, the one tappable element without the 48px
-  minimum; WCAG exempts it as an inline link, but the README promises 48px.
+- The footer's source link meets the touch-target floor.
 
 ## [2.1.2] - 2026-11-12
 
 ### Fixed
 
-- **The MemorAIz dates now match the resume and the GitHub profile.** The
-  Experience entry read "Feb 2026 - Oct 2026", running to graduation; it now
-  reads "Feb 2026 - Sep 2026", the internship (Feb - Jun) plus the thesis
-  collaboration that followed it.
+- The MemorAIz dates now match the resume and the GitHub profile.
 
 ## [2.1.1] - 2026-11-11
 
 ### Changed
 
-- **Skills and crawler data follow the re-synced projects.** Skills adds
-  FastAPI, which serves all three, and LLM Evaluation, now a project of its
-  own; the `Person` JSON-LD's `knowsAbout` adds LLM Evaluation too.
-- **The Projects subtitle mentions the live demos** beside the source links.
+- Skills and crawler data follow the re-synced projects.
+- The Projects subtitle mentions the live demos.
 
 ## [2.1.0] - 2026-11-11
 
 ### Added
 
-- **Live demo links on project cards.** A card can carry `demo`, shown as
-  "Live demo" beside "View source", and the command palette lists each demo
-  as its own entry. The RAG, multi-agent and LLM-as-Judge cards link their
-  deployments. The weekly link check now keeps a cookie jar, because
-  Streamlit Community Cloud sends a client without cookies round an endless
-  auth redirect, which would fail on both demos while they were up.
+- Live demo links on project cards.
 
 ### Changed
 
-- **Three project cards re-synced with their repositories,** each of which
-  had grown into a deployed service. Figures come from each repository's
-  README, evaluation or build-status page; test counts and coverage were
-  measured from a checkout of `main`.
-  - *Self-Correcting Multi-Agent RAG* (was *Self-Correcting RAG Pipeline*):
-    hybrid BM25 and vector search, a tool-using agent with read-only SQL and
-    private uploads; recall@5 rose from 0.967 to 0.992 over dense retrieval on
-    a 60-question golden set; 341 tests (was 31). The stack drops
-    sentence-transformers and FAISS, now optional, for pgvector and Next.js.
-  - *Campaign Forge* (now *Multi-Agent Marketing Platform*, as its 2.0.0
-    release calls it): from four agents in one pipeline to a workflow engine
-    of 28 agents and 14 templates, with checkpointed, resumable runs and an
-    Evaluation Lab; branch coverage is 97% (the card said 94%).
-  - *LLM-as-Judge* returns, cut in July when it was a prototype: an
-    evaluation platform published on PyPI, with 98% test coverage.
-- **The Bachelor's thesis card is removed.** It had no repository, and its
-  "~25% control-loop stability" figure could not be traced to a source, so it
-  broke the rule that every figure on the page is checkable. Six cards keep
-  the grid at two full rows of three.
+- Three project cards re-synced with their repositories.
+- The Bachelor's thesis card is removed.
 
 ### Security
 
-- **`minimatch` moves to 11 under ESLint** (GHSA-g3hv-75wg-m249, moderate: a
-  crafted glob pattern could expand into quadratic work). Every 10.x release is
-  affected and ESLint 10.14 still requires `^10`, so Dependabot could not
-  update it and `npm audit fix` would have downgraded ESLint. Both projects now
-  carry an npm `overrides` entry for `minimatch` `^11.0.1` (resolving 11.0.5).
-  The risk here was low, since ESLint only matches the repository's own config
-  globs and the package is a development dependency, but both Dependabot alerts
-  are now resolved and `npm audit` reports nothing, dev dependencies included.
-  `docs/development.md` records when to remove the override.
-- **The invariants test found the inline analytics script by its exact
-  spelling** (CodeQL `js/bad-tag-filter`). It matched only a bare lowercase
-  `<script>`, so a second inline script written `<SCRIPT>` or `<script defer>`
-  would have passed it while the CSP blocked that script on the live site. It
-  now finds `<script>` elements in any case and with any attributes, keeps the
-  inline executable ones, and fails unless there is exactly one.
+- `minimatch` moves to 11 under ESLint.
+- **The invariants test found the inline analytics script by its
 
 ## [2.0.0] - 2026-11-10
 
 ### Added
 
-- **Open-source repository structure.** Issue forms for a bug, an improvement
-  and a documentation problem, with blank issues turned off and links that
-  route security reports and personal contact elsewhere
-  (`.github/ISSUE_TEMPLATE/`); a `CODEOWNERS` file; a `docs/README.md` index
-  for anyone opening the folder on GitHub; and short READMEs in `frontend/` and
-  `backend/` giving each project's layout and commands. Every version in this
-  file is now a git tag and a GitHub Release, the older ones included.
-- **Command palette** ([cmdk](https://github.com/pacocoursey/cmdk)): Ctrl/Cmd+K, or
-  the Search item in the dock, jumps to a section, opens a project's repository
-  or copies the email address. Searching a technology finds the project built with
-  it. The entries are built from the existing data files. It is an 18 KB chunk
-  fetched only on intent.
-- **GitHub contribution graph**
-  ([react-activity-calendar](https://github.com/grubersjoe/react-activity-calendar))
-  under the project grid, loaded as it nears the viewport. It reads a committed
-  snapshot rather than a live API, which was measured answering with 504s and
-  taking 11 seconds, so it adds no third-party request and no CSP change.
-  `scripts/fetch-github-activity.mjs` refreshes the snapshot, and the new
-  `refresh-activity.yml` workflow commits the result every Monday.
-- **Globe** ([cobe](https://github.com/shuding/cobe)) in the contact panel, marking
-  Karachi, Bologna and Enschede. Screens of 80rem and up only; smaller screens never
-  download it or create a WebGL context. Reduced motion gets a still frame.
-- Together these add about 2 KB of gzipped JS to the first load. Largest Contentful
-  Paint and layout shift were unchanged in before-and-after runs on throttled 4G.
-  `beasties` (critical CSS) was tried and left out: First Contentful Paint improved
-  by about 350 ms, but it inlined 91% of the stylesheet into the prerendered page
-  and Largest Contentful Paint got about 750 ms worse.
-- **Build-time prerendering.** `npm run build` now compiles a server bundle of
-  the app and writes the rendered page into `dist/index.html`
-  (`frontend/scripts/prerender.mjs`); `main.jsx` hydrates it. The full page is
-  in the HTML response, so text paints before JavaScript runs, crawlers and
-  link previews see every section, and deep links such as `/#projects` land on
-  the real document height. The `noscript` fallback became redundant and went.
-- **Frontend content tests** (`frontend/test/data.test.js`, 12 tests, `npm test`
-  in `frontend/`, and a CI step): every About figure must appear in the entry
-  that claims it, project and experience copy stays in a shared length range,
-  each project card has exactly one of a repository link or a source note, links
-  are absolute `https`, keys are unique, the palette's entries point somewhere
-  real, the activity snapshot is a usable year of days, and no copy uses a
-  character outside the font subset. The first two were comment-only conventions
-  before. The font check serialises every export of every data module: a list of
-  named exports once left the About "Approach" paragraphs and the globe caption
-  unchecked.
-- **Repository invariants** (`test/invariants.test.js` at the root, `npm run
-  test:invariants`): 16 tests with no dependencies, reading source files only,
-  for couplings that used to fail silently. They check that the CSP hash matches
-  the inline analytics script, that `index.html` keeps the exact root element the
-  prerender looks for, that the portrait preload matches the AVIF source in
-  `Hero.jsx`, that the hand-kept copies of the palette (the theme-color metas,
-  `404.html`, the social card script, the contact email's `BRAND`, the graph's
-  scale and the globe's cyan) match the tokens, that the three last-modified
-  dates agree, that the Node version is pinned the same way everywhere, that the
-  contact form's fields, email pattern and honeypot match the API's, that the
-  form's API origin is in the CSP and the DNS hint, that the graph and the globe
-  switch at the breakpoint the calendar measures, that the data modules import
-  only what a bare Node process can load, and that no file contains an em dash.
-- **A build gate on the host.** `frontend/package.json` gains a `prebuild` script
-  that runs ESLint, the content tests and the repository invariants. npm runs it
-  before every `npm run build`, which is the host's build command, so the host no
-  longer publishes a commit that fails any of them; the previous deploy stays
-  live. Render still deploys every push. `npm run build --ignore-scripts` skips
-  the gate, which CI uses because it runs the same checks as separate steps.
-- **Bundle budgets** ([Size Limit](https://github.com/ai/size-limit),
-  `frontend/.size-limit.json`, `npm run size --prefix frontend` after a build),
-  gzipped: entry JS 87 kB (83.1 kB measured), entry CSS 8 kB (7.4 kB), the
-  palette chunk 20 kB (18.5 kB), the graph's chunks 27 kB (24.7 kB) and the
-  globe's 6.5 kB (5.9 kB). A static import of cobe, the smallest of the three
-  lazy libraries, came in just 108 bytes over 89 kB, so the entry budget sits at
-  87 kB, where pulling any of them into the first load fails. A budget changes
-  in the same commit as the change that needs it, with the reason. Size Limit 14
-  does not support the older Node 22 and 24 releases, so the frontend's
-  `engines` is `^22.19.0 || >=24.5.0` now; the root and backend stay at
-  `>=22.13.0`.
-- **Browser tests** ([Playwright](https://playwright.dev/) with
-  [axe-core](https://github.com/dequelabs/axe-core), `npm run test:e2e --prefix
-  frontend` after a build): 20 tests in `frontend/e2e/site.spec.js` against
-  `frontend/dist`, served by `e2e/serve.mjs` with the CSP from `_headers` and
-  with `404.html` for unknown paths, as the host serves them. `vite preview`
-  applies neither, so a CSP break used to show up only in production. Analytics
-  and the backend are answered inside the test, so the suite never touches the
-  network. It covers a clean load (no console errors, page errors or CSP
-  violations, with analytics and the font loaded), every scroll reveal, no
-  horizontal overflow from 320px to 1920px, no axe WCAG 2.2 A or AA violations
-  at 1440px and 390px or with the palette open, the palette's shortcut, search
-  and focus return, the dock's Home link, the contact form's method, live
-  region, validation, success and rate-limit paths, the graph on a phone, and
-  print. Chromium only. The server refuses a build made with `VITE_API_BASE_URL`
-  set, since the real CSP would block the address it bakes in.
-- **Backend linting**: ESLint with the recommended rules and Node globals
-  (`backend/eslint.config.js`, `npm run lint` in `backend/`), at the versions the
-  frontend uses. The root `npm run lint` now runs the frontend's and then the
-  backend's.
-- **Weekly link check** (`.github/workflows/links.yml`,
-  [lychee](https://github.com/lycheeverse/lychee), configured in `lychee.toml`):
-  every Monday, and on demand, it checks the links in the data files,
-  `index.html`, `humans.txt`, the README, the community files, `docs/` and the
-  Postman README, including relative links between files, and fails the run on a
-  dead one. LinkedIn and LeetCode answer automated clients with errors and are
-  excluded, as is the API. The first run, made locally, checked 163 links with
-  no errors.
-- Contact form: native `required`, `autocomplete` and `maxLength` matching the
-  API's limits; focus moves to the first invalid field with its error linked by
-  `aria-describedby`; results announce from a persistent live region; a notice
-  after six seconds explains the backend's cold start; a 60-second timeout; and
-  every failure message offers the email address as a fallback. Focusing the
-  form sends one `no-cors` request to `/health` so the backend is waking before
-  the visitor presses send.
-- A direct-contact column beside the form (email, LinkedIn, GitHub, resume),
-  and a link to the site's own source in the footer.
-- `ExternalLink` component: every off-site link gets the same `rel` and tells
-  screen-reader users it opens a new tab.
-- Named landmarks: each section is `aria-labelledby` its heading.
-- 320px portrait variants (`Profile-320.{avif,webp}`, 19 KB and 27 KB) served
-  through `srcset`/`sizes`, with a matching `imagesrcset` preload, so phones no
-  longer download the 67 KB desktop portrait for a 96px avatar.
-- **An About figures band**: four figures, each naming the entry below that
-  backs it. **985 tests** guard the RemindrAI service, its console and its first
-  tenant; **97.5%** item-match and **99.5%** product-category accuracy come from
-  Fruugle; **100K+** records moved through ETL at Jubilee Life Insurance. The
-  thesis is the largest piece of work on the page, and the test figure gives it
-  a number in the band a recruiter actually scans: the three repositories'
-  suites as the thesis report measured them (670 + 146 + 169), re-checked
-  against its final verification run of 30 September 2026, and claimed in the
-  MemorAIz Experience bullets, per the rule in `about.js`. Two columns on phones,
-  four from 48rem. `Vitest` joins the Web & Backend skill group for the same
-  reason: testing was claimed nowhere.
-- `docs/` documentation set: architecture, API reference, development, design
-  system, deployment, testing and security controls.
-- `CONTRIBUTING.md`, `CODE_OF_CONDUCT.md` (Contributor Covenant 2.1) and this
-  changelog.
-- Postman CORS folder covering the preflight from an allowed and a disallowed
-  origin, and saved response examples on the primary requests.
-- `docs/development.md` gained a Dependencies section: the per-workspace update
-  commands, how majors are handled given that Dependabot skips them, and why a
-  lockfile-only commit is the normal fix for a transitive advisory.
-- `Computer Vision` and `Robotics` join the `Person` schema's `knowsAbout`
-  list, as do `Multi-Tenant Systems`, `Multi-Channel Notification Delivery` and
-  `GDPR Data Protection Engineering`. Two of the six projects on the page are
-  exactly computer vision and robotics, and the structured data named neither,
-  so a crawler read the page as narrower than it is. Both stay out of the Skills
-  section deliberately: the target roles are AI/ML, and the TIAGo and
-  connecting-rod cards already carry their own stacks.
+- Open-source repository structure.
+- Command palette.
+- GitHub contribution graph.
+- Globe.
+- Together these add about 2 KB of gzipped JS to the first load. Largest
+- Build-time prerendering.
+- Frontend content tests.
+- Repository invariants.
+- A build gate on the host.
+- Bundle budgets.
+- Browser tests.
+- Backend linting.
+- Weekly link check.
+- Contact form: native `required`, `autocomplete` and `maxLength` matching
+- A direct-contact column beside the form (email, LinkedIn, GitHub,
+- `ExternalLink` component: every off-site link gets the same `rel` and
+- Named landmarks: each section is `aria-labelledby` its
+- 320px portrait variants (`Profile-320.{avif,webp}`, 19 KB and 27 KB)
+- An About figures band.
+- `docs/` documentation set: architecture, API reference, development,
+- `CONTRIBUTING.md`, `CODE_OF_CONDUCT.md` (Contributor Covenant 2.1) and
+- Postman CORS folder covering the preflight from an allowed and a
+- `docs/development.md` gained a Dependencies section: the per-workspace
+- `Computer Vision` and `Robotics` join the `Person` schema's
 
 ### Changed
 
-- The three manifests move to version 2.0.0 together (the frontend's was
-  Vite's default `0.0.0`, the backend's `1.0.0`), and the frontend and backend
-  ones carry the same author, licence and repository fields as the root. The
-  invariants test now fails if the three versions or the newest version heading
-  here disagree.
-- **Visual redesign on the same identity** (dark navy, cyan accent). Hanken
-  Grotesk replaces NTR: NTR ships one weight, so every bold on the site was
-  synthesised by the browser. Section headers are left-aligned with no gradient
-  rules; cards lost their hover lift, which implied they were clickable; tags are
-  neutral rather than cyan; gradient text is gone.
-- **Layout redesign**, adapting the interaction patterns of
-  [magicuidesign/portfolio](https://github.com/magicuidesign/portfolio)
-  (MIT, Dillion Verma) in plain CSS. No dependency was added, and no copy, palette
-  or typeface changed. See [Design lineage](docs/design.md#design-lineage).
-  - The page fills a desktop screen. The container widens from 72rem to 92rem with
-    a gutter that grows with the viewport, and past 1920px the whole page scales
-    with it. No rules separate the sections.
-  - Sections use that width: four figures across, story beside education, two
-    columns of Experience bullets and of Skills, channels beside the contact form,
-    and three columns of project cards.
-  - A floating dock replaces the top navigation bar, its mobile menu and the
-    back-to-top button. It magnifies on hover, carries the current section, and
-    on a phone puts every section within a thumb's reach. The full name moves to a
-    masthead that scrolls away.
-  - Experience becomes expandable `<details>` rows, with dates beside each role
-    and the latest role open, where it was three narrow columns. About's
-    education uses the same row shape, and neither has a card around it.
-  - The hero portrait is 320px on desktop rather than 288px, and 148px on tablets.
-    A 1x screen up to 1920px now downloads the 320w image rather than the 680w one.
-  - Entrance and scroll reveal blur and fade rather than rise. Projects gets a
-    pill-on-a-rule header and Contact becomes one panel with its title as a pill.
-    A CSS-only dot band replaces the hero's colour wash.
-  - Metadata and tags move from the system monospace to Hanken Grotesk, so the
-    page has one typeface. The footer drops to one line, since the links it
-    carried are in the contact panel above it and the dock below it.
-- Hero keeps the "hi, Waleed here." greeting and caret, now followed by what
-  the work is and a single primary action (View projects).
-- The Interests section is folded into About as "Roles I'm targeting". Its
-  "Topics I'm Exploring" list went, since each of its five entries was already
-  claimed in the hero lead or the Skills groups, and so did its generic
-  principles ("clean architecture", "reproducible workflows"). The About
-  "Approach" block no longer restates the section subtitle one line below it.
-- Skills is a definition list rather than six cards. Twilio and Upstash QStash
-  moved to Data & Messaging and Power BI to ML & Data, from Cloud & DevOps.
-  ".NET ASP Core" is now "ASP.NET Core". Four tags that padded the count without
-  adding a claim are gone: `VS Code`, `Jupyter`, `Git` and `HTML/CSS`. An editor
-  listed as a skill makes the tags that do matter harder to find.
-- In-page links (the dock, "View projects" and the skip link) go through a new
-  `SectionLink` component, and the palette's "Go to" entries through the same
-  scroll helper: they scroll to the section rather than leaving `#section` in
-  the address bar as the old navbar did, and move keyboard focus to the section
-  they jump to.
-- The reading-progress bar is a CSS scroll-driven animation instead of a
-  `ScrollProgress` component with a scroll listener.
-- Scroll reveals only affect content below the fold, and only after hydration.
-  The observer uses threshold 0; the old 0.18 ratio could never be reached by an
-  element taller than the viewport.
-- `ErrorBoundary` wraps each section separately and offers a page reload; its
-  old "Try again" re-rendered the same failing tree.
-- Printing is now one token override in `tokens.css`. Stat figures, degree names
-  and role titles printed as pale grey before, and keeping each section whole left
-  half of page one blank.
-- The social card and 404 page use the new font and palette.
-  `scripts/gen-og-card.mjs` decompresses the WOFF2 to TTF in memory first, since
-  fontkit cannot apply weights to a WOFF2 (`wawoff2`, installed on demand with
-  `sharp` and `fontkit`). The 404 page's "Error 404" label is in the site's
-  metadata style, Hanken Grotesk with no monospace or uppercase tracking.
-- `index.html`: shorter meta description, non-standard `language` and redundant
-  `googlebot` tags removed, and the backend `preconnect` (a TLS handshake on
-  every page view for a form most visitors never use) reduced to
-  `dns-prefetch`. The inline analytics snippet is byte-identical, so its CSP
-  hash is unchanged. The `WebSite` node's `publisher` points at the `Person`
-  node by `@id` instead of declaring a second, anonymous `Person`.
-- `vite.config.js` drops `build.target: "es2018"` for Vite's Baseline default,
-  which is what the CSS already requires.
-- **Graduated.** The Master's in Automation Engineering was awarded on
-  5 October 2026, so the copy no longer describes it as in progress:
-  - Education reads "Oct 2024 - Oct 2026" rather than "Sep 2024 - Present". The
-    start month moves from September to October to match the matriculation date
-    on the degree certificate (6 October 2024), which also removes a one-month
-    overlap with the Jubilee role that ended in October 2024.
-  - The MemorAIz role closes at "Feb 2026 - Oct 2026": the internship ended
-    with the thesis.
-  - The hero note says the degree is complete and that I am open to AI and ML
-    engineering roles, the two families listed under "Roles I'm targeting".
-    The About subtitle ends on "what I'm looking for next", since that section
-    closes on the target roles.
-- `sitemap.xml` `lastmod`, the `ProfilePage` `dateModified` and the `humans.txt`
-  "Last update" read 2026-11-05, the last user-visible content change. They had
-  fallen behind before (all three once sat at 2026-09-16, a date older than the
-  site they described), and the repository invariants now fail when the three
-  disagree. `humans.txt` also reported Express 4 and a July build date until the
-  Express 5 upgrade, and now lists cmdk, react-activity-calendar and cobe among
-  its components.
-- The resume link points at a new Google Drive file, four times over since
-  1.0.0. `resumeUrl` in `portfolio.js` is the single source for it, so the dock,
-  the hero action, the contact column and the command palette all follow from
-  one edit.
-- The project grid holds six cards. A TIAGo card (autonomous mapping,
-  navigation and pick-and-place) replaces the Modular AI Educational Assistant,
-  and every card links its public repository or, through `sourceNote`, says why
-  there is none. Cards no longer print a period.
-- **Project copy re-checked against the repositories it describes**, and three
-  cards corrected:
-  - *Visual Inspection of Connecting Rods* described "defect classification on
-    the production line", "95%+ classification accuracy" and "~80% less manual
-    inspection time on the floor", with scikit-learn in the stack. The project
-    is a Computer Vision course assignment: a classical OpenCV pipeline that
-    measures rods from a fixed image set, with no learned model and no
-    deployment. The card now says that, and the stack is Python, OpenCV,
-    NumPy and SciPy.
-  - *Multi-Agent AI Workflow System* is **Campaign Forge** in its repository. The
-    stack listed LangGraph, which it does not use (it is built on the OpenAI SDK
-    with Pydantic), and "research, copy, brief, and QA" agents where the code
-    has research, copywriter, art-director and manager agents. The "cut manual
-    effort by 90%" highlight appears nowhere in the repository and was replaced
-    with its documented engineering (retries, validated output, 94% coverage,
-    an adversarial eval corpus).
-  - *Self-Correcting RAG* listed LangChain, which it does not use; the stack is
-    now Python, FastAPI, sentence-transformers, FAISS and Groq, and the
-    unmeasured "cutting hallucinated outputs" highlight became what the code
-    guarantees.
-  - *TIAGo* now says it was a team of three, as its README credits.
-- **RemindrAI copy re-synced** against its repositories (`RemindrAI`,
-  `remindr-dashboard`, `hfarm_new`) and then against the finished thesis report,
-  and cut to the density of everything around it: its Experience bullets had run
-  25 to 35 words against 15 to 22 for the other two roles. The bullets now run 19
-  to 24 words, and the card has a 42-word description, a 19-word highlight and
-  five stack chips. The thesis is titled *"An Embeddable, Multi-Tenant Reminder
-  and Multi-Channel Communication Capability for Conversational Applications"*,
-  so the card leads on **embeddability**, and its highlight states the adoption
-  result rather than repeating the deployment sentence the Experience entry
-  carries. New on the page, all from the report: tenancy enforced at four
-  independent depths; H-FARM's Student Assistant as the first production tenant;
-  the scheduler benchmark, stated as its shape (median claim latency near-flat
-  from 1K to 100K due reminders) because the report says the absolute figures
-  from a local database do not transfer; and identity pinning, the second of the
-  two design decisions the thesis defends, which keeps a reminder's owner out of
-  the model's reach. Account linking, dead-lettering and delivery-status
-  reconciliation stay in the report but not on the page. The card also drops
-  "My Master's thesis", which restated the role line printed directly above it,
-  and the `Server Components` chip, which describes the console rather than the
-  service and stays listed under Skills.
-- Site copy rewritten to remove the tells of machine-written prose: the three
-  em dashes and arrow glyphs are gone, and so is the sentence-fragment tic that
-  negates the clause before it ("Not notebooks that only run on my machine",
-  "not pitch-deck mockups"). Casual register was raised throughout, with no
-  figure, date, employer or technology claim altered.
-- **Contact API: a tripped honeypot answers exactly as a send does.** The honeypot
-  is checked after validation rather than before, so an invalid body gets the
-  same `400` with or without the trap filled, and a valid one gets the
-  byte-identical `200` a real send gets. That `200` is now exactly
-  `{"success": true, "message": "Message sent successfully."}`. It no longer
-  carries Resend's message id, which only a real send could return, so it told
-  a bot which of its submissions the trap had caught; the id is logged on the
-  server instead. The router now runs the rate limiter, validation, the
-  honeypot, then the send. Only response time still differs, since a real send
-  waits for Resend.
-- The backend suite grows from 9 to 18 tests in two files. `contact.test.js`
-  blanks the three mail variables before importing the app (dotenv never
-  overrides a variable that is already set), so no test can send mail even with
-  a real `backend/.env`, and a valid body is now tested as far as the
-  unconfigured mailer (`503`). New tests
-  cover malformed JSON (`400`, costing no quota), the honeypot's identical
-  answers, CORS for an allowed and a disallowed origin, and the `429` on a sixth
-  request. Each test that spends quota sends its own `X-Forwarded-For`, so adding
-  one never pushes another into a `429`. The new `delivery.test.js` configures
-  the mailer against a fake Resend on the reserved `.invalid` domain, so the
-  send path is tested for the first time: a delivered message and a tripped
-  honeypot get byte-identical bodies, the `mailto:` links carry the sender's
-  address encoded, and a newline in a name or subject cannot forge a line in the
-  plain-text part.
-- Postman requests renamed to a single convention, and the collection and
-  environment descriptions brought in line with the current API. The collection
-  holds 14 requests: "Empty body", which duplicated "Missing required field", is
-  gone, and "Malformed JSON" is new. The honeypot request asserts the exact
-  real-send body, with no `id`, and the rate-limit request sends an invalid body,
-  so it can never send mail: runs one to five get a `400` and still count, and
-  the sixth gets the `429`. The six requests that spend quota are ordered so
-  that, on a fresh run, the first five fit in the window and the rate-limit
-  request is the one that gets the `429`.
-- CI runs four jobs: `frontend` (lint, content tests, repository invariants, the
-  build, size budgets and the audit), a new `e2e` (the browser suite, uploading
-  the Playwright report for 14 days when it fails), `backend` (lint, tests and
-  the audit) and `secret-scan` (gitleaks).
-- Dependencies brought up to date in both projects. Two were majors, which
-  Dependabot skips by design, so each got the manual changelog read that policy
-  asks for:
-  - **Express 4 to 5** (`4.22.2` to `5.3.0`). Express 4 is in maintenance, and
-    nothing in this codebase depended on the removed API, so the upgrade was a
-    version bump rather than a migration. The full suite passed unchanged.
-  - **`dotenv` 17 to 18** (`17.4.2` to `18.0.9`). v18 moves the package
-    internals from `lib/` to `dist/` and drops the `./lib/env-options` and
-    `./lib/cli-options` subpath exports, neither of which this repo imports.
-    `config/env.js` uses only `dotenv.config({ quiet: true })`, which v18 still
-    documents and which still suppresses the boot banner.
-  - The rest are minor or patch: `express-rate-limit` `8.7.3` and `resend`
-    `6.37.0` on the backend; `react` and `react-dom` `19.3.1`, `vite` `8.3.6`,
-    `@vitejs/plugin-react` `6.2.1`, `eslint` `10.14.0`, `globals` `17.14.0` and
-    `eslint-plugin-react-refresh` `0.5.7` on the frontend; and the transitive
-    trees refreshed in the lockfiles.
-  - **React 19.3 costs 8.6 KB of gzipped JS**: the entry chunk went from 72.4 KB
-    to 81.0 KB. Building the previous commit with each bump applied alone puts
-    all of it on `react-dom`, whose client build gained the release's new
-    features (`<ViewTransition>`, Fragment refs, Trusted Types) whether a page
-    uses them or not; Vite 8.3 is size-neutral. Pinning React back to 19.2
-    recovers the 8.6 KB if leanness ever outweighs staying current.
-  - `backend/package.json` is marked `private`, like the other two manifests,
-    so it cannot be published by accident.
-- `README.md` restructured as an entry point and documentation index, with the
-  detailed reference material moved into `docs/`. It leads with the social card
-  and a contents line, adds a Contact section and spells out the Dependabot
-  policy (npm majors by hand, Action majors included). It also corrects the
-  claim that a project card's `github` is optional: a card takes exactly one of
-  `github` or `sourceNote`, and `docs/development.md`, which said the same, is
-  fixed too.
-- `SECURITY.md` scoped to disclosure policy, with implemented controls moved to
-  `docs/security.md`.
-- Both `.env.example` files rewritten as sectioned, fully annotated templates,
-  each stating what breaks when a variable is missing rather than only what it
-  holds. The backend template lists the built-in CORS defaults, since setting
-  `ALLOWED_ORIGINS` replaces them rather than adding to them.
-- Local development standardized on port 5000, which is what the README, `docs/`
-  and the Postman local environment already documented.
-- `dotenv.config()` runs with `{ quiet: true }`, so the banner dotenv prints by
-  default no longer opens the Render deploy log ahead of the app's own lines.
-- Two hard-coded colours, the faint ring round a skill tag and the backdrop
-  behind the palette, are tokens now (`--color-halo`, `--color-scrim`), and the
-  unused `--text-xl` is gone.
-- PR template covers the changelog, the Postman collection and `docs/`.
+- The three manifests move to version 2.0.0 together (the frontend's
+- Visual redesign on the same identity.
+- Layout redesign.
+- Hero keeps the "hi, Waleed here." greeting and caret, now followed by
+- The Interests section is folded into About as "Roles I'm targeting".
+- Skills is a definition list rather than six cards. Twilio and Upstash
+- In-page links (the dock, "View projects" and the skip link) go through a
+- The reading-progress bar is a CSS scroll-driven animation instead of
+- Scroll reveals only affect content below the fold, and only after
+- `ErrorBoundary` wraps each section separately and offers a page reload;
+- Printing is now one token override in `tokens.css`. Stat figures, degree
+- The social card and 404 page use the new font and
+- `index.html`: shorter meta description, non-standard `language` and
+- `vite.config.js` drops `build.target: "es2018"` for Vite's Baseline
+- Graduated.
+- `sitemap.xml` `lastmod`, the `ProfilePage` `dateModified` and the
+- The resume link points at a new Google Drive file, four times over
+- The project grid holds six cards. A TIAGo card (autonomous
+- Project copy re-checked against the repositories it describes.
+- RemindrAI copy re-synced.
+- Site copy rewritten to remove the tells of machine-written prose: the
+- Contact API: a tripped honeypot answers exactly as a send does.
+- The backend suite grows from 9 to 18 tests in two files.
+- Postman requests renamed to a single convention, and the collection
+- CI runs four jobs: `frontend` (lint, content tests, repository invariants,
+- Dependencies brought up to date in both projects. Two were majors,
+- `README.md` restructured as an entry point and documentation index, with
+- `SECURITY.md` scoped to disclosure policy, with implemented controls moved
+- Both `.env.example` files rewritten as sectioned, fully annotated
+- Local development standardized on port 5000, which is what the README,
+- `dotenv.config()` runs with `{ quiet: true }`, so the banner dotenv prints
+- Two hard-coded colours, the faint ring round a skill tag and the
+- PR template covers the changelog, the Postman collection and
 
 ### Removed
 
-- **Bootstrap and PurgeCSS.** Bootstrap supplied a grid, a handful of utilities
-  and a form-control style, and PurgeCSS existed only to strip the rest; the
-  pair also made `NODE_ENV=production` a silent requirement of every build.
-  Replaced by commented plain CSS in cascade layers (about 2,400 lines today;
-  `styles/index.css` declares `reset, tokens, base, layout, components,
-  utilities`), with design tokens, native nesting, `clamp()` type, logical
-  properties, `color-mix()`, a container query on the contact form, and each
-  component's styles beside its JSX. Gzipped CSS fell from 9.95 KB to 5.8 KB at
-  the time (7.4 KB after the layout redesign), 24 packages left the frontend
-  tree, and `postcss.config.js` is gone.
-- Section code-splitting, `LazyMountSection`, the `requestIdleCallback`
-  mount-all effect, the forced scroll-to-top on load and `useInView`. With the
-  page prerendered they no longer bought anything, and the forced scroll broke
-  shared links to a section. At the time, 81 KB of JS plus 9.5 KB of section
-  chunks became one 81 KB bundle; the only chunks fetched later now are the
-  palette, graph and globe libraries.
-- Decorative icons on card headings, Skills groups and contact form labels,
-  with the icon-key lookup map and the `icon` fields in `skills.js` that fed it.
-  Experience and education rows open with a ringed initial (`Monogram`)
-  instead.
+- Bootstrap and PurgeCSS.
+- Section code-splitting, `LazyMountSection`, the
+- Decorative icons on card headings, Skills groups and contact form
 - `frontend/public/fonts/ntr-latin-400.woff2`.
 
 ### Fixed
 
-- **Contact form**:
-  - Before hydration a submit was the browser's own `GET`, which put the
-    message in the address bar, the server logs and analytics. The prerendered
-    form now says `method="post"`.
-  - The status live region was `display: none` while empty, which takes it out
-    of the accessibility tree, and a region that reappears together with its
-    text is often not announced. It now stays rendered, taking no space while
-    empty.
-  - While sending, the fields are read-only, since an edit made during a slow
-    send was never sent and then vanished on success. The button is
-    `aria-disabled` rather than `disabled`, which had dropped keyboard focus to
-    the page just as the result arrived, and a second submit while busy is
-    ignored.
-- Printing left content the visitor had not scrolled to blank, since it was
-  still waiting to reveal. It now prints in full, with transitions off.
-- `Reveal` and the contribution graph read only the first entry of an
-  `IntersectionObserver` batch, so a fast scroll could deliver a stale "not
-  intersecting" first and leave content hidden. They now act if any entry
-  intersects, and the globe reads the newest.
-- The contribution graph drew one more week than it had measured for, spilling
-  into the library's own sideways scroller: it now slices whole weeks ending on
-  the snapshot's last day. It also re-measures on resize, so a rotated phone or
-  a window dragged across 80rem gets a graph that fits.
-- The dock's Home link scrolled to the hero, cutting off the masthead and dot
-  band above it; it now goes to the very top of the page. On touch screens,
-  where the dock steps aside while a contact field has focus, it now visibly
-  slides back in; its visibility used to flip only once the slide had ended.
-- The globe's WebGL check ran on every screen, so phones, where the globe is
-  hidden, created a WebGL context for nothing. It now runs only when the globe
-  is about to load, and releases its context straight away.
-- The project cards never faded in: their own `transition` (for the hover
-  ring) replaced the one Reveal's CSS gives `[data-reveal]`, so they popped in
-  and their stagger never ran. The card's rule now lists the reveal's
-  properties too, and a browser test checks that every revealed element still
-  transitions opacity. The stagger also assumed three columns; it now follows
-  the grid's column count, two from 44rem and three from 72rem.
-- On Apple platforms the Search tooltip drew the Command key as U+2318, which
-  the font subset does not cover. It is an icon followed by "K" now; other
-  platforms still read "Ctrl K".
-- The graph's "View profile" link gets the full tap-target height.
-- A malformed JSON body got a generic `500`. It now gets `400` "Malformed JSON
-  body.", and an unsupported charset or encoding `415`. Like the 16 KB cap, both
-  are rejected by the body parser before the rate limiter, so they cost no
-  quota.
-- `backend/.env.example` shipped placeholder values for the three mail
-  variables, and any non-empty value counts as configured, so an unedited copy
-  turned the documented `503` into a `502` from a failed send, with no warning
-  at boot. They are empty now, with examples in comments.
-- The notification email's "Received" time was in the server's time zone,
-  unlabelled. It is UTC now and says so.
-- Comments that had drifted from the code: `portfolio.js` named a navbar as the
-  reader of `sections`, where the dock and the palette read it; `Dock.jsx` said
-  every item works before hydration, which the Search button does not;
-  `Footer.jsx` said the dock repeats the email address, which it does not;
-  `Projects.jsx` described the shared last row as a pair rather than a grid
-  row; `LocationGlobe.jsx` misstated why the canvas is 720px, and
-  `LocationGlobe.css` said the observer "never fires" for a hidden globe,
-  where it reports "not intersecting";
-  `config/env.js` said `ALLOWED_ORIGINS` adds a domain, where it replaces the
-  defaults; and the mailer's `EmailDeliveryError` comment left out an
-  unreachable Resend, which the SDK reports the same way. `CLAUDE.md`, the
-  README, `docs/` and the Postman README describe the new checks and the API
-  behaviour above.
-- Documentation brought back in step with the code: the frontend test count (12,
-  not 8), a `hooks/` folder that no longer exists, `preconnect` hints the site
-  dropped, the claim that no email address is published in the UI, and the claim
-  that CI protects `main`, which nothing enforces. The weekly snapshot commit is
-  now documented under deployment and security.
-- The focus ring set `border-radius` on focus, squaring off circular controls.
-- A project highlight box stretched to the height of its row neighbour's,
-  leaving a band of empty background under shorter text.
-- Below 576px the hero's Bootstrap row overflowed the viewport by 12px on each
-  side, masked by `overflow-x: hidden` on `body`; both are gone.
-- The contact form comment cited a 5000-character cap in `validate()` that did
-  not exist. The cap is now enforced with `maxLength`, matching the API.
-- A non-JSON error response (a proxy page during a Render cold start) surfaced
-  as a JSON parse error in the form.
-- **The RemindrAI copy had the agent chatting over email.** The project card
-  and an Experience bullet said it scheduled from conversation across Email,
-  WhatsApp, Telegram and Discord, but email is delivery-only by design and an
-  inbound email never reaches the agent; of the four, only the other three
-  carry a conversation. The card now names the four channels as delivery
-  targets.
-- **The documented CSP hash command produced a wrong hash on Windows**, which
-  is the one failure this repository is loudest about: the analytics snippet is
-  pinned by SHA-256, and a bad hash blocks the script with no console error and
-  no visible symptom. `.gitattributes` stores `index.html` with LF, so LF is
-  what the host serves and what the browser hashes, but a Windows working copy
-  holds CRLF and the command hashed those bytes. Following the documentation
-  exactly would therefore have broken analytics silently. The command now
-  normalizes line endings, and the section says to verify it reproduces the
-  hash already in `_headers` before trusting it. The committed hash was correct
-  throughout; only the instructions for regenerating it were wrong.
-- **Three documents described a `featured` project flag** the code dropped in
-  August: the README data sample set it, `docs/development.md` told you to set
-  it for "the centrepiece card", and `docs/design.md` credited it with the
-  gradient top rule. The README sample also carried a `period` field that
-  `projects.js` no longer has and `Projects.jsx` never reads. Anyone following
-  the README to add a project was copying two dead fields.
-- `docs/architecture.md` omitted `SectionHeader` from the `components/ui/`
-  layer, the one component every section heading renders through.
-- The `404.html` style comment pointed at `.hero-cta-primary`, a class that no
-  longer exists anywhere in the codebase; it now names `.btn.btn--primary`, the
-  button it matches.
-- Contact tests in the Postman collection report a `429` as skipped rather than
-  failed, so a full-collection run no longer fails on requests whose only
-  problem is that the shared 5-per-15-minute window is exhausted.
-- Documented backend security headers now match what Helmet actually sends
-  (`X-Frame-Options: SAMEORIGIN`, `Referrer-Policy: no-referrer`); the stricter
-  `DENY` set belongs to the site's own headers.
-- Documented CORS behaviour corrected: a disallowed origin receives a response
-  with no `Access-Control-Allow-Origin` rather than a `403`. The inaccurate
-  comment in `server.js` was corrected too.
+- Contact form.
+- Printing left content the visitor had not scrolled to blank, since it
+- `Reveal` and the contribution graph read only the first entry of
+- The contribution graph drew one more week than it had measured for,
+- The dock's Home link scrolled to the hero, cutting off the masthead and
+- The globe's WebGL check ran on every screen, so phones, where the globe
+- The project cards never faded in: their own `transition` (for the
+- On Apple platforms the Search tooltip drew the Command key as U+2318,
+- The graph's "View profile" link gets the full tap-target
+- A malformed JSON body got a generic `500`. It now gets `400` "Malformed
+- `backend/.env.example` shipped placeholder values for the three
+- The notification email's "Received" time was in the server's time
+- Comments that had drifted from the code: `portfolio.js` named a navbar as
+- Documentation brought back in step with the code: the frontend test count
+- The focus ring set `border-radius` on focus, squaring off circular
+- A project highlight box stretched to the height of its row
+- Below 576px the hero's Bootstrap row overflowed the viewport by 12px on
+- The contact form comment cited a 5000-character cap in `validate()` that
+- A non-JSON error response (a proxy page during a Render cold start)
+- The RemindrAI copy had the agent chatting over email.
+- The documented CSP hash command produced a wrong hash on Windows.
+- Three documents described a `featured` project flag.
+- `docs/architecture.md` omitted `SectionHeader` from the
+- The `404.html` style comment pointed at `.hero-cta-primary`, a class that
+- Contact tests in the Postman collection report a `429` as skipped rather
+- Documented backend security headers now match what Helmet actually
+- Documented CORS behaviour corrected: a disallowed origin receives a
 
 ### Security
 
-- **GitHub's own protections are on.** Private vulnerability reporting, which
-  `SECURITY.md` now names as the preferred route; secret scanning with push
-  protection; and Dependabot alerts and security updates, which open a pull
-  request for a vulnerable transitive dependency instead of leaving the audit
-  step red until someone runs `npm audit fix`.
-- **The notification email's reply links could be rewritten by the sender.**
-  The submitter's address went into its `mailto:` links HTML-escaped but not
-  URL-encoded, and the API's email pattern admits `?`, `&` and `=`, so an
-  address could add a `bcc` or replace the subject in the owner's reply draft.
-  It is URL-encoded now, keeping `@` readable, and then escaped. The plain-text
-  part printed the name, email and subject as given, so a newline in one could
-  forge extra `Email:` or `Subject:` lines; they are flattened the way the
-  headers already were.
-- The error handler logged a rejected request body's whole error, to which
-  body-parser attaches the raw request text: the sender's name, address and
-  message. Body errors are logged by type only now.
-- The CSP's `font-src` is `'self'` alone; nothing loads a `data:` font.
-- Every GitHub Action in every workflow is pinned to a full commit SHA, with its
-  version in a comment, so a moved tag cannot change what runs. Every checkout
-  that does not push sets `persist-credentials: false`; `refresh-activity.yml`
-  pushes the snapshot, so it keeps them.
-- Dependabot waits seven days after a release before proposing it
-  (`cooldown`), since a compromised or broken version is usually caught and
-  pulled within days. Security updates are not delayed.
-- High-severity `body-parser` advisory (GHSA-27r3-jxmh-p828, denial of service
-  through trailing bytes after a compressed request body), reached transitively
-  through `express`, and the moderate `qs` advisory (GHSA-6pq8-jhm2-2vcw). Resolved
-  in the lockfile at `2.4.0` and `6.17.1`. The `body-parser` advisory is a
-  production dependency, so it had failed the CI audit gate on every run since
-  26 October, `main` included. The weekly Dependabot PRs could not clear it because
-  they only bump what `package.json` names directly.
-- **Critical `proxy-addr` advisory** (GHSA-jqcg-44mw-7w3h, IP spoofing through
-  an IPv4-mapped IPv6 trust subnet), cleared by moving `express` to `5.3.0`,
-  which depends on `proxy-addr` `2.0.8`. It applies directly here:
-  `server.js` sets `trust proxy`, and the contact limiter keys on the
-  `req.ip` that `proxy-addr` resolves. It is also a production dependency, so
-  it would have failed the CI audit gate on the next run.
-- `ip-address` advisories under `express-rate-limit`, resolved in the lockfile:
-  high-severity SSRF and trust-boundary bypass through leading-zero octets, CIDR
-  suffixes and IPv4-mapped addresses (`10.5.0`), then the moderate
-  GHSA-j6r3-76f7-8jcv and GHSA-h3mg-xc3c-68pw (`10.7.3`). A production
-  dependency, so the high-severity one would have failed the CI audit gate on
-  the next run.
-- Two transitive advisories cleared in the lockfiles alone, needing no
-  `package.json` edit: `browserslist` (high, unbounded memory growth) on the
-  frontend and `qs` (moderate, array-limit bypass) on the backend.
-- High-severity `nanoid`, `brace-expansion` and `source-map-js` advisories in
-  the frontend's dev tree, resolved in the lockfile. Dev-only, so they were not
-  failing CI.
+- GitHub's own protections are on.
+- The notification email's reply links could be rewritten by the sender.
+- The error handler logged a rejected request body's whole error, to
+- The CSP's `font-src` is `'self'` alone; nothing loads a `data:`
+- Every GitHub Action in every workflow is pinned to a full commit SHA, with
+- Dependabot waits seven days after a release before proposing
+- High-severity `body-parser` advisory (GHSA-27r3-jxmh-p828, denial of
+- Critical `proxy-addr` advisory.
+- `ip-address` advisories under `express-rate-limit`, resolved in the
+- Two transitive advisories cleared in the lockfiles alone, needing
+- High-severity `nanoid`, `brace-expansion` and `source-map-js` advisories
 
 ## [1.0.0] - 2026-07-15
 
-The redesign that produced the current site.
-
 ### Added
 
-- Honeypot field on the contact form, answered with the same `200` a real send
-  returns, and logged with the sender so a false positive is recoverable.
-- Single button system (`.btn-outlined` with `--accent` and `--icon`
-  modifiers), replacing per-section button styles.
-- Reproducible 1200x630 social card generated by `scripts/gen-og-card.mjs`.
-- Postman coverage for the 16 KB body cap and the honeypot.
+- Honeypot field on the contact form, answered with the same `200` a real
+- Single button system (`.btn-outlined` with `--accent` and
+- Reproducible 1200x630 social card generated by
+- Postman coverage for the 16 KB body cap and the
 
 ### Changed
 
-- Navy palette, NTR typography and a flatter layout; every colour moved to a
-  `:root` token.
-- Portrait served at 2x its display slot, sized top-down from the circle rather
-  than from the image.
-- Images revalidate on every visit so a swapped photo is never served stale.
-- Node moved to 24 after 20 reached end of life; CI reads the version from
-  `.nvmrc` instead of a hardcoded number.
-- Dependabot stopped ignoring GitHub Actions majors, which had left
-  `checkout`/`setup-node` three majors behind.
+- Navy palette, NTR typography and a flatter layout; every colour moved to
+- Portrait served at 2x its display slot, sized top-down from the circle
+- Images revalidate on every visit so a swapped photo is never served
+- Node moved to 24 after 20 reached end of life; CI reads the version
+- Dependabot stopped ignoring GitHub Actions majors, which had
 
 ### Fixed
 
-- Anchor jumps land on the correct section, with smoother scrolling.
-- Email template ink matched to the site background.
+- Anchor jumps land on the correct section, with smoother
+- Email template ink matched to the site
 
 ## [0.6.0] - 2026-06-28
 
 ### Added
 
-- RemindrAI (MemorAIz) featured across experience, projects and skills.
-- Production Postman environment and live-API test links.
-- Root scripts driving both workspaces, and `node --watch` for backend dev.
-- README badges.
+- RemindrAI (MemorAIz) featured across experience, projects and
+- Production Postman environment and live-API test
+- Root scripts driving both workspaces, and `node --watch` for backend
+- README
 
 ### Changed
 
-- Hardened `.gitignore`; stopped tracking local editor and agent settings.
-- HTML-escape hardening in the email template.
+- Hardened `.gitignore`; stopped tracking local editor and agent
+- HTML-escape hardening in the email
 
 ## [0.5.0] - 2026-05-19
 
 ### Added
 
-- Postman collection with a full API test suite.
-- Branded 404 page and a skip-to-content link.
-- Caching strategy in `_headers`, plus a kill-switch service worker to recover
-  visitors left with the retired PWA worker.
-- `.editorconfig`, `.npmrc`, `SECURITY.md` and `.env.example` templates.
+- Postman collection with a full API test
+- Branded 404 page and a skip-to-content
+- Caching strategy in `_headers`, plus a kill-switch service worker to
+- `.editorconfig`, `.npmrc`, `SECURITY.md` and `.env.example`
 
 ### Changed
 
-- Components reorganized into `layout/`, `sections/` and `ui/`, with below-fold
-  sections lazily mounted.
-- Node version pinned consistently across `.nvmrc`, the host's config, CI and both
-  `engines` fields.
-- Dropped `tsparticles` from the frontend.
+- Components reorganized into `layout/`, `sections/` and `ui/`, with
+- Node version pinned consistently across `.nvmrc`, the host's config, CI and
+- Dropped `tsparticles` from the
 
 ## [0.4.0] - 2026-04-20
 
 ### Added
 
-- Centralized data layer in `frontend/src/data/`, starting with experience and
-  the shared portfolio constants.
-- `_headers` file configuring security headers and content types on the host.
+- Centralized data layer in `frontend/src/data/`, starting with experience
+- `_headers` file configuring security headers and content types on the
 
 ## [0.3.0] - 2026-03-06
 
 ### Added
 
-- Contact-form backend: Express API with validation, rate limiting and Resend
-  delivery.
-- Content Security Policy and security headers, with the inline analytics
-  snippet pinned by SHA-256 hash.
-- Hero entrance animations in CSS, and PurgeCSS for production builds.
+- Contact-form backend: Express API with validation, rate limiting and
+- Content Security Policy and security headers, with the inline
+- Hero entrance animations in CSS, and PurgeCSS for production
 
 ### Changed
 
-- Removed `framer-motion` in favour of CSS keyframes.
-- Analytics deferred to `requestIdleCallback` so it never blocks first paint.
-- URLs normalized to the apex domain.
+- Removed `framer-motion` in favour of CSS
+- Analytics deferred to `requestIdleCallback` so it never blocks first
+- URLs normalized to the apex
 
 ## [0.2.0] - 2025-12-26
 
 ### Added
 
-- SEO and performance pass: meta tags, lazy loading, AVIF/WebP portrait,
-  optimized assets.
-- Health route with a timestamp.
+- SEO and performance pass: meta tags, lazy loading, AVIF/WebP
+- Health route with a
 
 ### Changed
 
-- Email handling moved to Resend, with improved error handling.
+- Email handling moved to Resend, with improved error
 
 ## [0.1.0] - 2025-12-05
 
 ### Added
 
-- Initial React portfolio: hero, about, experience, projects, skills, interests
-  and contact sections.
-- MIT licence and first README.
+- Initial React portfolio: hero, about, experience, projects, skills,
+- MIT licence and first
 
 [Unreleased]: https://github.com/syed-waleed-ahmed/Portfolio/compare/v3.0.0...HEAD
 [3.0.0]: https://github.com/syed-waleed-ahmed/Portfolio/compare/v2.6.4...v3.0.0
