@@ -18,6 +18,15 @@ updates:
     groups:
       minor-and-patch:
         update-types: ["minor", "patch"]
+    ignore:
+      # Tracks the Node major in .nvmrc: newer types would accept APIs the
+      # pinned Node lacks. Move it when .nvmrc moves.
+      - dependency-name: "@types/node"
+        update-types: ["version-update:semver-major"]
+      # typescript-eslint supports TypeScript below 6.1, so 7 fails the lint.
+      # Remove this once its peer range admits 7.
+      - dependency-name: "typescript"
+        update-types: ["version-update:semver-major"]
     commit-message:
       prefix: "chore(deps)"
       prefix-development: "chore(deps-dev)"
