@@ -68,11 +68,11 @@ More in [docs/development.md](docs/development.md).
 
 ## Quality checks
 
-On every pull request and push to `main`, CI runs lint, the type check, the unit and Worker tests, invariants
-(7:1 text contrast in both themes, a strict CSP, the deploy configuration), a build, size budgets, `npm audit`,
-the browser suite (axe in light and dark on every page, layout from 320 to 2560px, the form, the palette, print
-and forced colours) and gitleaks over the full history. The site deploys only after all of it passes, and each
-deploy is checked against the live origin. Details in [docs/deployment.md](docs/deployment.md).
+On every pull request and push to `main`, CI runs lint, the type check, the unit and Worker tests, invariants (7:1
+text contrast in both themes, a strict CSP, the deploy configuration), a build, size budgets, `npm audit`, the
+browser suite in Chromium, Firefox and WebKit (axe in light and dark on every page, layout from 320 to 2560px, the
+form, the palette, print and forced colours) and gitleaks over the full history. The site deploys only after all of
+it passes, and each deploy is checked against the live origin. Details in [docs/deployment.md](docs/deployment.md).
 
 ## Documentation
 

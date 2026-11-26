@@ -59,7 +59,8 @@ proportions.
   panel above them.
 - Case studies put a sticky contents list beside the article. Text keeps the
   measure; diagrams and tables take the full column and scroll sideways on a
-  phone rather than shrinking their text.
+  phone rather than shrinking their text, with a shadow at the edge that has
+  more to show.
 - The header is sticky with text links. Below 56rem the links fold into a
   `<details>` menu that works without JavaScript.
 
@@ -83,8 +84,10 @@ sections and case study headings take focus after a jump; the form announces
 results in a live region, focuses the first invalid field and keeps what was
 typed on failure; controls are at least 44px tall on touch screens; reduced motion
 stops the caret and smooth scrolling; forced-colours mode keeps the palette's
-selection visible. axe (WCAG 2.2 A and AA, and best practice) runs on every
-page in both themes in CI.
+selection visible; a table or diagram that scrolls sideways is a named
+region the keyboard can reach. axe (WCAG 2.2 A and AA, and best practice) runs
+on every page in both themes, and on each case study at phone width, in
+Chromium, Firefox and WebKit in CI.
 
 ## Motion
 

@@ -14,11 +14,11 @@ frontend/
 │   ├── styles/         Tokens and global CSS; one stylesheet for every page
 │   ├── routes.ts       Every page, its URL and metadata
 │   ├── head.ts         Each page's <head> and structured data
-│   ├── main.tsx        Hydrates the prerendered page
+│   ├── main.tsx        Loads the page's own chunk, then hydrates the prerendered page
 │   └── entry-server.tsx  Renders every page at build time
 ├── worker/             The contact API and its rate limiter, with tests
 ├── public/             Copied as is: font, images, favicons, _headers, robots.txt, sw.js
-├── scripts/            prerender.mjs (build step), verify-deploy.mjs (checks a deployed origin)
+├── scripts/            prerender.mjs (pages, preloads, sitemap, redirects, security.txt), verify-deploy.mjs
 ├── test/               Content and logic tests
 ├── e2e/                Playwright and axe suite, and the server that applies the real headers
 ├── wrangler.jsonc      The Worker, its assets, its Durable Object and its domains
