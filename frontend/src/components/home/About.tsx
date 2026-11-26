@@ -13,9 +13,8 @@ export default function About() {
             silently never arrives is worse than having no reminder service at all.
           </p>
           <p>
-            I came to software from electrical engineering, and ten months rotating through development, databases, networking
-            and security operations at an insurer means I am comfortable owning a system end to end, from the schema to the
-            deploy.
+            I came to software from electrical engineering, and a traineeship that moved me between an insurer&apos;s IT teams
+            left me comfortable owning a system end to end, from the schema to the deploy.
           </p>
           <h3 className="subhead">How I work with AI tools</h3>
           <p>

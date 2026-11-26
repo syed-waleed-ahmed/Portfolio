@@ -23,7 +23,7 @@ const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 // hold them, and an address cannot be cleaned without becoming another one.
 const EMAIL_UNSENDABLE_RE = /[\p{Cc}\p{Cs}]/u;
 
-export const isEmail = (value: string) => EMAIL_RE.test(value) && !EMAIL_UNSENDABLE_RE.test(value);
+const isEmail = (value: string) => EMAIL_RE.test(value) && !EMAIL_UNSENDABLE_RE.test(value);
 
 export type FieldErrors = Partial<Record<FieldName, string>>;
 

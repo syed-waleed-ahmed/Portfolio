@@ -2,9 +2,10 @@ import { PORTRAIT } from "@/content/portrait.ts";
 import { languageList, PERSON } from "@/content/site.ts";
 
 // The first screen answers a recruiter's questions in order: who this is, what
-// they build, the strongest evidence for it, and the practical facts (where,
-// whether they need sponsorship, which languages). The greeting stays as the
-// opening line; the heading says what the work is.
+// they build, and the practical facts (where, whether they need sponsorship,
+// which languages, which degree). The evidence is the next section, so the
+// hero does not restate it. The greeting stays as the opening line; the
+// heading says what the work is.
 export default function Hero() {
   return (
     <section id="top" className="hero" aria-labelledby="hero-title" tabIndex={-1}>
@@ -23,11 +24,6 @@ export default function Hero() {
             <span className="hero__claim">I build LLM applications and the backend systems that keep them reliable.</span>
           </h1>
 
-          <p className="hero__lead">
-            My MSc thesis at MemorAIz was RemindrAI: a multi-tenant reminder service that AI assistants embed, with retry-safe
-            delivery over four channels and an agent that a prompt injection cannot point at another user&apos;s data. Each
-            project below has a case study with its architecture, how it was evaluated, and what did not work.
-          </p>
         </div>
 
         <picture className="hero__portrait">

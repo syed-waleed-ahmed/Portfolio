@@ -4,6 +4,10 @@ Notable changes, newest first, in the [Keep a Changelog](https://keepachangelog.
 
 ## [Unreleased]
 
+### Changed
+
+- Nothing on the home page is said twice: the first screen no longer restates the thesis project or the case-study promise that the sections below give, so it fits on one screen with the facts row, and About no longer repeats the traineeship's wording from Experience. The Research Team case study's opening paragraph no longer repeats its summary.
+
 ## [4.1.0] - 2026-11-26
 
 Follow-ups to 4.0.0 from a re-audit of the live site.

@@ -7,7 +7,7 @@ import type { Env } from "./env.ts";
 export const RESEND_URL = "https://api.resend.com/emails";
 // Far longer than a healthy call takes, and well inside the 20 seconds the
 // form waits.
-export const SEND_TIMEOUT_MS = 10_000;
+const SEND_TIMEOUT_MS = 10_000;
 
 // Resend refused the message, could not be reached, or did not answer in time.
 export class EmailDeliveryError extends Error {

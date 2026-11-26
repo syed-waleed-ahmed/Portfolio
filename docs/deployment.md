@@ -36,9 +36,9 @@ deploys and never appear in the repository. From `frontend/`, with Wrangler
 signed in to the account that owns the site:
 
 ```bash
-npx wrangler secret put RESEND_API_KEY
-npx wrangler secret put EMAIL_FROM     # Portfolio contact form <contact@syedwaleedahmed.me>
-npx wrangler secret put EMAIL_TO       # the inbox that receives messages
+npx wrangler@4.161.0 secret put RESEND_API_KEY
+npx wrangler@4.161.0 secret put EMAIL_FROM     # Portfolio contact form <contact@syedwaleedahmed.me>
+npx wrangler@4.161.0 secret put EMAIL_TO       # the inbox that receives messages
 ```
 
 The same can be done in the dashboard under the Worker's Settings, Variables
