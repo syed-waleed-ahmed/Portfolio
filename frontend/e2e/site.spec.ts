@@ -35,12 +35,15 @@ const violations = (results: Awaited<ReturnType<AxeBuilder["analyze"]>>) =>
 
 test.describe("every page", () => {
   for (const path of PAGES) {
-    test(`${path} loads with no errors, no third-party requests and no cookies`, async ({ page, context }) => {
+    test(`${path} loads with no errors, no third-party requests and no cookies`, async ({ page, context, baseURL }) => {
       const problems = await watch(page);
       const foreign: string[] = [];
+      // Against the base URL, not page.url(): the first request leaves while
+      // the page is still about:blank.
+      const own = new URL(baseURL!).hostname;
       page.on("request", (request) => {
         const url = new URL(request.url());
-        if (!["127.0.0.1", "localhost", new URL(page.url() || "http://127.0.0.1").hostname].includes(url.hostname) && url.protocol.startsWith("http")) foreign.push(request.url());
+        if (url.protocol.startsWith("http") && url.hostname !== own) foreign.push(request.url());
       });
       const response = await page.goto(path);
       expect(response?.status()).toBe(200);
