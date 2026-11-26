@@ -419,12 +419,11 @@ export default function RemindrAICaseStudy() {
             <>
               <ul>
                 <li>No metrics or tracing stack: structured logs and a failing health check are all the operator has.</li>
-                <li>One region, one database, no replicas and no per-tenant fairness in the scheduler.</li>
+                <li>One region, one database and no replicas.</li>
                 <li>
                   One pilot consumer, H-FARM&apos;s Student Assistant, integrated through the portable adapter, and 22 sends in
                   production during the pilot: far too few to say anything about reliability in the field.
                 </li>
-                <li>Plan entitlements are defined but their enforcement is not switched on, so no request is refused by plan.</li>
                 <li>An author-written evaluation set, one model provider, no user study and no penetration test.</li>
               </ul>
               <p>
