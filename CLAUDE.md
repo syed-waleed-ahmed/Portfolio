@@ -84,6 +84,8 @@ suite; a new dependency or a change to what the entry imports needs `npm run siz
 
 - **The Worker's secrets** (`RESEND_API_KEY`, `EMAIL_FROM`, `EMAIL_TO`) are set with `wrangler secret put`, not in
   the repo. Missing, the form answers 503 and `verify-deploy.mjs` fails the deploy.
+- **The sending domain**: Resend's DKIM, `send`, `rsend` and `_dmarc` records in the Cloudflare zone let the form
+  send from `contact@syedwaleedahmed.me`; remove one and mail stops ([deployment](docs/deployment.md)).
 - **The Cloudflare zone**: "Always Use HTTPS" and the www-to-apex redirect rule live in the dashboard;
   `verify-deploy.mjs` checks both after each deploy.
 - **The domain** is registered at Spaceship until 2027-12-22; nothing watches the date.
