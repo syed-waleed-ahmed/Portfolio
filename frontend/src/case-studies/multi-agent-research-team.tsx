@@ -64,9 +64,8 @@ export default function MultiAgentResearchTeamCaseStudy() {
           content: (
             <>
               <p>
-                Give it a technical topic and get back a cited report with code examples, while watching it work: every search,
-                retry and provider switch appears in the browser as it happens. The interesting constraint was running real
-                agents on free tiers, where rate limits and restarts are routine, without a demo that falls over.
+                Give it a technical topic and get back a cited report with code examples. The interesting constraint was running
+                real agents on free tiers, where rate limits and restarts are routine, without a demo that falls over.
               </p>
             </>
           ),

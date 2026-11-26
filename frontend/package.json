@@ -17,7 +17,7 @@
   },
   "scripts": {
     "dev": "vite",
-    "dev:api": "wrangler dev --port 8787",
+    "dev:api": "npx --yes wrangler@4.161.0 dev --port 8787",
     "typecheck": "tsc --noEmit -p tsconfig.json",
     "prebuild": "eslint . && tsc --noEmit -p tsconfig.json && npm test && node --test ../test/invariants.test.ts",
     "build": "vite build && vite build --ssr src/entry-server.tsx --outDir dist-server && node scripts/prerender.mjs",

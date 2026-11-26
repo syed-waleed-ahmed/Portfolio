@@ -155,6 +155,18 @@ test("the Worker publishes the build, runs the API first, and names one origin",
   assert.equal(read(".github/workflows/deploy.yml").match(/^\s*SITE_URL:\s*(\S+)$/m)?.[1], SITE.url, "deploy.yml verifies a different origin than SITE.url");
 });
 
+// Wrangler is not a dependency (it would add a large native binary to every
+// npm ci), so local runs fetch the same version the deploy uses.
+test("local Wrangler commands use the version the deploy pins", () => {
+  const pinned = read(".github/workflows/deploy.yml").match(/wranglerVersion:\s*"([^"]+)"/)?.[1];
+  assert.ok(pinned, "deploy.yml pins no wranglerVersion");
+  const devApi = JSON.parse(read("frontend/package.json")).scripts["dev:api"] as string;
+  assert.match(devApi, new RegExp(`wrangler@${pinned.replace(/\./g, "\.")} `), `dev:api must run wrangler@${pinned}`);
+  for (const [, version] of read("docs/deployment.md").matchAll(/npx wrangler@(\S+)/g)) {
+    assert.equal(version, pinned, "docs/deployment.md names another Wrangler version");
+  }
+});
+
 // .nvmrc is the one pin: local work, CI and the deploy read it.
 test("the Node version is pinned once and every engines range admits it", () => {
   const nvmrc = Number(read(".nvmrc").trim());
