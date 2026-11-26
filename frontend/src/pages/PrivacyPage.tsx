@@ -40,8 +40,13 @@ export default function PrivacyPage() {
           <strong>Why:</strong> to read your message and reply to it, which you ask for by sending it.
         </li>
         <li>
-          <strong>Rate limiting:</strong> to stop abuse, the server keeps a count of recent submissions per IP address for
-          15 minutes, then discards it.
+          <strong>Rate limiting:</strong> to stop abuse, the server keeps the times of recent submissions per IP address for
+          15 minutes, then discards them.
+        </li>
+        <li>
+          <strong>Logs:</strong> Cloudflare keeps a short-lived log of requests to the form&apos;s server code, with technical
+          details such as your IP address. The code itself logs only what happened (sent, refused, rate-limited), never
+          what you wrote.
         </li>
         <li>
           <strong>How long:</strong> the email stays in my inbox until I delete it. Resend keeps a record of the delivery
