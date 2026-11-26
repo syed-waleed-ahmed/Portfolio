@@ -7,6 +7,7 @@ Notable changes, newest first, in the [Keep a Changelog](https://keepachangelog.
 ### Changed
 
 - Nothing on the home page is said twice: the first screen no longer restates the thesis project or the case-study promise that the sections below give, so it fits on one screen with the facts row, and About no longer repeats the traineeship's wording from Experience. The Research Team case study's opening paragraph no longer repeats its summary.
+- The resume is linked from the header only, no longer also from Contact and the command palette, and links use plain names: "Source" in the footer and "Case study" in Experience.
 
 ## [4.1.0] - 2026-11-26
 

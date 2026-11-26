@@ -75,7 +75,6 @@ export const commandGroups: CommandGroup[] = [
     heading: "Contact",
     items: [
       { id: "copy-email", label: "Copy email address", keywords: [PERSON.email, "mail"], action: { kind: "copy", text: PERSON.email } },
-      { id: "resume", label: "Resume", keywords: ["cv", "pdf"], action: { kind: "open", href: PERSON.links.resume } },
       { id: "linkedin", label: "LinkedIn", keywords: [], action: { kind: "open", href: PERSON.links.linkedin } },
       { id: "github", label: "GitHub", keywords: [], action: { kind: "open", href: PERSON.links.github } },
       { id: "site-source", label: "This site's source", keywords: ["repository", "code"], action: { kind: "open", href: SITE.repository } },

@@ -4,7 +4,7 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test, type Page } from "@playwright/test";
 import { projects } from "../src/content/projects.ts";
-import { SECTIONS } from "../src/content/site.ts";
+import { PERSON, SECTIONS } from "../src/content/site.ts";
 
 const PAGES = ["/", ...projects.map((project) => `/work/${project.slug}/`), "/privacy/"];
 
@@ -125,6 +125,13 @@ test.describe("layout", () => {
       await page.getByRole("navigation", { name: "Primary" }).getByRole("link", { name: label }).click();
       await expect(page.locator(`#${id}`)).toBeInViewport();
     }
+  });
+
+  test("the resume is linked from the header only", async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.goto("/");
+    await expect(page.locator(`a[href="${PERSON.links.resume}"]:visible`)).toHaveCount(1);
+    await expect(page.locator(`main a[href="${PERSON.links.resume}"]`)).toHaveCount(0);
   });
 
   test("on a phone the menu opens without JavaScript and lists every section and the resume", async ({ browser }) => {

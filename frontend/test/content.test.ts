@@ -159,7 +159,6 @@ test("a search selects what was asked for", () => {
   assert.equal(best("judge"), "case-llm-as-judge");
   assert.equal(best("fruugle"), "go-experience");
   assert.equal(best("copy email"), "copy-email");
-  assert.equal(best("resume"), "resume");
   assert.equal(best("rag demo"), "demo-self-correcting-rag");
   assert.equal(rankCommands("zzzzqq").length, 0);
 });

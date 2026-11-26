@@ -17,7 +17,9 @@ export default function SiteFooter() {
             <a href="/privacy/">Privacy</a>
           </li>
           <li>
-            <ExternalLink href={SITE.repository}>Source on GitHub</ExternalLink>
+            <ExternalLink href={SITE.repository}>
+              Source<span className="visually-hidden"> of this site</span>
+            </ExternalLink>
           </li>
           <li>
             <a href={`mailto:${PERSON.email}`}>{PERSON.email}</a>

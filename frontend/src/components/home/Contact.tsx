@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, type ChangeEvent, type FormEvent } from "react";
 import { FaGithub, FaLinkedinIn } from "react-icons/fa";
-import { LuCircleAlert, LuCircleCheck, LuFileText, LuMail, LuTriangleAlert } from "react-icons/lu";
+import { LuCircleAlert, LuCircleCheck, LuMail, LuTriangleAlert } from "react-icons/lu";
 import ExternalLink from "@/components/ui/ExternalLink";
 import Section from "@/components/ui/Section";
 import { PERSON } from "@/content/site.ts";
@@ -137,12 +137,6 @@ export default function Contact() {
               <ExternalLink href={PERSON.links.github}>
                 <FaGithub className="icon" aria-hidden="true" />
                 GitHub
-              </ExternalLink>
-            </li>
-            <li>
-              <ExternalLink href={PERSON.links.resume}>
-                <LuFileText className="icon" aria-hidden="true" />
-                Resume (PDF on Google Drive)
               </ExternalLink>
             </li>
           </ul>
