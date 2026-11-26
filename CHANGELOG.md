@@ -4,6 +4,10 @@ Notable changes, newest first, in the [Keep a Changelog](https://keepachangelog.
 
 ## [Unreleased]
 
+## [4.1.0] - 2026-11-26
+
+Follow-ups to 4.0.0 from a re-audit of the live site.
+
 ### Added
 
 - `/.well-known/security.txt` (RFC 9116), naming the private vulnerability report and the email address.
@@ -500,7 +504,8 @@ A rebuild of the site's content, design and contact service, following an indepe
 - Initial React portfolio: hero, about, experience, projects, skills,
 - MIT licence and first
 
-[Unreleased]: https://github.com/syed-waleed-ahmed/Portfolio/compare/v4.0.0...HEAD
+[Unreleased]: https://github.com/syed-waleed-ahmed/Portfolio/compare/v4.1.0...HEAD
+[4.1.0]: https://github.com/syed-waleed-ahmed/Portfolio/compare/v4.0.0...v4.1.0
 [4.0.0]: https://github.com/syed-waleed-ahmed/Portfolio/compare/v3.0.0...v4.0.0
 [3.0.0]: https://github.com/syed-waleed-ahmed/Portfolio/compare/v2.6.4...v3.0.0
 [2.6.4]: https://github.com/syed-waleed-ahmed/Portfolio/compare/v2.6.3...v2.6.4

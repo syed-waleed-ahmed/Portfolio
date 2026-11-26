@@ -25,7 +25,7 @@ body:
     id: what-happened
     attributes:
       label: What happened, and what did you expect?
-      placeholder: The Experience rows do not open with the keyboard. I expected Enter to toggle them.
+      placeholder: After Send, the contact form showed no message. I expected a confirmation or an error.
     validations:
       required: true
 
@@ -35,9 +35,9 @@ body:
       label: Steps to reproduce
       description: The URL or endpoint, and what you did, step by step.
       placeholder: |
-        1. Open https://syedwaleedahmed.me/ at 390px wide
-        2. Tab to the first Experience row
-        3. Press Enter
+        1. Open https://syedwaleedahmed.me/#contact at 390px wide
+        2. Fill in every field
+        3. Press Send
     validations:
       required: true
 
