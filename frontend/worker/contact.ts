@@ -16,7 +16,7 @@ export interface Deps {
   log(event: Record<string, unknown>): void;
 }
 
-export const defaultDeps: Deps = {
+const defaultDeps: Deps = {
   async limit(key, env) {
     const stub = env.CONTACT_LIMITER.get(env.CONTACT_LIMITER.idFromName(key));
     return (await (await stub.fetch(new Request("https://limiter/hit", { method: "POST" }))).json()) as Verdict;
