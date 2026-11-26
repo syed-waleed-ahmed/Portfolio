@@ -10,8 +10,9 @@ name: Deploy
 #     publish it.
 #   * workflow_dispatch republishes main by hand, with no new commit.
 #
-# The backend is separate: Render deploys it once every check on the push has
-# passed, by a setting in its own dashboard.
+# The Worker that serves the contact API ships in the same deploy. Its mail
+# settings are secrets set once with `wrangler secret put`; the verification
+# step fails while they are missing (docs/deployment.md).
 on:
   workflow_call:
     inputs:
@@ -81,7 +82,7 @@ jobs:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
           workingDirectory: frontend
-          wranglerVersion: "4.158.0"
+          wranglerVersion: "4.161.0"
           command: deploy
 
       # The live site must now serve this build, apply every rule in _headers

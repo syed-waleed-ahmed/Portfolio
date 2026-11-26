@@ -1,5 +1,5 @@
 # === Dependencies ===
-# frontend/ and backend/ each keep their own. The root can get one too, from the
+# frontend/ keeps its own. The root can get one too, from the
 # `npm i --no-save` that scripts/gen-og-card.mjs needs.
 node_modules/
 # The root package.json only holds delegating scripts and has no dependencies,
@@ -20,11 +20,11 @@ dist-server/
 .lychee-cookies.json
 
 # === Env / secrets ===
-# No slash, so these match at any depth, including backend/ and frontend/.
+# No slash, so these match at any depth.
 .env
 .env.*
-# But DO track .env.example templates - they're checked-in placeholders
-!.env.example
+# Local secrets for wrangler dev; the .example template is tracked.
+.dev.vars
 
 # === Logs ===
 npm-debug.log*
@@ -65,13 +65,10 @@ secrets.json
 
 # === Deployment / platform artifacts ===
 .wrangler/
-.render/
 
 # === Test / coverage output ===
 coverage/
 *.lcov
-# newman writes HTML/JSON run reports here when reporters are enabled
-newman/
 # Playwright's report and per-test traces, from npm run test:e2e
 playwright-report/
 test-results/
