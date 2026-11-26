@@ -116,6 +116,31 @@ test.describe("layout", () => {
     }
   });
 
+  test("links within a page scroll and focus without putting a fragment in the address", async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.goto("/");
+    await hydrated(page);
+    await page.getByRole("navigation", { name: "Primary" }).getByRole("link", { name: "Contact" }).click();
+    await expect(page.locator("#contact")).toBeInViewport();
+    await expect(page.locator("#contact")).toBeFocused();
+    expect(new URL(page.url()).hash).toBe("");
+
+    await page.goto("/work/remindrai/");
+    await hydrated(page);
+    const entry = page.locator(".case__toc a").nth(2);
+    const target = (await entry.getAttribute("href"))!;
+    await entry.click();
+    await expect(page.locator(target)).toBeInViewport();
+    expect(new URL(page.url()).hash).toBe("");
+  });
+
+  test("an address with a fragment opens at its section and loses the fragment", async ({ page }) => {
+    await page.goto("/#contact");
+    await hydrated(page);
+    await expect(page.locator("#contact")).toBeInViewport();
+    await expect.poll(() => new URL(page.url()).hash).toBe("");
+  });
+
   test("the home page's sections follow SECTIONS, and the header links reach them", async ({ page }) => {
     await page.goto("/");
     const ids = await page.locator("main > section.section").evaluateAll((sections) => sections.map((section) => section.id));
