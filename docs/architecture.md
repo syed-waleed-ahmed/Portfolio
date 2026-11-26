@@ -57,9 +57,13 @@ ordinary links: there is no client-side router, because every page is already
 a file.
 
 Everything is readable without JavaScript. Scripts add the command palette,
-the form's inline validation and status messages, and closing the phone menu
-after a choice; the form itself posts natively before hydration, and the
-Worker answers such a post with a plain page.
+the form's inline validation and status messages, closing the phone menu
+after a choice, and a clean address bar: links within a page are ordinary
+fragment links, and once the script loads,
+`components/layout/InPageLinks.tsx` scrolls to and focuses the target without
+writing the fragment into the address, and removes one an address arrives
+with. The form itself posts natively before hydration, and the Worker answers
+such a post with a plain page.
 
 Render output must be identical at build time and in the browser. The one
 platform-dependent value, the Command key on Apple devices, is read with

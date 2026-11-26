@@ -1,4 +1,5 @@
 import type { ComponentType } from "react";
+import InPageLinks from "@/components/layout/InPageLinks";
 import SiteFooter from "@/components/layout/SiteFooter";
 import SiteHeader from "@/components/layout/SiteHeader";
 import ErrorBoundary from "@/components/ui/ErrorBoundary";
@@ -33,6 +34,7 @@ export default function Page({ route, Body }: Props) {
           ))}
       </main>
       <SiteFooter />
+      <InPageLinks />
     </>
   );
 }

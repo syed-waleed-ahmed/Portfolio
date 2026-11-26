@@ -62,7 +62,8 @@ proportions.
   phone rather than shrinking their text, with a shadow at the edge that has
   more to show.
 - The header is sticky with text links. Below 56rem the links fold into a
-  `<details>` menu that works without JavaScript.
+  `<details>` menu that works without JavaScript. A link to a section scrolls
+  there and leaves the address as it was, so it never ends in `#contact`.
 
 ## Components worth knowing
 
