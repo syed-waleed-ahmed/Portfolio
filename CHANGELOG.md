@@ -4,6 +4,8 @@ Notable changes, newest first, in the [Keep a Changelog](https://keepachangelog.
 
 ## [Unreleased]
 
+## [4.0.0] - 2026-11-26
+
 A rebuild of the site's content, design and contact service, following an independent audit of 3.0.0.
 
 ### Added
@@ -484,7 +486,8 @@ A rebuild of the site's content, design and contact service, following an indepe
 - Initial React portfolio: hero, about, experience, projects, skills,
 - MIT licence and first
 
-[Unreleased]: https://github.com/syed-waleed-ahmed/Portfolio/compare/v3.0.0...HEAD
+[Unreleased]: https://github.com/syed-waleed-ahmed/Portfolio/compare/v4.0.0...HEAD
+[4.0.0]: https://github.com/syed-waleed-ahmed/Portfolio/compare/v3.0.0...v4.0.0
 [3.0.0]: https://github.com/syed-waleed-ahmed/Portfolio/compare/v2.6.4...v3.0.0
 [2.6.4]: https://github.com/syed-waleed-ahmed/Portfolio/compare/v2.6.3...v2.6.4
 [2.6.3]: https://github.com/syed-waleed-ahmed/Portfolio/compare/v2.6.2...v2.6.3
