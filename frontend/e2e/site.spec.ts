@@ -67,6 +67,22 @@ test.describe("every page", () => {
     }
   }
 
+  test("each page downloads its own chunk and no other page's", async ({ page }) => {
+    const chunks = { home: /\/HomePage-/, privacy: /\/PrivacyPage-/, remindrai: /\/remindrai-/ };
+    for (const [path, own] of [["/", "home"], ["/privacy/", "privacy"], ["/work/remindrai/", "remindrai"]] as const) {
+      const scripts: string[] = [];
+      page.on("request", (request) => {
+        if (request.url().endsWith(".js")) scripts.push(request.url());
+      });
+      await page.goto(path);
+      await hydrated(page);
+      for (const [name, pattern] of Object.entries(chunks)) {
+        expect(scripts.some((url) => pattern.test(url)), `${path} and the ${name} chunk`).toBe(name === own);
+      }
+      page.removeAllListeners("request");
+    }
+  });
+
   test("an unknown path gets the 404 page, with a 404 and noindex", async ({ page }) => {
     const response = await page.goto("/no-such-page");
     expect(response?.status()).toBe(404);

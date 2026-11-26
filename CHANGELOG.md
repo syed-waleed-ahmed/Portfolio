@@ -12,6 +12,11 @@ Notable changes, newest first, in the [Keep a Changelog](https://keepachangelog.
 
 - The first screen has no buttons again, as asked before 4.0.0 brought two back.
 - On a phone the featured project leaves its pipeline to the case study, like the other five.
+- Each page downloads only its own code: a case study or the privacy page no longer loads the home page's, and every page preloads its chunk instead of waiting for the main script to ask for it.
+
+### Fixed
+
+- An address without its trailing slash, such as `/work/remindrai`, redirects permanently (301) instead of temporarily.
 
 ## [4.0.0] - 2026-11-26
 

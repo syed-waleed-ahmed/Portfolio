@@ -131,7 +131,7 @@ test("the CSP allows no inline script or style, and the page holds none", () => 
   }
   assert.match(directive("connect-src"), /^connect-src 'self'$/, "the contact form posts to its own origin; nothing else is needed");
   const html = read("frontend/index.html");
-  const inline = [...html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi)].filter(([, attributes]) => !/\bsrc=/.test(attributes!));
+  const inline = [...html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script\b[^>]*>/gi)].filter(([, attributes]) => !/\bsrc=/.test(attributes!));
   assert.deepEqual(inline, [], "index.html holds an inline script, which the CSP would block");
   // A style attribute in prerendered markup is blocked the same way.
   const jsx = walk("frontend/src", (path) => path.endsWith(".tsx")).filter((path) => /\bstyle=\{/.test(read(path)));

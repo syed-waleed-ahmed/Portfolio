@@ -37,7 +37,7 @@ suite; a new dependency or a change to what the entry imports needs `npm run siz
 ## Architecture in brief
 
 - `src/routes.ts` lists every page (`PAGES`); `scripts/prerender.mjs` writes each to `dist/` with its head from
-  `src/head.ts` and generates `sitemap.xml`. `main.tsx` matches the URL, loads a case study's chunk, and hydrates.
+  `src/head.ts` and generates `sitemap.xml`. `main.tsx` matches the URL, loads that page's chunk (preloaded from Vite's manifest), and hydrates.
   Render output must be identical at build time and in the browser: read `window`, dates or randomness in effects.
 - Facts live once in `src/content/` (`site.ts`, `projects.ts`, `experience.ts`, `skills.ts`). These, `routes.ts`,
   `head.ts`, `commands.ts` and `src/shared/` use relative `.ts` imports and no JSX, because Node loads them with type

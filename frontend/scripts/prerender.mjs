@@ -16,6 +16,29 @@ const ROOT = "<!--app-html-->";
 
 const { pages, PERSON, SITE } = await import(new URL("entry-server.js", SERVER).href);
 const template = await readFile(new URL("index.html", DIST), "utf8");
+
+// Each page's own chunk and what it imports, as modulepreload links, minus
+// what the entry already loads. Without them the browser would find the
+// page's chunk only once the entry had run.
+const MANIFEST = new URL(".vite/manifest.json", DIST);
+const manifest = JSON.parse(await readFile(MANIFEST, "utf8"));
+const entryKey = Object.keys(manifest).find((key) => manifest[key].isEntry);
+const chunksOf = (key, seen = new Set()) => {
+  if (seen.has(key)) return seen;
+  seen.add(key);
+  for (const child of manifest[key]?.imports ?? []) chunksOf(child, seen);
+  return seen;
+};
+const loadedByEntry = new Set([...chunksOf(entryKey)].map((key) => manifest[key].file));
+const preloadsFor = (module) => {
+  if (!module) return "";
+  if (!manifest[module]) throw new Error(`prerender: ${module} is not in the client manifest`);
+  return [...chunksOf(module)]
+    .map((key) => manifest[key].file)
+    .filter((file) => !loadedByEntry.has(file))
+    .map((file) => `\n    <link rel="modulepreload" crossorigin href="/${file}" />`)
+    .join("");
+};
 for (const marker of [HEAD, ROOT]) {
   if (!template.includes(marker)) throw new Error(`prerender: ${marker} is missing from dist/index.html`);
 }
@@ -28,8 +51,17 @@ for (const page of pages) {
   const file = new URL(fileFor(page.path), DIST);
   await mkdir(dirname(fileURLToPath(file)), { recursive: true });
   // Function replacements, so a "$" in the markup is inserted as written.
-  await writeFile(file, template.replace(HEAD, () => page.head).replace(ROOT, () => page.html));
+  await writeFile(file, template.replace(HEAD, () => page.head + preloadsFor(page.module)).replace(ROOT, () => page.html));
 }
+
+// A directory page asked for without its trailing slash gets a permanent
+// redirect. The host's own redirect for it is a 307, which search engines
+// treat as temporary.
+const redirects = pages
+  .map((page) => page.path)
+  .filter((path) => path !== "/" && path.endsWith("/"))
+  .map((path) => `${path.slice(0, -1)} ${path} 301`);
+await writeFile(new URL("_redirects", DIST), `${redirects.join("\n")}\n`);
 
 const urls = pages
   .filter((page) => page.indexable)
@@ -57,4 +89,5 @@ await writeFile(
 );
 
 await rm(SERVER, { recursive: true, force: true });
-console.log(`prerender: wrote ${pages.length} pages, a sitemap of ${urls.length} URLs and security.txt`);
+await rm(new URL(".vite/", DIST), { recursive: true, force: true });
+console.log(`prerender: wrote ${pages.length} pages, ${redirects.length} redirects, a sitemap of ${urls.length} URLs and security.txt`);

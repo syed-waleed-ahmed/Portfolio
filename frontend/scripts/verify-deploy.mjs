@@ -103,6 +103,16 @@ const check = async () => {
     if (response.status !== 200) problems.push(`${path}, in the sitemap, answered ${response.status}`);
   }
 
+  //    Asked for without its trailing slash, each of those pages redirects
+  //    permanently to it (dist/_redirects).
+  for (const path of sitemapPaths.filter((p) => p !== "/" && p.endsWith("/"))) {
+    const response = await get(path.slice(0, -1));
+    const location = response.headers.get("location") ?? "";
+    if (![301, 308].includes(response.status) || !location.endsWith(path)) {
+      problems.push(`${path.slice(0, -1)} answered ${response.status}${location ? ` to ${location}` : ""}; expected a permanent redirect to ${path}`);
+    }
+  }
+
   // 4. The Worker answers its API, and has the mail settings it needs. A
   //    deploy without them would otherwise show only as a form that fails.
   const health = await get("/api/health");
