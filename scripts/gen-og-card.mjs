@@ -16,7 +16,7 @@
 //
 // Everything it reads already lives in the repository - the portrait and the
 // font - so the output is reproducible from a clean checkout. Colours mirror
-// src/styles/tokens.css.
+// the light theme in frontend/src/styles/tokens.css.
 import * as fontkit from "fontkit";
 import sharp from "sharp";
 import { decompress } from "wawoff2";
@@ -30,16 +30,17 @@ const pub = (p) => path.join(root, "frontend/public", p);
 const PORTRAIT = pub("images/Profile.avif");
 const FONT = pub("fonts/hanken-grotesk-latin-wght.woff2");
 
-const BG = "#070a11"; // --color-bg
-const TEXT = "#f6f9fd"; // --color-text-strong
-const SOFT = "#b9c4d3"; // --color-text-soft
-const MUTED = "#a2aec1"; // --color-text-muted
-const CYAN = "#6ee7f7"; // --color-accent
-const INDIGO = "#6366f1"; // --color-indigo
+const BG = "#f7f6f2"; // --color-bg (light)
+const INK = "#121417"; // --color-ink-strong
+const SOFT = "#3b3f47"; // --color-ink-soft
+const MUTED = "#484c54"; // --color-ink-muted
+const ACCENT = "#92290a"; // --color-accent
+const RULE = "#d6d2c7"; // --color-rule
 
 const NAME = "Syed Waleed Ahmed";
 const ROLE = "AI Software Engineer";
-const BLURB = ["Multi-agent systems, RAG pipelines,", "and LLM workflow automation."];
+const GREETING = "hi, Waleed here.";
+const BLURB = ["I build LLM applications and the backend", "systems that keep them reliable."];
 const DOMAIN = "syedwaleedahmed.me";
 
 // The site ships a variable WOFF2, and fontkit cannot apply variations to
@@ -80,16 +81,19 @@ const kb = (file) => `${(statSync(file).size / 1024).toFixed(1)} KB`;
 async function socialCard() {
   const W = 1200;
   const H = 630;
-  const TEXT_X = 500;
+  const TEXT_X = 470;
 
-  const name = textPath(weight(700), NAME, 68, TEXT_X, 292, TEXT, -0.02);
-  const role = textPath(weight(600), ROLE, 40, TEXT_X, 356, CYAN);
-  const l1 = textPath(weight(400), BLURB[0], 30, TEXT_X, 428, SOFT);
-  const l2 = textPath(weight(400), BLURB[1], 30, TEXT_X, 468, SOFT);
-  const url = textPath(weight(500), DOMAIN, 24, TEXT_X, 548, MUTED);
+  // The site's first screen in miniature: the greeting in the accent, the
+  // name, the role, and the claim, on paper.
+  const greeting = textPath(weight(500), GREETING, 30, TEXT_X, 196, ACCENT);
+  const name = textPath(weight(700), NAME, 64, TEXT_X, 272, INK, -0.02);
+  const role = textPath(weight(500), ROLE, 32, TEXT_X, 322, SOFT);
+  const l1 = textPath(weight(600), BLURB[0], 30, TEXT_X, 400, INK, -0.01);
+  const l2 = textPath(weight(600), BLURB[1], 30, TEXT_X, 440, INK, -0.01);
+  const url = textPath(weight(500), DOMAIN, 22, TEXT_X, 520, MUTED);
 
   // Fail loudly rather than shipping a card with text running off the edge.
-  for (const [label, t] of [["name", name], ["role", role], ["blurb 1", l1], ["blurb 2", l2]]) {
+  for (const [label, t] of [["greeting", greeting], ["name", name], ["role", role], ["blurb 1", l1], ["blurb 2", l2]]) {
     if (TEXT_X + t.width > W - 48) {
       throw new Error(`${label} overflows the card: needs ${Math.ceil(TEXT_X + t.width)}px, have ${W - 48}px`);
     }
@@ -97,30 +101,17 @@ async function socialCard() {
 
   const svg = Buffer.from(
     `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}">
-       <defs>
-         <radialGradient id="wash" cx="0.22" cy="0.3" r="0.6">
-           <stop offset="0" stop-color="${INDIGO}" stop-opacity="0.22"/>
-           <stop offset="1" stop-color="${INDIGO}" stop-opacity="0"/>
-         </radialGradient>
-         <linearGradient id="rule" x1="0" x2="1">
-           <stop offset="0" stop-color="${INDIGO}"/>
-           <stop offset="1" stop-color="${CYAN}"/>
-         </linearGradient>
-       </defs>
        <rect width="${W}" height="${H}" fill="${BG}"/>
-       <rect width="${W}" height="${H}" fill="url(#wash)"/>
-       <rect x="0" y="${H - 6}" width="${W}" height="6" fill="url(#rule)"/>
-       ${name.svg}${role.svg}${l1.svg}${l2.svg}${url.svg}
+       <rect x="${TEXT_X}" y="470" width="${W - TEXT_X - 90}" height="1" fill="${RULE}"/>
+       <rect x="0" y="${H - 8}" width="${W}" height="8" fill="${ACCENT}"/>
+       ${greeting.svg}${name.svg}${role.svg}${l1.svg}${l2.svg}${url.svg}
      </svg>`
   );
 
-  const D = 360;
-  const RING = 8;
+  // A rounded square, as the portrait is on the site.
+  const D = 320;
   const mask = Buffer.from(
-    `<svg xmlns="http://www.w3.org/2000/svg" width="${D}" height="${D}"><circle cx="${D / 2}" cy="${D / 2}" r="${D / 2}" fill="#fff"/></svg>`
-  );
-  const ring = Buffer.from(
-    `<svg xmlns="http://www.w3.org/2000/svg" width="${D + RING * 2}" height="${D + RING * 2}"><circle cx="${D / 2 + RING}" cy="${D / 2 + RING}" r="${D / 2 + RING - 1.5}" fill="none" stroke="${CYAN}" stroke-opacity="0.45" stroke-width="3"/></svg>`
+    `<svg xmlns="http://www.w3.org/2000/svg" width="${D}" height="${D}"><rect width="${D}" height="${D}" rx="14" fill="#fff"/></svg>`
   );
   const portrait = await sharp(PORTRAIT)
     .resize(D, D)
@@ -128,16 +119,10 @@ async function socialCard() {
     .png()
     .toBuffer();
 
-  const top = (H - D) / 2;
   const out = pub("images/og-card.png");
   await sharp(svg)
-    .composite([
-      { input: ring, left: 90 - RING, top: top - RING },
-      { input: portrait, left: 90, top },
-    ])
-    // Palette-quantized: full-colour PNG spent ~370 KB on the soft background
-    // gradient. Dithering keeps that gradient from banding.
-    .png({ palette: true, colors: 256, quality: 100, dither: 1, effort: 10, compressionLevel: 9 })
+    .composite([{ input: portrait, left: 90, top: (H - D) / 2 - 4 }])
+    .png({ palette: true, colors: 256, quality: 100, effort: 10, compressionLevel: 9 })
     .toFile(out);
   console.log(`images/og-card.png      ${W}x${H}  ${kb(out)}`);
 }

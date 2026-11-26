@@ -1,55 +1,28 @@
-# Frontend
+# Frontend and Worker
 
-The site at [syedwaleedahmed.me](https://syedwaleedahmed.me/): React 19 and
-Vite 8, prerendered at build time and hydrated in the browser, styled with
-plain CSS in cascade layers. Published to Cloudflare Workers from this
-directory by `.github/workflows/deploy.yml`, as static assets (see
-[Deployment](../docs/deployment.md)).
-
-It is one of two independent npm projects in this repository, with its own
-`package.json` and lockfile; the other is [`../backend`](../backend/README.md).
+The site at [syedwaleedahmed.me](https://syedwaleedahmed.me/) and its contact API, one npm project and one
+Cloudflare Worker. See the [root README](../README.md) and [docs/](../docs/) for how it fits together.
 
 ```text
 frontend/
 ├── src/
-│   ├── components/   layout/ (masthead, dock, footer), sections/ (one per page section), ui/ (primitives), widgets/ (palette, graph and globe, each with its lazy library)
-│   ├── data/         All entries, figures and links, as plain modules with no JSX, plus the activity snapshot
-│   ├── assets/       Files imported by URL: the generated sprite of skill marks, and the project pictures
-│   ├── styles/       Layer order, tokens and global CSS; sections.css lists the styles of everything below the hero, linked after it, and print.css is linked last
-│   ├── App.jsx       The page
-│   ├── main.jsx      Hydrates the prerendered markup
-│   └── entry-server.jsx   Build-time render entry
-├── public/           Copied verbatim: fonts, images, favicons, _headers (CSP and caching), 404.html, crawler files, sw.js (a kill-switch)
-├── scripts/          prerender.mjs (build step), fetch-github-activity.mjs (graph snapshot), gen-skill-icons.mjs (skill marks sprite), verify-deploy.mjs (checks a deployed origin)
-├── test/             Content tests over src/data
-├── e2e/              Playwright + axe suite and the server that applies the real CSP
-├── index.html        Page shell: meta tags, JSON-LD, the hash-pinned analytics snippet, the prerender target
-├── wrangler.jsonc    Cloudflare Workers configuration: dist/ as static assets, 404.html for unknown paths
-└── .size-limit.json  Gzip budgets per chunk
+│   ├── content/        Facts as typed data: person, projects, experience, skills
+│   ├── case-studies/   One page per project, prose and diagrams
+│   ├── components/     home/, case-study/, layout/, ui/, widgets/ (the command palette)
+│   ├── pages/          Home, privacy, 404
+│   ├── shared/         The contact form's rules, imported by the page and the Worker
+│   ├── styles/         Tokens and global CSS; one stylesheet for every page
+│   ├── routes.ts       Every page, its URL and metadata
+│   ├── head.ts         Each page's <head> and structured data
+│   ├── main.tsx        Hydrates the prerendered page
+│   └── entry-server.tsx  Renders every page at build time
+├── worker/             The contact API and its rate limiter, with tests
+├── public/             Copied as is: font, images, favicons, _headers, robots.txt, sw.js
+├── scripts/            prerender.mjs (build step), verify-deploy.mjs (checks a deployed origin)
+├── test/               Content and logic tests
+├── e2e/                Playwright and axe suite, and the server that applies the real headers
+├── wrangler.jsonc      The Worker, its assets, its Durable Object and its domains
+└── .size-limit.js      Size budgets, read from the built pages
 ```
 
-## Commands
-
-Run inside this directory, or from the repository root with `--prefix frontend`.
-
-| Command | What it does |
-|---------|--------------|
-| `npm run dev` | Vite on :5173, client render only |
-| `npm run build` | Lint, content tests and repository invariants, then the client and SSR builds and the prerender into `dist/` |
-| `npm test` | Content tests over `src/data/` |
-| `npm run lint` | ESLint |
-| `npm run size` | Gzip budgets, after a build |
-| `npm run test:e2e` | Browser tests against `dist/` under its real CSP, after a build (`npx playwright install chromium` once). With `E2E_BASE_URL` set, the same tests against that deployed origin instead |
-| `npm run preview` | Serves `dist/` on :4173, the only way to see the prerendered page by hand; it ignores `public/_headers` |
-| `node scripts/verify-deploy.mjs <origin>` | Checks that a deployed origin serves the build in `dist/`, applies every rule in `_headers`, answers unknown paths with the 404 page, and that plain HTTP and `www` redirect to it. The deploy workflow runs it after publishing |
-
-A build that takes `VITE_API_BASE_URL` from a copied `.env` calls the local
-backend, which the real CSP blocks, so `test:e2e` refuses it and prints the
-rebuild command; see [Testing](../docs/testing.md#browser-tests).
-
-## Read next
-
-- [Architecture](../docs/architecture.md#frontend): layers, prerendering, the data layer
-- [Design system](../docs/design.md): tokens, layout and the rules that keep it from drifting
-- [Development](../docs/development.md#updating-site-content): editing content
-- [Testing](../docs/testing.md): the content tests and the browser suite
+Commands are listed in [docs/development.md](../docs/development.md).

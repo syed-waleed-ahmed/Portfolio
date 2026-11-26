@@ -1,22 +1,25 @@
-/* Stylesheet entry point. main.jsx imports this before App, so the layer order
-   below is declared ahead of every other rule in the bundle, including the CSS
-   each component imports next to itself.
+/* The one stylesheet for every page. Layer order is declared first, so later
+   layers win without !important or longer selectors. Nothing is unlayered.
 
-   Later layers win regardless of selector specificity, which is what lets a
-   component rule override a base rule without !important or a longer
-   selector. Nothing in the project is unlayered.
+   reset       browser defaults
+   tokens      custom properties only
+   base        element defaults: type, links, focus
+   layout      container, sections, header, footer
+   components  pieces, each file beside the component that uses it
+   utilities   single-purpose overrides
 
-   reset       normalise browser defaults
-   tokens      custom properties only, no selectors that style anything
-   base        element defaults: type, links, focus, selection
-   layout      page-level primitives: container, section, section header
-   components  reusable pieces and the per-component files beside the JSX
-   utilities   single-purpose overrides, applied deliberately */
+   Component styles are listed here, not imported by their components, so
+   they are in this file for every page: a case study is a lazy chunk, and
+   styles imported there would arrive after its prerendered HTML had painted.
+   The command palette is the one exception, since it never prerenders. */
 @layer reset, tokens, base, layout, components, utilities;
 
 @import "./tokens.css";
-@import "./reset.css";
 @import "./base.css";
 @import "./layout.css";
 @import "./components.css";
-@import "./utilities.css";
+@import "../components/home/Hero.css";
+@import "../components/home/Work.css";
+@import "../components/home/Home.css";
+@import "../components/case-study/CaseStudy.css";
+@import "./print.css";

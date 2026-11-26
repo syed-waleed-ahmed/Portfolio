@@ -4,55 +4,38 @@
   Referrer-Policy: strict-origin-when-cross-origin
   Permissions-Policy: camera=(), microphone=(), geolocation=()
   Strict-Transport-Security: max-age=31536000; includeSubDomains
-  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' 'sha256-DcZnhiXzGRqf7Ap1FmHxA25PvMu+ebywXAvTxOAgB+E=' https://www.googletagmanager.com https://*.googletagmanager.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://www.googletagmanager.com https://*.google-analytics.com; connect-src 'self' https://portfolio-backend-kmum.onrender.com https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com; font-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests;
+  Cross-Origin-Opener-Policy: same-origin
+  Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests
 
 # ===== Caching =====
-# This file is read by Cloudflare, which serves the site (frontend/wrangler.jsonc).
-# After each deploy, scripts/verify-deploy.mjs fetches one URL per rule below and
-# fails the deploy workflow if the live site does not send these headers.
+# Read by Cloudflare, which serves the build (frontend/wrangler.jsonc). After a
+# deploy, scripts/verify-deploy.mjs requests one URL per rule below and fails
+# the deploy if the live site does not send these headers.
 #
-# HTML: never cache. Browsers must revalidate on every visit so a deploy
-# is visible immediately. (Cloudflare's edge serves the new version as soon as
-# a deploy finishes, so this only governs the browser's own cache.)
-# /index.html and /404.html have no rule: Cloudflare redirects both to their
-# extensionless URLs, and the 404 page gets this same value by default.
-/
-  Cache-Control: public, max-age=0, must-revalidate
+# HTML gets Cloudflare's default for assets, public, max-age=0,
+# must-revalidate, so a deploy is visible on the next visit.
 
-# Service worker: also no-cache so the kill-switch update reaches users
-# on their next visit instead of waiting up to 24 h for a stale SW check.
+# The kill-switch for a service worker an old version of the site installed.
+# Never cached, so a browser that still has the old worker finds this one.
 /sw.js
   Cache-Control: public, max-age=0, must-revalidate
   Service-Worker-Allowed: /
 
-# Fingerprinted bundle assets: safe to cache forever (filename changes
-# whenever the content changes, so there's nothing stale to serve).
+# Fingerprinted bundle output: the name changes whenever the content does.
 /assets/*
   Cache-Control: public, max-age=31536000, immutable
 
-# Fonts: also safe to cache forever. The filename encodes family+subset+weight,
-# so a font file's bytes never change - switching typeface means a new file at a
-# new URL. That's the same guarantee /assets/* gets, just versioned by hand
-# rather than by a content hash. (Contrast /images/* below, where the same
-# filename really is reused for new content.)
+# The font's file name changes whenever the font does.
 /fonts/*
   Cache-Control: public, max-age=31536000, immutable
 
-# Images: revalidate every visit. Unlike /assets/*, these filenames are stable
-# (Profile.webp stays Profile.webp when the photo changes), so there's no
-# fingerprint to invalidate the cache for us - a max-age here is a window in
-# which visitors keep seeing the old image. Revalidating costs one 304 on an
-# already-open connection, and only for repeat visitors, whose JS comes from
-# immutable cache anyway - so it overlaps React's startup rather than delaying it.
+# Stable names (Profile.webp stays Profile.webp when the photo changes), so
+# browsers revalidate rather than keep a stale copy.
 /images/*
   Cache-Control: public, max-age=0, must-revalidate
 
-# Plain-text helpers
 /robots.txt
   Content-Type: text/plain; charset=utf-8
 
 /sitemap.xml
   Content-Type: application/xml; charset=utf-8
-
-/humans.txt
-  Content-Type: text/plain; charset=utf-8

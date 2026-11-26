@@ -1,31 +1,39 @@
-// Cloudflare Workers configuration: the site is a Worker with static assets
-// and no script, so every request is a free static asset request and never
-// counts against the Workers request quota.
+// Cloudflare Workers configuration: the prerendered site as static assets,
+// plus a small Worker for the contact API (worker/index.ts).
 //
-// .github/workflows/deploy.yml runs `wrangler deploy` from this directory
-// after a build. Wrangler is not a dependency: the workflow installs the
-// pinned version on demand, as the generator scripts do with their packages.
+// .github/workflows/deploy.yml runs `wrangler deploy` from this directory after
+// a build. The mail settings are secrets, set once with `wrangler secret put`
+// (docs/deployment.md), and never written here.
 {
   "name": "portfolio",
+  "main": "worker/index.ts",
   "compatibility_date": "2026-11-01",
-  // The site's two hostnames. For a custom domain Cloudflare creates the DNS
-  // record and the certificate itself; the zone is in the same account, and
-  // the registrar's nameservers point at it. The first is the site's one
-  // address: a redirect rule in the zone sends www to it, and "Always Use
-  // HTTPS" sends plain HTTP to HTTPS. scripts/verify-deploy.mjs checks both.
+  // The site's two hostnames. The first is its one address: a redirect rule in
+  // the zone sends www to it, and "Always Use HTTPS" sends plain HTTP to HTTPS.
+  // scripts/verify-deploy.mjs checks both.
   "routes": [
     { "pattern": "syedwaleedahmed.me", "custom_domain": true },
     { "pattern": "www.syedwaleedahmed.me", "custom_domain": true }
   ],
-  // One origin: without these the Worker would also answer at its own
-  // workers.dev address, and at a preview address for every version.
+  // One origin: no workers.dev address and no per-version preview addresses.
   "workers_dev": false,
   "preview_urls": false,
   "assets": {
-    // dist/_headers travels with the build and is applied by Cloudflare: the
-    // CSP, the other security headers and every cache rule.
+    // dist/_headers travels with the build: the CSP, the other security
+    // headers and the cache rules.
     "directory": "./dist",
+    "binding": "ASSETS",
     // Unknown paths get dist/404.html with a 404 status.
-    "not_found_handling": "404-page"
-  }
+    "not_found_handling": "404-page",
+    // Files are served without running the Worker; only the API runs it first.
+    "run_worker_first": ["/api/*"]
+  },
+  // The contact form's rate limiter: one SQLite-backed Durable Object per
+  // client address, available on the free plan (worker/limiter.ts).
+  "durable_objects": {
+    "bindings": [{ "name": "CONTACT_LIMITER", "class_name": "ContactLimiter" }]
+  },
+  "migrations": [{ "tag": "v1", "new_sqlite_classes": ["ContactLimiter"] }],
+  // Worker logs in the dashboard: the API logs events, never message contents.
+  "observability": { "enabled": true }
 }

@@ -19,7 +19,7 @@ concurrency:
 # github-actions updater bumps the SHA and the comment together.
 jobs:
   frontend:
-    name: Frontend (lint, tests, invariants, build, size, audit)
+    name: Site and Worker (lint, types, tests, invariants, build, size, audit)
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -45,13 +45,17 @@ jobs:
       - name: Lint
         run: npm run lint
 
-      - name: Content tests
+      - name: Type check
+        run: npm run typecheck
+
+      # The content and routing tests and the Worker's contact API tests.
+      - name: Unit tests
         run: npm test
 
-      # The couplings CLAUDE.md lists as failing silently: the CSP hash, the
-      # palette copies, the mirrored form rules and the rest.
+      # Rules a build would not catch: contrast in both themes, the CSP,
+      # the Worker configuration, the Node pin and the rest.
       - name: Repository invariants
-        run: node --test ../test/invariants.test.js
+        run: node --test ../test/invariants.test.ts
 
       # Compiles the client and server bundles and prerenders the page, so a
       # component that throws during render fails here rather than in a deploy.
@@ -96,9 +100,9 @@ jobs:
         run: npm run build --ignore-scripts
 
       # Served by e2e/serve.mjs with the headers from public/_headers, so the
-      # suite runs under the production CSP.
+      # suite runs under the production CSP. Firefox and WebKit are run by hand.
       - name: Browser tests
-        run: npm run test:e2e
+        run: npm run test:e2e -- --project=chromium
 
       - name: Upload the Playwright report
         if: failure()
@@ -107,36 +111,6 @@ jobs:
           name: playwright-report
           path: frontend/playwright-report/
           retention-days: 14
-
-  backend:
-    name: Backend (lint, test, audit)
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: backend
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
-
-      - name: Use Node.js from .nvmrc
-        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
-        with:
-          node-version-file: ".nvmrc"
-          cache: "npm"
-          cache-dependency-path: backend/package-lock.json
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Lint
-        run: npm run lint
-
-      - name: Test (also validates all modules import cleanly)
-        run: npm test
-
-      - name: Audit (production deps only, fail on high+)
-        run: npm audit --omit=dev --audit-level=high
 
   secret-scan:
     name: Secret scan (gitleaks)
@@ -152,16 +126,14 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-  # The frontend ships only from here, and only once every job above is green
-  # on a push to main: a pull request is checked but never published. A newer
-  # push cancels this run (see `concurrency` at the top), which is safe at any
-  # point, since Cloudflare switches to a new version only when its upload has
-  # finished. Render deploys the backend separately, and only once every check
-  # on the commit, this job included, has passed: that is its Auto-Deploy
-  # setting, which lives in Render's dashboard.
+  # The site and its Worker ship only from here, and only once every job above
+  # is green on a push to main: a pull request is checked but never published.
+  # A newer push cancels this run (see `concurrency` at the top), which is safe
+  # at any point, since Cloudflare switches versions only when an upload has
+  # finished.
   deploy:
     name: Deploy
-    needs: [frontend, e2e, backend, secret-scan]
+    needs: [frontend, e2e, secret-scan]
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     uses: ./.github/workflows/deploy.yml
     secrets:

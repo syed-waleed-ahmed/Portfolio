@@ -26,28 +26,6 @@ updates:
       prefix-development: "chore(deps-dev)"
     labels: ["dependencies", "frontend"]
 
-  - package-ecosystem: "npm"
-    directory: "/backend"
-    schedule:
-      interval: "weekly"
-      day: "monday"
-      time: "09:00"
-    open-pull-requests-limit: 5
-    # A just-published release is the riskiest one to pull in: a compromised or
-    # broken version is usually caught and pulled within days. Security updates
-    # are not delayed by this.
-    cooldown:
-      default-days: 7
-    groups:
-      minor-and-patch:
-        update-types: ["minor", "patch"]
-    ignore:
-      - dependency-name: "*"
-        update-types: ["version-update:semver-major"]
-    commit-message:
-      prefix: "chore(deps)"
-      prefix-development: "chore(deps-dev)"
-    labels: ["dependencies", "backend"]
 
   - package-ecosystem: "github-actions"
     directory: "/"

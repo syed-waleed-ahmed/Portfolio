@@ -1,56 +1,25 @@
+/* Ships with the palette's lazy chunk, so the first paint never waits for it. */
 @layer components {
-  /* Display only while open: a display on the base rule would beat the browser's
-     own dialog:not([open]) { display: none } and show the closed dialog. */
   .palette {
-    inset-block: clamp(var(--space-4), 12vh, 7rem) auto;
-    width: min(100% - 2 * var(--gutter), 34rem);
-    max-width: none;
-    max-height: calc(100dvh - 2 * var(--space-4));
-    margin: 0 auto;
+    width: min(100% - 2 * var(--space-4), 38rem);
+    max-height: min(32rem, 100dvh - 6rem);
+    margin: 12vh auto auto;
     padding: 0;
-    overflow: hidden;
-    border: 1px solid var(--color-border-strong);
-    border-radius: var(--radius-lg);
+    border: 1px solid var(--color-rule-strong);
+    border-radius: var(--radius-md);
     background-color: var(--color-surface);
-    color: var(--color-text);
-    /* The same two lights as the dock: see Dock.css. */
-    box-shadow:
-      inset 0 1px 0 var(--color-border),
-      var(--shadow-lg);
-
-    &[open] {
-      display: grid;
-      animation: palette-in var(--duration-base) var(--ease-out);
-    }
+    color: var(--color-ink);
+    box-shadow: var(--shadow-pop);
 
     &::backdrop {
       background-color: var(--color-scrim);
-      backdrop-filter: blur(4px);
-      animation: palette-fade var(--duration-base) ease;
     }
   }
 
-  @keyframes palette-in {
-    from {
-      opacity: 0;
-      translate: 0 -6px;
-    }
-  }
-
-  @keyframes palette-fade {
-    from {
-      opacity: 0;
-    }
-  }
-
-  /* minmax(0, 1fr) so a long project title truncates rather than widening the
-     panel past the dialog. */
   .palette__panel {
-    display: grid;
-    grid-template-rows: auto minmax(0, 1fr) auto;
-    min-width: 0;
+    display: flex;
+    flex-direction: column;
     max-height: inherit;
-    overflow: hidden;
   }
 
   .palette__search {
@@ -58,56 +27,43 @@
     align-items: center;
     gap: var(--space-3);
     padding-inline: var(--space-4);
-    border-block-end: 1px solid var(--color-border);
-    color: var(--color-text-muted);
-    transition: border-color var(--duration-fast) ease;
-
-    &:focus-within {
-      border-block-end-color: var(--color-accent-border);
-    }
-
-    & svg {
-      flex-shrink: 0;
-      width: 1rem;
-      height: 1rem;
-    }
+    border-block-end: 1px solid var(--color-rule);
+    color: var(--color-ink-muted);
   }
 
-  /* The caret and the search row's accent border mark focus here, so the ring
-     every other control draws would only box in the row a second time. */
   .palette__input {
     flex: 1;
-    min-width: 0;
     min-height: 3.25rem;
     border: 0;
-    background: none;
-    color: var(--color-text-strong);
-    outline: none;
+    background: transparent;
+    color: var(--color-ink-strong);
+    font-size: var(--text-md);
+
+    &:focus {
+      outline: none;
+    }
 
     &::placeholder {
-      color: var(--color-text-muted);
+      color: var(--color-ink-muted);
     }
   }
 
   .palette__list {
-    min-height: 0;
-    max-height: min(52dvh, 24rem);
-    padding: var(--space-2);
     overflow-y: auto;
     overscroll-behavior: contain;
+    padding: var(--space-2);
   }
 
   .palette__empty {
-    padding: var(--space-8) var(--space-4);
-    text-align: center;
-    color: var(--color-text-muted);
+    padding: var(--space-6) var(--space-4);
+    color: var(--color-ink-muted);
   }
 
   .palette__group [cmdk-group-heading] {
     padding: var(--space-3) var(--space-3) var(--space-1);
+    font-family: var(--font-mono);
     font-size: var(--text-xs);
-    font-weight: var(--weight-medium);
-    color: var(--color-text-muted);
+    color: var(--color-ink-muted);
   }
 
   .palette__item {
@@ -117,59 +73,38 @@
     gap: var(--space-4);
     min-height: var(--tap-target);
     padding-inline: var(--space-3);
-    border-radius: var(--radius-md);
-    font-size: var(--text-sm);
-    color: var(--color-text-soft);
+    border-radius: var(--radius-sm);
     cursor: pointer;
 
-    & svg {
-      flex-shrink: 0;
-      width: 0.875rem;
-      height: 0.875rem;
-      color: var(--color-text-muted);
-    }
-
     &[data-selected="true"] {
-      background-color: var(--color-accent-subtle);
-      color: var(--color-text-strong);
-
-      & svg {
-        color: var(--color-accent);
-      }
-
-      /* Under a contrast theme the tint is removed with every other author
-         colour, and the row the arrow keys are on looked like all the
-         others. The system's selection colours mark it instead. */
-      @media (forced-colors: active) {
-        forced-color-adjust: none;
-        background-color: Highlight;
-        color: HighlightText;
-
-        & svg {
-          color: HighlightText;
-        }
-      }
+      background-color: var(--color-sunk);
+      color: var(--color-ink-strong);
+      box-shadow: inset 2px 0 0 var(--color-accent);
     }
-  }
 
-  .palette__label {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+    & .icon {
+      color: var(--color-ink-muted);
+    }
   }
 
   .palette__hint {
     display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-1) var(--space-4);
-    padding: var(--space-2) var(--space-4);
-    border-block-start: 1px solid var(--color-border);
+    gap: var(--space-5);
+    padding: var(--space-3) var(--space-4);
+    border-block-start: 1px solid var(--color-rule);
+    font-family: var(--font-mono);
     font-size: var(--text-xs);
-    color: var(--color-text-muted);
+    color: var(--color-ink-muted);
+  }
 
-    /* These describe a keyboard, which a touch screen does not have. */
-    @media (pointer: coarse) {
-      display: none;
+  /* A contrast theme repaints with system colours; the selected row keeps an
+     outline it can see. */
+  @media (forced-colors: active) {
+    .palette__item[data-selected="true"] {
+      outline: 2px solid Highlight;
+      forced-color-adjust: none;
+      background-color: Highlight;
+      color: HighlightText;
     }
   }
 }

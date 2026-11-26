@@ -1,8 +1,7 @@
-/* Element defaults: the typeface, text colour, links, focus and selection. */
+/* The typeface, element defaults, links, focus and selection. */
 
 /* Self-hosted variable font (weights 100-900), latin subset. Served from
-   public/ rather than bundled so the standalone 404.html can use the same
-   file, and so index.html can preload it by a stable URL. */
+   public/ so index.html can preload it by a stable URL. */
 @font-face {
   font-family: "Hanken Grotesk";
   font-style: normal;
@@ -14,11 +13,9 @@
     U+2212, U+2215, U+FEFF, U+FFFD;
 }
 
-/* Metric-matched fallback, so the swap to the web font does not move the
-   layout. Hanken Grotesk's average advance width is within 1% of Arial's, so
-   no size-adjust is needed; the overrides match its vertical metrics
-   (ascent 1000, descent 303 on a 1000 UPM). Values computed with fontkit, see
-   docs/design.md. */
+/* Metric-matched fallback: Hanken Grotesk's advance widths are within 1% of
+   Arial's, and these overrides match its vertical metrics, so the swap to the
+   web font moves nothing. */
 @font-face {
   font-family: "Hanken Grotesk Fallback";
   src: local("Arial"), local("Helvetica Neue"), local("Helvetica"), local("Roboto");
@@ -28,32 +25,69 @@
   line-gap-override: 0%;
 }
 
-@layer base {
-  /* scroll-padding is the one place in-page jumps are offset: nav links, the
-     skip link and deep links alike. The end value is what keeps a control
-     reached with Tab from stopping underneath the floating dock. */
+@layer reset {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  * {
+    margin: 0;
+  }
+
   html {
-    scroll-behavior: smooth;
-    scroll-padding-block: var(--space-8) var(--dock-clearance);
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+
+  body {
+    min-height: 100dvh;
+  }
+
+  img,
+  picture,
+  video,
+  canvas {
+    display: block;
+    max-width: 100%;
+  }
+
+  input,
+  button,
+  textarea,
+  select {
+    font: inherit;
+    color: inherit;
+  }
+
+  button {
+    background: none;
+    border: 0;
+    padding: 0;
+    cursor: pointer;
+  }
+
+  ul,
+  ol {
+    padding: 0;
+  }
+
+  :where(h1, h2, h3, h4, p, li, dt, dd, figcaption) {
+    overflow-wrap: break-word;
+  }
+}
+
+@layer base {
+  html {
     background-color: var(--color-bg);
+    scroll-behavior: smooth;
+    /* Anchor jumps stop below the sticky header. */
+    scroll-padding-block-start: calc(var(--header-height) + var(--space-4));
 
-    /* Two lights behind the top of the page, cyan from the right behind the
-       portrait and indigo from the left, drawn on the canvas itself so the
-       dot field (z-index -1) sits over them and under the text. Sized in
-       rem, so they stay the same shape at every width; their centres are far
-       enough apart that the two never add up to more than either alone.
-       Screen only: paper has no glow. */
-    @media screen {
-      background-image:
-        radial-gradient(60rem 40rem at 88% -6rem, var(--color-glow), transparent 70%),
-        radial-gradient(48rem 36rem at -8% 14rem, var(--color-glow-indigo), transparent 70%);
-      background-repeat: no-repeat;
-    }
-
-    /* Past 1920px the type and the container grow together: sizes are all in
-       rem, so scaling the root keeps the page the same shape on a large monitor
-       instead of leaving small text in a narrowing strip. A viewport query, so
-       browser zoom still works: zooming in shrinks the viewport below it. */
+    /* Past 1920px the root font grows with the screen, so the page keeps its
+       proportions on a large monitor. A width query, so browser zoom still
+       works. */
     @media (min-width: 120rem) {
       font-size: clamp(100%, 0.834vw, 150%);
     }
@@ -65,63 +99,73 @@
 
   body {
     font-family: var(--font-sans);
-    font-size: var(--text-md);
-    line-height: var(--leading-normal);
-    color: var(--color-text);
-    text-rendering: optimizeLegibility;
+    font-size: var(--text-base);
+    line-height: var(--leading-body);
+    color: var(--color-ink);
+    background-color: var(--color-bg);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     font-synthesis-weight: none;
+    text-rendering: optimizeLegibility;
   }
 
   h1,
   h2,
   h3,
   h4 {
-    color: var(--color-text-strong);
+    color: var(--color-ink-strong);
     font-weight: var(--weight-semibold);
     line-height: var(--leading-snug);
-    letter-spacing: var(--tracking-snug);
+    letter-spacing: -0.012em;
     text-wrap: balance;
   }
 
-  p {
+  p,
+  li,
+  dd {
     text-wrap: pretty;
   }
 
   a {
-    color: inherit;
-    text-decoration: none;
+    color: var(--color-accent);
+    text-decoration-line: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.2em;
+    transition: color var(--duration) var(--ease);
+
+    &:hover {
+      color: var(--color-accent-hover);
+      text-decoration-thickness: 2px;
+    }
   }
 
-  strong {
+  strong,
+  b {
     font-weight: var(--weight-semibold);
-    color: var(--color-text-strong);
+    color: var(--color-ink-strong);
+  }
+
+  code,
+  kbd,
+  samp {
+    font-family: var(--font-mono);
+    font-size: 0.92em;
   }
 
   ::selection {
-    background: color-mix(in srgb, var(--color-accent) 35%, transparent);
-    color: var(--color-text-strong);
+    background-color: var(--color-accent);
+    color: var(--color-accent-ink);
   }
 
-  /* One focus treatment for everything. The outline follows each element's
-     own border-radius, so circular and square controls keep their shape. */
+  /* One focus treatment for every control. */
   :focus-visible {
     outline: 2px solid var(--color-accent);
     outline-offset: 3px;
   }
 
-  /* <main> and the page sections take programmatic focus from SectionLink so
-     keyboard navigation continues from where the visitor jumped. They are
-     containers, not controls, and a ring around a whole section is noise. */
+  /* Containers that take focus only so a jump can land on them. */
   [tabindex="-1"]:focus {
     outline: none;
-  }
-
-  @media (hover: hover) and (pointer: fine) {
-    html {
-      scrollbar-color: var(--color-border-strong) var(--color-bg);
-    }
   }
 
   @media (prefers-reduced-motion: reduce) {

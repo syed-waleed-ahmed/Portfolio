@@ -1,5 +1,6 @@
 // Confirms that a deployed origin serves this build, under the headers
-// public/_headers asks for. The deploy workflow runs it after publishing:
+// public/_headers asks for, with every page answering and the Worker's API
+// up. The deploy workflow runs it after publishing:
 //
 //   node scripts/verify-deploy.mjs https://syedwaleedahmed.me
 //
@@ -66,6 +67,7 @@ const title = readFileSync(path.join(DIST, "404.html"), "utf8").match(/<title>([
 const { protocol, host } = new URL(origin);
 const wrangler = readFileSync(fileURLToPath(new URL("../wrangler.jsonc", import.meta.url)), "utf8");
 const domains = [...wrangler.matchAll(/"pattern":\s*"([^"]+)",\s*"custom_domain":\s*true/g)].map((match) => match[1]);
+const sitemapPaths = [...readFileSync(path.join(DIST, "sitemap.xml"), "utf8").matchAll(/<loc>https?:\/\/[^/]+(\/[^<]*)<\/loc>/g)].map((match) => match[1]);
 
 // One pass over every check, returning what is wrong.
 const check = async () => {
@@ -91,12 +93,24 @@ const check = async () => {
     }
   }
 
-  // 3. An unknown path gets the 404 page, with a 404.
+  // 3. An unknown path gets the 404 page, with a 404, and every prerendered
+  //    page in the sitemap answers.
   const missing = await get("/verify-deploy-no-such-page");
   if (missing.status !== 404) problems.push(`an unknown path answered ${missing.status}, expected 404`);
   if (title && !(await missing.text()).includes(title)) problems.push("an unknown path did not get the 404.html page");
+  for (const path of sitemapPaths) {
+    const response = await get(path);
+    if (response.status !== 200) problems.push(`${path}, in the sitemap, answered ${response.status}`);
+  }
 
-  // 4. Plain HTTP goes to HTTPS, and every other hostname the Worker is
+  // 4. The Worker answers its API, and has the mail settings it needs. A
+  //    deploy without them would otherwise show only as a form that fails.
+  const health = await get("/api/health");
+  const body = health.ok ? await health.json().catch(() => null) : null;
+  if (body?.status !== "ok") problems.push(`/api/health answered ${health.status}, expected 200 with status ok`);
+  else if (body.mailer !== "configured") problems.push("/api/health reports the mail secrets missing: run `wrangler secret put` for RESEND_API_KEY, EMAIL_FROM and EMAIL_TO");
+
+  // 5. Plain HTTP goes to HTTPS, and every other hostname the Worker is
   //    attached to goes to this origin. Both are settings in the Cloudflare
   //    zone ("Always Use HTTPS" and a redirect rule), not files in the
   //    repository, so nothing else would notice either being switched off.
@@ -136,6 +150,6 @@ if (result.problems.length) {
   process.exit(1);
 }
 console.log(
-  `verify-deploy: ${origin} serves ${entry}, applies all ${rules.length} _headers rules and answers 404 with the 404 page` +
+  `verify-deploy: ${origin} serves ${entry}, applies all ${rules.length} _headers rules, answers all ${sitemapPaths.length} pages and its API, and 404s with the 404 page` +
     (result.redirects ? `; ${result.redirects} redirects to it are in place.` : ".")
 );

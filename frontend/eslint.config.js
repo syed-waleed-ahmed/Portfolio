@@ -1,46 +1,30 @@
-import js from '@eslint/js'
-import globals from 'globals'
-import reactHooks from 'eslint-plugin-react-hooks'
-import reactRefresh from 'eslint-plugin-react-refresh'
-import { defineConfig, globalIgnores } from 'eslint/config'
+import js from "@eslint/js";
+import reactHooks from "eslint-plugin-react-hooks";
+import reactRefresh from "eslint-plugin-react-refresh";
+import { defineConfig, globalIgnores } from "eslint/config";
+import globals from "globals";
+import tseslint from "typescript-eslint";
 
 export default defineConfig([
-  globalIgnores(['dist', 'dist-server', 'playwright-report', 'test-results']),
+  globalIgnores(["dist", "dist-server", "playwright-report", "test-results", ".wrangler"]),
   {
-    // .mjs too: the build scripts and the test server are modules by
-    // extension, and without it they matched only the globals block below
-    // and were checked by no rule at all.
-    files: ['**/*.{js,jsx,mjs}'],
-    extends: [
-      js.configs.recommended,
-      reactHooks.configs.flat.recommended,
-      reactRefresh.configs.vite,
-    ],
+    files: ["**/*.{ts,tsx,js,mjs}"],
+    extends: [js.configs.recommended, tseslint.configs.recommended],
     languageOptions: {
-      ecmaVersion: 'latest',
-      globals: {
-        ...globals.browser,
-        // Injected by `define` in vite.config.js
-        __BUILD_YEAR__: 'readonly',
-      },
-      parserOptions: {
-        ecmaFeatures: { jsx: true },
-        sourceType: 'module',
-      },
-    },
-    rules: {
-      'no-unused-vars': ['error', { varsIgnorePattern: '^[A-Z_]' }],
+      ecmaVersion: "latest",
+      sourceType: "module",
+      globals: { ...globals.browser, __BUILD_YEAR__: "readonly" },
     },
   },
-  // Build configs, build scripts and tests run in Node, not the browser. The
-  // e2e specs do too, apart from the callbacks they hand to the page, which
-  // keep the browser globals from the block above.
   {
-    files: ['*.config.js', 'scripts/**/*.{js,mjs}', 'test/**/*.{js,mjs}', 'e2e/**/*.{js,mjs}'],
-    languageOptions: {
-      ecmaVersion: 'latest',
-      sourceType: 'module',
-      globals: globals.node,
-    },
+    files: ["src/**/*.tsx"],
+    // The two entry points export render data, not components.
+    ignores: ["src/main.tsx", "src/entry-server.tsx"],
+    extends: [reactHooks.configs.flat.recommended, reactRefresh.configs.vite],
   },
-])
+  // Build scripts, tests and the Worker run outside the browser.
+  {
+    files: ["*.config.{js,ts}", "scripts/**", "test/**", "e2e/**", "worker/**"],
+    languageOptions: { globals: globals.node },
+  },
+]);

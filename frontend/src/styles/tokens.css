@@ -1,137 +1,71 @@
-/* Design tokens. Every colour, size, radius, duration and z-index in the
-   project resolves to one of these, so a visual change is a token change.
-   The site is dark-only by design. Six places cannot read these and copy
-   the palette by hand, among them public/404.html, the theme-color metas and
-   the contact email; docs/design.md lists them all, and
-   test/invariants.test.js at the repository root fails when one drifts. */
+/* Design tokens. Every colour, size and duration on the site is one of these.
+
+   Two themes, chosen by the visitor's system setting: warm paper and ink by
+   day, near-black by night. Every text colour, the accent and the status
+   colours hold 7:1 (WCAG AAA) against every surface in both themes, and
+   borders that mark a control hold 3:1. test/invariants.test.ts computes both
+   from this file, so a value that breaks either fails the build. */
 @layer tokens {
-  /* ::backdrop as well as :root: a dialog's backdrop only inherits from :root
-     since Chrome 122, Firefox 120 and Safari 17.4, and the build's browser
-     target is older than all three, so the command palette's dimmed backdrop
-     needs the tokens defined on it directly. */
   :root,
   ::backdrop {
-    color-scheme: dark;
+    color-scheme: light dark;
 
-    /* ===== Colour =====
-       Every colour on the site is one of the roles below, and a component
-       picks a role, never a value. The hues are few on purpose: one navy for
-       every surface, one slate for every line and every grey, cyan for what
-       can be acted on, and a status colour only while there is a status to
-       report. docs/design.md has the table and the contrast of each pair. */
+    /* Surfaces: the page, a panel on it, and a well cut into a panel. */
+    --color-bg: #f7f6f2;
+    --color-surface: #ffffff;
+    --color-sunk: #efede6;
 
-    /* ----- Surfaces: three steps of one navy, each lighter than the last -----
-       The page; a panel resting on it (cards, the contact panel, the dock,
-       the palette); and something raised on a panel (a hovered dock item, a
-       core skill, a picture's placeholder). Chips, form fields and the well
-       a project picture sits in are cut into a panel instead, so they are
-       filled with the page colour. The page is a midnight close to black and
-       the two steps above it are graphite with a little of its blue, each
-       about 1.12:1 above the last: enough for a panel to read as a panel
-       before its border does. They were navy until 2026-11-24, and with a
-       navy page under them every section looked like the one before. */
-    --color-bg: #070a11;
-    --color-surface: #121824;
-    --color-surface-raised: #1c2434;
-    /* The dock floats over whatever scrolls beneath it. */
-    --color-surface-translucent: color-mix(in srgb, var(--color-surface) 88%, transparent);
+    /* Text, four steps: headings, body, secondary, metadata. */
+    --color-ink-strong: #121417;
+    --color-ink: #25282e;
+    --color-ink-soft: #3b3f47;
+    --color-ink-muted: #484c54;
 
-    /* ----- Borders: three weights of one slate, by what the line has to do -----
-       A hairline only separates (about 1.4:1 on the page). A control's
-       outline says "this is a thing" (about 2.3:1). A form field's border is
-       the only sign that there is somewhere to type, so it meets the 3:1 that
-       WCAG 1.4.11 asks of an input's boundary, against the panel outside it
-       (3.4:1) and the page-coloured fill inside it (3.8:1). */
-    --color-border: rgb(148 163 184 / 0.22);
-    --color-border-strong: rgb(148 163 184 / 0.42);
-    --color-border-field: rgb(148 163 184 / 0.66);
+    /* One accent for what can be acted on and where you are. */
+    --color-accent: #92290a;
+    --color-accent-hover: #6f1f07;
+    --color-accent-ink: #ffffff;
 
-    /* ----- Text: four steps, all at least 7:1 (WCAG AAA) on bg and surface -----
-       Headings and figures; body; descriptions and long copy; metadata. */
-    --color-text-strong: #f6f9fd;
-    --color-text: #d3dbe7;
-    --color-text-soft: #b9c4d3;
-    --color-text-muted: #a2aec1;
+    /* Lines: a hairline separates; a strong line outlines a control; a field
+       border marks where to type (3:1 against panel and page). */
+    --color-rule: #d6d2c7;
+    --color-rule-strong: #85817a;
+    --color-field: #7a766c;
 
-    /* ----- Accent: the one brand colour -----
-       Cyan marks what can be acted on and where you are: links, the primary
-       button, focus rings, the current section in the dock, the number each
-       section opens with. It has two partners, neither used alone: lavender,
-       which the hero name runs from into cyan, light enough to be read as
-       text; and indigo, in the reading-progress line and the second light
-       behind the page, and the header of the contact email. The derived
-       steps are the same for every hue in this file: -border is the colour
-       at 50%, enough to hold 3:1 as an edge, and -subtle is the colour at
-       10%, a tint to sit text of that hue on. */
-    --color-accent: #6ee7f7;
-    --color-accent-hover: #a4f0fa;
-    --color-accent-ink: #06131a;
-    --color-accent-border: color-mix(in srgb, var(--color-accent) 50%, transparent);
-    --color-accent-subtle: color-mix(in srgb, var(--color-accent) 10%, transparent);
-    --color-lavender: #b4b8ff;
-    --color-indigo: #6366f1;
+    /* Status, shown only while there is something to report. */
+    --color-success: #1a5530;
+    --color-warning: #6b4600;
+    --color-danger: #8e1c1c;
 
-    /* ----- Inverse: a light chip on the dark page -----
-       Every tooltip. Named for the job, so that a text colour is never
-       borrowed as a background. */
-    --color-inverse: var(--color-text-strong);
-    --color-inverse-ink: var(--color-bg);
+    --color-scrim: rgb(18 20 23 / 0.45);
+    --shadow-pop: 0 12px 32px rgb(18 20 23 / 0.14);
 
-    /* ----- Status: shown only while there is something to report -----
-       Success, a warning (try again later: nothing the visitor did wrong) and
-       an error (something to correct). Information has no hue of its own: a
-       neutral note uses the text and border roles above. */
-    --color-success: #a2f2d1;
-    --color-success-border: color-mix(in srgb, var(--color-success) 50%, transparent);
-    --color-success-subtle: color-mix(in srgb, var(--color-success) 10%, transparent);
-    --color-warning: #ffe1a8;
-    --color-warning-border: color-mix(in srgb, var(--color-warning) 50%, transparent);
-    --color-warning-subtle: color-mix(in srgb, var(--color-warning) 10%, transparent);
-    --color-danger: #ffc0c9;
-    --color-danger-border: color-mix(in srgb, var(--color-danger) 50%, transparent);
-    --color-danger-subtle: color-mix(in srgb, var(--color-danger) 10%, transparent);
+    /* Typography. Hanken Grotesk is self-hosted; the monospace is the
+       system's, used for metadata, figures and code, where its fixed width
+       lines numbers up. */
+    --font-sans: "Hanken Grotesk", "Hanken Grotesk Fallback", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    --font-mono: ui-monospace, "SFMono-Regular", "Cascadia Mono", "Segoe UI Mono", Menlo, Consolas, monospace;
 
-    /* ----- Decoration and depth -----
-       The dots of the dot field; the two lights behind the top of the page,
-       kept faint enough that muted text over the brightest point of either
-       still holds 7:1; the lift at the top of every other section; and the
-       scrim that dims the page behind the palette. */
-    --color-dot: rgb(148 163 184 / 0.3);
-    --color-glow: color-mix(in srgb, var(--color-accent) 9%, transparent);
-    --color-glow-indigo: color-mix(in srgb, var(--color-indigo) 16%, transparent);
-    --color-band: color-mix(in srgb, var(--color-surface) 55%, transparent);
-    --color-scrim: rgb(2 6 23 / 0.6);
+    /* No text is smaller than 14px. */
+    --text-xs: 0.875rem;
+    --text-sm: 0.9375rem;
+    --text-base: 1.0625rem;
+    --text-md: 1.1875rem;
+    --text-lg: clamp(1.25rem, 1.1rem + 0.5vw, 1.5rem);
+    --text-xl: clamp(1.5rem, 1.25rem + 0.9vw, 2rem);
+    --text-2xl: clamp(1.875rem, 1.4rem + 1.6vw, 2.75rem);
+    --text-display: clamp(2.25rem, 1.35rem + 3.3vw, 4.25rem);
 
-    /* ----- Typography ----- */
-    --font-sans: "Hanken Grotesk", "Hanken Grotesk Fallback", system-ui, -apple-system,
-      "Segoe UI", Roboto, sans-serif;
-
-    /* Fluid steps: the clamp() middle term scales with the viewport between a
-       ~360px phone and a ~1280px laptop, and the ends stop it there. */
-    --text-2xs: 0.75rem;
-    --text-xs: 0.8125rem;
-    --text-sm: 0.875rem;
-    --text-base: 1rem;
-    --text-md: 1.0625rem;
-    --text-lg: clamp(1.0625rem, 1rem + 0.3vw, 1.25rem);
-    --text-2xl: clamp(1.75rem, 1.45rem + 1.3vw, 2.5rem);
-    --text-title: clamp(1.25rem, 1rem + 1vw, 1.875rem);
-
-    --leading-tight: 1.1;
+    --leading-tight: 1.08;
     --leading-snug: 1.3;
-    --leading-normal: 1.6;
-    --leading-relaxed: 1.7;
-
-    --tracking-tighter: -0.04em;
-    --tracking-tight: -0.025em;
-    --tracking-snug: -0.01em;
+    --leading-body: 1.62;
 
     --weight-regular: 400;
     --weight-medium: 500;
     --weight-semibold: 600;
     --weight-bold: 700;
 
-    /* ----- Spacing (4px base) ----- */
+    /* Spacing, on a 4px base. */
     --space-1: 0.25rem;
     --space-2: 0.5rem;
     --space-3: 0.75rem;
@@ -142,65 +76,61 @@
     --space-10: 2.5rem;
     --space-12: 3rem;
     --space-16: 4rem;
+    --space-20: 5rem;
 
-    /* Sections are separated by this space alone, with no rules between them.
-       The page fills a desktop screen: the gutter grows with the viewport, and
-       the container only stops at 92rem, where lines would otherwise get too
-       long even in the multi-column layouts. */
-    --section-space: clamp(2.25rem, 1.25rem + 3vw, 4.5rem);
-    --gutter: clamp(1.25rem, -0.5rem + 5vw, 5rem);
-    --container-max: 92rem;
+    --gutter: clamp(1.25rem, 0.4rem + 3.6vw, 3.5rem);
+    --container: 80rem;
+    --measure: 68ch;
+    --section-space: clamp(3.5rem, 2.25rem + 4vw, 6.5rem);
+    --header-height: 3.75rem;
 
-    /* ----- Shape and depth ----- */
-    --radius-sm: 6px;
-    --radius-md: 10px;
-    --radius-lg: 14px;
-    --radius-full: 999px;
+    --radius-sm: 4px;
+    --radius-md: 8px;
 
-    --shadow-md: 0 8px 24px rgb(2 6 23 / 0.35);
-    --shadow-lg: 0 16px 40px rgb(2 6 23 / 0.45);
+    --duration: 160ms;
+    --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
 
-    /* ----- Motion ----- */
-    --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
-    --duration-fast: 150ms;
-    --duration-base: 220ms;
-    --duration-slow: 400ms;
-    --reveal-blur: 6px;
-    --reveal-shift: -6px;
-
-    /* ----- Layout constants ----- */
     --tap-target: 44px;
-
-    /* The floating dock. --dock-clearance is how far page content and
-       scroll-padding keep clear of it, so nothing focused or scrolled to ends
-       up underneath. */
-    --dock-item: 2.5rem;
-    --dock-pad: 0.5rem;
-    --dock-offset: var(--space-4);
-    --dock-bar: calc(var(--dock-item) + 2 * var(--dock-pad));
-    --dock-clearance: calc(var(--dock-bar) + var(--dock-offset) + var(--space-4));
-
-    --z-floating: 60;
-    --z-skip-link: 100;
   }
 
-  /* Touch input gets a larger floor for anything tappable. Keyed to the input
-     device, not a width breakpoint. */
+  @media (prefers-color-scheme: dark) {
+    :root,
+    ::backdrop {
+      --color-bg: #111214;
+      --color-surface: #18191c;
+      --color-sunk: #0c0d0e;
+
+      --color-ink-strong: #f3f1ec;
+      --color-ink: #dddad2;
+      --color-ink-soft: #c4c0b6;
+      --color-ink-muted: #aaa69c;
+
+      --color-accent: #ff9466;
+      --color-accent-hover: #ffb391;
+      --color-accent-ink: #111214;
+
+      --color-rule: #2c2d31;
+      --color-rule-strong: #68696e;
+      --color-field: #75767b;
+
+      --color-success: #86d9a6;
+      --color-warning: #f0c674;
+      --color-danger: #ffa3a3;
+
+      --color-scrim: rgb(0 0 0 / 0.6);
+      --shadow-pop: 0 12px 32px rgb(0 0 0 / 0.5);
+    }
+  }
+
   @media (pointer: coarse) {
     :root {
       --tap-target: 48px;
-      --dock-item: var(--tap-target);
-      --dock-pad: 0.375rem;
-      --dock-offset: var(--space-2);
     }
   }
 
   @media (prefers-reduced-motion: reduce) {
-    :root,
-    ::backdrop {
-      --duration-fast: 0ms;
-      --duration-base: 0ms;
-      --duration-slow: 0ms;
+    :root {
+      --duration: 0ms;
     }
   }
 }

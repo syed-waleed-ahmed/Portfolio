@@ -1,0 +1,8 @@
+# Secrets for `npm run dev:api` (wrangler dev). Copy to frontend/.dev.vars,
+# which is gitignored. Without them the contact API answers 503, which is
+# enough to work on the form. In production the same three are Worker secrets
+# (docs/deployment.md).
+RESEND_API_KEY=
+# A sender Resend accepts for your account, for example Portfolio <onboarding@resend.dev>
+EMAIL_FROM=
+EMAIL_TO=

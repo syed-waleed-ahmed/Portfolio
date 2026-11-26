@@ -1,537 +1,100 @@
-# Syed Waleed Ahmed - Portfolio
-
-[![Syed Waleed Ahmed, AI Software Engineer: multi-agent systems, RAG pipelines and LLM workflow automation](frontend/public/images/og-card.png)](https://syedwaleedahmed.me/)
+# Syed Waleed Ahmed: portfolio
 
 [![CI](https://github.com/syed-waleed-ahmed/Portfolio/actions/workflows/ci.yml/badge.svg)](https://github.com/syed-waleed-ahmed/Portfolio/actions/workflows/ci.yml)
-[![Link check](https://github.com/syed-waleed-ahmed/Portfolio/actions/workflows/links.yml/badge.svg)](https://github.com/syed-waleed-ahmed/Portfolio/actions/workflows/links.yml)
-[![Release](https://img.shields.io/github/v/release/syed-waleed-ahmed/Portfolio)](https://github.com/syed-waleed-ahmed/Portfolio/releases)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Node](https://img.shields.io/badge/node-%5E22.19%20%7C%7C%20%5E24.5%20%7C%7C%20%3E%3D26-brightgreen.svg)](.nvmrc)
-[![Live](https://img.shields.io/badge/live-syedwaleedahmed.me-0a7cff.svg)](https://syedwaleedahmed.me/)
 
-The source of my personal site: an AI software engineer's portfolio covering experience,
-projects and skills, with a working contact form. It is built with
-**React 19 + Vite** on the frontend and **Node.js + Express** on the backend,
-and the form delivers email through Resend.
+The source of [syedwaleedahmed.me](https://syedwaleedahmed.me/): who I am, what I have built, and a case study for
+each project with its architecture, how it was evaluated, and what it does not do yet.
 
-**Live:** https://syedwaleedahmed.me/
+[![The site's social card: a portrait, the greeting "hi, Waleed here.", the name, the role, and the line "I build LLM applications and the backend systems that keep them reliable."](frontend/public/images/og-card.png)](https://syedwaleedahmed.me/)
 
-**Contents:** [Why this exists](#why-this-exists) ·
-[Features](#features) · [Architecture](#architecture) ·
-[Tech stack](#tech-stack) · [Repository structure](#repository-structure) ·
-[Quick start](#quick-start) · [Configuration](#configuration) ·
-[Usage](#usage) · [API](#api-overview) ·
-[Development workflow](#development-workflow) · [Testing](#testing) ·
-[Deployment](#deployment) · [Documentation](#documentation) ·
-[Troubleshooting](#troubleshooting) · [Roadmap](#roadmap) ·
-[Contributing](#contributing) · [Security](#security) ·
-[Contact](#contact) · [License](#license)
+## The case studies
 
----
+| Project | What it shows |
+|---|---|
+| [RemindrAI](https://syedwaleedahmed.me/work/remindrai/) | My MSc thesis: a multi-tenant reminder service AI assistants embed, with at-most-once delivery, four-depth tenant isolation and a 92-case agent evaluation |
+| [Self-Correcting RAG](https://syedwaleedahmed.me/work/self-correcting-rag/) | Hybrid retrieval with a relevance filter and a grounding check, and an evaluation that found the correction loop did not pay off |
+| [LLM-as-Judge](https://syedwaleedahmed.me/work/llm-as-judge/) | An evaluation library on PyPI, and why it is not yet a validated measurement |
+| [FastAPI Niche Assistant](https://syedwaleedahmed.me/work/fastapi-niche-assistant/) | A LoRA fine-tune served on CPU, with a paired comparison against its own base model |
+| [AI Workflow Assistant](https://syedwaleedahmed.me/work/ai-workflow-assistant/) | A spreadsheet analyst where no model-written code runs and every figure is traced |
+| [Multi-Agent Research Team](https://syedwaleedahmed.me/work/multi-agent-research-team/) | A three-stage agent pipeline built to survive free-tier rate limits |
 
-## Why this exists
-
-A portfolio is often the first engineering artifact a reader sees, so this one
-is written to be read as a work sample: a prerendered page with no CSS
-framework, animation library or UI kit, a small hardened API rather than a
-third-party form widget, accessibility and caching handled deliberately, and
-documentation that explains the decisions rather than restating the code.
-
-The constraints that follow from that: ship as little JavaScript as possible,
-keep every visual value in one token system, treat the contact endpoint as a
-public API that will be abused, and keep the docs accurate enough that someone
-forking the repository can run it without reading the source.
-
----
-
-## Features
-
-**Frontend**
-
-- Prerendered at build time and hydrated on load, so the full page is in the
-  HTML response and text paints before any JavaScript runs
-- Lean output: about 5.5 KB of gzipped CSS before the first paint and 86 KB of
-  gzipped JS on load, held there by size budgets in CI, with no CSS framework,
-  animation library, UI kit or PWA shell. The styles of everything below the
-  hero are a second stylesheet, linked after it, so the first screen never
-  waits for them
-- A design built around one line: the greeting is sized to fill its column on
-  every screen, the thesis project leads the work as a wide featured card, and
-  Skills opens with the ten skills the projects are built on, each naming the
-  projects that show it
-- A Ctrl/Cmd+K command palette ([cmdk](https://github.com/pacocoursey/cmdk)), a
-  GitHub contribution graph
-  ([react-activity-calendar](https://github.com/grubersjoe/react-activity-calendar))
-  and a globe ([cobe](https://github.com/shuding/cobe)), each a separate chunk
-  fetched only when it is wanted
-- Brand marks on the skill tags, from
-  [Simple Icons](https://github.com/simple-icons/simple-icons) (CC0) and
-  [Lobe Icons](https://github.com/lobehub/lobe-icons) (MIT), built into one
-  cached SVG sprite so they add nothing to the JavaScript or the HTML
-- A colour system of named roles, held by tests: no colour is written outside
-  the token file, every text colour is 7:1 on every surface, and each hue
-  derives its border and tint by one formula
-- Modern CSS architecture: cascade layers, design tokens, native nesting,
-  fluid `clamp()` type, container-query units, `subgrid`, `:has()`, CSS
-  counters, animated `<details>` and a scroll-driven reading-progress line,
-  with styles co-located beside each component
-- A floating dock, expandable work rows, a blur-fade entrance and a light that
-  follows the pointer across the project cards, adapted from
-  [magicuidesign/portfolio](https://github.com/magicuidesign/portfolio) and
-  [magicui](https://github.com/magicuidesign/magicui) (both MIT) and rewritten
-  in plain CSS with no new dependencies
-- A picture on every project card, cropped from an image in that project's own
-  repository (the thesis poster for RemindrAI) and loaded lazily as AVIF at two
-  widths, or three on the cards drawn largest, with a WebP fallback for
-  browsers without AVIF
-- Data-driven content: entries, figures and links live in `src/data/`, with
-  content tests that keep figures traceable and entries consistent
-- Accessibility: skip link, named landmarks, one focus style, an accessible
-  dock and form, text at WCAG AAA contrast (7:1), reduced motion honoured,
-  48px tap targets on touch screens; an axe-core WCAG 2.2 A/AA scan of the
-  built page runs in CI
-- Responsive from 320px up with no horizontal scroll, and designed for a phone
-  rather than shrunk to one: project descriptions and the full skills list are
-  one tap away there, in native `<details>` that a wider screen holds open
-- A branded 404 page
-- An error boundary per section
-- SEO: canonical URL, `Person` + `WebSite` + `ProfilePage` JSON-LD, the
-  projects as a JSON-LD `ItemList` generated at build time from the same data
-  as the cards, OG and Twitter cards, sitemap, `robots.txt`, `humans.txt`
-- One self-hosted variable font with a metric-matched fallback, so no
-  third-party request on the critical path and no layout shift on swap
-
-**Backend**
-
-- Layered Express service: `config/` to `routes/` to `services/`
-- Helmet security headers, rate limiting, a 16 KB body cap, trust-proxy, a
-  centralized error handler that answers malformed bodies with a `400` rather
-  than a `500`, and graceful shutdown
-- Honeypot spam trap whose response is byte-identical to a real send's
-- HTML escaping and mail-header sanitization on every user-supplied value, and
-  a URL-encoded address in the email's `mailto:` links
-- Branded HTML and plain-text email templates
-
-**Engineering**
-
-- 33 backend API tests, 17 frontend content tests and 22 repository invariants
-  on Node's built-in runner, with no test dependencies; the invariants pin the
-  couplings between files that would otherwise fail silently, such as the CSP
-  hash and the hand-copied palette
-- 41 browser tests in Playwright, with axe-core, against the built site under
-  its production CSP
-- Size Limit budgets on the entry JS, each of the three stylesheets, each lazy
-  chunk, the skill sprite and the project pictures
-- Postman collection covering every endpoint: validation, the body cap,
-  malformed JSON, the honeypot, the rate limiter, CORS and the 404s
-- CI runs lint, the content tests, the invariants, a build, the size budgets,
-  the browser suite, the backend tests, `npm audit` and a gitleaks scan on
-  every push to `main` and every pull request against it
-- The frontend is published by a deploy job that waits for every CI job, so a
-  commit that fails any of them never replaces the live site, and each deploy
-  is then checked at the origin it went to: the build served, every header
-  rule and the 404 page
-- Every GitHub Action pinned to a commit SHA; Dependabot opens grouped weekly
-  PRs for minor and patch releases and for GitHub Actions, after a seven-day
-  cooldown, and npm majors are upgraded by hand after reading the changelog
-- A scheduled workflow refreshes the contribution graph's snapshot every Monday,
-  and another checks every link in the site's data and the docs
-- One pinned Node version, in `.nvmrc`, shared by local work, CI and the deploy
-
----
-
-## Architecture
+## How the site works
 
 ```text
-Browser  --  page and assets  -->  Cloudflare Workers (frontend/, prerendered build)
-   |
-   |  POST /api/contact, cross-origin with CORS
-   v
-Render (backend/, Express)  -->  Resend  -->  inbox
+Browser ──> Cloudflare: prerendered pages from frontend/dist, with strict security headers
+   └── POST /api/contact ──> Worker ──> Resend ──> inbox
+                               └── rate limit: one Durable Object per client
 ```
 
-No database, no authentication, no user state. The frontend is a static build;
-the only server-side work in the system is validating a contact submission and
-handing it to an email provider.
+- **Prerendered, then hydrated.** Every page, including each case study, is an HTML file written at build time
+  from React components, so it reads fully without JavaScript. The browser hydrates the same tree.
+- **Facts stated once.** Experience, projects and skills are typed data in `frontend/src/content/`; the pages, the
+  structured data, the sitemap and the command palette all read them.
+- **The contact form posts to the site's own origin.** A Cloudflare Worker validates it with the same module the
+  form uses, rate-limits per client with a Durable Object, and sends it through Resend. It works without
+  JavaScript too.
+- **No analytics, no cookies, no third-party requests,** and a Content Security Policy with no inline code.
 
-Full detail in [`docs/architecture.md`](docs/architecture.md).
+The reasons, the trade-offs and the alternatives are in [docs/architecture.md](docs/architecture.md).
 
----
+| | |
+|---|---|
+| Frontend | React 19, TypeScript (strict), Vite 8, plain CSS in cascade layers, `cmdk` for the palette |
+| API | A Cloudflare Worker with a SQLite-backed Durable Object, Resend's REST API |
+| Quality | ESLint, `tsc`, Node's test runner, Playwright with axe-core, size budgets |
+| Delivery | GitHub Actions, Cloudflare Workers, Dependabot, gitleaks |
 
-## Tech stack
+## Running it
 
-| Layer | Choices |
-|-------|---------|
-| Frontend | React 19 (prerendered, hydrated), Vite 8, plain CSS in cascade layers, `react-icons`, and lazily loaded `cmdk`, `react-activity-calendar`, `cobe` |
-| Backend | Node.js 24, Express 5 (ESM), Helmet, `express-rate-limit`, Resend |
-| Quality | ESLint 10, `node --test`, Playwright + axe-core, Size Limit, Postman |
-| CI/CD | GitHub Actions, Dependabot, gitleaks, lychee |
-| Hosting | Cloudflare Workers (frontend), Render (backend) |
-
----
-
-## Repository structure
-
-```text
-portfolio/
-├── .github/          Workflows, Dependabot, issue forms, PR template, CODEOWNERS
-├── backend/          Express API (config, routes, services, tests), with its own README
-├── frontend/         React app (components, data, styles, scripts, public, tests), with its own README
-├── docs/             Documentation set, indexed in docs/README.md and below
-├── postman/          API collection and environments
-├── scripts/          The social card generator and the release-notes formatter
-├── test/             Repository invariants, across both projects
-└── lychee.toml       Link-check configuration
-```
-
-Annotated version in
-[`docs/architecture.md`](docs/architecture.md#repository-layout).
-
----
-
-## Quick start
-
-Requires Node `^22.19.0 || ^24.5.0 || >=26.0.0` (`.nvmrc` pins 24; run `nvm use`).
+Node 24 (see `.nvmrc`).
 
 ```bash
 git clone https://github.com/syed-waleed-ahmed/Portfolio.git
 cd Portfolio
 npm run install:all
-
-cp backend/.env.example backend/.env      # fill in Resend values
-cp frontend/.env.example frontend/.env    # optional API override
-
-npm run dev:backend      # http://localhost:5000
-npm run dev:frontend     # http://localhost:5173
+npm run dev          # the site on http://localhost:5173
+npm run dev:api      # optional: the contact API on :8787 (wrangler dev)
 ```
 
-Without Resend credentials everything still runs; the contact endpoint returns
-`503` instead of sending. The copied `frontend/.env` sets
-`VITE_API_BASE_URL=http://localhost:5000`, which points the form at your local
-backend; without the file, the form calls the production API. Vite bakes the
-value into every build, and the browser tests refuse a build that does not call
-the production API (see [Troubleshooting](#troubleshooting)).
+| Command | |
+|---|---|
+| `npm run lint` and `npm run typecheck` | ESLint and TypeScript |
+| `npm test` | Content, routing and Worker tests, then the repository invariants |
+| `npm run build` | The checks above, then build and prerender into `frontend/dist` |
+| `npm run test:e2e` | Browser tests against the build, under its production headers |
 
-### Scripts
+More in [docs/development.md](docs/development.md).
 
-| Script | What it does |
-|--------|--------------|
-| `npm run install:all` | Install both projects |
-| `npm run dev:frontend` | Vite dev server on port 5173 |
-| `npm run dev:backend` | Express with `node --watch` on port 5000 |
-| `npm run build` | Frontend lint, content tests and invariants, then the production build into `frontend/dist/` |
-| `npm run lint` | ESLint over the frontend and the backend |
-| `npm test` | Backend API test suite |
-| `npm run test:invariants` | Repository invariants |
-| `npm start` | Backend without the file watcher, as Render starts it |
+## Quality checks
 
-`frontend/` adds `npm test` (content tests), `npm run size` (bundle budgets) and
-`npm run test:e2e` (browser tests), the last two against an existing build.
-
----
-
-## Configuration
-
-`backend/.env`: `RESEND_API_KEY`, `EMAIL_FROM` and `EMAIL_TO` are required for
-delivery; `PORT`, `NODE_ENV`, `ALLOWED_ORIGINS`, `TRUST_PROXY_HOPS` and
-`RESEND_TIMEOUT_MS` are optional.
-
-`frontend/.env`: `VITE_API_BASE_URL` only, and it is compiled into the public
-bundle, so never put a secret there.
-
-Every variable is described in
-[`docs/development.md`](docs/development.md#configuration), and both
-`.env.example` files are annotated templates.
-
----
-
-## Usage
-
-### Updating site content
-
-Entries, figures and links live in `frontend/src/data/`; only the hero text,
-section subtitles and contact panel text are written in their components.
-Adding a project is a data edit and a picture, not a component edit:
-
-```js
-// frontend/src/data/projects.js
-export const projects = [
-  {
-    title: "Project name",
-    role: "Your role",
-    description: "What it does.",
-    highlight: "The one thing worth noticing.",
-    stack: ["React", "Node", "Express", "Resend"],
-    github: "https://github.com/…",   // or sourceNote, never both
-    demo: "https://…",                // optional, needs github
-    image: "project-name",            // stem of four files in src/assets/projects/
-    imageAlt: "What the picture shows.",
-    imageWidest: 1440,                // optional: a third, wider cut
-  },
-  // …
-];
-```
-
-Each card carries exactly one of `github`, which draws a "View source" link at
-the foot of the card, or `sourceNote`, a short line saying why there is no
-public repository (for example "Private repository"). A card with a running
-deployment adds `demo`, a "Live demo" link beside "View source" that the
-command palette also lists as its own entry. `image` names
-`<image>-480` and `<image>-960` in `frontend/src/assets/projects/`, each as
-`.avif` and `.webp`, and `imageAlt` describes the picture. The content tests
-fail on a card with neither or both of `github` and `sourceNote`, with a `demo`
-and no `github`, or with a missing picture or `imageAlt`, and hold
-descriptions, highlights and stacks to the same density as the other cards.
-Array order is page order, and one entry, the first, carries `featured: true`:
-the grid lays it out across the full width with its picture beside its text,
-and its `facts` (three figures under its highlight) must each restate a claim
-an Experience entry or the card already makes. The content tests hold it to
-exactly one featured card, in first place.
-
-The same pattern applies to `experience.js`, `skills.js`, `about.js` and
-`portfolio.js`, and the command palette builds its entries from these files, so
-new content reaches it without being listed again. See
-[`docs/development.md`](docs/development.md#updating-site-content) for the
-per-file guide and the rules that keep the data layer honest.
-
-### Calling the API
-
-```bash
-curl -X POST http://localhost:5000/api/contact \
-  -H "Content-Type: application/json" \
-  -d '{"name":"Jane Doe","email":"jane@example.com","subject":"Hello","message":"Hi there."}'
-```
-
-```json
-{ "success": true, "message": "Message sent successfully." }
-```
-
----
-
-## API overview
-
-| Method | Path | Purpose |
-|--------|------|---------|
-| `GET` | `/` | Root probe |
-| `GET` | `/health` | Health check with server time |
-| `POST` | `/api/contact` | Submit the contact form |
-
-`POST /api/contact` takes `name`, `email`, `subject` and `message`, is limited
-to 5 requests per IP per 15 minutes, caps the body at 16 KB, and returns `400`
-on validation failure or malformed JSON, `413` on an oversized body, `415` on
-an unsupported charset or encoding, `429` when limited, `502` when Resend
-rejects the send, cannot be reached or does not answer within 10 seconds, and
-`503` when the mailer is unconfigured.
-
-Full contract, including the honeypot and CORS behaviour, in
-[`docs/api.md`](docs/api.md). Runnable requests in
-[`postman/`](postman/README.md).
-
----
-
-## Development workflow
-
-Branch from `main`, keep the change focused, update the docs alongside the
-behaviour, and run the checks that apply:
-
-```bash
-npm run lint                         # frontend and backend
-npm test --prefix frontend           # content changes
-npm run test:invariants              # any change
-npm run build                        # frontend changes; runs frontend lint and the two above first
-npm run size --prefix frontend       # frontend changes, after the build
-npm run test:e2e --prefix frontend   # UI changes, after a build that calls the production API
-npm test                             # backend changes
-```
-
-CI runs the same checks plus `npm audit` and a gitleaks scan on every push to
-`main` and every pull request against it. Conventions, commit format and review
-expectations are in [`CONTRIBUTING.md`](CONTRIBUTING.md).
-
----
-
-## Testing
-
-```bash
-npm test                             # 33 backend API tests via node --test
-npm test --prefix frontend           # 17 content tests over frontend/src/data
-npm run test:invariants              # 22 checks: files that must agree, and the colour system's rules
-npm run size --prefix frontend       # bundle budgets, after a build
-npm run test:e2e --prefix frontend   # 41 browser tests, after a build
-```
-
-The API suite is three files. The first binds an ephemeral port and covers
-both health probes, the validation paths, the 16 KB cap, malformed JSON, the
-honeypot answering exactly as a real send, CORS and the preflight the form
-needs, the rate limiter and whose address it counts, and the 404 catch-all.
-The second sends through a fake Resend and checks the mail itself: the owner
-as recipient, the sender as `Reply-To`, a reply link the address cannot add
-parameters to, and a plain-text part no field can add lines to. It also makes
-the fake refuse, fail and stay silent, and expects the same `502` each time.
-The third reads the configuration: its defaults and its boot warnings. None
-can send real email, whatever `backend/.env` holds: the first blanks the mail
-settings before importing the app, the second points the SDK at the reserved
-`.invalid` domain and answers it itself, and the third never builds a mailer.
-Importing the app is itself a check that every module loads.
-
-The frontend content tests keep every About figure traceable to the entry that
-claims it, hold project and experience copy to a shared length range, give
-every project card exactly one of a source link or a note, require every
-external link to be absolute `https` and every key and section id to be
-unique, and fail on any character in the data modules that the self-hosted
-font subset cannot draw. They also check that every project picture exists in
-both formats, that every skill mark has a symbol in the sprite, that every
-command palette entry points somewhere real, that its search finds the right
-entry, and that the activity snapshot is a usable year of days. Two check the
-redesign's claims against the entries: the featured project's figures must
-each restate a phrase Experience still says, and each core skill's list of
-projects must name entries that really use it.
-
-The repository invariants pin what used to fail silently, among them the CSP
-hash of the inline analytics script, the six hand-copied palettes, the form
-rules mirrored between frontend and backend, the API origin the CSP must
-allow, the hand-kept dates, the Node version, the Cloudflare configuration,
-the release version in all three manifests, every stylesheet loaded exactly
-once and in the right order, and the no-em-dash house style. The browser suite
-runs the built page in Chromium under its production CSP, with the backend and
-analytics answered inside the test: no console or CSP errors, every section
-revealed, no horizontal scroll from 320px to 1920px, no axe violations, all
-text at 7:1, the dock's current section and the palette's selected row still
-marked under forced colours, the greeting filling its column without leaving
-it at six widths, the first screen clear of the dock in a tall and a short
-window, and the command palette, the dock's Home link, the contact form, the
-phone disclosures, the graph's fit on a phone, the skill marks, the project
-pictures and printing each checked in turn.
-
-Live and manual testing uses the Postman collection in
-[`postman/`](postman/README.md), which runs the same paths against a real
-server, including the CORS preflights and the wrong method. It can be imported
-straight from GitHub without cloning.
-A weekly workflow checks every link in the site's data and the docs. Details in
-[`docs/testing.md`](docs/testing.md).
-
----
-
-## Deployment
-
-Both sides deploy automatically from `main`:
-
-| Part | Platform | Build |
-|------|----------|-------|
-| Frontend | Cloudflare Workers, as static assets | `npm run build` in `frontend/`, then `wrangler deploy` publishes `frontend/dist`, both run by `.github/workflows/deploy.yml` |
-| Backend | Render | `npm ci --omit=dev` then `npm start` in `backend/` |
-
-The frontend ships only through that workflow, which CI calls once every job
-has passed on a push to `main`, so a commit that fails lint, a test, the
-browser suite, a size budget, the audit or the secret scan leaves the previous
-deploy live. The build prerenders the page, so a build that fails to render
-fails the deploy rather than publishing an empty page, and it runs frontend
-lint, the content tests and the invariants first: the only gate for the weekly
-snapshot commit and a manual run, which do not pass through CI. After
-publishing, the workflow checks that the deployed origin serves that build,
-applies every rule in `_headers`, answers an unknown path with the 404 page,
-and that plain HTTP and `www` redirect to it.
-Render waits for the same checks: its Auto-Deploy setting is After CI Checks
-Pass, so a backend commit is deployed only once CI is green.
-
-The domain's DNS zone is on Cloudflare too, and `frontend/wrangler.jsonc`
-attaches `syedwaleedahmed.me` and `www` to the Worker (see
-[Domain](docs/deployment.md#domain)). Platform settings, security headers, the
-CSP hash procedure and cache rules are in
-[`docs/deployment.md`](docs/deployment.md).
-
----
+On every pull request and push to `main`, CI runs lint, the type check, the unit and Worker tests, invariants
+(7:1 text contrast in both themes, a strict CSP, the deploy configuration), a build, size budgets, `npm audit`,
+the browser suite (axe in light and dark on every page, layout from 320 to 2560px, the form, the palette, print
+and forced colours) and gitleaks over the full history. The site deploys only after all of it passes, and each
+deploy is checked against the live origin. Details in [docs/deployment.md](docs/deployment.md).
 
 ## Documentation
 
-| Document | Covers |
-|----------|--------|
-| [Architecture](docs/architecture.md) | System shape, repository layout, frontend layers, backend modules, request flow |
-| [API reference](docs/api.md) | Endpoints, payloads, status codes, rate limiting, CORS |
-| [Development](docs/development.md) | Setup, scripts, configuration, conventions, troubleshooting |
-| [Design system](docs/design.md) | CSS architecture, tokens, typography, layout, the dock, command palette, activity graph and globe, motion, accessibility, print, generated assets |
-| [Deployment](docs/deployment.md) | Cloudflare Workers and the deploy gate, Render, CI, the weekly snapshot commit and link check, headers, CSP, caching, releases |
-| [Testing](docs/testing.md) | API, content, invariant and browser suites, size budgets, link check, Postman collection, coverage gaps |
-| [Security controls](docs/security.md) | What is implemented and why |
-| [Postman](postman/README.md) | Importing and running the API collection |
-| [Contributing](CONTRIBUTING.md) | What is welcome, workflow, commit format |
-| [Code of Conduct](CODE_OF_CONDUCT.md) | Community expectations |
-| [Security policy](SECURITY.md) | Reporting a vulnerability |
-| [Changelog](CHANGELOG.md) | Release history |
+| | |
+|---|---|
+| [Architecture](docs/architecture.md) | Rendering, content, the contact API, security, decisions |
+| [Development](docs/development.md) | Setup, editing content, tests, troubleshooting |
+| [Deployment](docs/deployment.md) | The deploy pipeline, secrets, domain, releases |
+| [Design](docs/design.md) | Colour, type, layout, accessibility |
+| [Changelog](CHANGELOG.md) | Releases |
 
----
+## How this was built
 
-## Troubleshooting
+I write much of my code with AI coding assistants, mostly Claude; commits written with one carry a
+`Co-Authored-By` line. The design, the evaluation claims and what goes on the site are mine to answer for.
 
-| Symptom | Cause |
-|---------|-------|
-| `EBADENGINE` on install | Node outside `^22.19.0 \|\| ^24.5.0 \|\| >=26.0.0`. Run `nvm use` |
-| `npm run build` stops before Vite | The prebuild gate: lint, a content test or an invariant failed, and the output names it |
-| `npm run test:e2e` refuses the build | It was built with `VITE_API_BASE_URL` pointing away from production, as `frontend/.env` does. Rebuild with it set to the production origin; the error prints the command |
-| Contact form returns `503` | `RESEND_API_KEY`, `EMAIL_FROM` or `EMAIL_TO` missing. The boot log names them |
-| Contact form returns `502` | Resend rejected the send, could not be reached or did not answer within 10 seconds; usually an unverified `EMAIL_FROM` |
-| CORS error in the browser | Your origin is not on the allow-list. Set `ALLOWED_ORIGINS` to include it, along with every default you still need |
-| Works in Postman, not the browser | Same cause: Postman sends no `Origin` header |
-| `429 Too many requests` | 5 per IP per 15 minutes. Restart the backend to clear the counter |
-| Hydration error in the console | Something renders differently at build time than in the browser. Move it into an effect |
-| Analytics stopped after editing `index.html` | The inline snippet is CSP hash-pinned. Recompute the hash; `npm run test:invariants` prints it |
+## Contributing and security
 
-Longer explanations for each in
-[`docs/development.md`](docs/development.md#troubleshooting).
-
----
-
-## Roadmap
-
-Queued work, not a committed plan:
-
-- Delete `frontend/public/sw.js` once analytics show no service-worker traffic
-  for about 30 days
-- Frontend component tests, if the UI grows more stateful logic than the
-  contact form and the command palette
-- An uptime pinger against `/health` to remove Render free-tier cold starts
-
-Known testing gaps are listed in [`docs/testing.md`](docs/testing.md#gaps), and
-deliberate security non-goals in
-[`docs/security.md`](docs/security.md#deliberate-non-goals).
-
----
-
-## Contributing
-
-Bug reports, accessibility and performance fixes, and documentation
-corrections are welcome. Content and redesign PRs are not; see
-[`CONTRIBUTING.md`](CONTRIBUTING.md) for the full scope and workflow.
-Participation is governed by the [Code of Conduct](CODE_OF_CONDUCT.md).
-
-## Security
-
-Please report vulnerabilities privately rather than in a public issue. The
-policy, scope and safe-harbour terms are in [`SECURITY.md`](SECURITY.md); the
-controls already in place are inventoried in
-[`docs/security.md`](docs/security.md).
-
-## Contact
-
-The quickest route is the [contact form](https://syedwaleedahmed.me/#contact)
-on the site. You can also email
-[syedwaleedahmed9@gmail.com](mailto:syedwaleedahmed9@gmail.com) or reach me on
-[LinkedIn](https://www.linkedin.com/in/syed-waleed-ahmed/). The resume is
-linked from the site's dock.
+Bug reports and accessibility or performance fixes are welcome as issues or pull requests; the content is personal,
+so content changes are not. Report a vulnerability privately, as [SECURITY.md](SECURITY.md) describes.
 
 ## License
 
-MIT; see [LICENSE](LICENSE). You are welcome to fork this for your own
-portfolio: replace the content in `frontend/src/data/`, the hero text in
-`Hero.jsx` (and re-measure the greeting's size factor in `Hero.css` if you
-change its words), the images in `frontend/public/`, the project pictures in
-`frontend/src/assets/projects/` and the copies listed under
-[Facts stated twice](docs/development.md#facts-stated-twice), set
-`githubUsername` in `portfolio.js`, and run
-`node frontend/scripts/fetch-github-activity.mjs` to replace the contribution
-snapshot.
-
-The brand marks in `frontend/src/assets/skill-icons.svg` are not covered by
-that licence. They come from Simple Icons (CC0-1.0) and Lobe Icons (MIT), and
-each remains a trademark of its owner, shown here only to name the tool beside
-it.
+MIT, see [LICENSE](LICENSE). You are welcome to adapt it for your own site; replace the content in
+`frontend/src/content/`, the case studies in `frontend/src/case-studies/` and the images in `frontend/public/`.

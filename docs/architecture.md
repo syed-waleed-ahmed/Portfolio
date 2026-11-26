@@ -1,360 +1,147 @@
 # Architecture
 
-Two independent npm projects in one repository, deployed to two platforms. The
-browser loads the site from one and calls the other directly for the only real
-endpoint, the contact form.
+The site is a set of prerendered pages served as static files by Cloudflare,
+plus one small Worker that receives the contact form. There is no database,
+no login and no analytics.
 
 ```text
-Browser
-  |
-  +-- page: HTML / CSS / JS / fonts / images ---->  Cloudflare   <--  frontend/
-  |
-  +-- POST /api/contact (JSON, CORS-restricted) ->  Render       <--  backend/
-  +-- GET /health (no-cors wake-up ping) -------->    |
-                                                      |  Resend SDK
-                                                      v
-                                                    Resend  ->  inbox
+Browser ──> Cloudflare (static assets from frontend/dist, with _headers)
+   │
+   └── POST /api/contact ──> Worker (frontend/worker) ──> Resend ──> inbox
+                               └── ContactLimiter (Durable Object, one per client)
 ```
-
-`frontend/` is React 19 and Vite, prerendered into `dist/` at build time;
-`backend/` is Node and Express, as ES modules. Cloudflare serves `dist/` as the
-static assets of a Worker that has no script (`frontend/wrangler.jsonc`), so
-nothing there proxies `/api`: the browser calls the Render origin directly,
-cross-origin, so the backend's CORS allow-list names the site's origins and the
-site's CSP names the backend in `connect-src`. The `/health` request is sent
-once, when a visitor first focuses the form, to wake the free-tier instance
-before they press send.
-
-There is no database and no session state. The only server-side work in the
-whole system is validating a contact form and handing it to an email provider,
-which is why the backend is a few hundred lines and the frontend is where the
-complexity lives.
-
----
 
 ## Repository layout
 
 ```text
-portfolio/
-├── .github/
-│   ├── workflows/ci.yml            Lint, tests, invariants, build, size, browser tests, audit, secret scan, then the deploy
-│   ├── workflows/deploy.yml        Builds the frontend, publishes it to Cloudflare Workers and checks the result
-│   ├── workflows/links.yml         Weekly link check (lychee)
-│   ├── workflows/refresh-activity.yml  Weekly commit of the contribution snapshot, then its deploy
-│   ├── dependabot.yml              Grouped weekly dependency PRs, after a seven-day cooldown
-│   ├── ISSUE_TEMPLATE/             Issue forms (bug, improvement, documentation); blank issues off
-│   ├── CODEOWNERS                  Requests the maintainer's review on every PR
-│   └── PULL_REQUEST_TEMPLATE.md
-├── backend/
-│   ├── config/env.js               Env parsing + boot-time validation
-│   ├── routes/contactRoutes.js     Rate limit, validation, honeypot
-│   ├── services/mailerService.js   Resend delivery + email templates
-│   ├── test/contact.test.js        API tests with the mailer unconfigured (node --test)
-│   ├── test/delivery.test.js       The send path and its failures, against a fake Resend
-│   ├── test/env.test.js            Configuration parsing and boot warnings
-│   ├── server.js                   App assembly; exports app, listens when run directly
-│   ├── eslint.config.js            Lint rules for Node
-│   ├── README.md                   The project's layout and commands
-│   └── .env.example
-├── frontend/
-│   ├── README.md                   The project's layout and commands
-│   ├── public/                     Static passthrough (see below)
-│   ├── scripts/prerender.mjs       Writes the rendered page into dist/index.html
-│   ├── scripts/fetch-github-activity.mjs  Refreshes the contribution snapshot
-│   ├── scripts/gen-skill-icons.mjs Rebuilds the sprite of skill marks
-│   ├── scripts/verify-deploy.mjs   Checks a deployed origin: this build, every _headers rule, the 404 page
-│   ├── src/
-│   │   ├── assets/                 Files a component imports by URL: the skill marks sprite (generated) and the project pictures
-│   │   ├── components/
-│   │   │   ├── layout/             Masthead, Dock, Footer
-│   │   │   ├── sections/           One component per page section, each with its .css
-│   │   │   ├── ui/                 Reusable primitives
-│   │   │   └── widgets/            The palette, the contribution graph and the globe: each lazy library beside what loads it
-│   │   ├── data/                   Portfolio content, no JSX
-│   │   ├── styles/                 Layer order, tokens, reset, base, layout, shared components, utilities; sections.css and print.css
-│   │   ├── App.jsx
-│   │   ├── entry-server.jsx        Build-time render entry
-│   │   └── main.jsx                Hydrates the prerendered markup
-│   ├── test/data.test.js           Content tests (node --test)
-│   ├── e2e/site.spec.js            Browser tests (Playwright + axe)
-│   ├── e2e/serve.mjs               Serves dist/ with its real CSP for those tests
-│   ├── playwright.config.js
-│   ├── .size-limit.json            Gzip budgets: entry JS, each of the three stylesheets, each lazy chunk, the sprite, the project pictures
-│   ├── index.html
-│   ├── vite.config.js
-│   ├── wrangler.jsonc              Cloudflare Workers configuration: dist/ as static assets, 404.html for unknown paths
-│   ├── eslint.config.js
-│   └── .env.example
-├── docs/                           This documentation set, indexed by docs/README.md
-├── postman/                        Collection + local and production envs, with a README
-├── scripts/gen-og-card.mjs         Rebuilds the 1200x630 social card
-├── scripts/release-notes.mjs       Prints a changelog section as release notes, one line per paragraph
-├── test/invariants.test.js         Repository invariants: files that must agree (node --test)
-├── .editorconfig  .gitattributes  .gitignore  .npmrc  .nvmrc
-├── lychee.toml                     Link checker configuration
-├── package.json                    Root scripts that drive both projects
-└── README.md  CHANGELOG.md  CONTRIBUTING.md  CODE_OF_CONDUCT.md  SECURITY.md  LICENSE  CLAUDE.md
+frontend/
+  src/
+    content/       Facts as typed data: person, projects, experience, skills
+    case-studies/  One TSX file per project, the long-form page
+    components/    home/, case-study/, layout/, ui/, widgets/
+    pages/         Home, privacy, 404
+    shared/        Code the page and the Worker both import (the form's rules)
+    styles/        Tokens, base, layout, components, print; one stylesheet
+    routes.ts      Every page, its URL and its metadata
+    head.ts        Each page's <head> and structured data
+    commands.ts    The command palette's entries and ranking
+  worker/          The contact API and its rate limiter, with tests
+  scripts/         prerender.mjs, verify-deploy.mjs
+  test/            Content and logic tests (Node's runner)
+  e2e/             Browser tests (Playwright and axe) and the test server
+test/              Repository invariants
+scripts/           The social card generator and the release-notes formatter
+docs/              This file, development, deployment, design
 ```
 
-The community files sit at the root, where GitHub and readers look first.
-`CLAUDE.md` is guidance for AI coding agents working in the repository; it is
-kept in step with the docs like any other.
+## Rendering
 
-`frontend/public/` is copied verbatim into the build. It holds the branded
-`404.html`, the `_headers` file Cloudflare applies, the self-hosted font,
-favicons, the portrait images, the social card, `robots.txt`, `sitemap.xml`,
-`humans.txt`, the Search Console verification file, and `sw.js` (a kill-switch
-service worker; see [Deployment](deployment.md#stale-service-worker-recovery)).
+`npm run build` runs three steps:
 
----
+1. `vite build` compiles the client bundle.
+2. `vite build --ssr src/entry-server.tsx` compiles a Node bundle that renders
+   every entry in `PAGES` (from `routes.ts`) to HTML, with its `<head>`.
+3. `scripts/prerender.mjs` writes each page into `dist/` (`/` to
+   `index.html`, `/work/remindrai/` to `work/remindrai/index.html`, the 404
+   page to `404.html`) and generates `sitemap.xml` from the same list.
 
-## Frontend
+In the browser, `main.tsx` matches the URL to a route, loads that page's case
+study chunk if it has one, and hydrates. Navigation between pages is ordinary
+links: there is no client-side router, because every page is already a file.
 
-### Layers
+Everything is readable without JavaScript. Scripts add the command palette,
+the form's inline validation and status messages, and closing the phone menu
+after a choice; the form itself posts natively before hydration, and the
+Worker answers such a post with a plain page.
 
-Every file has one obvious home, which is what keeps the tree navigable as
-sections are added.
+Render output must be identical at build time and in the browser. The one
+platform-dependent value, the Command key on Apple devices, is read with
+`useSyncExternalStore` after hydration; the build year is fixed by Vite's
+`define`.
 
-| Layer | What lives here | Examples |
-|-------|-----------------|----------|
-| `components/layout/` | Chrome that frames every page | `Masthead`, `Dock`, `Footer` |
-| `components/sections/` | One file per visible section, with its stylesheet beside it: the hero and each entry in `sections` | `Hero`, `Projects`, `Experience`, `About`, `Skills`, `Contact` |
-| `components/ui/` | Reusable primitives, no domain coupling | `Reveal`, `SectionHeader`, `SectionLink`, `ExternalLink`, `Monogram`, `SkipLink`, `ErrorBoundary`, and `scrollToSection`, the helper `SectionLink` and the palette share |
-| `components/widgets/` | The pieces built on a lazily loaded library, each beside the component that loads it | `CommandMenu` (the dock's Search item) loads `CommandPalette` (`cmdk`), and both use `commandShortcut`, the Ctrl/Cmd+K test; `GitHubActivity` (in Projects) loads `GitHubActivityCalendar` (`react-activity-calendar`); `LocationGlobe` (in Contact) loads `cobe` |
-| `data/` | Pure content, no JSX | `projects.js`, `experience.js`, `about.js`, `skills.js`, `portfolio.js`, `commands.js` (built from the others), `github-activity.json` (generated) |
-| `styles/` | Global CSS in cascade layers, and the two stylesheets linked apart from the entry one | `index.css` (layer order), `tokens.css`, `reset.css`, `base.css`, `layout.css`, `components.css`, `utilities.css`; `sections.css` (everything below the hero, linked after it) and `print.css` (linked last, `media="print"`) |
+## Content
 
-### Data-driven content
+Facts live once, in `src/content/`:
 
-Entries, figures and links live in `src/data/`, so adding a role or a skill,
-or changing a project, is a data edit rather than a JSX edit. The project grid
-is the one place laid out for a count: it is composed for six cards (one
-featured, then two, then three), with spans and the reveal stagger set by
-position in `Projects.css` and picture sizes chosen by position in
-`Projects.jsx`, and the core skills' proofs count "of the six projects". A
-seventh card still renders, alone on a row of its own, and the content tests
-fail until those proofs are recounted. The exceptions are prose tied to
-one component: the hero's status line, headline, lead and graduation note in `Hero.jsx`,
-each section's subtitle passed to `SectionHeader`, and the contact panel's text
-in `Contact.jsx`. See [Development](development.md#updating-site-content) for
-the per-file guide.
+- `site.ts`: the person, links, work authorisation, languages and the
+  sections of the home page.
+- `projects.ts`: each project's summary, pipeline, the decision worth asking
+  about, and its measured result with the caveat attached.
+- `experience.ts`: roles in the words of the current CVs, and education.
+- `skills.ts`: skills the work shows, and skills only familiar from
+  coursework or a traineeship.
 
-`data/portfolio.js` exports `sections`, the ordered list of section ids and
-labels. It is the single source for the dock's links, the command palette's
-"Go to" entries and the `<section>` elements `App.jsx` renders, so a section
-cannot be added to one and forgotten in another. Each section is labelled by
-its heading, whose id is `${sectionId}-title`.
+These modules use relative `.ts` imports so Node can load them with type
+stripping: the content tests, the prerender and the structured data all read
+the same objects. A case study's prose is in its TSX file, which also holds
+its diagrams as data (`components/case-study/Diagram.tsx` draws them).
 
-The section headings are the exception to "one file per section owns its own
-markup": all of them render through `components/ui/SectionHeader`, which takes
-the heading id, the title and the subtitle and nothing else. There is one
-header, for every section; the number above each title is a CSS counter on the
-sections themselves, so it follows the order of `sections` in
-`data/portfolio.js`. Sharing one component is what stops the headings drifting
-apart as sections are edited independently.
+## The contact API
 
-`frontend/test/data.test.js` turns the data layer's conventions into checks:
-every figure in the hero's strip (`stats` in `about.js`) must appear in the
-Experience or Projects entry it cites, exactly one project is `featured` and
-it comes first, each of its `facts` restates a phrase an Experience bullet or
-the card still says, every core skill's `proof` names entries that use it,
-project and experience copy stay within shared length ranges, each project
-card carries exactly one of `github` or `sourceNote` and names a picture that
-exists, links are absolute `https`, no export of a data module uses a
-character the font subset cannot draw, every command palette entry points
-somewhere real, the activity snapshot is a usable year of days, and the
-generated sprite of skill marks holds exactly the symbols `skills.js` names.
-The data modules stay importable by plain Node for that reason: relative
-imports with `.js` extensions, no JSX and no `@/` alias, and nothing imported
-into `portfolio.js`, which the snapshot workflow loads without installing
-dependencies. The repository invariants
-check those import rules.
+`POST /api/contact`, same origin, handled by `worker/contact.ts`.
 
-### Import alias
+| | |
+|---|---|
+| Body | JSON `{ name, email, subject, message, website }`, or the same fields form-encoded when the page posts before its script loads. 16 KB at most. |
+| Rules | From `src/shared/contact.ts`, which the form imports too: every field required and trimmed; name and email up to 100 characters, subject 200, message 5,000; an address with control characters or unpaired surrogates is refused. |
+| Rate limit | 5 per client per 15 minutes. The client is the `CF-Connecting-IP` address, or its /56 for IPv6. |
+| Honeypot | A filled `website` field gets the same 200 a real send gets, and nothing is sent. |
 
-`@` resolves to `frontend/src/` (configured in `vite.config.js`), so imports do
-not encode folder depth:
+| Status | When |
+|---|---|
+| 200 `{ "ok": true }` | Sent, or caught by the honeypot |
+| 400 `{ ok: false, error, field? }` | Invalid input or malformed JSON |
+| 403 | An `Origin` header from another site |
+| 405, 415, 413 | Wrong method, content type, or size |
+| 429 | Over the limit, with `Retry-After` |
+| 502 | Resend refused, could not be reached, or did not answer in 10 seconds |
+| 503 | The mail secrets are not set |
+| 500 | Anything else; no detail is returned |
 
-```js
-// good: identical wherever this file lives
-import Reveal from "@/components/ui/Reveal";
-import { projects } from "@/data/projects";
+`GET /api/health` answers `{ status: "ok", mailer: "configured" | "missing" }`
+and is what the deploy verification reads.
 
-// bad: breaks the moment the file moves
-import Reveal from "../ui/Reveal";
-```
+The order is parse, validate, limit, honeypot, send: a body that cannot be
+parsed or does not validate costs no quota, so a visitor fixing a typo is never
+locked out. If the limiter cannot answer, the API answers 503 and sends
+nothing. The limiter is a Durable Object per client holding only
+the times of recent submissions, deleted by an alarm when the window passes.
+Logs record events (`contact.sent`, `contact.rate_limited`), never what a
+visitor typed.
 
-### Rendering strategy
+## Security and privacy
 
-The page is **prerendered at build time**. `npm run build` runs three steps,
-after npm's `prebuild` gate of lint, content tests and repository invariants
-(see [Deployment](deployment.md#the-deploy-gate)):
+- **Content Security Policy:** `default-src 'self'` with no inline script or
+  style anywhere, `connect-src 'self'`, `frame-ancestors 'none'`. The
+  invariants test fails on an inline script in `index.html`, a `style`
+  attribute in a component, or a widened `script-src`.
+- **Other headers** (`public/_headers`): HSTS, `nosniff`,
+  `X-Frame-Options: DENY`, a strict referrer policy, `Cross-Origin-Opener-Policy`,
+  and a permissions policy that denies camera, microphone and location. The
+  Worker sets its own on API responses: `no-store`, `nosniff` and
+  `default-src 'none'`.
+- **No tracking:** no analytics, no cookies, no third-party requests. The
+  browser suite fails if a page sets a cookie or calls another host.
+- **The form:** same-origin only, validated on both sides from one module,
+  escaped for HTML and URL-encoded where an address becomes a `mailto:` link,
+  with header fields flattened so a value cannot add a header.
+- **Secrets:** the Resend key and the mail addresses are Worker secrets, set
+  with Wrangler; none is in the repository. CI runs gitleaks over the full
+  history and `npm audit` on production dependencies.
 
-1. `vite build` produces the client bundle in `dist/`.
-2. `vite build --ssr src/entry-server.jsx --outDir dist-server` compiles the
-   app for Node.
-3. `scripts/prerender.mjs` renders `<App />` to HTML once, writes it inside
-   `<div id="root">` in `dist/index.html`, adds the projects' structured data
-   (a JSON-LD `ItemList` generated from `projects.js`) before `</head>`, and
-   deletes `dist-server/`.
+The privacy page (`src/pages/PrivacyPage.tsx`) states the processing in plain
+words. It makes no claim of legal compliance.
 
-The HTML response therefore already contains every heading, paragraph and
-link. Text paints before any JavaScript runs, crawlers and link previews see
-the full page, and anchors such as `/#projects` resolve against the real
-document height. `main.jsx` then calls `hydrateRoot` to attach React to that
-markup. The dev server has no prerender step and serves an empty root, so
-`main.jsx` falls back to `createRoot` there.
+## Decisions
 
-Two consequences shape the components:
-
-- **Render output must be deterministic.** Anything that differs between build
-  time and the visitor's browser would fail hydration. The footer year, for
-  example, is injected by Vite `define` as `__BUILD_YEAR__` rather than computed
-  at render time.
-- **Browser-only work belongs in effects.** `Reveal` hides below-the-fold
-  content only after hydration, so the prerendered HTML is never invisible.
-
-Sections are imported eagerly into a single bundle. With the content already in
-the HTML there is nothing to gain from splitting a few kilobytes of section code
-into separate requests. Each section has its own `ErrorBoundary`, so a render
-error takes down that section rather than the page.
-
-Three extras are the exception, because they carry real weight and many visitors
-never reach them. Each is a separate chunk, fetched only when wanted:
-
-| Extra | Library | Gzipped | Fetched when |
-|-------|---------|---------|--------------|
-| Command palette | `cmdk` | 19 KB | The trigger is hovered or focused, or Ctrl/Cmd+K is pressed |
-| Contribution graph | `react-activity-calendar` | 25 KB, with its tooltips and data | The block comes within 600px of the viewport |
-| Globe | `cobe` | 6 KB | The block comes within 200px of the viewport, on screens of 80rem and up |
-
-The brand marks in Skills take a third route, since they are images rather
-than code: one SVG sprite in `src/assets/`, referenced by `<use>`, which the
-browser fetches as a single low-priority image request and caches as a
-fingerprinted asset. As components they would have put about 21 KB of path
-data into the entry chunk and again into the prerendered HTML.
-
-The small components that load them add about 2 KB to the first load. Size
-Limit budgets in `frontend/.size-limit.json` hold the entry bundle and each of
-these chunks to a limit, so a static import that drags a library into the entry
-fails CI (see [Testing](testing.md#bundle-size-budgets)). A failed chunk cannot
-take the page down: the palette's loader catches it, because the dock sits
-outside every `ErrorBoundary`; the graph has a boundary of its own; and the
-globe's loader catches the failure and leaves its caption in place.
-`cmdk` also bundles Radix Dialog, which the palette does not use, since a native
-`<dialog>` gives synchronous focus restoration. It cannot be tree-shaken out, and
-is accepted because the chunk only loads on intent.
-
-There is no animation library, no UI kit, no CSS framework and no PWA shell.
-
----
-
-## Backend
-
-Three layers, so `server.js` stays thin and each concern is testable on its own.
-
-| Module | Responsibility |
-|--------|----------------|
-| `config/env.js` | Reads and normalizes `process.env` into one frozen `config` object; warns at boot about settings that would otherwise fail silently (missing mail settings, an origin no browser could send, an unusable number). Nothing else touches `process.env` |
-| `routes/contactRoutes.js` | Rate limiting, field validation, then the honeypot check. Knows nothing about email |
-| `services/mailerService.js` | Repair of malformed text, HTML escaping, mail-header sanitization, template rendering, Resend delivery with a timeout. Knows nothing about HTTP |
-| `server.js` | Middleware assembly, health routes, 404, centralized error handler, graceful shutdown |
-
-The service layer signals failure with two typed errors, `MailerNotConfiguredError`
-and `EmailDeliveryError`, which the route maps to `503` and `502`. Anything else
-is forwarded to the central error handler, which logs the full error and returns
-a generic message. The boundary is what keeps provider details out of HTTP
-responses. The one exception the handler makes is a body the parser refused:
-that is the client's fault, so it answers with the parser's `400`, `413` or `415`
-and a fixed message, and logs the error's type only, never the error itself,
-which carries the raw request body.
-
-`server.js` exports the Express app and only calls `listen()` when executed
-directly, which is what lets the test suite bind an ephemeral port instead of
-fighting over 5000.
-
-### Contact form request flow
-
-1. The body is JSON, so the browser first sends an `OPTIONS` preflight. For an
-   allowed origin the CORS middleware answers it with `204` and the CORS
-   headers; any other origin gets no `Access-Control-Allow-Origin`, and the
-   browser stops here.
-2. The browser POSTs the form (including the empty `website` honeypot) to
-   `/api/contact`.
-3. Helmet sets security headers.
-4. CORS checks the `Origin` against the allow-list. A disallowed origin gets a
-   response with no `Access-Control-Allow-Origin`, which the browser blocks.
-5. `express.json({ limit: "16kb" })` parses the body, or rejects it: `413` over
-   the cap, `400` for malformed JSON, `415` for an unsupported charset or
-   encoding. This runs **before** the router, so those cost no rate-limit
-   quota.
-6. `express-rate-limit` checks the client IP: 5 requests per 15 minutes, with
-   IPv6 clients keyed by `/56` subnet. The IP is the visitor's only while
-   `trust proxy` counts the host's proxies correctly, which
-   [Deployment](deployment.md#checking-the-rate-limiters-key) says how to check.
-7. Validation enforces presence, length caps and the email pattern, returning
-   `400` on the first failure.
-8. The honeypot check runs on the valid body. A filled `website` field returns
-   the same `200` a real send produces, logs the sender, and stops.
-9. `mailerService` replaces any unpaired surrogate, escapes the values,
-   URL-encodes the address for the `mailto:` links, flattens control
-   characters to spaces in header-bound fields and the plain-text part's
-   one-line fields, renders the HTML and plain-text parts, and sends via Resend
-   with the submitter's address as `Reply-To`, waiting at most ten seconds.
-10. On success the route logs Resend's message ID and returns the same `200`
-    body as step 8. Failures map to `503` (unconfigured) or `502` (rejected,
-    Resend unreachable, or no answer in time). Anything unexpected reaches the
-    central handler as a `500`.
-
-The send is one attempt, made while the visitor waits, and nothing is stored:
-there is no queue, retry or outbox. A message whose send fails exists only in
-the visitor's browser, which is why every failure the form shows offers the
-email address beside it.
-
-Status codes and payloads for each step are documented in the
-[API reference](api.md#post-apicontact).
-
----
-
-## Cross-cutting decisions
-
-**One Node version, one source of truth.** `.nvmrc` pins it; every workflow,
-the deploy included, reads it via `node-version-file`, and all three
-`package.json` files declare an `engines.node` range that admits it. The
-repository invariants fail on a workflow that names a version itself and on a
-range that leaves the pin out. `.npmrc` sets `engine-strict=true`, so a
-mismatched `npm run install:all` fails loudly instead of producing confusing
-runtime errors; an install run inside `frontend/` or `backend/` does not read
-that file and only warns.
-
-**Couplings that fail silently are tested.** Several values have to agree
-across files with nothing at build time to notice when they drift: the CSP hash
-of the inline script, the palette copies, the form rules mirrored between
-`Contact.jsx` and the route, the backend origin in the CSP. `test/invariants.test.js`
-checks each pair, and runs in CI and again before the build of every deploy.
-
-**The build has no environment-dependent steps.** There is no PostCSS
-configuration and no CSS purging, so `npm run build` produces the same output
-locally, in CI and in the deploy workflow with no variables set. Nor does it
-touch the network: the contribution graph reads a committed snapshot, and a
-weekly workflow refreshes that as an ordinary commit. The one variable is
-`VITE_API_BASE_URL`, which a local `frontend/.env` usually sets for work on the
-contact form. Vite bakes it into any build made with that file present, and the
-production CSP would block the call, so `e2e/serve.mjs` refuses such a build
-rather than test it.
-
-**Secrets never reach the client.** The Resend key lives only in the backend
-environment. The frontend's only configurable value is the API base URL, and
-`VITE_`-prefixed variables are compiled into the bundle by design, so never put
-anything sensitive there.
-
----
-
-## Related documents
-
-- [API reference](api.md)
-- [Design system](design.md)
-- [Development](development.md)
-- [Deployment](deployment.md)
-- [Security](security.md)
-- [Testing](testing.md)
+| Decision | Instead of | Why, and the cost |
+|---|---|---|
+| Keep React, Vite and a hand-written prerender | Moving to Astro or Next.js | The prerender is a short script and already gives static HTML per page; a framework migration would rewrite working code for little gain. The cost is that every page hydrates the full React runtime, about 86 kB gzipped of script. |
+| Strict TypeScript, version 6 | TypeScript 7 | typescript-eslint supports TypeScript below 6.1. Types replace several content tests, such as a project having exactly one kind of source. |
+| The contact API in the site's Worker | Express on Render's free tier | Render slept after 15 minutes, so the first message waited up to a minute; it also needed CORS, a guessed proxy count for rate limiting and dashboard-only settings. The Worker has none of those. The cost is a one-time secret setup and a Durable Object for exact limits. |
+| A Durable Object for the rate limit | Cloudflare's rate-limiting binding | The binding counts per data centre over 10 or 60 seconds only. |
+| No analytics | Google Analytics behind a consent banner | It was the heaviest script on the page (179 kB) and the only reason for cookies. Cloudflare's own request statistics remain. |
+| Keep the command palette, rank results in code | Removing it, or cmdk's built-in filter | It is the fastest way across six case studies. cmdk 1.1.1 cannot reorder its groups, so it only moves the selection. |
+| Text navigation in a sticky header | The floating icon dock | Labels say where they lead, and nothing covers the content. |
+| Diagrams as data, drawn as SVG | Exported images | Themable, sharp at any size, real text for screen readers, and each a few lines to change. |
+| Remove the globe, the contribution graph and the reveal animation | Keeping them | Decorative, template-derived, and two of them were extra dependencies and a weekly bot commit. |

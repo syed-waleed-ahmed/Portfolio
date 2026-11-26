@@ -1,0 +1,25 @@
+name: Health check
+
+# Once a day, asks the live site whether the contact API is up and has its
+# mail settings. A failed run emails the repository owner, so a form that
+# stopped working is noticed by the owner rather than by a visitor. It reads
+# /api/health only and never sends a message.
+on:
+  schedule:
+    - cron: "23 6 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  health:
+    name: Contact API health
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Read /api/health
+        run: |
+          body="$(curl --silent --show-error --fail --max-time 20 --retry 3 --retry-delay 10 https://syedwaleedahmed.me/api/health)"
+          echo "$body"
+          echo "$body" | jq -e '.status == "ok" and .mailer == "configured"' > /dev/null

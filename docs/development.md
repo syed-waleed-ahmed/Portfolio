@@ -1,503 +1,110 @@
 # Development
 
-Everything needed to run the project locally, change it, and get a change
-reviewed.
-
-## Prerequisites
-
-| Tool | Version | Notes |
-|------|---------|-------|
-| Node.js | `^22.19.0 \|\| ^24.5.0 \|\| >=26.0.0` (24 recommended) | `.nvmrc` pins 24; run `nvm use` to match. The frontend's range is the narrow one, set by Size Limit; the backend and root accept 22.13 and up |
-| npm | 11+ | Ships with Node 24 |
-| Resend account | - | Only needed to exercise the email path locally |
-| Chromium for Playwright | - | Only for the browser tests: `npx playwright install chromium` once, in `frontend/` |
-
-The root `.npmrc` sets `engine-strict=true`, so `npm run install:all` on an
-unsupported Node version fails immediately rather than breaking at runtime. npm
-passes that setting on to the two installs the script runs. An `npm install` or
-`npm ci` run inside `frontend/` or `backend/`, or with `--prefix`, does not read
-the root `.npmrc` and only warns, which is also why CI, the deploy workflow and
-Render do not enforce `engines`.
-
----
-
 ## Setup
 
-```bash
-git clone https://github.com/syed-waleed-ahmed/Portfolio.git
-cd Portfolio
-npm run install:all
-```
-
-`install:all` installs both projects. Then configure each side:
+Node 24 (pinned in `.nvmrc`; any of `^22.19 || ^24.5 || >=26` works).
 
 ```bash
-cp backend/.env.example backend/.env      # fill in Resend values
-cp frontend/.env.example frontend/.env    # optional, local API override
+npm run install:all          # npm ci in frontend/
+npm run dev                  # Vite on :5173, client-rendered, all pages
+npm run dev:api              # wrangler dev on :8787, the Worker and its limiter
 ```
 
-Run the two servers in separate terminals:
+Vite proxies `/api` to `:8787`, so with both running the form posts to the
+local Worker. Without `dev:api` the form reports that the server could not be
+reached; it never posts to production. To send real mail locally, copy
+`frontend/.dev.vars.example` to `frontend/.dev.vars` and fill it in; the file
+is gitignored. Without it the API answers 503.
+
+The dev server renders in the browser only. To see the prerendered pages, build
+and serve them with their production headers:
 
 ```bash
-npm run dev:backend    # http://localhost:5000
-npm run dev:frontend   # http://localhost:5173
+npm run build
+node frontend/e2e/serve.mjs  # http://127.0.0.1:4174
 ```
 
-The frontend calls the deployed backend unless `VITE_API_BASE_URL` points it
-somewhere else, so set that in `frontend/.env` when working on the contact form.
+## Commands
 
-Without Resend credentials the backend still boots and serves every route; the
-contact endpoint returns `503` instead of sending. That is enough to develop
-against everything except delivery itself. `backend/.env.example` leaves the
-three mail variables empty so that an unedited copy behaves exactly like that.
+From the repository root:
 
----
+| Command | What it does |
+|---|---|
+| `npm run lint` | ESLint over the app, the Worker, the scripts and the tests |
+| `npm run typecheck` | `tsc --noEmit` with strict settings |
+| `npm test` | Content, routing, palette and Worker tests, then the repository invariants |
+| `npm run build` | The prebuild gate (lint, types, tests, invariants), then client build, SSR build and prerender into `frontend/dist` |
+| `npm run test:e2e` | Playwright and axe against `frontend/dist` (needs a build) |
 
-## Scripts
+In `frontend/`: `npm run size` checks the size budgets in `.size-limit.js`
+after a build. `npm run build --ignore-scripts` skips the gate, as CI does
+because it runs the same checks as separate steps.
 
-Run from the repository root. Most delegate into `frontend/` or `backend/`, so
-there is no need to change directories.
+## Editing content
 
-| Script | What it does |
-|--------|--------------|
-| `npm run install:all` | Install dependencies for `frontend/` and `backend/` |
-| `npm run dev:frontend` | Vite dev server with HMR on port 5173 |
-| `npm run dev:backend` | Express with `node --watch` on port 5000 |
-| `npm run build` | The prebuild gate (below), then a production build of the frontend into `frontend/dist/`, prerendered |
-| `npm run lint` | ESLint over the frontend, then the backend |
-| `npm test` | Backend API test suite (`node --test`) |
-| `npm run test:invariants` | Repository invariants in `test/invariants.test.js` |
-| `npm start` | The backend without the file watcher, as Render starts it |
+| To change | Edit |
+|---|---|
+| Name, role, links, work authorisation, languages | `src/content/site.ts` |
+| A role or a degree | `src/content/experience.ts` |
+| A project's summary, pipeline, decision or result | `src/content/projects.ts` |
+| A case study's prose, tables or diagrams | `src/case-studies/<slug>.tsx` |
+| Skills | `src/content/skills.ts` |
+| The hero's copy | `src/components/home/Hero.tsx` |
 
-Inside `frontend/` there are also:
+Rules that keep the content honest:
 
-| Script | What it does |
-|--------|--------------|
-| `npm test` | The content tests in `test/data.test.js` |
-| `npm run preview` | Serves the built `dist/`: the only way to see the prerendered page by hand, since the dev server renders on the client. It ignores `public/_headers`, so the page runs without its CSP |
-| `npm run size` | Size Limit budgets, against an existing build |
-| `npm run test:e2e` | The Playwright and axe browser suite, against an existing build served with its real CSP, or against a deployed origin when `E2E_BASE_URL` names one |
+- **Experience follows the CVs** in `D:\Documents\Employment\Resume\source\`.
+  A figure goes on the site only if a CV or the project's own repository or
+  report states it.
+- **A result carries its caveat** in the same sentence, and a test count never
+  headlines a project. The content tests check the second.
+- **A skill is "shown"** only if a project or role on the site uses it; the
+  rest go under "familiar".
+- **Copy uses characters the font subset can draw.** The content tests scan
+  every source file; use an icon from `react-icons` for arrows and symbols.
+- **Facts repeated outside the repository** (the CVs, LinkedIn, the GitHub
+  profile README, each project's README) are not checked by anything here.
 
-`backend/` has `npm run lint` and `npm test` of its own, which the root scripts
-call. What each suite covers, and how to run the browser tests, is in
-[Testing](testing.md).
+Adding a project means an entry in `projects.ts`, a case study in
+`src/case-studies/` named by its slug, and optionally screenshots in
+`src/assets/projects/` (`<name>-480` and `<name>-960`, each `.avif` and
+`.webp`). The route, the sitemap, the structured data and the palette entry
+follow from the data. Moving `SITE.updated` in `site.ts` marks the content as
+reviewed; the sitemap and the footer read it.
 
-Two scripts run with plain `node` from the repository root.
-`node scripts/gen-og-card.mjs` regenerates the social card. It needs `sharp`,
-`fontkit` and `wawoff2`, which are installed on demand rather than kept as
-dependencies (see [Design](design.md#generated-assets)).
-`node frontend/scripts/fetch-github-activity.mjs` refreshes the contribution
-snapshot and needs no install (see [below](#updating-site-content)).
+## Tests
 
-A third runs from `frontend/`: `node scripts/gen-skill-icons.mjs` rebuilds the
-sprite of brand marks in the Skills section from `skillIcons` in `skills.js`.
-It reads two icon packages that are also installed on demand (see
-[Design](design.md#skill-marks)).
+| Layer | Where | What it covers |
+|---|---|---|
+| Content and logic | `frontend/test/content.test.ts` | Project and experience rules, the font subset, routes round-trip, unique titles, structured data per page, the palette's ranking, the form's rules |
+| Worker | `frontend/worker/test/` | Every status the API returns, the honeypot answering like a real send, the body cap, origin checks, logs without personal data, the limiter's window and alarm, IPv6 keys, email escaping |
+| Invariants | `test/invariants.test.ts` | 7:1 text contrast in both themes, colours only from tokens, a strict CSP with no inline code, each stylesheet loaded once, the Wrangler config, the Node pin, versions, no em dashes |
+| Browser | `frontend/e2e/site.spec.ts` | Every page under the real headers: no console errors, no third-party requests, no cookies, axe (WCAG 2.2 AA and best practice) and the 7:1 rule in light and dark, no sideways scroll from 320 to 2560 px, no text under 14 px, the menu without JavaScript, case study contents and diagrams, the palette as rendered, every state of the form, reduced motion, print, forced colours |
 
-A fourth, also from `frontend/`, is `node scripts/verify-deploy.mjs <origin>`,
-which checks that a deployed origin serves the build in `dist/` under every
-rule in `_headers`. The deploy workflow runs it after publishing (see
-[Testing](testing.md#deploy-check)); it needs a build and no install.
-
-### The prebuild gate
-
-`frontend/package.json` has a `prebuild` script, which npm runs before every
-`npm run build`, from the root or inside `frontend/`: frontend lint, the content
-tests, then the repository invariants. It exists for the deploy:
-`.github/workflows/deploy.yml` builds with `npm run build`, so a commit that
-fails any of the three never replaces the live site (see
-[Deployment](deployment.md#the-deploy-gate)). After a green CI run it repeats
-checks that have just passed; for the weekly snapshot commit and a manual run
-of the workflow, which do not pass through CI, it is the only gate. Locally it
-costs a few seconds and catches the same failures before you push.
-
-To skip it deliberately, for instance while working on a build problem with a
-lint error you already know about, run `npm run build --ignore-scripts` inside
-`frontend/`. CI does exactly that, because it runs the three checks as separate
-steps.
-
----
-
-## Dependencies
-
-Both projects keep their own `package.json` and lockfile; there is no npm
-workspace linking them, so every command below runs per side.
+CI runs the browser suite in Chromium. Firefox and WebKit run by hand:
 
 ```bash
-npm outdated --prefix backend      # what has moved
-npm update   --prefix backend      # apply everything inside the existing ranges
-npm audit --omit=dev --audit-level=high --prefix backend   # the gate CI enforces
+cd frontend
+npx playwright test --project=firefox
+E2E_NO_UPGRADE=1 npx playwright test --project=webkit
 ```
 
-Dependabot opens grouped weekly PRs for minor and patch bumps, each release at
-least seven days old, and is the normal path for keeping current, so a manual
-`npm update` is usually only needed between runs. Majors are deliberately
-excluded from those PRs and are done by hand: read the upgrade guide, bump the
-range in `package.json`, then run the full local gate before pushing
-(`npm run lint` and `npm test` in `backend/`; `npm run build`, which lints and
-runs the content tests and invariants first, then `npm run size` and
-`npm run test:e2e` in `frontend/`). A new dependency's own `engines` can narrow
-the project's: Size Limit 14 is why the frontend needs Node 22.19, 24.5, or 26
-and up.
+WebKit needs `E2E_NO_UPGRADE=1` because Playwright's WebKit applies the CSP's
+`upgrade-insecure-requests` to `http://127.0.0.1` and then loads nothing; the
+test server drops that directive when asked. A test that needs a permission
+only Chromium can grant, or a forced-colours emulation WebKit lacks, skips
+itself there.
 
-Run `npm run install:all` after pulling a Dependabot merge. Otherwise
-`node_modules` stays behind the lockfile, and local builds run on older versions
-than CI and the deploy do.
-
-Three rules apply:
-
-- **Commit the lockfile with the `package.json` change.** CI installs with
-  `npm ci`, which fails outright if the two disagree.
-- **A transitive advisory is still your advisory.** `npm audit fix` resolves
-  most of them by moving a nested version in the lockfile alone, so the fix is
-  a lockfile-only commit with no `package.json` edit. The weekly grouped PRs
-  will not clear one, because they only bump what `package.json` names
-  directly; Dependabot security updates, which are enabled, open their own PR
-  when a patched version fits the dependents' ranges.
-- **When no compatible patch exists, override it, and say when to stop.** In
-  November 2026 every `minimatch` 10.x was vulnerable (GHSA-g3hv-75wg-m249),
-  the fix was 11.0.1, and ESLint 10.14 still required `^10`, so neither
-  Dependabot nor `npm audit fix` could resolve it without downgrading ESLint.
-  Both `package.json` files therefore carry `"overrides": { "minimatch":
-  "^11.0.1" }`. ESLint calls only `new Minimatch(pattern, { dot: true })`,
-  `.match()` and `.pattern`, which minimatch 11 kept, and lint was checked to
-  still ignore `dist/`, catch an error, and apply each config block to its
-  files. Remove the override once `npm view eslint dependencies.minimatch`
-  and `npm view @eslint/config-array dependencies.minimatch` both allow 11:
-  delete the `overrides` key, run `npm install`, and check `npm ls minimatch`
-  still resolves 11.
-
-The audit gate covers production dependencies at high severity and above. A
-dev-dependency finding does not fail CI, but it is still worth clearing while
-the fix is a one-line lockfile bump.
-
----
-
-## Configuration
-
-Both `.env.example` files are annotated templates and are the canonical
-reference for what each variable does. The tables below are the summary.
-
-### `backend/.env`
-
-| Variable | Required | Purpose |
-|----------|----------|---------|
-| `PORT` | no | Listen port. Defaults to 5000; Render sets it automatically |
-| `NODE_ENV` | recommended | `production` suppresses error detail in `500` responses |
-| `RESEND_API_KEY` | yes | API key from [resend.com](https://resend.com) |
-| `EMAIL_FROM` | yes | Verified sender, or `onboarding@resend.dev` for testing |
-| `EMAIL_TO` | yes | Where submissions are delivered |
-| `ALLOWED_ORIGINS` | no | Comma-separated origin allow-list. Unset uses the built-in defaults (`http://localhost:5173` and the site's live domains). Set, it replaces them rather than adding to them, so list every origin that should keep working. Each entry is `scheme://host[:port]` exactly, lower case, with no path or trailing slash |
-| `TRUST_PROXY_HOPS` | no | How many proxies sit in front of the server, which decides whose address the rate limiter counts. Defaults to 3, for Render. Leave it unset locally. On another host, find the right number with the check in [Deployment](deployment.md#checking-the-rate-limiters-key) |
-| `RESEND_TIMEOUT_MS` | no | How long a send waits for Resend before the API answers `502`. Defaults to 10000 |
-
-Missing mail variables are reported once at boot with a `[env] missing: …`
-warning rather than failing the process, so the site stays up if the mail
-provider is misconfigured. Any non-empty value counts as set, which is why the
-template leaves all three empty: a copied placeholder would skip the warning and
-turn the `503` into a `502` from a send that cannot succeed. The same boot log
-names an `ALLOWED_ORIGINS` entry that no browser could match, and a
-`TRUST_PROXY_HOPS` or `RESEND_TIMEOUT_MS` that is not a usable number, in which
-case the default is used.
-
-### `frontend/.env`
-
-| Variable | Required | Purpose |
-|----------|----------|---------|
-| `VITE_API_BASE_URL` | no | Backend URL override. Defaults to the deployed Render backend. A new origin in production also needs `connect-src` in `frontend/public/_headers` and the `dns-prefetch` in `index.html`: see [Deployment](deployment.md#environment-variables) |
-
-`VITE_`-prefixed values are inlined into the client bundle at build time. Never
-put a secret in one.
-
-The template sets `VITE_API_BASE_URL=http://localhost:5000`, so with a copied
-`frontend/.env` every local build calls your local backend, `npm run build`
-included. That is what you want for the contact form, and what the browser
-tests refuse: build with the variable set to the production origin before
-`npm run test:e2e` (see [Testing](testing.md#browser-tests)).
-
----
-
-## Updating site content
-
-Entries, figures and links live in `frontend/src/data/`. Components read from
-it and render automatically, so adding a job or a skill, or changing a project,
-is a data change. The project grid is composed for six cards: a seventh
-renders, but alone on a row, and the core skills' proofs that count "of the six
-projects" fail their test until recounted (see
-[Architecture](architecture.md#data-driven-content)). A few pieces of prose are
-tied to one component and live there instead:
-
-| Change | File |
-|--------|------|
-| New job or internship | `experience.js` |
-| New project | `projects.js`: array order is page order, and the first entry, and only it, carries `featured: true` with three `facts` (`value`, `label`, and the `claim` it restates from Experience or the card). Each card carries exactly one of `github` or `sourceNote`, plus an optional `demo` URL beside `github`, and an `image` with its `imageAlt`. `image` is the stem of four files in `src/assets/projects/` (`<image>-480` and `<image>-960`, each as `.avif` and `.webp`), or six with an optional `imageWidest` cut over 960px; see [Design](design.md#project-cards-one-featured-then-two-then-three) |
-| New skill group or tag | `skills.js`; if the tag is a product with a mark, add it to `skillIcons` there and rebuild the sprite, see [Design](design.md#skill-marks) |
-| A core skill (the ten Skills opens with) | `coreSkills` in `skills.js`: six to twelve `{ name, proof }` entries. A proof names projects by the part of the title before the colon, so renaming a project or changing its stack can fail the content test |
-| Approach copy, a degree, a target role | `about.js` |
-| A figure in the hero's strip | `stats` in `about.js`; the hero renders them |
-| Name, role, location, email, resume link, socials, GitHub username, section order | `portfolio.js`. `role` is shown in the masthead and must match `<title>` and `jobTitle` in `index.html`; `location` also finds the masthead's coordinates in `locations` |
-| A place on the globe | `about.js`: `locations` and its caption. The masthead reads the home city's coordinates from here too, and shows none for a city not listed |
-| GitHub contribution graph | Generated, do not edit: `github-activity.json`, see below |
-| The hero's status line, headline, lead and graduation note | `components/sections/Hero.jsx`. Availability is stated twice, in the status line and in the contact panel's heading line, so change both. If the greeting's words change, re-measure its size factor in `Hero.css` |
-| A section's subtitle | That section's component, passed to `SectionHeader` |
-| The contact panel's text and the form's messages | `components/sections/Contact.jsx` |
-
-Four rules keep the data layer honest. `npm test` in `frontend/` checks the
-first, third and fourth; the second rests on whoever writes the copy:
-
-1. **Figures are restatements, not new claims.** Every figure in the hero's
-   strip is already stated in `experience.js` or `projects.js`: the 985 tests,
-   for instance, restate a RemindrAI bullet in the MemorAIz entry. The
-   featured project's `facts` work the same way, each naming the phrase it
-   restates, and each core skill's `proof` names entries that really use it.
-   Change one side without the other and the test fails rather than the page
-   contradicting itself.
-2. **Every claim must be checkable.** Project copy is written from the
-   project's own repository or report. A figure that cannot be traced to one
-   does not go on the page.
-3. **Entries match their neighbours' density.** Project descriptions run 32 to
-   53 words, highlights 9 to 26, with four or five stack chips; experience
-   bullets 12 to 26 words. When a new fact arrives, drop an older one rather
-   than growing the entry.
-4. **Copy stays inside the font subset.** Arrows and other symbols outside it
-   render in a fallback face, so use `react-icons` for them. The test reads
-   every export of every data module; prose in the components listed above is
-   held to the same rule by hand.
-
-`commands.js` builds the command palette's entries from the other data
-modules, so new content reaches it without being listed again; only the
-Home entry and the Contact group's entries (copy email, resume and profile
-links) are written out there.
-
-### Facts stated twice
-
-`frontend/index.html` carries its own copy of the content for crawlers and link
-previews, and nothing compares it with the data modules. A change of name,
-role, degree, headline, contact details, socials or location therefore also
-needs:
-
-- `index.html`: the `<title>` (it names the city), the meta description, the
-  Open Graph and Twitter text, the `Person` JSON-LD (`jobTitle`, `alumniOf`,
-  `hasCredential`, `knowsAbout`, `sameAs` and the rest) and the `ProfilePage`
-  name and description
-- `frontend/public/humans.txt`, which repeats the name, contact details,
-  socials and location
-- for the name, role or headline, the `NAME`, `ROLE` and `BLURB` constants in
-  `scripts/gen-og-card.mjs`, and a regenerated card (see
-  [Design](design.md#generated-assets)); the card also draws
-  `images/Profile.avif`, so a new portrait needs one too
-
-The projects are the exception: their structured data, a JSON-LD `ItemList`,
-is generated from `projects.js` by `scripts/prerender.mjs` at build time, so a
-card change needs nothing in `index.html`. A card with a public repository
-becomes `SoftwareSourceCode` with its `codeRepository`; one with a
-`sourceNote` becomes a plain `CreativeWork`, so a private repository is never
-named. A browser test checks the list against the rendered cards.
-
-Each project's copy is also repeated outside this repository, where no test
-can see it: the Featured Projects tables in the GitHub profile README
-(`syed-waleed-ahmed/syed-waleed-ahmed`), the Projects section on LinkedIn, the
-resume, and the project repository's own About text and social preview image,
-which each public project repository commits as a `social-preview.png` under
-`docs/`. The
-repository stays the source of truth, so a figure that changes there moves the
-card and these copies together. LinkedIn shows a project's social preview as
-its thumbnail and caches it, so after a new preview, inspect the repository's
-URL once in LinkedIn's Post Inspector to refresh it.
-
-Any user-visible content change also moves three dates together: `dateModified`
-in the `ProfilePage` JSON-LD in `index.html` (a full date-time such as
-`2026-11-22T00:00:00+01:00`, since Google's profile-page markup reports a bare
-date as invalid), `<lastmod>` in `public/sitemap.xml` and `Last update` in
-`public/humans.txt`. The repository invariants fail if the three disagree or
-`dateModified` is a bare date, but cannot tell whether they are
-current, so moving them is still part of the change. The weekly snapshot commit
-does not count as a content change.
-
-The contribution graph reads a committed snapshot,
-`frontend/src/data/github-activity.json`. The `refresh-activity.yml` workflow
-regenerates it every Monday, commits the result to `main` and publishes that
-commit, so a local `main` will need a `git pull`. To refresh
-it outside that schedule, run
-`node frontend/scripts/fetch-github-activity.mjs`. A failed run leaves the last
-good snapshot in place. Deleting the workflow stops the commits, and the graph
-then shows its age in its label.
-
-A new section needs an entry in `sections` in `portfolio.js`, a component in
-`components/sections/`, and a line in the `SECTION_COMPONENTS` map in
-`App.jsx`, plus an icon in `SECTION_ICONS` in `Dock.jsx` (it falls back to a
-generic one). Its `SectionHeader` id must be `<section id>-title`. Where the
-entry sits in `sections` is where the section sits on the page, in the dock
-and in the palette, and the headers number themselves from that order. Its
-stylesheet goes beside the component and is listed in `styles/sections.css`,
-not imported by the JSX: see [Design](design.md#three-stylesheets-loaded-in-order).
-
-Visual changes are governed by the token system: read
-[Design](design.md) before touching colours, type sizes or the Projects grid.
-
----
-
-## Code conventions
-
-- **ES modules everywhere**, both projects. All three `package.json` files set
-  `"type": "module"`.
-- **Imports use the `@/` alias** in the frontend rather than relative paths
-  that climb directories.
-- **Editor settings come from `.editorconfig`**: UTF-8, LF, two-space indent,
-  final newline, trimmed trailing whitespace (except in Markdown, where
-  trailing spaces are a line break).
-- **Line endings are normalized to LF** by `.gitattributes`: checkouts get LF on
-  every OS, and a file an editor saves with CRLF produces no whole-file diff.
-- **Comments explain why, not what.** The existing code comments are the
-  reference for tone and density; match them rather than annotating obvious
-  lines.
-- **No em dashes** in code, comments, copy or docs. This is a deliberate
-  house style, applied across the repository, and the repository invariants
-  fail on any tracked or new file that has one.
-
-`npm run lint` from the root lints both projects. Each has its own flat config
-built on ESLint's recommended rules: the frontend adds the React Hooks and
-React Refresh plugins for the browser, and `backend/eslint.config.js` sets Node
-globals. They hold correctness, not formatting; style is held by
-`.editorconfig` and review. The frontend's rules cover its `.mjs` build scripts
-and test server as well as `.js` and `.jsx`. The two scripts at the repository
-root, `scripts/gen-og-card.mjs` and `test/invariants.test.js`, belong to
-neither project and are linted by neither.
-
----
-
-## Development workflow
-
-1. Branch from `main`, which is what deploys. CI holds the frontend back: it is
-   published only once every job has passed on a push to `main`. Render holds
-   the backend back the same way, by a setting in its dashboard (Auto-Deploy:
-   After CI Checks Pass). Run the checks before merging all the same.
-2. Make the change, keeping documentation in step with behaviour.
-3. Run the checks that apply:
-   ```bash
-   npm run lint                         # frontend and backend
-   npm test --prefix frontend           # content changes
-   npm run test:invariants              # any change
-   npm run build                        # frontend changes; runs frontend lint and the two tests above first
-   npm run size --prefix frontend       # frontend changes, after the build
-   npm run test:e2e --prefix frontend   # UI changes, after a build against the production API origin
-   npm test                             # backend changes
-   ```
-4. Update [`api.md`](api.md) and the Postman collection if you changed the API
-   surface, and add an entry under `Unreleased` in
-   [`CHANGELOG.md`](../CHANGELOG.md) if the change is user-visible.
-5. Open a PR and fill in the template. CI runs lint, the content tests, the
-   invariants, a build, the size budgets, the browser suite, the backend tests,
-   `npm audit` and a gitleaks scan on every push to `main` and every pull
-   request against it.
-
-Full contributor guidance, including commit message conventions, is in
-[`CONTRIBUTING.md`](../CONTRIBUTING.md).
-
----
+What is not tested automatically: real delivery through Resend (the Worker
+tests replace the mailer, and the live check reads only whether the secrets
+are set), and the truth of the content, which no test can judge.
 
 ## Troubleshooting
 
-**`npm run install:all` fails with `EBADENGINE` / "Unsupported engine".**
-Your Node version is outside the frontend's `^22.19.0 || ^24.5.0 || >=26.0.0`
-(which excludes Node 25), or below the backend's 22.13. Run `nvm use` (or
-install Node 24). This is `engine-strict=true` in the root `.npmrc` doing its
-job; an install inside `frontend/` or `backend/` prints the same warning
-without stopping.
-
-**`npm run build` stops before Vite starts.**
-The prebuild gate failed: an ESLint error, a content test or a repository
-invariant. The output above the npm error names which, and each invariant's
-message says what to change. Fix it, or for a deliberate local build skip the
-gate with `npm run build --ignore-scripts` inside `frontend/`. The deploy
-workflow never skips it, so the same commit would not be published.
-
-**`npm run test:e2e` exits with "frontend/dist was built with VITE_API_BASE_URL set".**
-`frontend/.env` pointed the build at your local backend, and the real CSP the
-suite serves would block that origin. Rebuild with the variable set to the
-production origin, which works in any shell:
-`VITE_API_BASE_URL=https://portfolio-backend-kmum.onrender.com npm run build` in
-bash, or `$env:VITE_API_BASE_URL='https://portfolio-backend-kmum.onrender.com'`
-then `npm run build` in PowerShell (the variable lasts for that session).
-Clearing it with `''` instead works in bash and PowerShell 7.5+, but older
-PowerShell deletes an empty variable, so the build reads `frontend/.env` again.
-"frontend/dist is missing" means there is no build at all yet.
-
-**`npm run test:e2e` fails with "Executable doesn't exist".**
-Playwright's browser is not installed for this version. Run
-`npx playwright install chromium` in `frontend/`, once per machine and again
-after a Playwright upgrade.
-
-**The contact form returns `503 Email service is not configured.`**
-One of `RESEND_API_KEY`, `EMAIL_FROM`, `EMAIL_TO` is missing from
-`backend/.env`. The boot log lists exactly which.
-
-**The contact form returns `502 Email delivery failed.`**
-Resend rejected the send, or could not be reached at all: the SDK reports a
-network failure the same way. The usual cause is an `EMAIL_FROM` address on an
-unverified domain, or a placeholder API key. Use `onboarding@resend.dev` while
-testing. The real provider error is in the server log, not the response.
-
-**The browser console shows a CORS error against localhost.**
-Your frontend origin is not on the allow-list. The defaults cover
-`http://localhost:5173`; if Vite picked a different port because 5173 was busy,
-set `ALLOWED_ORIGINS` in `backend/.env` to include that origin. It replaces the
-defaults, so list `http://localhost:5173` as well if you still need it.
-
-**The contact form fails with a connection error against localhost.**
-`VITE_API_BASE_URL` in `frontend/.env` and `PORT` in `backend/.env` have to
-name the same port. Both templates default to 5000, as do the docs and the
-Postman local environment; change one and you have to change the other. Note
-that Vite reads `.env` at startup, so restart the dev server after editing it.
-
-**The contact form works in Postman but not in the browser.**
-Same cause. Postman sends no `Origin` header and so is never subject to CORS,
-while the browser is. Check the response for an `Access-Control-Allow-Origin`
-header.
-
-**`429 Too many requests` while testing.**
-The limiter allows 5 submissions per IP per 15 minutes. Restart the backend to
-clear the in-memory counter.
-
-**`prerender: <div id="root"></div> not found in dist/index.html`.**
-The root element in `frontend/index.html` was edited. The prerender script
-finds it by exact string match, so it must stay an empty
-`<div id="root"></div>`. With the prebuild gate in place, the repository
-invariants report this before the build starts.
-
-**`git push` is rejected as non-fast-forward on `main`.**
-The weekly workflow may have committed a new contribution snapshot since your
-last pull. Run `git pull --rebase` and push again.
-
-**A hydration error in the browser console.**
-Something renders differently at build time than in the browser: a date, a
-random value, or a read of `window` during render. Move browser-only values
-into an effect, or fix them at build time as the footer year is. The dev server
-does not hydrate, so this only shows on a built page (`npm run preview` in
-`frontend/`).
-
-**Analytics stopped reporting after an edit to `index.html`.**
-The inline analytics snippet is pinned in the CSP by SHA-256 hash. Any change,
-including whitespace, invalidates it and the browser blocks the script with no
-visible symptom. The repository invariants fail on it first, with the new
-value in the message, so this should only reach the live site if the gate was
-skipped. Recompute the hash as described in
-[Deployment](deployment.md#the-inline-analytics-hash).
-
-**Stale content on the live site after a deploy.**
-HTML and images revalidate on every visit, so a hard refresh should be enough.
-If a visitor is stuck on a much older build, they may still have the retired
-service worker installed (see
-[Deployment](deployment.md#stale-service-worker-recovery)). If the site has not
-changed at all, look at the `deploy` job of the commit's CI run: when another
-job fails, the frontend is never published.
-
----
-
-## Related documents
-
-- [Architecture](architecture.md) - how the pieces fit together
-- [API reference](api.md) - endpoints and error codes
-- [Testing](testing.md) - what the suites, budgets and link check cover, and how to run them
-- [Design](design.md) - the token system and layout invariants
-- [Deployment](deployment.md) - Cloudflare Workers, Render and the header files
+| Symptom | Cause |
+|---|---|
+| `npm ci` fails with `EPERM` on Windows | Vite or the test server holds a native binary open. Stop them first. |
+| A Git Bash argument `/` became `C:/Program Files/Git/` | Git Bash path conversion. Prefix the command with `MSYS_NO_PATHCONV=1`. |
+| The form says the server could not be reached in development | `npm run dev:api` is not running. |
+| `npm run build` stops before Vite | The prebuild gate failed; its output names the check. |
+| A hydration warning in the console | Something renders differently at build time and in the browser. Move it into an effect. |

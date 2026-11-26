@@ -1,133 +1,47 @@
-/* Everything the page changes for paper, in one stylesheet of its own.
-   App.jsx links it with media="print", so a browser fetches it at low
-   priority and it never holds up the first paint: until November 2026 these
-   rules sat beside each component, inside the stylesheet every visitor waits
-   for, and took about 300 bytes of its 8 kB budget.
-
-   The layer statement repeats the one in index.css, so the order holds
-   whichever sheet a browser parses first. Each rule sits in the layer of the
-   rule it overrides, and wins there by coming later: App.jsx links this
-   sheet last, after the entry stylesheet and after styles/sections.css, and
-   the invariants test holds it there.
-
-   When a component gains something paper should not show, or should show
-   differently, the rule goes here, not beside the component. */
-@layer reset, tokens, base, layout, components, utilities;
-
+/* Paper: ink on white, no chrome, links spelled out, nothing hidden. */
 @media print {
-  /* The dark palette would print as pale grey on white, and every component
-     reads the tokens, so paper is one override. The only colours written
-     outside tokens.css: the invariants test allows them here, as token
-     values and nowhere else. */
   @layer tokens {
     :root {
-      color-scheme: light;
-      --color-bg: #fff;
-      --color-surface: #fff;
-      --color-surface-raised: #fff;
-      --color-border: #d4d8de;
-      --color-border-strong: #b6bcc5;
-      --color-border-field: #8a919c;
-      --color-text-strong: #111;
-      --color-text: #222;
-      --color-text-soft: #333;
-      --color-text-muted: #555;
-      --color-accent: #0b5f70;
-      --color-accent-hover: #0b5f70;
-      --color-accent-border: #b6bcc5;
-      --color-success: #166534;
-      --color-warning: #854d0e;
-      --color-danger: #b91c1c;
-      --shadow-md: none;
-      --shadow-lg: none;
+      --color-bg: #ffffff;
+      --color-surface: #ffffff;
+      --color-sunk: #ffffff;
+      --color-ink-strong: #000000;
+      --color-ink: #111111;
+      --color-ink-soft: #222222;
+      --color-ink-muted: #333333;
+      --color-accent: #000000;
+      --color-rule: #bbbbbb;
+      --color-rule-strong: #888888;
     }
   }
 
-  /* Sections flow across pages, since keeping one whole left half of page
-     one blank. Only the small units stay together. */
-  @layer layout {
-    .section {
-      padding-block: 1.5rem;
-    }
-
-    .stats,
-    .core,
-    .school,
-    .roles,
-    .skills__row,
-    .project-card,
-    .experience,
-    .section-header {
-      break-inside: avoid;
-    }
-  }
-
-  @layer components {
-    /* What only a screen has a use for: the navigation, the decoration, and
-       the two widgets that draw themselves with JavaScript. */
+  @layer utilities {
+    .site-header,
+    .site-footer__links,
     .skip-link,
-    .dot-field,
-    .reading-progress,
-    .dock-shell,
-    .hero__caret,
-    .experience__chevron,
-    .activity,
-    .location-globe,
-    .more summary,
-    .project-card::before,
-    .project-card::after {
+    .hero__cta,
+    .contact-form,
+    .case__toc,
+    .hero__caret {
       display: none;
     }
 
-    /* Printing lays the page out without scrolling it, so anything the
-       visitor had not scrolled to yet would print blank. Paper gets it all,
-       at once. The project cards carry the reveal's transition in a rule of
-       their own, so they are named too. */
-    [data-reveal],
-    .project-card {
-      transition: none;
+    .section,
+    .case__section,
+    .project,
+    .role {
+      break-inside: avoid-page;
     }
 
-    [data-reveal="pending"] {
-      opacity: 1;
-      translate: none;
-      filter: none;
+    a[href^="http"]::after {
+      content: " (" attr(href) ")";
+      font-size: 0.85em;
+      color: var(--color-ink-muted);
+      overflow-wrap: anywhere;
     }
 
-    /* The hero is a full screen on a desktop; on paper it is its own
-       height, and the name is ink rather than a gradient clipped to text. */
-    .hero,
-    .hero__stage {
-      min-block-size: 0;
-      padding-block: 1rem;
-    }
-
-    .hero__name {
-      background: none;
-      color: inherit;
-    }
-
-    /* No glare on paper, so the pictures are not dimmed, and the featured
-       card's well loses its light. */
-    .project-card__image {
-      filter: none;
-    }
-
-    .project-card--featured .project-card__picture {
-      background-image: none;
-    }
-
-    /* A closed row would otherwise drop its bullets from a printed page, a
-       project card its description and Skills its inventory. */
-    .experience::details-content,
-    .more::details-content {
-      block-size: auto;
-      content-visibility: visible;
-    }
-
-    /* No dock to keep clear of. */
-    .site-footer {
-      padding-block-end: var(--space-4);
+    .section__head {
+      position: static;
     }
   }
 }
