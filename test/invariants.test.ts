@@ -161,7 +161,7 @@ test("local Wrangler commands use the version the deploy pins", () => {
   const pinned = read(".github/workflows/deploy.yml").match(/wranglerVersion:\s*"([^"]+)"/)?.[1];
   assert.ok(pinned, "deploy.yml pins no wranglerVersion");
   const devApi = JSON.parse(read("frontend/package.json")).scripts["dev:api"] as string;
-  assert.match(devApi, new RegExp(`wrangler@${pinned.replace(/\./g, "\.")} `), `dev:api must run wrangler@${pinned}`);
+  assert.ok(devApi.includes(`wrangler@${pinned} `), `dev:api must run wrangler@${pinned}`);
   for (const [, version] of read("docs/deployment.md").matchAll(/npx wrangler@(\S+)/g)) {
     assert.equal(version, pinned, "docs/deployment.md names another Wrangler version");
   }
