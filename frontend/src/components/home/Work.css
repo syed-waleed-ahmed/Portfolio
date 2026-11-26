@@ -124,6 +124,16 @@
     max-width: var(--measure);
   }
 
+  /* On a phone a row is the project's name, what it is, what was measured
+     and where to read more: the summary and the pipeline are on its case
+     study, and five of each made the page several screens longer. */
+  @media (max-width: 47.99rem) {
+    .project__body > p:first-child,
+    .project__body > .pipeline {
+      display: none;
+    }
+  }
+
   .project__evidence {
     padding-inline-start: var(--space-4);
     border-inline-start: 2px solid var(--color-accent);

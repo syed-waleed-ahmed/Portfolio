@@ -149,6 +149,29 @@
     border: 1px dashed var(--color-rule-strong);
   }
 
+  /* On a phone the skills read as plain lists: the same words, a third of
+     the height the pills took. */
+  @media (max-width: 47.99rem) {
+    .skills .tags {
+      display: block;
+      font-family: var(--font-sans);
+      font-size: var(--text-sm);
+      color: var(--color-ink);
+
+      & li,
+      &.tags li {
+        display: inline;
+        padding: 0;
+        background: none;
+        border: 0;
+      }
+
+      & li:not(:last-child)::after {
+        content: ", ";
+      }
+    }
+  }
+
   /* ===== Contact ===== */
   .contact {
     display: grid;
