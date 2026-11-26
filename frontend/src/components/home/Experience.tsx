@@ -1,6 +1,7 @@
 import { LuArrowRight } from "react-icons/lu";
 import Section from "@/components/ui/Section";
 import { experience } from "@/content/experience.ts";
+import { projectBySlug } from "@/content/projects.ts";
 import { caseStudyPath } from "@/routes.ts";
 
 export default function Experience() {
@@ -27,7 +28,7 @@ export default function Experience() {
               {role.caseStudy && (
                 <p>
                   <a href={caseStudyPath(role.caseStudy)}>
-                    The thesis project in depth
+                    Case study<span className="visually-hidden">: {projectBySlug(role.caseStudy)?.title}</span>
                     <LuArrowRight className="icon" aria-hidden="true" />
                   </a>
                 </p>
