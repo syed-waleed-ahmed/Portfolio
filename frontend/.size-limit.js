@@ -1,4 +1,6 @@
-// Size budgets, checked by `npm run size` after a build.
+// Size budgets, checked by `npm run size` after a build. None is looser than
+// the budget it replaced in 3.0.0, though the page budgets now also count the
+// modules each page preloads.
 //
 // Vite names a shared chunk after the module it starts with, so the files a
 // page loads change name as the code changes. The page budgets therefore read
@@ -17,8 +19,8 @@ const scriptsOf = (page) => {
 };
 
 export default [
-  { name: "Home page scripts (entry and preloads)", path: scriptsOf("index.html"), gzip: true, limit: "90 kB" },
-  { name: "Case study page scripts, before its own chunk", path: scriptsOf("work/remindrai/index.html"), gzip: true, limit: "90 kB" },
+  { name: "Home page scripts (entry and preloads)", path: scriptsOf("index.html"), gzip: true, limit: "87 kB" },
+  { name: "Case study page scripts, before its own chunk", path: scriptsOf("work/remindrai/index.html"), gzip: true, limit: "87 kB" },
   {
     name: "Largest case study chunk",
     path: "dist/assets/remindrai-*.js",
@@ -28,5 +30,5 @@ export default [
   { name: "The stylesheet every page waits for", path: "dist/assets/index-*.css", gzip: true, limit: "6.5 kB" },
   { name: "Command palette (cmdk), fetched on intent", path: ["dist/assets/CommandPalette-*.js", "dist/assets/CommandPalette-*.css"], gzip: true, limit: "20 kB" },
   { name: "The one font file", path: "dist/fonts/*.woff2", gzip: false, brotli: false, limit: "36 kB" },
-  { name: "Case study screenshots, lazy, AVIF", path: "dist/assets/*.avif", gzip: false, brotli: false, limit: "240 kB" },
+  { name: "Case study screenshots, lazy, AVIF", path: "dist/assets/*.avif", gzip: false, brotli: false, limit: "238 kB" },
 ];
