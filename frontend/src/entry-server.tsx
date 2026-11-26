@@ -25,4 +25,4 @@ export const pages = PAGES.map((route) => ({
   html: render(route),
 }));
 
-export { SITE } from "@/content/site.ts";
+export { PERSON, SITE } from "@/content/site.ts";

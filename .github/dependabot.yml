@@ -12,15 +12,12 @@ updates:
     # are not delayed by this.
     cooldown:
       default-days: 7
-    # Group minor + patch into a single PR. Skip majors - a major bump can
-    # break the app and deserves a manual read of the changelog, not an
-    # auto-PR. (Contrast the github-actions block below.)
+    # Minor and patch updates arrive as one grouped PR. A major is left out of
+    # the group, so each arrives as its own PR, to be read against its
+    # changelog; ignoring majors meant never hearing of them.
     groups:
       minor-and-patch:
         update-types: ["minor", "patch"]
-    ignore:
-      - dependency-name: "*"
-        update-types: ["version-update:semver-major"]
     commit-message:
       prefix: "chore(deps)"
       prefix-development: "chore(deps-dev)"
@@ -39,11 +36,11 @@ updates:
     # are not delayed by this.
     cooldown:
       default-days: 7
-    # Majors are NOT ignored here, unlike the npm blocks above. An Action's
-    # major is how it ships a new runner (node20 -> node24) or drops a
-    # deprecated input - it's the update you most need, and skipping them is
-    # what left checkout/setup-node three majors behind and gitleaks two.
-    # They're grouped so it stays one PR to review.
+    # Majors are grouped with everything else here, unlike npm above. An
+    # Action's major is how it ships a new runner (node20 -> node24) or drops a
+    # deprecated input, the update you most need; skipping them is what left
+    # checkout/setup-node three majors behind and gitleaks two. One group keeps
+    # it to one PR to review.
     groups:
       actions:
         patterns: ["*"]

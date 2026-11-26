@@ -4,6 +4,15 @@ Notable changes, newest first, in the [Keep a Changelog](https://keepachangelog.
 
 ## [Unreleased]
 
+### Added
+
+- `/.well-known/security.txt` (RFC 9116), naming the private vulnerability report and the email address.
+
+### Changed
+
+- The first screen has no buttons again, as asked before 4.0.0 brought two back.
+- On a phone the featured project leaves its pipeline to the case study, like the other five.
+
 ## [4.0.0] - 2026-11-26
 
 A rebuild of the site's content, design and contact service, following an independent audit of 3.0.0.

@@ -81,7 +81,8 @@ reviewed; the sitemap and the footer read it.
 | Invariants | `test/invariants.test.ts` | 7:1 text contrast in both themes, colours only from tokens, a strict CSP with no inline code, each stylesheet loaded once, the Wrangler config, the Node pin, versions, no em dashes |
 | Browser | `frontend/e2e/site.spec.ts` | Every page under the real headers: no console errors, no third-party requests, no cookies, axe (WCAG 2.2 AA and best practice) and the 7:1 rule in light and dark, no sideways scroll from 320 to 2560 px, no text under 14 px, the menu without JavaScript, case study contents and diagrams, the palette as rendered, every state of the form, reduced motion, print, forced colours |
 
-CI runs the browser suite in Chromium. Firefox and WebKit run by hand:
+CI runs the browser suite in Chromium, Firefox and WebKit, one job each. To run
+one engine locally:
 
 ```bash
 cd frontend

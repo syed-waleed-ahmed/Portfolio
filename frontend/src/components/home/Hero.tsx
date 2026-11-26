@@ -1,7 +1,5 @@
-import { LuArrowRight } from "react-icons/lu";
 import { PORTRAIT } from "@/content/portrait.ts";
 import { languageList, PERSON } from "@/content/site.ts";
-import { caseStudyPath } from "@/routes.ts";
 
 // The first screen answers a recruiter's questions in order: who this is, what
 // they build, the strongest evidence for it, and the practical facts (where,
@@ -29,16 +27,6 @@ export default function Hero() {
             My MSc thesis at MemorAIz was RemindrAI: a multi-tenant reminder service that AI assistants embed, with retry-safe
             delivery over four channels and an agent that a prompt injection cannot point at another user&apos;s data. Each
             project below has a case study with its architecture, how it was evaluated, and what did not work.
-          </p>
-
-          <p className="hero__cta">
-            <a className="button" href={caseStudyPath("remindrai")}>
-              Read the RemindrAI case study
-              <LuArrowRight className="icon" aria-hidden="true" />
-            </a>
-            <a className="button button--quiet" href="#work">
-              All projects
-            </a>
           </p>
         </div>
 

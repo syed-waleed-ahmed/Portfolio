@@ -106,8 +106,9 @@
 
   /* On a phone a row is the project's name, what it is, what was measured
      and where to read more: the summary and the pipeline are on its case
-     study, and five of each made the page several screens longer. */
+     study, and six of each made the page several screens longer. */
   @media (max-width: 47.99rem) {
+    .feature > .pipeline,
     .project__body > p:first-child,
     .project__body > .pipeline {
       display: none;
