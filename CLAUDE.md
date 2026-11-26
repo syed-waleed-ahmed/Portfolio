@@ -37,8 +37,9 @@ suite; a new dependency or a change to what the entry imports needs `npm run siz
 ## Architecture in brief
 
 - `src/routes.ts` lists every page (`PAGES`); `scripts/prerender.mjs` writes each to `dist/` with its head from
-  `src/head.ts` and generates `sitemap.xml`. `main.tsx` matches the URL, loads that page's chunk (preloaded from Vite's manifest), and hydrates.
-  Render output must be identical at build time and in the browser: read `window`, dates or randomness in effects.
+  `src/head.ts`, preload links for the page's chunks from Vite's manifest, and `sitemap.xml`, `_redirects` and
+  `.well-known/security.txt`. `main.tsx` matches the URL, loads that page's chunk, and hydrates. Render output must
+  be identical at build time and in the browser: read `window`, dates or randomness in effects.
 - Facts live once in `src/content/` (`site.ts`, `projects.ts`, `experience.ts`, `skills.ts`). These, `routes.ts`,
   `head.ts`, `commands.ts` and `src/shared/` use relative `.ts` imports and no JSX, because Node loads them with type
   stripping for the tests, the prerender and the Worker. The invariants test enforces it. Elsewhere use the `@/` alias.

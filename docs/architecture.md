@@ -102,11 +102,12 @@ its diagrams as data (`components/case-study/Diagram.tsx` draws them).
 | 405, 415, 413 | Wrong method, content type, or size |
 | 429 | Over the limit, with `Retry-After` |
 | 502 | Resend refused, could not be reached, or did not answer in 10 seconds |
-| 503 | The mail secrets are not set |
+| 503 | The mail secrets are not set, or the rate limiter could not answer |
 | 500 | Anything else; no detail is returned |
 
 `GET /api/health` answers `{ status: "ok", mailer: "configured" | "missing" }`
-and is what the deploy verification reads.
+and is what the deploy verification reads. Any other path under `/api/`
+answers 404, with the same API headers.
 
 The order is parse, validate, limit, honeypot, send: a body that cannot be
 parsed or does not validate costs no quota, so a visitor fixing a typo is never
@@ -135,6 +136,9 @@ visitor typed.
 - **Secrets:** the Resend key and the mail addresses are Worker secrets, set
   with Wrangler; none is in the repository. CI runs gitleaks over the full
   history and `npm audit` on production dependencies.
+- **Reporting:** `SECURITY.md`, and `/.well-known/security.txt` (RFC 9116),
+  which the prerender writes so its required expiry date moves forward with
+  every deploy.
 
 The privacy page (`src/pages/PrivacyPage.tsx`) states the processing in plain
 words. It makes no claim of legal compliance.
@@ -143,9 +147,10 @@ words. It makes no claim of legal compliance.
 
 | Decision | Instead of | Why, and the cost |
 |---|---|---|
-| Keep React, Vite and a hand-written prerender | Moving to Astro or Next.js | The prerender is a short script and already gives static HTML per page; a framework migration would rewrite working code for little gain. The cost is that every page hydrates the full React runtime, about 86 kB gzipped of script. |
+| Keep React, Vite and a hand-written prerender | Moving to Astro or Next.js | The prerender is a short script and already gives static HTML per page; a framework migration would rewrite working code for little gain. The cost is that every page hydrates React: with its own chunk, a page loads 79 to 90 kB of gzipped script. |
 | Strict TypeScript, version 6 | TypeScript 7 | typescript-eslint supports TypeScript below 6.1. Types replace several content tests, such as a project having exactly one kind of source. |
 | The contact API in the site's Worker | Express on Render's free tier | Render slept after 15 minutes, so the first message waited up to a minute; it also needed CORS, a guessed proxy count for rate limiting and dashboard-only settings. The Worker has none of those. The cost is a one-time secret setup and a Durable Object for exact limits. |
+| Each page's body as its own chunk, preloaded | One bundle with every page in it | A case study or the privacy page no longer downloads the home page's components. The cost is more, smaller files, and a build step that reads Vite's manifest to write the preload links. |
 | A Durable Object for the rate limit | Cloudflare's rate-limiting binding | The binding counts per data centre over 10 or 60 seconds only. |
 | No analytics | Google Analytics behind a consent banner | It was the heaviest script on the page (179 kB) and the only reason for cookies. Cloudflare's own request statistics remain. |
 | Keep the command palette, rank results in code | Removing it, or cmdk's built-in filter | It is the fastest way across six case studies. cmdk 1.1.1 cannot reorder its groups, so it only moves the selection. |

@@ -8,15 +8,17 @@ configured in `frontend/wrangler.jsonc` and published by
 
 1. A pull request runs CI (`ci.yml`): lint, type check, unit and Worker
    tests, repository invariants, a build, size budgets and `npm audit` in one
-   job; the browser suite in a second; gitleaks over the full history in a
-   third. Nothing is published from a pull request.
-2. A push to `main` runs the same jobs, and once all three pass, calls
+   job; the browser suite in Chromium in another, and in Firefox and WebKit in
+   one job each; gitleaks over the full history in the last. Nothing is
+   published from a pull request.
+2. A push to `main` runs the same jobs, and once all of them pass, calls
    `deploy.yml`, which builds again behind the prebuild gate and runs
    `wrangler deploy`. Cloudflare switches to the new version only when the
    upload has finished, so a cancelled run leaves the previous one live.
 3. `scripts/verify-deploy.mjs` then checks the live origin: it serves this
    build's entry script, applies every rule in `_headers`, answers every page
-   in the sitemap, answers unknown paths with the 404 page and a 404,
+   in the sitemap, redirects each of those pages asked for without its trailing
+   slash with a 301, answers unknown paths with the 404 page and a 404,
    redirects HTTP and `www` to the apex, and reports the Worker healthy with
    its mail secrets set. Any failure fails the run.
 
