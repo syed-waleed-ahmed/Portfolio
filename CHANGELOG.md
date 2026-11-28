@@ -4,6 +4,10 @@ Notable changes, newest first, in the [Keep a Changelog](https://keepachangelog.
 
 ## [Unreleased]
 
+## [4.1.1] - 2026-11-28
+
+Follow-ups to 4.1.0: the home page says each thing once, links use plain names, and the address bar stays clean.
+
 ### Changed
 
 - Nothing on the home page is said twice: the first screen no longer restates the thesis project or the case-study promise that the sections below give, so it fits on one screen with the facts row, and About no longer repeats the traineeship's wording from Experience. The Research Team case study's opening paragraph no longer repeats its summary.
@@ -514,7 +518,8 @@ A rebuild of the site's content, design and contact service, following an indepe
 - Initial React portfolio: hero, about, experience, projects, skills,
 - MIT licence and first
 
-[Unreleased]: https://github.com/syed-waleed-ahmed/Portfolio/compare/v4.1.0...HEAD
+[Unreleased]: https://github.com/syed-waleed-ahmed/Portfolio/compare/v4.1.1...HEAD
+[4.1.1]: https://github.com/syed-waleed-ahmed/Portfolio/compare/v4.1.0...v4.1.1
 [4.1.0]: https://github.com/syed-waleed-ahmed/Portfolio/compare/v4.0.0...v4.1.0
 [4.0.0]: https://github.com/syed-waleed-ahmed/Portfolio/compare/v3.0.0...v4.0.0
 [3.0.0]: https://github.com/syed-waleed-ahmed/Portfolio/compare/v2.6.4...v3.0.0
