@@ -10,6 +10,10 @@ Notable changes, newest first, in the [Keep a Changelog](https://keepachangelog.
 - The resume is linked from the header only, no longer also from Contact and the command palette, and links use plain names: "Source" in the footer and "Case study" in Experience.
 - The address bar stays clean: a section link, a case study's contents or the skip link scrolls to its target without adding `#contact` or similar to the address, and an address that arrives with one opens at that section and drops it.
 
+### Fixed
+
+- The review date in the footer, the privacy page, the sitemap and the structured data names 2026-11-26, the day the copy above last changed, instead of the day before.
+
 ## [4.1.0] - 2026-11-26
 
 Follow-ups to 4.0.0 from a re-audit of the live site.
