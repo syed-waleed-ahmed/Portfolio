@@ -8,7 +8,7 @@ export const SITE = {
   repository: "https://github.com/syed-waleed-ahmed/Portfolio",
   // The day the content was last reviewed. The sitemap, the ProfilePage
   // structured data and the footer show it.
-  updated: "2026-11-25",
+  updated: "2026-11-26",
 } as const;
 
 export interface Language {
