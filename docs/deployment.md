@@ -49,10 +49,17 @@ verification fails, which is the intended signal.
 The sender's domain is verified in Resend (region Ireland). That rests on
 four records in the Cloudflare zone, all DNS only: the DKIM key
 `resend._domainkey` (TXT), `send` and `rsend` (CNAMEs to Resend's servers),
-and `_dmarc` (TXT, `v=DMARC1; p=none;`, which only monitors). Removing any of
-them stops delivery, and nothing in this repository would notice; Resend's
-Domains page shows the status. The domain has no MX record, because nothing
-receives mail there.
+and `_dmarc` (TXT). Removing any of them stops delivery, and nothing in this
+repository would notice; Resend's Domains page shows the status. The domain
+has no MX record, because nothing receives mail there.
+
+The same records keep others from sending as the domain. `_dmarc` is
+`p=reject`, and its `rua` address is Cloudflare's, so reports appear under
+Email, DMARC Management. Resend's mail passes because its DKIM signature is
+for the apex and its envelope sender is `send`, which aligns with it. The
+apex itself has `v=spf1 -all`, because nothing sends from the bare domain. A
+new sender would need its own DKIM key in the zone before its first message,
+or receivers drop it.
 
 The first deploy with the Worker also creates the `ContactLimiter` Durable
 Object class (the `v1` migration in `wrangler.jsonc`). SQLite-backed Durable
@@ -70,7 +77,8 @@ The `production` environment accepts deployments from `main` only.
 ## Domain
 
 `syedwaleedahmed.me` is registered at Spaceship until 2027-12-22, with
-auto-renew on; the registrar only names Cloudflare's nameservers. Nothing here
+auto-renew off, so it has to be renewed by hand before then; the registrar
+only names Cloudflare's nameservers and holds the DS record. Nothing here
 watches the expiry, so check it each December. The zone is on Cloudflare's
 free plan, in the same account as the Worker.
 
@@ -83,6 +91,19 @@ both after every deploy:
 |---|---|---|
 | Always Use HTTPS | SSL/TLS, Edge Certificates | `http://` answers 301 to `https://` |
 | Redirect rule `https://www.*` to `https://${1}` | Rules, Redirect Rules | `www` answers 301 to the apex |
+
+Three more are set there and checked by nothing:
+
+| Setting | Where | Effect |
+|---|---|---|
+| Minimum TLS Version 1.2 | SSL/TLS, Edge Certificates | TLS 1.0 and 1.1 handshakes fail |
+| Certificate Transparency Monitoring | SSL/TLS, Edge Certificates | The account's email hears of every certificate a CA issues for the domain |
+| DNSSEC | DNS, Settings | Cloudflare signs the zone; the DS record is at Spaceship |
+
+Before moving the nameservers or the registration away from Cloudflare and
+Spaceship, delete the DS record at Spaceship and wait a day. A DS that names a
+key the new nameservers do not hold makes validating resolvers refuse the
+domain.
 
 The canonical origin is `SITE.url` in `frontend/src/content/site.ts`; the
 first route and `SITE_URL` in `deploy.yml` must match it, which the
