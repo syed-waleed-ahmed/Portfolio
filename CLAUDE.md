@@ -90,7 +90,9 @@ suite; a new dependency or a change to what the entry imports needs `npm run siz
   send from `contact@syedwaleedahmed.me`; remove one and mail stops ([deployment](docs/deployment.md)).
 - **The Cloudflare zone**: "Always Use HTTPS" and the www-to-apex redirect rule live in the dashboard;
   `verify-deploy.mjs` checks both after each deploy.
-- **The domain** is registered at Spaceship until 2027-12-22; nothing watches the date.
+- **The domain** is registered at Spaceship until 2027-12-22 with auto-renew off; nothing watches the date. DNSSEC
+  is on, with the DS record at Spaceship: delete it before moving the nameservers or the registrar, or the domain
+  stops resolving.
 - **`public/sw.js`** is a kill switch for a service worker an old version installed. Keep it.
 - **`SITE.updated`** in `content/site.ts` is the content's review date, shown in the footer and the sitemap; move it
   when content changes.
